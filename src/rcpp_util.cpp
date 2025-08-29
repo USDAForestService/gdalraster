@@ -132,3 +132,10 @@ bool contains_str_(const Rcpp::CharacterVector &v, const Rcpp::String &s) {
     else
         return true;
 }
+
+// wrapper for base R isNamespaceLoaded()
+bool is_namespace_loaded_(const Rcpp::String &pkg) {
+    Rcpp::Function f("isNamespaceLoaded");
+    Rcpp::LogicalVector res = f(pkg);
+    return Rcpp::is_true(Rcpp::all(res));
+}

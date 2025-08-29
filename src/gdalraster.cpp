@@ -37,13 +37,29 @@ void gdal_error_handler_r(CPLErr err_class, int err_no, const char *msg) {
 
         case CE_Warning:
         {
-            Rcpp::Rcout << "GDAL WARNING " << err_no << ": " << msg << "\n";
+            // try to be compatible with sf, and terra default level 2
+            if (is_namespace_loaded_("sf")) {
+                std::stringstream ss_msg;
+                ss_msg << "GDAL WARNING " << err_no << ": " << msg;
+                Rcpp::warning(ss_msg.str());
+            }
+            else {
+                Rcpp::Rcout << "GDAL WARNING " << err_no << ": " << msg << "\n";
+            }
         }
         break;
 
         case CE_Failure:
         {
-            Rcpp::Rcout << "GDAL FAILURE " << err_no << ": " << msg << "\n";
+            // try to be compatible with sf, and terra default level 2
+            if (is_namespace_loaded_("sf") || is_namespace_loaded_("terra")) {
+                std::stringstream ss_msg;
+                ss_msg << "GDAL FAILURE " << err_no << ": " << msg;
+                Rcpp::warning(ss_msg.str());
+            }
+            else {
+                Rcpp::Rcout << "GDAL FAILURE " << err_no << ": " << msg << "\n";
+            }
         }
         break;
 
