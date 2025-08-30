@@ -345,9 +345,9 @@ SEXP ogr_ds_layer_names(const std::string &dsn) {
 
     CPLPushErrorHandler(CPLQuietErrorHandler);
     hDS = GDALOpenEx(dsn_in.c_str(), GDAL_OF_VECTOR, nullptr, nullptr, nullptr);
+    CPLPopErrorHandler();
     if (hDS == nullptr)
         return R_NilValue;
-    CPLPopErrorHandler();
 
     int cnt = GDALDatasetGetLayerCount(hDS);
     if (cnt == 0) {
@@ -1160,8 +1160,10 @@ bool ogr_layer_exists(const std::string &dsn, const std::string &layer) {
 
     CPLPushErrorHandler(CPLQuietErrorHandler);
     hDS = GDALOpenEx(dsn_in.c_str(), GDAL_OF_VECTOR, nullptr, nullptr, nullptr);
-    if (hDS == nullptr)
+    if (hDS == nullptr) {
+        CPLPopErrorHandler();
         return false;
+    }
     hLayer = GDALDatasetGetLayerByName(hDS, layer.c_str());
     CPLPopErrorHandler();
 
@@ -1531,8 +1533,10 @@ SEXP ogr_layer_field_names(const std::string &dsn, const std::string &layer) {
 
     CPLPushErrorHandler(CPLQuietErrorHandler);
     hDS = GDALOpenEx(dsn_in.c_str(), GDAL_OF_VECTOR, nullptr, nullptr, nullptr);
-    if (hDS == nullptr)
+    if (hDS == nullptr) {
+        CPLPopErrorHandler();
         return R_NilValue;
+    }
     if (layer == "")
         hLayer = GDALDatasetGetLayer(hDS, 0);
     else
@@ -1594,8 +1598,10 @@ int ogr_field_index(const std::string &dsn, const std::string &layer,
 
     CPLPushErrorHandler(CPLQuietErrorHandler);
     hDS = GDALOpenEx(dsn_in.c_str(), GDAL_OF_VECTOR, nullptr, nullptr, nullptr);
-    if (hDS == nullptr)
+    if (hDS == nullptr) {
+        CPLPopErrorHandler();
         return -1;
+    }
     if (layer == "")
         hLayer = GDALDatasetGetLayer(hDS, 0);
     else
@@ -1717,8 +1723,10 @@ bool ogr_field_create(const std::string &dsn, const std::string &layer,
     hDS = GDALOpenEx(dsn_in.c_str(), GDAL_OF_VECTOR | GDAL_OF_UPDATE,
                      nullptr, nullptr, nullptr);
 
-    if (hDS == nullptr)
+    if (hDS == nullptr) {
+        CPLPopErrorHandler();
         return false;
+    }
 
     if (layer == "")
         hLayer = GDALDatasetGetLayer(hDS, 0);
@@ -1834,8 +1842,10 @@ bool ogr_geom_field_create(const std::string &dsn, const std::string &layer,
     hDS = GDALOpenEx(dsn_in.c_str(), GDAL_OF_VECTOR | GDAL_OF_UPDATE,
                      nullptr, nullptr, nullptr);
 
-    if (hDS == nullptr)
+    if (hDS == nullptr) {
+        CPLPopErrorHandler();
         return false;
+    }
 
     if (layer == "")
         hLayer = GDALDatasetGetLayer(hDS, 0);
