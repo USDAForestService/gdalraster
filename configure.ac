@@ -12,7 +12,7 @@
 # 2025-02-26: fix test for GDAL >= 3.1.0
 # 2025-04-25: drop PROJ include directory and libs since we require GDAL >= 3.1
 
-AC_INIT([gdalraster],[2.2.1],[jctoney@gmail.com])
+AC_INIT([gdalraster],[2.2.1.9000],[jctoney@gmail.com])
 AC_LANG(C++)
 
 # find R home and set CC/CFLAGS

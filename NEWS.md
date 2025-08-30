@@ -1,3 +1,7 @@
+# gdalraster 2.2.1.9000 (dev)
+
+* ensure that the global error handler is restored when the input dataset cannot be opened in some OGR management functions (#787) (2025-08-30)
+
 # gdalraster 2.2.1
 
 ## Bug fix and maintenance release
