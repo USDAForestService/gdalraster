@@ -1,16 +1,18 @@
-# Process this file with autoconf to produce a configure script.
-# Initially based on configure.ac from https://github.com/appelmar/gdalcubes
-# Copyright (c) 2018-2019 Marius Appel, License: MIT
-# Much of the PROJ config was removed here because gdalraster only uses PROJ via
-# GDAL headers. Still checks that PROJ is available to GDAL and handles optional
-# local copy of the PROJ data directory. The PROJ datadir is now obtained from
-# pkg-config if possible. Compiler invocations are now logged.
-# subsequent changelog:
-# 2024-03-03: test that GEOS is available to GDAL (required at gdalraster 1.10)
-# 2024-03-12: restore proj_include_path and proj_lib_path
-# 2024-03-17: rework GEOS test, include <ogr_api.h> in initial gdal_test.cpp
-# 2025-02-26: fix test for GDAL >= 3.1.0
-# 2025-04-25: drop PROJ include directory and libs since we require GDAL >= 3.1
+dnl Process this file with autoconf to produce a configure script.
+dnl Initially based on configure.ac from https://github.com/appelmar/gdalcubes
+dnl Copyright (c) 2018-2019 Marius Appel, License: MIT
+dnl Much of the PROJ config was removed here because gdalraster only uses PROJ via
+dnl GDAL headers. Still checks that PROJ is available to GDAL and handles optional
+dnl local copy of the PROJ data directory. The PROJ datadir is now obtained from
+dnl pkg-config if possible. Compiler invocations are now logged.
+dnl subsequent changelog:
+dnl 2024-03-03: test that GEOS is available to GDAL (required at gdalraster 1.10)
+dnl 2024-03-12: restore proj_include_path and proj_lib_path
+dnl 2024-03-17: rework GEOS test, include <ogr_api.h> in initial gdal_test.cpp
+dnl 2025-02-26: fix test for GDAL >= 3.1.0
+dnl 2025-04-25: drop PROJ include directory and libs since we require GDAL >= 3.1
+dnl 2025-08-31: check size of long long which should always by 64 bits in practice
+dnl             but is guaranteed only to be at least 64
 
 AC_INIT([gdalraster],[2.2.1.9000],[jctoney@gmail.com])
 AC_LANG(C++)
@@ -326,6 +328,11 @@ elif test "${gdal_has_proj}" = cross_compiling; then
   AC_MSG_RESULT([assume yes for cross-compiling])
 else
   AC_MSG_RESULT(yes)
+fi
+
+AC_CHECK_SIZEOF([long long])
+if test "$ac_cv_sizeof_long_long" != 8 ; then
+AC_MSG_WARN([size of long long != 8, problems with bit64::integer64 may occur])
 fi
 
 AC_MSG_NOTICE([Package CPP flags: ${PKG_CPPFLAGS}])
