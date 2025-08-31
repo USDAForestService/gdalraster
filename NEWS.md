@@ -1,4 +1,6 @@
-# gdalraster 2.2.1.9000 (dev)
+# gdalraster 2.2.1.9010 (dev)
+
+* (internal) various C++ code linting (#788) (2025-08-31)
 
 * ensure that the global error handler is restored when the input dataset cannot be opened in some OGR management functions (#787) (2025-08-30)
 
