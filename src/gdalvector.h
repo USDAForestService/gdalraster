@@ -5,22 +5,24 @@
    Copyright (c) 2023-2025 gdalraster authors
 */
 
-#ifndef SRC_GDALVECTOR_H_
-#define SRC_GDALVECTOR_H_
+#ifndef GDALVECTOR_H_
+#define GDALVECTOR_H_
+
+#include <Rcpp.h>
 
 #include <map>
 #include <string>
 #include <vector>
 
-#include "rcpp_util.h"
-
-#if __has_include("ogr_recordbatch.h")  // for Arrow structs (GDAL >= 3.6)
-    #include "ogr_recordbatch.h"
+#if __has_include(<ogr_recordbatch.h>)  // for Arrow structs (GDAL >= 3.6)
+    #include <ogr_recordbatch.h>
 #endif
+
+#include "rcpp_util.h"
 
 // Predeclare some GDAL types until the public header is included
 #ifndef GDAL_H_INCLUDED
-    #ifndef SRC_GDALRASTER_H_
+    #ifndef GDALRASTER_H_
         typedef void *GDALDatasetH;
         typedef enum {GA_ReadOnly = 0, GA_Update = 1} GDALAccess;
     #endif
@@ -185,7 +187,7 @@ class GDALVector {
             const std::map<R_xlen_t, int> &map_flds,
             const std::map<R_xlen_t, int> &map_geom_flds) const;
 
-#if __has_include("ogr_recordbatch.h")
+#if __has_include(<ogr_recordbatch.h>)
     int arrow_get_schema(struct ArrowSchema* out);
     int arrow_get_next(struct ArrowArray* out);
     const char* arrow_get_last_error();
@@ -213,7 +215,7 @@ class GDALVector {
     OGRLayerH m_hLayer {nullptr};
     bool m_shared {false};
     int64_t m_last_write_fid {NA_INTEGER64};
-#if __has_include("ogr_recordbatch.h")
+#if __has_include(<ogr_recordbatch.h>)
     struct ArrowArrayStream m_stream;
     std::vector<SEXP> m_stream_xptrs {};
 #endif
@@ -222,4 +224,4 @@ class GDALVector {
 // cppcheck-suppress unknownMacro
 RCPP_EXPOSED_CLASS(GDALVector)
 
-#endif  // SRC_GDALVECTOR_H_
+#endif  // GDALVECTOR_H_

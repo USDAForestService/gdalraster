@@ -25,6 +25,7 @@
  * DEALINGS IN THE SOFTWARE.
  ****************************************************************************/
 
+#include <algorithm>
 #include <cmath>
 #include "gdalraster.h"
 

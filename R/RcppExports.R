@@ -2217,8 +2217,8 @@ vsi_is_local <- function(filename) {
 }
 
 #' @noRd
-.gdal_commands <- function(contains, recurse, cout) {
-    .Call(`_gdalraster_gdal_commands`, contains, recurse, cout)
+.gdal_commands <- function(contains, recurse, console_out) {
+    .Call(`_gdalraster_gdal_commands`, contains, recurse, console_out)
 }
 
 #' @noRd

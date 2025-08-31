@@ -22,15 +22,17 @@
     used with the interface here is 9223372036854775807.
 */
 
-#ifndef SRC_VSIFILE_H_
-#define SRC_VSIFILE_H_
+#ifndef VSIFILE_H_
+#define VSIFILE_H_
+
+#include <Rcpp.h>
+#include <RcppInt64>
+
+#include <cpl_vsi.h>
 
 #include <cstdint>
 #include <string>
-#include "Rcpp.h"
-#include "RcppInt64"
 
-#include "cpl_vsi.h"
 
 class VSIFile {
  public:
@@ -68,4 +70,4 @@ class VSIFile {
 // cppcheck-suppress unknownMacro
 RCPP_EXPOSED_CLASS(VSIFile)
 
-#endif  // SRC_VSIFILE_H_
+#endif  // VSIFILE_H_

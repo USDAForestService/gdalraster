@@ -1004,15 +1004,15 @@ BEGIN_RCPP
 END_RCPP
 }
 // gdal_commands
-Rcpp::DataFrame gdal_commands(const std::string& contains, bool recurse, bool cout);
-RcppExport SEXP _gdalraster_gdal_commands(SEXP containsSEXP, SEXP recurseSEXP, SEXP coutSEXP) {
+Rcpp::DataFrame gdal_commands(const std::string& contains, bool recurse, bool console_out);
+RcppExport SEXP _gdalraster_gdal_commands(SEXP containsSEXP, SEXP recurseSEXP, SEXP console_outSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< const std::string& >::type contains(containsSEXP);
     Rcpp::traits::input_parameter< bool >::type recurse(recurseSEXP);
-    Rcpp::traits::input_parameter< bool >::type cout(coutSEXP);
-    rcpp_result_gen = Rcpp::wrap(gdal_commands(contains, recurse, cout));
+    Rcpp::traits::input_parameter< bool >::type console_out(console_outSEXP);
+    rcpp_result_gen = Rcpp::wrap(gdal_commands(contains, recurse, console_out));
     return rcpp_result_gen;
 END_RCPP
 }

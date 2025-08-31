@@ -1,7 +1,7 @@
-#ifndef SRC_GDALRASTER_TYPES_H_
-#define SRC_GDALRASTER_TYPES_H_
+#ifndef GDALRASTER_TYPES_H_
+#define GDALRASTER_TYPES_H_
 
 #include "gdalraster.h"
 #include "gdalvector.h"
 
-#endif  // SRC_GDALRASTER_TYPES_H_
+#endif  // GDALRASTER_TYPES_H_

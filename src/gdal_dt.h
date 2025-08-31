@@ -5,12 +5,13 @@
    Copyright (c) 2023-2025 gdalraster authors
 */
 
-#ifndef SRC_GDAL_DT_H_
-#define SRC_GDAL_DT_H_
+#ifndef GDAL_DT_H_
+#define GDAL_DT_H_
+
+#include <Rcpp.h>
 
 #include <string>
 
-#include <Rcpp.h>
 
 int dt_size(const std::string &dt, bool as_bytes);
 bool dt_is_complex(const std::string &dt);
@@ -27,4 +28,4 @@ std::string dt_find(int bits, bool is_signed, bool is_floating,
 
 std::string dt_find_for_value(double value, bool is_complex);
 
-#endif  // SRC_GDAL_DT_H_
+#endif  // GDAL_DT_H_

@@ -3,18 +3,18 @@
    Copyright (c) 2023-2025 gdalraster authors
 */
 
+#include <cpl_port.h>
+#include <cpl_error.h>
+#include <cpl_string.h>
+#include <cpl_time.h>
+#include <ogr_srs_api.h>
+
 #include <cstdint>
+#include <string>
 #include <vector>
 
-#include "gdal.h"
-#include "cpl_port.h"
-#include "cpl_error.h"
-#include "cpl_string.h"
-#include "cpl_time.h"
-#include "ogr_srs_api.h"
-
-#include "gdalraster.h"
 #include "ogr_util.h"
+#include "gdalraster.h"
 
 
 OGRwkbGeometryType getWkbGeomType_(const std::string &geom_type) {
@@ -667,7 +667,7 @@ bool ogr_ds_add_field_domain(const std::string &dsn,
             char *pszFailureReason = nullptr;
             ret = GDALDatasetAddFieldDomain(hDS, hFldDom, &pszFailureReason);
             if (pszFailureReason != nullptr) {
-                Rcpp::Rcout << pszFailureReason << std::endl;
+                Rcpp::Rcout << pszFailureReason << "\n";
                 VSIFree(pszFailureReason);
             }
             OGR_FldDomain_Destroy(hFldDom);
@@ -804,7 +804,7 @@ bool ogr_ds_add_field_domain(const std::string &dsn,
                 ret = GDALDatasetAddFieldDomain(hDS, hFldDom,
                                                 &pszFailureReason);
                 if (pszFailureReason != nullptr) {
-                    Rcpp::Rcout << pszFailureReason << std::endl;
+                    Rcpp::Rcout << pszFailureReason << "\n";
                     VSIFree(pszFailureReason);
                 }
                 OGR_FldDomain_Destroy(hFldDom);
@@ -908,7 +908,7 @@ bool ogr_ds_add_field_domain(const std::string &dsn,
                 ret = GDALDatasetAddFieldDomain(hDS, hFldDom,
                                                 &pszFailureReason);
                 if (pszFailureReason != nullptr) {
-                    Rcpp::Rcout << pszFailureReason << std::endl;
+                    Rcpp::Rcout << pszFailureReason << "\n";
                     VSIFree(pszFailureReason);
                 }
                 OGR_FldDomain_Destroy(hFldDom);
@@ -918,8 +918,7 @@ bool ogr_ds_add_field_domain(const std::string &dsn,
         else {
             GDALReleaseDataset(hDS);
             if (eFieldType == OFTDateTime) {
-                Rcpp::Rcout << "use '$type' RangeDateTime for OFTDateTime"
-                    << std::endl;
+                Rcpp::Rcout << "use '$type' RangeDateTime for OFTDateTime\n";
             }
             Rcpp::stop(
                 "'$field_type' must be OFTInteger, OFTInteger64 or OFTReal");
@@ -1059,7 +1058,7 @@ bool ogr_ds_add_field_domain(const std::string &dsn,
             char *pszFailureReason = nullptr;
             ret = GDALDatasetAddFieldDomain(hDS, hFldDom, &pszFailureReason);
             if (pszFailureReason != nullptr) {
-                Rcpp::Rcout << pszFailureReason << std::endl;
+                Rcpp::Rcout << pszFailureReason << "\n";
                 VSIFree(pszFailureReason);
             }
             OGR_FldDomain_Destroy(hFldDom);
@@ -1101,7 +1100,7 @@ bool ogr_ds_add_field_domain(const std::string &dsn,
             char *pszFailureReason = nullptr;
             ret = GDALDatasetAddFieldDomain(hDS, hFldDom, &pszFailureReason);
             if (pszFailureReason != nullptr) {
-                Rcpp::Rcout << pszFailureReason << std::endl;
+                Rcpp::Rcout << pszFailureReason << "\n";
                 VSIFree(pszFailureReason);
             }
             OGR_FldDomain_Destroy(hFldDom);
@@ -1244,7 +1243,7 @@ OGRLayerH CreateLayer_(GDALDatasetH hDS, const std::string &layer,
             }
         }
         if (!has_geom_fld_defn)
-            Rcpp::stop("'layer_defn' does not have a geometry field definition");
+            Rcpp::stop("'layer_defn' does not have a geom field definition");
     }
 
     OGRwkbGeometryType eGeomType = getWkbGeomType_(geom_type_in);

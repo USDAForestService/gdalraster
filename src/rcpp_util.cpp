@@ -5,6 +5,9 @@
 
 #include "rcpp_util.h"
 
+#include <algorithm>
+#include <string>
+
 // convert data frame to numeric matrix in Rcpp
 Rcpp::NumericMatrix df_to_matrix_(const Rcpp::DataFrame &df) {
     Rcpp::NumericMatrix m = Rcpp::no_init(df.nrows(), df.size());

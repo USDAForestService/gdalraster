@@ -12,8 +12,11 @@
 #include <cctype>
 #include <cstring>
 #include <sstream>
+#include <string>
+#include <vector>
 
 #include "gdalraster.h"
+#include "rcpp_util.h"
 
 #define GDALALG_MIN_GDAL_ GDAL_COMPUTE_VERSION(3, 11, 3)
 
@@ -21,7 +24,7 @@ constexpr char GDALALG_MIN_GDAL_MSG_[] =
     "GDAL CLI bindings require GDAL >= 3.11.3";
 
 #if GDAL_VERSION_NUM >= GDALALG_MIN_GDAL_
-constexpr R_xlen_t CMD_TOKENS_MAX_ = 5;
+constexpr R_xlen_t CMD_TOKENS_MAX_ = 6;  // made up for a rough bound check
 
 #if GDAL_VERSION_NUM < GDAL_COMPUTE_VERSION(3, 12, 0)
 // https://lists.osgeo.org/pipermail/gdal-dev/2025-August/060818.html
@@ -46,7 +49,7 @@ void append_subalg_names_desc_(const GDALAlgorithmH alg,
                                std::vector<std::string> *desc,
                                std::vector<std::string> *urls,
                                const std::string &contains,
-                               bool cout) {
+                               bool console_out) {
 
     char **subnames = nullptr;
     subnames = GDALAlgorithmGetSubAlgorithmNames(alg);
@@ -62,7 +65,7 @@ void append_subalg_names_desc_(const GDALAlgorithmH alg,
         }
 
         std::string this_cmd_str = cmd_str + " " + GDALAlgorithmGetName(subalg);
-        bool cout_this = true;
+        bool console_out_this = true;
         if (contains == "" ||
             this_cmd_str.find(contains) != std::string::npos) {
 
@@ -71,10 +74,10 @@ void append_subalg_names_desc_(const GDALAlgorithmH alg,
             urls->push_back(GDALAlgorithmGetHelpFullURL(subalg));
         }
         else {
-            cout_this = false;
+            console_out_this = false;
         }
 
-        if (cout && cout_this) {
+        if (console_out && console_out_this) {
             Rcpp::Rcout << this_cmd_str.c_str() << ":\n";
             Rcpp::Rcout << GDALAlgorithmGetDescription(subalg) << "\n";
             if (!EQUAL(GDALAlgorithmGetHelpFullURL(subalg), ""))
@@ -84,7 +87,7 @@ void append_subalg_names_desc_(const GDALAlgorithmH alg,
 
         if (GDALAlgorithmHasSubAlgorithms(subalg)) {
             append_subalg_names_desc_(subalg, this_cmd_str, names, desc, urls,
-                                      contains, cout);
+                                      contains, console_out);
         }
 
         GDALAlgorithmRelease(subalg);
@@ -98,7 +101,7 @@ void append_subalg_names_desc_(const GDALAlgorithmH alg,
 //' @noRd
 // [[Rcpp::export(name = ".gdal_commands")]]
 Rcpp::DataFrame gdal_commands(const std::string &contains, bool recurse,
-                              bool cout) {
+                              bool console_out) {
 
 #if GDAL_VERSION_NUM < GDALALG_MIN_GDAL_
     Rcpp::stop(GDALALG_MIN_GDAL_MSG_);
@@ -141,7 +144,7 @@ Rcpp::DataFrame gdal_commands(const std::string &contains, bool recurse,
             continue;
         }
 
-        bool cout_this = true;
+        bool console_out_this = true;
         if (contains_in == "" ||
             std::string(names[i]).find(contains_in) != std::string::npos) {
 
@@ -150,10 +153,10 @@ Rcpp::DataFrame gdal_commands(const std::string &contains, bool recurse,
             cmd_urls.push_back(GDALAlgorithmGetHelpFullURL(alg));
         }
         else {
-            cout_this = false;
+            console_out_this = false;
         }
 
-        if (cout && cout_this) {
+        if (console_out && console_out_this) {
             Rcpp::Rcout << names[i] << ":\n";
             Rcpp::Rcout << GDALAlgorithmGetDescription(alg) << "\n";
             if (!EQUAL(GDALAlgorithmGetHelpFullURL(alg), ""))
@@ -164,7 +167,7 @@ Rcpp::DataFrame gdal_commands(const std::string &contains, bool recurse,
         if (recurse && GDALAlgorithmHasSubAlgorithms(alg)) {
             append_subalg_names_desc_(alg, std::string(names[i]),
                                       &cmd_names, &cmd_descriptions,
-                                      &cmd_urls, contains_in, cout);
+                                      &cmd_urls, contains_in, console_out);
         }
 
         GDALAlgorithmRelease(alg);
@@ -646,8 +649,8 @@ Rcpp::List GDALAlg::argInfo(const Rcpp::String &arg_name) const {
 
 void GDALAlg::usage() const {
     Rcpp::Environment pkg = Rcpp::Environment::namespace_env("gdalraster");
-    Rcpp::Function fn = pkg[".print_alg_usage"];
-    fn(Rcpp::wrap(m_cmd_str));
+    Rcpp::Function print_usage = pkg[".print_alg_usage"];
+    print_usage(Rcpp::wrap(m_cmd_str));
 }
 
 Rcpp::String GDALAlg::usageAsJSON() const {
@@ -754,7 +757,7 @@ bool GDALAlg::parseCommandLineArgs() {
         for (Rcpp::String arg_name : arg_names) {
             const char *pszArgName = arg_name.get_cstring();
 
-            // TODO: arg aliases are currently hard coded, look up instead
+            // FIXME: arg aliases are currently hard coded, look up instead
 
             if (m_input_GDALVector && EQUAL(pszArgName, "input-format")) {
                 if (contains_str_(m_args, "--input-format") ||
@@ -1277,7 +1280,7 @@ Rcpp::CharacterVector GDALAlg::parseListArgs_(
         std::vector<GDALDatasetH> ds_list = m_map_input_hDS["input"];
         m_num_input_datasets = ds_list.size();
         if (m_num_input_datasets > 1 && m_input_GDALVector) {
-            // becasue currently, auto setting args from GDALVector input is
+            // since currently, auto setting args from GDALVector input is
             // not supported for multiple input datasets
             m_input_GDALVector = nullptr;
         }
