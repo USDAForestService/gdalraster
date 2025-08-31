@@ -3,15 +3,20 @@
    Copyright (c) 2023-2025 gdalraster authors
 */
 
-#include <algorithm>
+#include "gdal_vsi.h"
 
-#include "gdal.h"
-#include "cpl_port.h"
-#include "cpl_string.h"
-#include "cpl_vsi.h"
+#include <RcppInt64>
+
+#include <gdal.h>
+#include <cpl_port.h>
+#include <cpl_string.h>
+#include <cpl_vsi.h>
+
+#include <algorithm>
+#include <string>
+#include <vector>
 
 #include "gdalraster.h"
-#include "gdal_vsi.h"
 
 
 //' Copy a source file to a target filename

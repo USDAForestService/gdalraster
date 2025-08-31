@@ -3,11 +3,12 @@
    Copyright (c) 2023-2025 gdalraster authors
 */
 
-#ifndef SRC_GDAL_VSI_H_
-#define SRC_GDAL_VSI_H_
+#ifndef GDAL_VSI_H_
+#define GDAL_VSI_H_
+
+#include <Rcpp.h>
 
 #include <string>
-#include <Rcpp.h>
 
 int vsi_copy_file(const Rcpp::CharacterVector &src_file,
                   const Rcpp::CharacterVector &target_file,
@@ -56,4 +57,4 @@ SEXP vsi_get_signed_url(const Rcpp::CharacterVector &filename,
 bool vsi_is_local(const Rcpp::CharacterVector &filename);
 
 
-#endif  // SRC_GDAL_VSI_H_
+#endif  // GDAL_VSI_H_

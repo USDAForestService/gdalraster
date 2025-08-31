@@ -3,14 +3,18 @@
    Copyright (c) 2023-2025 gdalraster authors
 */
 
-#ifndef SRC_OGR_UTIL_H_
-#define SRC_OGR_UTIL_H_
+#ifndef OGR_UTIL_H_
+#define OGR_UTIL_H_
+
+#include <gdal.h>
+
+#include <Rcpp.h>
 
 #include <map>
 #include <string>
-#include "rcpp_util.h"
 
 #include "gdalvector.h"
+#include "rcpp_util.h"
 
 #ifdef GDAL_H_INCLUDED
 // map OGRwkbGeometryType enum to string names for use in R
@@ -241,4 +245,4 @@ SEXP ogr_execute_sql(const std::string &dsn, const std::string &sql,
                      const std::string &spatial_filter,
                      const std::string &dialect);
 
-#endif  // SRC_OGR_UTIL_H_
+#endif  // OGR_UTIL_H_

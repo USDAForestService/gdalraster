@@ -6,16 +6,15 @@
    Copyright (c) 2023-2025 gdalraster authors
 */
 
-#ifndef SRC_GEOM_API_H_
-#define SRC_GEOM_API_H_
-
-#include <string>
-#include <vector>
+#ifndef GEOM_API_H_
+#define GEOM_API_H_
 
 #include <Rcpp.h>
 
-#include "ogr_geometry.h"
+#include <ogr_geometry.h>
 
+#include <string>
+#include <vector>
 
 std::vector<int> getGEOSVersion();
 bool has_geos();  // GDAL built against GEOS is required at gdalraster 1.10
@@ -161,4 +160,4 @@ OGRwkbGeometryType getTargetGeomType(OGRwkbGeometryType geom_type,
                                      bool convert_to_linear,
                                      bool promote_to_multi);
 
-#endif  // SRC_GEOM_API_H_
+#endif  // GEOM_API_H_

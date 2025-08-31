@@ -4,11 +4,12 @@
    Also tracks the min, max, sum and count.
    Chris Toney <chris.toney at usda.gov> */
 
-#ifndef SRC_RUNNING_STATS_H_
-#define SRC_RUNNING_STATS_H_
+#ifndef RUNNING_STATS_H_
+#define RUNNING_STATS_H_
+
+#include <Rcpp.h>
 
 #include <cstdint>
-#include <Rcpp.h>
 
 class RunningStats {
  public:
@@ -39,4 +40,4 @@ class RunningStats {
 // cppcheck-suppress unknownMacro
 RCPP_EXPOSED_CLASS(RunningStats)
 
-#endif  // SRC_RUNNING_STATS_H_
+#endif  // RUNNING_STATS_H_

@@ -4,14 +4,18 @@
    Copyright (c) 2023-2025 gdalraster authors
 */
 
+#include "vsifile.h"
+
+#include <cpl_port.h>
+#include <cpl_conv.h>
+
 #include <cstdlib>
 #include <limits>
+#include <string>
 #include <vector>
 
-#include "cpl_port.h"
-#include "cpl_conv.h"
 #include "gdalraster.h"
-#include "vsifile.h"
+#include "rcpp_util.h"
 
 constexpr uint64_t VSI_L_OFFSET_MAX_R = 9223372036854775807;
 
@@ -145,7 +149,7 @@ SEXP VSIFile::read(Rcpp::NumericVector nbytes) {
         nbytes_in = static_cast<size_t>(Rcpp::fromInteger64(nbytes[0]));
     }
     else {
-        if (nbytes[0] > static_cast<double>(MAX_INT_AS_R_NUMERIC))
+        if (nbytes[0] > static_cast<double>(MAX_INT_AS_R_NUMERIC_))
             Rcpp::stop("'nbytes' given as type double is out of range");
         else
             nbytes_in = static_cast<size_t>(nbytes[0]);
@@ -292,9 +296,9 @@ int VSIFile::set_access(std::string access) {
 }
 
 void VSIFile::show() const {
-    Rcpp::Rcout << "C++ object of class VSIFile" << std::endl;
-    Rcpp::Rcout << " Filename : " << get_filename() << std::endl;
-    Rcpp::Rcout << " Access   : " << get_access() << std::endl;
+    Rcpp::Rcout << "C++ object of class VSIFile\n";
+    Rcpp::Rcout << " Filename : " << get_filename() << "\n";
+    Rcpp::Rcout << " Access   : " << get_access() << "\n";
 }
 
 RCPP_MODULE(mod_VSIFile) {

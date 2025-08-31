@@ -1,13 +1,11 @@
 /* Hash table class for counting unique combinations of integers
 Chris Toney <chris.toney at usda.gov> */
 
-#ifndef SRC_CMB_TABLE_H_
-#define SRC_CMB_TABLE_H_
+#ifndef CMB_TABLE_H_
+#define CMB_TABLE_H_
 
 #include <Rcpp.h>
 
-#include <string>
-#include <vector>
 #include <unordered_map>
 
 struct cmbKey {
@@ -69,4 +67,4 @@ class CmbTable {
 // cppcheck-suppress unknownMacro
 RCPP_EXPOSED_CLASS(CmbTable)
 
-#endif  // SRC_CMB_TABLE_H_
+#endif  // CMB_TABLE_H_

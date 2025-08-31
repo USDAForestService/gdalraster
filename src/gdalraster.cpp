@@ -5,25 +5,28 @@
    Copyright (c) 2023-2025 gdalraster authors
 */
 
-#include <errno.h>
+#include <gdal.h>
+#include <gdal_priv.h>
+#include <cpl_port.h>
+#include <cpl_conv.h>
+#include <cpl_string.h>
+#include <cpl_vsi.h>
+#include <gdal_alg.h>
+#include <gdal_utils.h>
+
 #include <algorithm>
 #include <cmath>
 #include <complex>
+#include <cstdint>
 #include <sstream>
+#include <string>
 #include <utility>
+#include <vector>
 
-#include "gdal.h"
-#include "gdal_priv.h"
-#include "cpl_port.h"
-#include "cpl_conv.h"
-#include "cpl_string.h"
-#include "cpl_vsi.h"
-#include "gdal_alg.h"
-#include "gdal_utils.h"
-
-#include "gdal_vsi.h"
-#include "transform.h"
 #include "gdalraster.h"
+#include "gdal_vsi.h"
+#include "rcpp_util.h"
+#include "transform.h"
 
 void gdal_error_handler_r(CPLErr err_class, int err_no, const char *msg) {
     switch (err_class) {
@@ -610,7 +613,7 @@ Rcpp::NumericMatrix GDALRaster::pixel_extract(const Rcpp::RObject &xy,
     for (auto& b : bands_in) {
         GDALRasterBandH hBand = GDALGetRasterBand(m_hDataset, b);
         if (hBand == nullptr) {
-            Rcpp::Rcout << "invalid band number: " << b << std::endl;
+            Rcpp::Rcout << "invalid band number: " << b << "\n";
             Rcpp::stop("failed to access the requested band");
         }
         GDALDataType eDT = GDALGetRasterDataType(hBand);
@@ -2162,21 +2165,21 @@ void GDALRaster::show() const {
     Rcpp::Function fn = pkg[".get_crs_name"];
     std::string crs_name = Rcpp::as<std::string>(fn(getProjection()));
 
-    Rcpp::Rcout << "C++ object of class GDALRaster" << std::endl;
+    Rcpp::Rcout << "C++ object of class GDALRaster\n";
     Rcpp::Rcout << " Driver : " << getDriverLongName() << " (" <<
-                                   getDriverShortName() << ")" << std::endl;
-    Rcpp::Rcout << " DSN    : " << getDescription(0) << std::endl;
+                                   getDriverShortName() << ")\n";
+    Rcpp::Rcout << " DSN    : " << getDescription(0) << "\n";
     Rcpp::Rcout << " Dim    : " << std::to_string(xsize) << ", " <<
                                    std::to_string(ysize) << ", " <<
                                    std::to_string(getRasterCount()) <<
-                                   std::endl;
-    Rcpp::Rcout << " CRS    : " << crs_name << std::endl;
+                                   "\n";
+    Rcpp::Rcout << " CRS    : " << crs_name << "\n";
     Rcpp::Rcout << " Res    : " << std::to_string(res()[0]) << ", " <<
-                                   std::to_string(res()[1]) << std::endl;
+                                   std::to_string(res()[1]) << "\n";
     Rcpp::Rcout << " Bbox   : " << std::to_string(bbox()[0]) << ", " <<
                                    std::to_string(bbox()[1]) << ", " <<
                                    std::to_string(bbox()[2]) << ", " <<
-                                   std::to_string(bbox()[3]) << std::endl;
+                                   std::to_string(bbox()[3]) << "\n";
 }
 
 // ****************************************************************************

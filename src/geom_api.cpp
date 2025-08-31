@@ -5,16 +5,18 @@
    Copyright (c) 2023-2025 gdalraster authors
 */
 
-#include "rcpp_util.h"
+#include <cpl_port.h>
+#include <cpl_conv.h>
+#include <cpl_string.h>
+#include <ogr_api.h>
+#include <ogr_srs_api.h>
+
+#include <string>
+#include <vector>
+
 #include "geom_api.h"
-
-#include "cpl_port.h"
-#include "cpl_conv.h"
-#include "cpl_string.h"
-#include "ogr_api.h"
-#include "ogr_srs_api.h"
-
 #include "gdalraster.h"
+#include "rcpp_util.h"
 #include "srs_api.h"
 
 
@@ -74,7 +76,7 @@ OGRGeometryH createGeomFromWkb(const Rcpp::RawVector &wkb) {
     OGRErr err = OGRERR_NONE;
     std::string msg = "unknown error";
 
-#if GDAL_VERSION_NUM < GDAL_COMPUTE_VERSION(3,3,0)
+#if GDAL_VERSION_NUM < GDAL_COMPUTE_VERSION(3, 3, 0)
     err = OGR_G_CreateFromWkb(&wkb[0], nullptr, &hGeom,
                               static_cast<int>(wkb.size()));
 #else
@@ -115,7 +117,7 @@ bool exportGeomToWkb(OGRGeometryH hGeom, unsigned char *wkb, bool as_iso,
         eOrder = wkbXDR;
     }
     else {
-        Rcpp::Rcerr << "invalid 'byte_order'" << std::endl;
+        Rcpp::Rcerr << "invalid 'byte_order'\n";
         return false;
     }
 
@@ -223,8 +225,10 @@ SEXP g_wkt2wkb(const std::string &geom, bool as_iso = false,
     // POINT EMPTY is exported to WKB as if it were POINT(0 0),
     // so that particular case is necessary.
     // (note: this appears to also be true with GEOS 3.12.1, CT 2024-09-14)
-    if (OGR_G_GetGeometryType(hGeom) == wkbPoint && OGR_G_IsEmpty(hGeom))
-        Rcpp::warning("POINT EMPTY is exported to WKB as if it were POINT(0 0)");
+    if (OGR_G_GetGeometryType(hGeom) == wkbPoint && OGR_G_IsEmpty(hGeom)) {
+        Rcpp::warning(
+            "POINT EMPTY is exported to WKB as if it were POINT(0 0)");
+    }
 
     const int nWKBSize = OGR_G_WkbSize(hGeom);
     if (!nWKBSize) {
@@ -334,7 +338,7 @@ Rcpp::RawVector g_create(const std::string &geom_type,
 
     if (eType == wkbGeometryCollection && nPts > 0) {
         Rcpp::Rcerr << "g_create() only creates an empty geometry collection, "
-            << "ignoring input points" << std::endl;
+            << "ignoring input points\n";
     }
 
     if (nPts == 1 && eType != wkbGeometryCollection) {
@@ -558,7 +562,7 @@ Rcpp::LogicalVector g_is_valid(const Rcpp::RObject &geom,
     if (hGeom == nullptr) {
         if (!quiet) {
             Rcpp::warning(
-                    "failed to create geometry object from WKB, NA returned");
+                "failed to create geometry object from WKB, NA returned");
         }
         return Rcpp::LogicalVector::create(NA_LOGICAL);
     }
@@ -606,7 +610,7 @@ SEXP g_make_valid(const Rcpp::RObject &geom,
 
         if (!quiet) {
             Rcpp::warning(
-                    "GEOS < 3.8 detected: g_make_valid() requires GEOS >= 3.8");
+                "GEOS < 3.8 detected: g_make_valid() requires GEOS >= 3.8");
         }
         // will return a clone of the input geometry if it is valid, or
         // NULL if it is invalid
@@ -620,10 +624,12 @@ SEXP g_make_valid(const Rcpp::RObject &geom,
         opt.push_back("METHOD=LINEWORK");
     }
     else if (EQUAL(method.c_str(), "STRUCTURE")) {
-        if (GDAL_VERSION_NUM < GDAL_COMPUTE_VERSION(3,4,0) || !geos_3_10_min) {
+        if (GDAL_VERSION_NUM < GDAL_COMPUTE_VERSION(3, 4, 0) ||
+            !geos_3_10_min) {
+
             if (!quiet) {
                 Rcpp::warning(
-                        "STRUCTURE method requires GEOS >= 3.10 and GDAL >= 3.4");
+                    "STRUCTURE method requires GEOS >= 3.10 and GDAL >= 3.4");
             }
 
             opt.push_back("METHOD=LINEWORK");
@@ -654,14 +660,14 @@ SEXP g_make_valid(const Rcpp::RObject &geom,
     if (hGeom == nullptr) {
         if (!quiet) {
             Rcpp::warning(
-                    "failed to create geometry object from WKB, NULL returned");
+                "failed to create geometry object from WKB, NULL returned");
         }
         return R_NilValue;
     }
 
     OGRGeometryH hGeomValid = nullptr;
 
-#if GDAL_VERSION_NUM >= GDAL_COMPUTE_VERSION(3,4,0)
+#if GDAL_VERSION_NUM >= GDAL_COMPUTE_VERSION(3, 4, 0)
     if (geos_3_10_min)
         hGeomValid = OGR_G_MakeValidEx(hGeom, opt.data());
     else
@@ -695,7 +701,7 @@ SEXP g_make_valid(const Rcpp::RObject &geom,
     if (!result) {
         if (!quiet) {
             Rcpp::warning(
-                    "failed to export WKB raw vector for output geometry");
+                "failed to export WKB raw vector for output geometry");
         }
         return R_NilValue;
     }
@@ -724,7 +730,7 @@ SEXP g_set_3D(const Rcpp::RObject &geom, bool is_3d, bool as_iso,
     if (hGeom == nullptr) {
         if (!quiet) {
             Rcpp::warning(
-                    "failed to create geometry object from WKB, NULL returned");
+                "failed to create geometry object from WKB, NULL returned");
         }
         return R_NilValue;
     }
@@ -757,7 +763,7 @@ SEXP g_set_3D(const Rcpp::RObject &geom, bool is_3d, bool as_iso,
     if (!result) {
         if (!quiet) {
             Rcpp::warning(
-                    "failed to export WKB raw vector for output geometry");
+                "failed to export WKB raw vector for output geometry");
         }
         return R_NilValue;
     }
@@ -786,7 +792,7 @@ SEXP g_set_measured(const Rcpp::RObject &geom, bool is_measured, bool as_iso,
     if (hGeom == nullptr) {
         if (!quiet) {
             Rcpp::warning(
-                    "failed to create geometry object from WKB, NULL returned");
+                "failed to create geometry object from WKB, NULL returned");
         }
         return R_NilValue;
     }
@@ -819,7 +825,7 @@ SEXP g_set_measured(const Rcpp::RObject &geom, bool is_measured, bool as_iso,
     if (!result) {
         if (!quiet) {
             Rcpp::warning(
-                    "failed to export WKB raw vector for output geometry");
+                "failed to export WKB raw vector for output geometry");
         }
         return R_NilValue;
     }
@@ -845,7 +851,7 @@ SEXP g_swap_xy(const Rcpp::RObject &geom, bool as_iso = false,
     if (hGeom == nullptr) {
         if (!quiet) {
             Rcpp::warning(
-                    "failed to create geometry object from WKB, NULL returned");
+                "failed to create geometry object from WKB, NULL returned");
         }
         return R_NilValue;
     }
@@ -875,7 +881,7 @@ SEXP g_swap_xy(const Rcpp::RObject &geom, bool as_iso = false,
     if (!result) {
         if (!quiet) {
             Rcpp::warning(
-                    "failed to export WKB raw vector for output geometry");
+                "failed to export WKB raw vector for output geometry");
         }
         return R_NilValue;
     }
@@ -901,7 +907,7 @@ Rcpp::LogicalVector g_is_empty(const Rcpp::RObject &geom,
     if (hGeom == nullptr) {
         if (!quiet) {
             Rcpp::warning(
-                    "failed to create geometry object from WKB, NA returned");
+                "failed to create geometry object from WKB, NA returned");
         }
         return Rcpp::LogicalVector::create(NA_LOGICAL);
     }
@@ -930,7 +936,7 @@ Rcpp::LogicalVector g_is_3D(const Rcpp::RObject &geom,
     if (hGeom == nullptr) {
         if (!quiet) {
             Rcpp::warning(
-                    "failed to create geometry object from WKB, NA returned");
+                "failed to create geometry object from WKB, NA returned");
         }
         return Rcpp::LogicalVector::create(NA_LOGICAL);
     }
@@ -959,7 +965,7 @@ Rcpp::LogicalVector g_is_measured(const Rcpp::RObject &geom,
     if (hGeom == nullptr) {
         if (!quiet) {
             Rcpp::warning(
-                    "failed to create geometry object from WKB, NA returned");
+                "failed to create geometry object from WKB, NA returned");
         }
         return Rcpp::LogicalVector::create(NA_LOGICAL);
     }
@@ -990,7 +996,7 @@ Rcpp::LogicalVector g_is_ring(const Rcpp::RObject &geom,
     if (hGeom == nullptr) {
         if (!quiet) {
             Rcpp::warning(
-                    "failed to create geometry object from WKB, NA returned");
+                "failed to create geometry object from WKB, NA returned");
         }
         return Rcpp::LogicalVector::create(NA_LOGICAL);
     }
@@ -1018,7 +1024,7 @@ Rcpp::String g_name(const Rcpp::RObject &geom, bool quiet = false) {
     if (hGeom == nullptr) {
         if (!quiet) {
             Rcpp::warning(
-                    "failed to create geometry object from WKB, NA returned");
+                "failed to create geometry object from WKB, NA returned");
         }
         return NA_STRING;
     }
@@ -1049,7 +1055,7 @@ Rcpp::String g_summary(const Rcpp::RObject &geom, bool quiet = false) {
     if (hGeom == nullptr) {
         if (!quiet) {
             Rcpp::warning(
-                    "failed to create geometry object from WKB, NA returned");
+                "failed to create geometry object from WKB, NA returned");
         }
         return NA_STRING;
     }
@@ -1082,7 +1088,7 @@ Rcpp::NumericVector g_envelope(const Rcpp::RObject &geom, bool as_3d = false,
     if (hGeom == nullptr) {
         if (!quiet) {
             Rcpp::warning(
-                    "failed to create geometry object from WKB, NA returned");
+                "failed to create geometry object from WKB, NA returned");
         }
         return Rcpp::NumericVector::create(NA_REAL, NA_REAL, NA_REAL, NA_REAL);
     }
@@ -1136,7 +1142,7 @@ Rcpp::LogicalVector g_intersects(const Rcpp::RObject &this_geom,
     if (hGeom_this == nullptr) {
         if (!quiet) {
             Rcpp::warning(
-                    "failed to create geometry object from WKB, NA returned");
+                "failed to create geometry object from WKB, NA returned");
         }
         return Rcpp::LogicalVector::create(NA_LOGICAL);
     }
@@ -1157,7 +1163,7 @@ Rcpp::LogicalVector g_intersects(const Rcpp::RObject &this_geom,
         OGR_G_DestroyGeometry(hGeom_this);
         if (!quiet) {
             Rcpp::warning(
-                    "failed to create geometry object from WKB, NA returned");
+                "failed to create geometry object from WKB, NA returned");
         }
         return Rcpp::LogicalVector::create(NA_LOGICAL);
     }
@@ -1192,7 +1198,7 @@ Rcpp::LogicalVector g_equals(const Rcpp::RObject &this_geom,
     if (hGeom_this == nullptr) {
         if (!quiet) {
             Rcpp::warning(
-                    "failed to create geometry object from WKB, NA returned");
+                "failed to create geometry object from WKB, NA returned");
         }
         return Rcpp::LogicalVector::create(NA_LOGICAL);
     }
@@ -1213,7 +1219,7 @@ Rcpp::LogicalVector g_equals(const Rcpp::RObject &this_geom,
         OGR_G_DestroyGeometry(hGeom_this);
         if (!quiet) {
             Rcpp::warning(
-                    "failed to create geometry object from WKB, NA returned");
+                "failed to create geometry object from WKB, NA returned");
         }
         return Rcpp::LogicalVector::create(NA_LOGICAL);
     }
@@ -1248,7 +1254,7 @@ Rcpp::LogicalVector g_disjoint(const Rcpp::RObject &this_geom,
     if (hGeom_this == nullptr) {
         if (!quiet) {
             Rcpp::warning(
-                    "failed to create geometry object from WKB, NA returned");
+                "failed to create geometry object from WKB, NA returned");
         }
         return Rcpp::LogicalVector::create(NA_LOGICAL);
     }
@@ -1269,7 +1275,7 @@ Rcpp::LogicalVector g_disjoint(const Rcpp::RObject &this_geom,
         OGR_G_DestroyGeometry(hGeom_this);
         if (!quiet) {
             Rcpp::warning(
-                    "failed to create geometry object from WKB, NA returned");
+                "failed to create geometry object from WKB, NA returned");
         }
         return Rcpp::LogicalVector::create(NA_LOGICAL);
     }
@@ -1304,7 +1310,7 @@ Rcpp::LogicalVector g_touches(const Rcpp::RObject &this_geom,
     if (hGeom_this == nullptr) {
         if (!quiet) {
             Rcpp::warning(
-                    "failed to create geometry object from WKB, NA returned");
+                "failed to create geometry object from WKB, NA returned");
         }
         return Rcpp::LogicalVector::create(NA_LOGICAL);
     }
@@ -1325,7 +1331,7 @@ Rcpp::LogicalVector g_touches(const Rcpp::RObject &this_geom,
         OGR_G_DestroyGeometry(hGeom_this);
         if (!quiet) {
             Rcpp::warning(
-                    "failed to create geometry object from WKB, NA returned");
+                "failed to create geometry object from WKB, NA returned");
         }
         return Rcpp::LogicalVector::create(NA_LOGICAL);
     }
@@ -1360,7 +1366,7 @@ Rcpp::LogicalVector g_contains(const Rcpp::RObject &this_geom,
     if (hGeom_this == nullptr) {
         if (!quiet) {
             Rcpp::warning(
-                    "failed to create geometry object from WKB, NA returned");
+                "failed to create geometry object from WKB, NA returned");
         }
         return Rcpp::LogicalVector::create(NA_LOGICAL);
     }
@@ -1381,7 +1387,7 @@ Rcpp::LogicalVector g_contains(const Rcpp::RObject &this_geom,
         OGR_G_DestroyGeometry(hGeom_this);
         if (!quiet) {
             Rcpp::warning(
-                    "failed to create geometry object from WKB, NA returned");
+                "failed to create geometry object from WKB, NA returned");
         }
         return Rcpp::LogicalVector::create(NA_LOGICAL);
     }
@@ -1416,7 +1422,7 @@ Rcpp::LogicalVector g_within(const Rcpp::RObject &this_geom,
     if (hGeom_this == nullptr) {
         if (!quiet) {
             Rcpp::warning(
-                    "failed to create geometry object from WKB, NA returned");
+                "failed to create geometry object from WKB, NA returned");
         }
         return Rcpp::LogicalVector::create(NA_LOGICAL);
     }
@@ -1437,7 +1443,7 @@ Rcpp::LogicalVector g_within(const Rcpp::RObject &this_geom,
         OGR_G_DestroyGeometry(hGeom_this);
         if (!quiet) {
             Rcpp::warning(
-                    "failed to create geometry object from WKB, NA returned");
+                "failed to create geometry object from WKB, NA returned");
         }
         return Rcpp::LogicalVector::create(NA_LOGICAL);
     }
@@ -1472,7 +1478,7 @@ Rcpp::LogicalVector g_crosses(const Rcpp::RObject &this_geom,
     if (hGeom_this == nullptr) {
         if (!quiet) {
             Rcpp::warning(
-                    "failed to create geometry object from WKB, NA returned");
+                "failed to create geometry object from WKB, NA returned");
         }
         return Rcpp::LogicalVector::create(NA_LOGICAL);
     }
@@ -1493,7 +1499,7 @@ Rcpp::LogicalVector g_crosses(const Rcpp::RObject &this_geom,
         OGR_G_DestroyGeometry(hGeom_this);
         if (!quiet) {
             Rcpp::warning(
-                    "failed to create geometry object from WKB, NA returned");
+                "failed to create geometry object from WKB, NA returned");
         }
         return Rcpp::LogicalVector::create(NA_LOGICAL);
     }
@@ -1530,7 +1536,7 @@ Rcpp::LogicalVector g_overlaps(const Rcpp::RObject &this_geom,
     if (hGeom_this == nullptr) {
         if (!quiet) {
             Rcpp::warning(
-                    "failed to create geometry object from WKB, NA returned");
+                "failed to create geometry object from WKB, NA returned");
         }
         return Rcpp::LogicalVector::create(NA_LOGICAL);
     }
@@ -1551,7 +1557,7 @@ Rcpp::LogicalVector g_overlaps(const Rcpp::RObject &this_geom,
         OGR_G_DestroyGeometry(hGeom_this);
         if (!quiet) {
             Rcpp::warning(
-                    "failed to create geometry object from WKB, NA returned");
+                "failed to create geometry object from WKB, NA returned");
         }
         return Rcpp::LogicalVector::create(NA_LOGICAL);
     }
@@ -1595,7 +1601,7 @@ SEXP g_boundary(const Rcpp::RObject &geom, bool as_iso,
     if (hGeom == nullptr) {
         if (!quiet) {
             Rcpp::warning(
-                    "failed to create geometry object from WKB, NULL returned");
+                "failed to create geometry object from WKB, NULL returned");
         }
         return R_NilValue;
     }
@@ -1627,7 +1633,7 @@ SEXP g_boundary(const Rcpp::RObject &geom, bool as_iso,
     if (!result) {
         if (!quiet) {
            Rcpp::warning(
-                    "failed to export WKB raw vector for output geometry");
+                "failed to export WKB raw vector for output geometry");
         }
         return R_NilValue;
     }
@@ -1664,7 +1670,7 @@ SEXP g_buffer(const Rcpp::RObject &geom, double dist, int quad_segs = 30,
     if (hGeom == nullptr) {
         if (!quiet) {
             Rcpp::warning(
-                    "failed to create geometry object from WKB, NULL returned");
+                "failed to create geometry object from WKB, NULL returned");
         }
         return R_NilValue;
     }
@@ -1696,7 +1702,7 @@ SEXP g_buffer(const Rcpp::RObject &geom, double dist, int quad_segs = 30,
     if (!result) {
         if (!quiet) {
            Rcpp::warning(
-                    "failed to export WKB raw vector for output geometry");
+                "failed to export WKB raw vector for output geometry");
         }
         return R_NilValue;
     }
@@ -1730,7 +1736,7 @@ SEXP g_convex_hull(const Rcpp::RObject &geom, bool as_iso,
     if (hGeom == nullptr) {
         if (!quiet) {
             Rcpp::warning(
-                    "failed to create geometry object from WKB, NULL returned");
+                "failed to create geometry object from WKB, NULL returned");
         }
         return R_NilValue;
     }
@@ -1762,7 +1768,7 @@ SEXP g_convex_hull(const Rcpp::RObject &geom, bool as_iso,
     if (!result) {
         if (!quiet) {
            Rcpp::warning(
-                    "failed to export WKB raw vector for output geometry");
+                "failed to export WKB raw vector for output geometry");
         }
         return R_NilValue;
     }
@@ -1802,7 +1808,7 @@ SEXP g_delaunay_triangulation(const Rcpp::RObject &geom,
     if (hGeom == nullptr) {
         if (!quiet) {
             Rcpp::warning(
-                    "failed to create geometry object from WKB, NULL returned");
+                "failed to create geometry object from WKB, NULL returned");
         }
         return R_NilValue;
     }
@@ -1838,7 +1844,7 @@ SEXP g_delaunay_triangulation(const Rcpp::RObject &geom,
     if (!result) {
         if (!quiet) {
            Rcpp::warning(
-                    "failed to export WKB raw vector for output geometry");
+                "failed to export WKB raw vector for output geometry");
         }
         return R_NilValue;
     }
@@ -1892,7 +1898,7 @@ SEXP g_simplify(const Rcpp::RObject &geom, double tolerance,
     if (hGeom == nullptr) {
         if (!quiet) {
             Rcpp::warning(
-                    "failed to create geometry object from WKB, NULL returned");
+                "failed to create geometry object from WKB, NULL returned");
         }
         return R_NilValue;
     }
@@ -1928,7 +1934,7 @@ SEXP g_simplify(const Rcpp::RObject &geom, double tolerance,
     if (!result) {
         if (!quiet) {
            Rcpp::warning(
-                    "failed to export WKB raw vector for output geometry");
+                "failed to export WKB raw vector for output geometry");
         }
         return R_NilValue;
     }
@@ -2023,7 +2029,7 @@ SEXP g_intersection(const Rcpp::RObject &this_geom,
     if (!result) {
         if (!quiet) {
            Rcpp::warning(
-                    "failed to export WKB raw vector for output geometry");
+                "failed to export WKB raw vector for output geometry");
         }
         return R_NilValue;
     }
@@ -2113,7 +2119,7 @@ SEXP g_union(const Rcpp::RObject &this_geom,
     if (!result) {
         if (!quiet) {
            Rcpp::warning(
-                    "failed to export WKB raw vector for output geometry");
+                "failed to export WKB raw vector for output geometry");
         }
         return R_NilValue;
     }
@@ -2203,7 +2209,7 @@ SEXP g_difference(const Rcpp::RObject &this_geom,
     if (!result) {
         if (!quiet) {
            Rcpp::warning(
-                    "failed to export WKB raw vector for output geometry");
+                "failed to export WKB raw vector for output geometry");
         }
         return R_NilValue;
     }
@@ -2293,7 +2299,7 @@ SEXP g_sym_difference(const Rcpp::RObject &this_geom,
     if (!result) {
         if (!quiet) {
            Rcpp::warning(
-                    "failed to export WKB raw vector for output geometry");
+                "failed to export WKB raw vector for output geometry");
         }
         return R_NilValue;
     }
@@ -2378,7 +2384,7 @@ double g_length(const Rcpp::RObject &geom, bool quiet = false) {
     if (hGeom == nullptr) {
         if (!quiet) {
             Rcpp::warning(
-                    "failed to create geometry object from WKB, NA returned");
+                "failed to create geometry object from WKB, NA returned");
         }
         return NA_REAL;
     }
@@ -2407,7 +2413,7 @@ double g_area(const Rcpp::RObject &geom, bool quiet = false) {
     if (hGeom == nullptr) {
         if (!quiet) {
             Rcpp::warning(
-                    "failed to create geometry object from WKB, NA returned");
+                "failed to create geometry object from WKB, NA returned");
         }
         return NA_REAL;
     }
@@ -2452,7 +2458,7 @@ double g_geodesic_area(const Rcpp::RObject &geom, const std::string &srs,
     if (hGeom == nullptr) {
         if (!quiet) {
             Rcpp::warning(
-                    "failed to create geometry object from WKB, NA returned");
+                "failed to create geometry object from WKB, NA returned");
         }
         OSRDestroySpatialReference(hSRS);
         return NA_REAL;
@@ -2518,7 +2524,7 @@ double g_geodesic_length(const Rcpp::RObject &geom, const std::string &srs,
     if (hGeom == nullptr) {
         if (!quiet) {
             Rcpp::warning(
-                    "failed to create geometry object from WKB, NA returned");
+                "failed to create geometry object from WKB, NA returned");
         }
         OSRDestroySpatialReference(hSRS);
         return NA_REAL;
@@ -2577,7 +2583,7 @@ Rcpp::NumericVector g_centroid(const Rcpp::RObject &geom,
     if (hGeom == nullptr) {
         if (!quiet) {
             Rcpp::warning(
-                    "failed to create geometry object from WKB, NA returned");
+                "failed to create geometry object from WKB, NA returned");
         }
         return Rcpp::NumericVector::create(NA_REAL, NA_REAL);
     }
@@ -2588,7 +2594,7 @@ Rcpp::NumericVector g_centroid(const Rcpp::RObject &geom,
         OGR_G_DestroyGeometry(hGeom);
         if (!quiet) {
             Rcpp::warning(
-                    "failed to create point geometry object, NA returned");
+                "failed to create point geometry object, NA returned");
         }
         return Rcpp::NumericVector::create(NA_REAL, NA_REAL);
     }
@@ -2597,7 +2603,7 @@ Rcpp::NumericVector g_centroid(const Rcpp::RObject &geom,
         OGR_G_DestroyGeometry(hGeom);
         if (!quiet) {
             Rcpp::warning(
-                    "failed to compute centroid for the geometry, NA returned");
+                "failed to compute centroid for the geometry, NA returned");
         }
         return Rcpp::NumericVector::create(NA_REAL, NA_REAL);
     }

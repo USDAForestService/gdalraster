@@ -7,7 +7,9 @@
 
 #include "gdal_dt.h"
 
-#include "gdal.h"
+#include <gdal.h>
+
+#include <string>
 
 
 //' Helper functions for GDAL raster data types

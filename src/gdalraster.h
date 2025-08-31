@@ -5,17 +5,12 @@
    Copyright (c) 2023-2025 gdalraster authors
 */
 
-#ifndef SRC_GDALRASTER_H_
-#define SRC_GDALRASTER_H_
+#ifndef GDALRASTER_H_
+#define GDALRASTER_H_
 
-#include <limits>
-#include <map>
-#include <string>
-#include <vector>
+#include <Rcpp.h>
 
-#include "rcpp_util.h"
-
-#ifndef SRC_GDALRASTER_TYPES_H_
+#ifndef GDALRASTER_TYPES_H_
 #include <cpl_port.h>
 #include <cpl_error.h>
 int CPL_STDCALL GDALTermProgressR(double, CPL_UNUSED const char *,
@@ -23,6 +18,10 @@ int CPL_STDCALL GDALTermProgressR(double, CPL_UNUSED const char *,
 void gdal_error_handler_r(CPLErr err_class, int err_no, const char *msg);
 void gdal_silent_errors_r(CPLErr err_class, int err_no, const char *msg);
 #endif
+
+#include <map>
+#include <string>
+#include <vector>
 
 // Predeclare some GDAL types until the public header is included
 #ifndef GDAL_H_INCLUDED
@@ -367,7 +366,7 @@ Rcpp::String ogrinfo(const Rcpp::CharacterVector &dsn,
                      const Rcpp::Nullable<Rcpp::CharacterVector> &cl_arg,
                      const Rcpp::Nullable<Rcpp::CharacterVector> &open_options,
                      bool read_only,
-                     bool cout);
+                     bool console_out);
 
 bool polygonize(const Rcpp::CharacterVector &src_filename, int src_band,
                 const Rcpp::CharacterVector &out_dsn,
@@ -404,4 +403,4 @@ Rcpp::IntegerMatrix createColorRamp(int start_index,
                                     const Rcpp::IntegerVector &end_color,
                                     const std::string &palette_interp);
 
-#endif  // SRC_GDALRASTER_H_
+#endif  // GDALRASTER_H_

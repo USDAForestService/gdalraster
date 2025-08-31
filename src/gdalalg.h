@@ -4,15 +4,15 @@
    Copyright (c) 2023-2025 gdalraster authors
 */
 
-#ifndef SRC_GDALALG_H_
-#define SRC_GDALALG_H_
-
-#include "rcpp_util.h"
+#ifndef GDALALG_H_
+#define GDALALG_H_
 
 #if __has_include(<gdalalgorithm.h>)
     #include <gdalalgorithm.h>
 #endif
 #include <gdal.h>
+
+#include <Rcpp.h>
 
 #include <map>
 #include <string>
@@ -20,8 +20,8 @@
 
 #include "gdalvector.h"
 
-Rcpp::DataFrame gdal_commands(const std::string starts_with, bool recurse,
-                              bool cout);
+Rcpp::DataFrame gdal_commands(const std::string &contains, bool recurse,
+                              bool console_out);
 
 Rcpp::CharacterVector gdal_global_reg_names();
 
@@ -88,4 +88,4 @@ class GDALAlg {
 // cppcheck-suppress unknownMacro
 RCPP_EXPOSED_CLASS(GDALAlg)
 
-#endif  // SRC_GDALALG_H_
+#endif  // GDALALG_H_

@@ -97,8 +97,8 @@ double RunningStats::get_sd() const {
 }
 
 void RunningStats::show() const {
-    Rcpp::Rcout << "C++ object of class RunningStats" << std::endl;
-    Rcpp::Rcout << " Number of values: " << get_count() << std::endl;
+    Rcpp::Rcout << "C++ object of class RunningStats\n";
+    Rcpp::Rcout << " Number of values: " << get_count() << "\n";
 }
 
 RCPP_MODULE(mod_running_stats) {

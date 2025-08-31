@@ -5,17 +5,17 @@
    Copyright (c) 2023-2025 gdalraster authors
 */
 
-#include "srs_api.h"
+#include <cpl_port.h>
+#include <cpl_conv.h>
+#include <ogr_srs_api.h>
+#include <ogr_spatialref.h>
+#include <ogrsf_frmts.h>
 
+#include <string>
 #include <vector>
 
+#include "srs_api.h"
 #include "transform.h"
-
-#include "cpl_port.h"
-#include "cpl_conv.h"
-#include "ogr_srs_api.h"
-#include "ogr_spatialref.h"
-#include "ogrsf_frmts.h"
 
 
 //' Convert spatial reference definitions to OGC WKT or PROJJSON
@@ -477,7 +477,7 @@ SEXP srs_find_epsg(const std::string &srs, bool all_matches = false) {
         if (!all_matches) {
             if (panConfidence[i] != 100) {
                 Rcpp::Rcout << "confidence in this match: " <<
-                        panConfidence[i] << "%" << std::endl;
+                    panConfidence[i] << "%" << "\n";
             }
             if (pszAuthorityName && pszAuthorityCode) {
                 identified_code = pszAuthorityName;

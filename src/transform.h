@@ -3,8 +3,10 @@
    Copyright (c) 2023-2025 gdalraster authors
 */
 
-#ifndef SRC_TRANSFORM_H_
-#define SRC_TRANSFORM_H_
+#ifndef TRANSFORM_H_
+#define TRANSFORM_H_
+
+#include <Rcpp.h>
 
 #include <string>
 #include <vector>
@@ -31,4 +33,4 @@ SEXP transform_bounds(const Rcpp::RObject &bbox,
                       int densify_pts,
                       bool traditional_gis_order);
 
-#endif  // SRC_TRANSFORM_H_
+#endif  // TRANSFORM_H_

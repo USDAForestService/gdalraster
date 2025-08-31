@@ -5,8 +5,8 @@
    Copyright (c) 2023-2025 gdalraster authors
 */
 
-#ifndef SRC_SRS_API_H_
-#define SRC_SRS_API_H_
+#ifndef SRS_API_H_
+#define SRS_API_H_
 
 #include <Rcpp.h>
 #include <string>
@@ -36,4 +36,4 @@ double srs_get_coord_epoch(const std::string &srs);
 int srs_get_utm_zone(const std::string &srs);
 std::string srs_get_axis_mapping_strategy(const std::string &srs);
 
-#endif  // SRC_SRS_API_H_
+#endif  // SRS_API_H_

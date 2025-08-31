@@ -3,6 +3,10 @@ Chris Toney <chris.toney at usda.gov> */
 
 #include "cmb_table.h"
 
+#include <string>
+#include <vector>
+
+
 CmbTable::CmbTable() {}
 
 CmbTable::CmbTable(unsigned int keyLen) :
@@ -135,8 +139,8 @@ void CmbTable::show() const {
         out += (" " + s);
     }
 
-    Rcpp::Rcout << "C++ object of class CmbTable" << std::endl;
-    Rcpp::Rcout << " Columns: " << out << std::endl;
+    Rcpp::Rcout << "C++ object of class CmbTable\n";
+    Rcpp::Rcout << " Columns: " << out << "\n";
 }
 
 RCPP_MODULE(mod_cmb_table) {
