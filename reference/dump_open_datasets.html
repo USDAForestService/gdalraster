@@ -35,7 +35,7 @@ output to the console.'></head><body>
     <li><a class="dropdown-item" href="../articles/vector-api-overview.html">Vector API Overview</a></li>
     <li><a class="dropdown-item" href="../articles/vector-read-benchmarks.html">Vector Read Benchmarks</a></li>
     <li><a class="dropdown-item" href="../articles/gdal-config-quick-ref.html">GDAL Config Quick Reference</a></li>
-    <li><a class="dropdown-item" href="../articles/use-gdal-cli-from-r.html">Using "gdal" CLI algorithms from R</a></li>
+    <li><a class="dropdown-item" href="../articles/use-gdal-cli-from-r.html">Using 'gdal' CLI algorithms from R</a></li>
     <li><hr class="dropdown-divider"></li>
     <li><h6 class="dropdown-header" data-toc-skip>Archived articles</h6></li>
     <li><a class="dropdown-item" href="../articles/gdalvector-draft.html">Draft Bindings to the GDAL/OGR Vector API</a></li>
@@ -88,12 +88,12 @@ output to the console.</p>
 <span class="r-in"><span><span class="va">ds</span> <span class="op">&lt;-</span> <span class="fu">new</span><span class="op">(</span><span class="va">GDALRaster</span>, <span class="va">elev_file</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="fu">dump_open_datasets</span><span class="op">(</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Open GDAL Datasets:</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   1 S GTiff  -905742336 143x107x1 /home/runner/work/_temp/Library/gdalraster/extdata/storml_elev.tif</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   1 S GTiff  -1660397568 143x107x1 /home/runner/work/_temp/Library/gdalraster/extdata/storml_elev.tif</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] 1</span>
 <span class="r-in"><span><span class="va">ds2</span> <span class="op">&lt;-</span> <span class="fu">new</span><span class="op">(</span><span class="va">GDALRaster</span>, <span class="va">elev_file</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="fu">dump_open_datasets</span><span class="op">(</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Open GDAL Datasets:</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   2 S GTiff  -905742336 143x107x1 /home/runner/work/_temp/Library/gdalraster/extdata/storml_elev.tif</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   2 S GTiff  -1660397568 143x107x1 /home/runner/work/_temp/Library/gdalraster/extdata/storml_elev.tif</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] 1</span>
 <span class="r-in"><span><span class="co"># open without using shared mode</span></span></span>
 <span class="r-in"><span><span class="va">ds3</span> <span class="op">&lt;-</span> <span class="fu">new</span><span class="op">(</span><span class="va">GDALRaster</span>, <span class="va">elev_file</span>, read_only <span class="op">=</span> <span class="cn">TRUE</span>,</span></span>
@@ -101,13 +101,13 @@ output to the console.</p>
 <span class="r-in"><span><span class="fu">dump_open_datasets</span><span class="op">(</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Open GDAL Datasets:</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   1 N GTiff       -1 143x107x1 /home/runner/work/_temp/Library/gdalraster/extdata/storml_elev.tif</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   2 S GTiff  -905742336 143x107x1 /home/runner/work/_temp/Library/gdalraster/extdata/storml_elev.tif</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   2 S GTiff  -1660397568 143x107x1 /home/runner/work/_temp/Library/gdalraster/extdata/storml_elev.tif</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] 2</span>
 <span class="r-in"><span><span class="va">ds</span><span class="op">$</span><span class="fu">close</span><span class="op">(</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="fu">dump_open_datasets</span><span class="op">(</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Open GDAL Datasets:</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   1 N GTiff       -1 143x107x1 /home/runner/work/_temp/Library/gdalraster/extdata/storml_elev.tif</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   1 S GTiff  -905742336 143x107x1 /home/runner/work/_temp/Library/gdalraster/extdata/storml_elev.tif</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   1 S GTiff  -1660397568 143x107x1 /home/runner/work/_temp/Library/gdalraster/extdata/storml_elev.tif</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] 2</span>
 <span class="r-in"><span><span class="va">ds2</span><span class="op">$</span><span class="fu">close</span><span class="op">(</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="fu">dump_open_datasets</span><span class="op">(</span><span class="op">)</span></span></span>

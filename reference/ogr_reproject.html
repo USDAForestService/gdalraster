@@ -33,7 +33,7 @@ for reprojection to occur."></head><body>
     <li><a class="dropdown-item" href="../articles/vector-api-overview.html">Vector API Overview</a></li>
     <li><a class="dropdown-item" href="../articles/vector-read-benchmarks.html">Vector Read Benchmarks</a></li>
     <li><a class="dropdown-item" href="../articles/gdal-config-quick-ref.html">GDAL Config Quick Reference</a></li>
-    <li><a class="dropdown-item" href="../articles/use-gdal-cli-from-r.html">Using "gdal" CLI algorithms from R</a></li>
+    <li><a class="dropdown-item" href="../articles/use-gdal-cli-from-r.html">Using 'gdal' CLI algorithms from R</a></li>
     <li><hr class="dropdown-divider"></li>
     <li><h6 class="dropdown-header" data-toc-skip>Archived articles</h6></li>
     <li><a class="dropdown-item" href="../articles/gdalvector-draft.html">Draft Bindings to the GDAL/OGR Vector API</a></li>
@@ -255,7 +255,7 @@ written to an existing database.</p>
 <span class="r-in"><span><span class="op">(</span><span class="va">bnd</span> <span class="op">&lt;-</span> <span class="fu">new</span><span class="op">(</span><span class="va">GDALVector</span>, <span class="va">ynp_dsn</span>, <span class="st">"ynp_bnd"</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> C++ object of class GDALVector</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  Driver : GeoPackage (GPKG)</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  DSN    : /tmp/Rtmps7Esis/ynp_features.gpkg</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  DSN    : /tmp/RtmpXxoeS9/ynp_features.gpkg</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  Layer  : ynp_bnd</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  CRS    : NAD83 (EPSG:4269)</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  Geom   : POLYGON</span>
@@ -268,7 +268,7 @@ written to an existing database.</p>
 <span class="r-in"><span><span class="op">(</span><span class="va">bnd_mtsp</span> <span class="op">&lt;-</span> <span class="fu">ogr_reproject</span><span class="op">(</span><span class="va">ynp_dsn</span>, <span class="st">"ynp_bnd"</span>, <span class="va">out_dsn</span>, <span class="va">mtbs</span><span class="op">$</span><span class="fu">getSpatialRef</span><span class="op">(</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> C++ object of class GDALVector</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  Driver : GeoPackage (GPKG)</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  DSN    : /tmp/Rtmps7Esis/file239928ced21d.gpkg</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  DSN    : /tmp/RtmpXxoeS9/file235c6f34733a.gpkg</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  Layer  : ynp_bnd</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  CRS    : NAD83 / Montana (EPSG:32100)</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  Geom   : POLYGON</span>

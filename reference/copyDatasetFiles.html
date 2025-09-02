@@ -27,7 +27,7 @@ Wrapper for GDALCopyDatasetFiles() in the GDAL API."></head><body>
     <li><a class="dropdown-item" href="../articles/vector-api-overview.html">Vector API Overview</a></li>
     <li><a class="dropdown-item" href="../articles/vector-read-benchmarks.html">Vector Read Benchmarks</a></li>
     <li><a class="dropdown-item" href="../articles/gdal-config-quick-ref.html">GDAL Config Quick Reference</a></li>
-    <li><a class="dropdown-item" href="../articles/use-gdal-cli-from-r.html">Using "gdal" CLI algorithms from R</a></li>
+    <li><a class="dropdown-item" href="../articles/use-gdal-cli-from-r.html">Using 'gdal' CLI algorithms from R</a></li>
     <li><hr class="dropdown-divider"></li>
     <li><h6 class="dropdown-header" data-toc-skip>Archived articles</h6></li>
     <li><a class="dropdown-item" href="../articles/gdalvector-draft.html">Draft Bindings to the GDAL/OGR Vector API</a></li>
@@ -116,7 +116,7 @@ from the passed file name.</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] TRUE</span>
 <span class="r-in"><span><span class="va">ds_copy</span> <span class="op">&lt;-</span> <span class="fu">new</span><span class="op">(</span><span class="va">GDALRaster</span>, <span class="va">lcp_tmp</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">ds_copy</span><span class="op">$</span><span class="fu">getFileList</span><span class="op">(</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "/tmp/Rtmps7Esis/storm_lake_copy.lcp" "/tmp/Rtmps7Esis/storm_lake_copy.prj"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "/tmp/RtmpXxoeS9/storm_lake_copy.lcp" "/tmp/RtmpXxoeS9/storm_lake_copy.prj"</span>
 <span class="r-in"><span><span class="va">ds_copy</span><span class="op">$</span><span class="fu">close</span><span class="op">(</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="fu"><a href="deleteDataset.html">deleteDataset</a></span><span class="op">(</span><span class="va">lcp_tmp</span><span class="op">)</span></span></span>

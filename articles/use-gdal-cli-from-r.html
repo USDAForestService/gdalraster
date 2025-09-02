@@ -5,12 +5,12 @@
 <meta charset="utf-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-<title>Using "gdal" CLI algorithms from R • gdalraster</title>
+<title>Using 'gdal' CLI algorithms from R • gdalraster</title>
 <script src="../lightswitch.js"></script><script src="../deps/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <link href="../deps/bootstrap-5.3.1/bootstrap.min.css" rel="stylesheet">
 <script src="../deps/bootstrap-5.3.1/bootstrap.bundle.min.js"></script><link href="../deps/font-awesome-6.5.2/css/all.min.css" rel="stylesheet">
 <link href="../deps/font-awesome-6.5.2/css/v4-shims.min.css" rel="stylesheet">
-<script src="../deps/headroom-0.11.0/headroom.min.js"></script><script src="../deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="../deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="../deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="../deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="../deps/search-1.0.0/fuse.min.js"></script><script src="../deps/search-1.0.0/mark.min.js"></script><!-- pkgdown --><script src="../pkgdown.js"></script><meta property="og:title" content="Using " gdal cli algorithms from r>
+<script src="../deps/headroom-0.11.0/headroom.min.js"></script><script src="../deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="../deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="../deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="../deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="../deps/search-1.0.0/fuse.min.js"></script><script src="../deps/search-1.0.0/mark.min.js"></script><!-- pkgdown --><script src="../pkgdown.js"></script><meta property="og:title" content="Using 'gdal' CLI algorithms from R">
 </head>
 <body>
     <a href="#main" class="visually-hidden-focusable">Skip to contents</a>
@@ -40,7 +40,7 @@
     <li><a class="dropdown-item" href="../articles/vector-api-overview.html">Vector API Overview</a></li>
     <li><a class="dropdown-item" href="../articles/vector-read-benchmarks.html">Vector Read Benchmarks</a></li>
     <li><a class="dropdown-item" href="../articles/gdal-config-quick-ref.html">GDAL Config Quick Reference</a></li>
-    <li><a class="dropdown-item" href="../articles/use-gdal-cli-from-r.html">Using "gdal" CLI algorithms from R</a></li>
+    <li><a class="dropdown-item" href="../articles/use-gdal-cli-from-r.html">Using 'gdal' CLI algorithms from R</a></li>
     <li><hr class="dropdown-divider"></li>
     <li><h6 class="dropdown-header" data-toc-skip>Archived articles</h6></li>
     <li><a class="dropdown-item" href="../articles/gdalvector-draft.html">Draft Bindings to the GDAL/OGR Vector API</a></li>
@@ -74,7 +74,7 @@
 <div class="row">
   <main id="main" class="col-md-9"><div class="page-header">
 
-      <h1>Using "gdal" CLI algorithms from R</h1>
+      <h1>Using 'gdal' CLI algorithms from R</h1>
             
       
       <small class="dont-index">Source: <a href="https://github.com/USDAForestService/gdalraster/blob/main/vignettes/articles/use-gdal-cli-from-r.Rmd" class="external-link"><code>vignettes/articles/use-gdal-cli-from-r.Rmd</code></a></small>
@@ -565,10 +565,9 @@ required output filename can be given as empty string
 <div class="section level4">
 <h4 id="vector-clip">vector clip<a class="anchor" aria-label="anchor" href="#vector-clip"></a>
 </h4>
+<p>Clip a vector layer by a bounding box.</p>
 <div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co">## clip a vector layer by a bounding box</span></span>
-<span></span>
-<span><span class="fu"><a href="../reference/gdal_cli.html">gdal_usage</a></span><span class="op">(</span><span class="st">"vector clip"</span><span class="op">)</span></span>
+<code class="sourceCode R"><span><span class="fu"><a href="../reference/gdal_cli.html">gdal_usage</a></span><span class="op">(</span><span class="st">"vector clip"</span><span class="op">)</span></span>
 <span><span class="co">#&gt; Usage: vector clip [OPTIONS] &lt;INPUT&gt; &lt;OUTPUT&gt;</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Clip a vector dataset. </span></span>
@@ -677,10 +676,10 @@ required output filename can be given as empty string
 <div class="section level4">
 <h4 id="vector-rasterize">vector rasterize<a class="anchor" aria-label="anchor" href="#vector-rasterize"></a>
 </h4>
+<p>Rasterize a vector layer given as a <code>GDALVector</code>
+object.</p>
 <div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co">## rasterize a vector layer given as a GDALVector object</span></span>
-<span></span>
-<span><span class="fu"><a href="../reference/gdal_cli.html">gdal_usage</a></span><span class="op">(</span><span class="st">"vector rasterize"</span><span class="op">)</span></span>
+<code class="sourceCode R"><span><span class="fu"><a href="../reference/gdal_cli.html">gdal_usage</a></span><span class="op">(</span><span class="st">"vector rasterize"</span><span class="op">)</span></span>
 <span><span class="co">#&gt; Usage: vector rasterize [OPTIONS] &lt;INPUT&gt; &lt;OUTPUT&gt;</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Burns vector geometries into a raster. </span></span>
