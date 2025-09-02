@@ -1,23 +1,23 @@
 # R interface to the GDAL CLI algorithms
-# convenience functions for using exposed class `GDALAlg`
+# functions for using exposed class `GDALAlg`
 # see R/gdalalg.R and src/gdalalg.h
 # Chris Toney <jctoney at gmail.com>
 
-#' Convenience functions for using GDAL CLI algorithms
+#' Functions for using GDAL CLI algorithms
 #'
 #' @name gdal_cli
 #' @description
-#' This set of functions can be used to access and run GDAL utilities as `gdal`
-#' command line interface (CLI) algorithms.
+#' This set of functions can be used to access and run `gdal` command line
+#' interface (CLI) algorithms.
 #'
 #' **Requires GDAL >= 3.11.3**
 #'
 #' **Experimental** (see the section `Development Status` below)
 #'
 #' @details
-#' These functions are convenient for accessing and running GDAL CLI algorithms
-#' by way of the C++ exposed class [`GDALAlg`][GDALAlg]. See the class
-#' documentation for additional information (`?GDALAlg`).
+#' These functions provide an interface to GDAL CLI algorithms by way of the
+#' C++ exposed class [`GDALAlg`][GDALAlg]. See the class documentation for
+#' additional information (`?GDALAlg`).
 #'
 #' `gdal_commands()` prints a list of commands and their descriptions to the
 #' console, and returns (invisibly) a data frame with columns `command`,

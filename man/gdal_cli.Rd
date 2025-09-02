@@ -7,7 +7,7 @@
 \alias{gdal_run}
 \alias{gdal_alg}
 \alias{gdal_global_reg_names}
-\title{Convenience functions for using GDAL CLI algorithms}
+\title{Functions for using GDAL CLI algorithms}
 \usage{
 gdal_commands(contains = NULL, recurse = TRUE, cout = TRUE)
 
@@ -44,17 +44,17 @@ method on the returned object can be called to parse arguments and obtain
 the result of that, with potentially useful error messages.}
 }
 \description{
-This set of functions can be used to access and run GDAL utilities as \code{gdal}
-command line interface (CLI) algorithms.
+This set of functions can be used to access and run \code{gdal} command line
+interface (CLI) algorithms.
 
 \strong{Requires GDAL >= 3.11.3}
 
 \strong{Experimental} (see the section \verb{Development Status} below)
 }
 \details{
-These functions are convenient for accessing and running GDAL CLI algorithms
-by way of the C++ exposed class \code{\link{GDALAlg}}. See the class
-documentation for additional information (\code{?GDALAlg}).
+These functions provide an interface to GDAL CLI algorithms by way of the
+C++ exposed class \code{\link{GDALAlg}}. See the class documentation for
+additional information (\code{?GDALAlg}).
 
 \code{gdal_commands()} prints a list of commands and their descriptions to the
 console, and returns (invisibly) a data frame with columns \code{command},
