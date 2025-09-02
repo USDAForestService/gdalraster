@@ -1,5 +1,5 @@
 ---
-title: "Using \"gdal\" CLI algorithms from R"
+title: "Using 'gdal' CLI algorithms from R"
 ---
 
 ```{r, include = FALSE}
@@ -442,9 +442,9 @@ gdal_usage("vector")
 
 #### vector clip
 
-``` r
-## clip a vector layer by a bounding box
+Clip a vector layer by a bounding box.
 
+``` r
 gdal_usage("vector clip")
 #> Usage: vector clip [OPTIONS] <INPUT> <OUTPUT>
 #> 
@@ -554,9 +554,9 @@ unlink(dsn_out)
 
 #### vector rasterize
 
-``` r
-## rasterize a vector layer given as a GDALVector object
+Rasterize a vector layer given as a `GDALVector` object.
 
+``` r
 gdal_usage("vector rasterize")
 #> Usage: vector rasterize [OPTIONS] <INPUT> <OUTPUT>
 #> 
