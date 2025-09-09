@@ -714,5 +714,5 @@ deleteDataset(f_out)
 
 **gdalraster** documentation:
 
-* Convenience functions for using "gdal" CLI algorithms (`?gdal_cli`)
+* Functions for using "gdal" CLI algorithms (`?gdal_cli`)
 * Class `GDALAlg` (`?GDALAlg`)
