@@ -1,6 +1,6 @@
 Package: gdalraster
 Title: Bindings to 'GDAL'
-Version: 2.2.1.9010
+Version: 2.2.1.9011
 Authors@R: c(
     person("Chris", "Toney", email = "jctoney@gmail.com",
             role = c("aut", "cre"), comment = "R interface/additional functionality"),

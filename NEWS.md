@@ -1,4 +1,6 @@
-# gdalraster 2.2.1.9010 (dev)
+# gdalraster 2.2.1.9011 (dev)
+
+* `gdal_usage()`: include the list of potential step algorithms for `"raster pipeline"` and `"vector pipeline"` (#789, adds **yyjsonr** to `Imports`) (2025-09-10)
 
 * (internal) various C++ code linting (#788) (2025-08-31)
 
