@@ -310,7 +310,7 @@ Please use with those cautions in mind. Bug reports may be filed at:
 }
 
 \examples{
-\dontshow{if (length(gdal_global_reg_names()) > 0) (if (getRversion() >= "3.4") withAutoprint else force)(\{ # examplesIf}
+\dontshow{if (length(gdal_global_reg_names()) > 0) withAutoprint(\{ # examplesIf}
 f <- system.file("extdata/storml_elev.tif", package="gdalraster")
 
 ## raster info

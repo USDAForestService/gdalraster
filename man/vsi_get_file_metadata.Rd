@@ -41,7 +41,7 @@ particular if a file is SOZIP-enabled (\code{SOZIP_VALID=YES}).
 }
 }
 \examples{
-\dontshow{if (gdal_version_num() >= gdal_compute_version(3, 7, 0)) (if (getRversion() >= "3.4") withAutoprint else force)(\{ # examplesIf}
+\dontshow{if (gdal_version_num() >= gdal_compute_version(3, 7, 0)) withAutoprint(\{ # examplesIf}
 # validate an SOZip-enabled file
 # Requires GDAL >= 3.7
 f <- system.file("extdata/ynp_features.zip", package = "gdalraster")
