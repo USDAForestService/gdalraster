@@ -60,7 +60,8 @@ Imports:
     tools,
     utils,
     wk,
-    xml2
+    xml2,
+    yyjsonr
 LinkingTo: nanoarrow, Rcpp, RcppInt64
 Suggests:
     gt,
