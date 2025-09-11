@@ -411,7 +411,7 @@ gdal_global_reg_names <- function() {
         }
     }
 
-    cat("Usage:", cmd)
+    cat("\nUsage:", cmd)
 
     if (alginfo$has_subalgorithms) {
         cat(" <SUBCOMMAND>")
@@ -437,7 +437,7 @@ gdal_global_reg_names <- function() {
         cat("\n")
     } else {
         if (length(alginfo$arg_names) > 0) {
-            if (has_non_positionals) {
+            if (has_non_positionals && alginfo$name != "pipeline") {
                 cat(" [OPTIONS]")
             }
             for (arg_nm in positional_args) {
@@ -569,18 +569,6 @@ gdal_global_reg_names <- function() {
         }
     }
 
-    print_pipeline_usage <- function() {
-        # TODO: add step names and their options
-
-        cat("<PIPELINE> is of the form: ")
-        if (isTRUE(grepl("raster", cmd, ignore.case = TRUE)))
-            str_out <- "read [READ-OPTIONS] ( ! <STEP-NAME> [STEP-OPTIONS] )* ! write [WRITE-OPTIONS]\n"
-        else
-            str_out <- "read|concat [READ-OPTIONS] ( ! <STEP-NAME> [STEP-OPTIONS] )* ! write [WRITE-OPTIONS]\n"
-        cat(str_out)
-        cat("\n")
-    }
-
     if (length(positional_args) > 0) {
         cat("Positional arguments:\n")
         for (arg_nm in positional_args) {
@@ -590,71 +578,109 @@ gdal_global_reg_names <- function() {
     }
 
     if (alginfo$name == "pipeline") {
-        print_pipeline_usage()
-    } else {
-        # non-positional args by category
-        common_args <- character()
-        base_args <- character()
-        advanced_args <- character()
-        esoteric_args <- character()
-        for (nm in alginfo$arg_names) {
-            arginfo <- alg$argInfo(nm)
-            if ((isTRUE(!as.logical(arginfo$is_only_for_cli)) ||  # GDAL < 3.12
-                isTRUE(!as.logical(arginfo$is_hidden_for_api)))  # GDAL >= 3.12
-                    && !arginfo$is_positional) {
+        cat("<PIPELINE> is of the form: ")
+        if (isTRUE(grepl("vector", cmd, ignore.case = TRUE)))
+            str_out <- "read|concat [READ-OPTIONS] ( ! <STEP-NAME> [STEP-OPTIONS] )* ! write [WRITE-OPTIONS]\n"
+        else
+            str_out <- "read [READ-OPTIONS] ( ! <STEP-NAME> [STEP-OPTIONS] )* ! write [WRITE-OPTIONS]\n"
 
-                if (tolower(arginfo$category) == "common")
-                    common_args <- append(common_args, nm)
-                else if (tolower(arginfo$category) == "base")
-                    base_args <- append(base_args, nm)
-                else if (tolower(arginfo$category) == "advanced")
-                    advanced_args <- append(advanced_args, nm)
-                else if (tolower(arginfo$category) == "esoteric")
-                    esoteric_args <- append(esoteric_args, nm)
-            }
+        cat(str_out)
+        cat("\n")
+    }
+
+    # non-positional args by category
+    common_args <- character()
+    base_args <- character()
+    advanced_args <- character()
+    esoteric_args <- character()
+    for (nm in alginfo$arg_names) {
+        arginfo <- alg$argInfo(nm)
+        if ((isTRUE(!as.logical(arginfo$is_only_for_cli)) ||  # GDAL < 3.12
+            isTRUE(!as.logical(arginfo$is_hidden_for_api)))  # GDAL >= 3.12
+                && !arginfo$is_positional) {
+
+            if (tolower(arginfo$category) == "common")
+                common_args <- append(common_args, nm)
+            else if (tolower(arginfo$category) == "base")
+                base_args <- append(base_args, nm)
+            else if (tolower(arginfo$category) == "advanced")
+                advanced_args <- append(advanced_args, nm)
+            else if (tolower(arginfo$category) == "esoteric")
+                esoteric_args <- append(esoteric_args, nm)
         }
+    }
 
-        if (length(common_args) > 0) {
-            cat("Common options:\n")
-            for (arg_nm in common_args) {
-                print_arg(arg_nm)
-            }
-            cat("\n")
+    if (length(common_args) > 0) {
+        cat("Common options:\n")
+        for (arg_nm in common_args) {
+            print_arg(arg_nm)
         }
+        cat("\n")
+    }
 
-        if (length(base_args) > 0) {
+    if (length(base_args) > 0) {
+        if (alginfo$name == "pipeline")
+            cat("Options for read input/write output:\n")
+        else
             cat("Options:\n")
-            for (arg_nm in base_args) {
-                print_arg(arg_nm)
-            }
-            cat("\n")
-        }
 
-        if (length(advanced_args) > 0) {
+        for (arg_nm in base_args) {
+            print_arg(arg_nm)
+        }
+        cat("\n")
+    }
+
+    if (length(advanced_args) > 0) {
+        if (alginfo$name == "pipeline")
+            cat("Advanced options for read input/write output:\n")
+        else
             cat("Advanced options:\n")
-            for (arg_nm in advanced_args) {
-                print_arg(arg_nm)
-            }
-            cat("\n")
-        }
 
-        if (length(esoteric_args) > 0) {
-            cat("Esoteric options:\n")
-            for (arg_nm in esoteric_args) {
-                print_arg(arg_nm)
-            }
-            cat("\n")
+        for (arg_nm in advanced_args) {
+            print_arg(arg_nm)
         }
+        cat("\n")
+    }
+
+    if (length(esoteric_args) > 0) {
+        if (alginfo$name == "pipeline")
+            cat("Esoteric options for read input/write output:\n")
+        else
+            cat("Esoteric options:\n")
+
+        for (arg_nm in esoteric_args) {
+            print_arg(arg_nm)
+        }
+        cat("\n")
     }
 
     if (alginfo$name == "pipeline") {
-        cat("See `gdal_usage(\"raster pipeline\")` or `gdal_usage(\"vector pipeline\")`\n")
+        x <- alg$usageAsJSON() |> yyjsonr::read_json_str()
+        if (!is.null(x$pipeline_algorithms) &&
+            is.data.frame(x$pipeline_algorithms) &&
+            nrow(x$pipeline_algorithms) > 0) {
+
+            cat("Potential steps are:\n")
+            for (i in seq_len(nrow(x$pipeline_algorithms))) {
+                if (x$pipeline_algorithms[i, "name"] != "read" &&
+                    x$pipeline_algorithms[i, "name"] != "write") {
+
+                cat("  ", x$pipeline_algorithms[i, "name"], "\n    ",
+                    x$pipeline_algorithms[i, "description"], "\n", sep = "")
+                }
+            }
+            cat("\n")
+        } else {
+            cat("See `gdal_usage(\"raster pipeline\")` or `gdal_usage(\"vector pipeline\")`\n")
+            cat("\n")
+        }
     } else if (alginfo$long_description != "") {
-        cat("\n", alginfo$long_description, "\n", sep = "")
+        cat(alginfo$long_description, "\n", sep = "")
+        cat("\n")
     }
 
     if (alginfo$URL != "")
-        cat("\nFor more details: ", alginfo$URL, "\n", sep = "")
+        cat("For more details: ", alginfo$URL, "\n", sep = "")
 
     alg$release()
 }

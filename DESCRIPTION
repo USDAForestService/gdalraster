@@ -60,7 +60,8 @@ Imports:
     tools,
     utils,
     wk,
-    xml2
+    xml2,
+    yyjsonr
 LinkingTo: nanoarrow, Rcpp, RcppInt64
 Suggests:
     gt,
@@ -72,6 +73,6 @@ NeedsCompilation: yes
 SystemRequirements: C++17, GDAL (>= 3.1.0, built against GEOS)
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
-RoxygenNote: 7.3.2
+RoxygenNote: 7.3.3
 VignetteBuilder: knitr
 Config/testthat/edition: 3

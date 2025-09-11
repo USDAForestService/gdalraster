@@ -52,7 +52,7 @@ include details about every single feature of a layer.
 metadata strings.
 }
 \examples{
-\dontshow{if (gdal_version_num() >= gdal_compute_version(3, 7, 0)) (if (getRversion() >= "3.4") withAutoprint else force)(\{ # examplesIf}
+\dontshow{if (gdal_version_num() >= gdal_compute_version(3, 7, 0)) withAutoprint(\{ # examplesIf}
 src <- system.file("extdata/ynp_fires_1984_2022.gpkg", package="gdalraster")
 
 # Get the names of the layers in a GeoPackage file
