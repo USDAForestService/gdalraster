@@ -27,6 +27,7 @@ test_that("gdal_run works", {
     ## raster output
     f <- system.file("extdata/ynp_fires_1984_2022.gpkg", package = "gdalraster")
     f_out = file.path(tempdir(), "ynp_fire_year.tif")
+    on.exit(deleteDataset(f_out), add = TRUE)
 
     args <- list()
     args$input <- f
@@ -51,11 +52,11 @@ test_that("gdal_run works", {
     ds$close()
     expect_true(alg$close())
     alg$release()
-    deleteDataset(f_out)
 
     ## vector output
     f_shp <- system.file("extdata/poly_multipoly.shp", package="gdalraster")
     f_gpkg <- file.path(tempdir(), "polygons_test.gpkg")
+    on.exit(deleteDataset(f_gpkg), add = TRUE)
 
     args <- c("--input", f_shp, "--output", f_gpkg, "--overwrite")
 
@@ -68,7 +69,6 @@ test_that("gdal_run works", {
     lyr$close()
     expect_true(alg$close())
     alg$release()
-    deleteDataset(f_gpkg)
 
     # errors
     expect_error(gdal_run(NULL))
@@ -76,6 +76,10 @@ test_that("gdal_run works", {
     expect_error(gdal_run("raster info"))  # no args so alg$run() fails
     expect_error(gdal_run("raster info", 0))
     expect_error(gdal_run("raster info", "--invalid=0"))  # parse fails
+    # invalid input for setVectorArgsFromObject:
+    args <- c("--input", f_shp, "--output", f_gpkg, "--overwrite")
+    expect_error(gdal_run("vector convert", args, "invalid"))
+
 })
 
 test_that("gdal_alg works", {

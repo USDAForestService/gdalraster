@@ -77,14 +77,18 @@
 #' object of class `GDALVector`. Argument values specified explicitly will
 #' override the automatic setting (as long as they result in a parsable set of
 #' arguments). Automatically setting arguments from `GDALVector` input can
-#' be disabled by setting this field to `FALSE`.
-#' When enabled and the `"input"` or `"like"` argument for an algorithm is a
-#' `GDALVector` object, the following arguments will be set automatically based
-#' on properties of the object (when the argument is available to the
-#' algorithm):
-#' * `"input-format"`: set to the object's driver short name
-#' * `"input-layer"`: set to the object's layer name if it is not a SQL layer
-#' * `"sql"`: set to the SQL statement if the object's layer is defined by one
+#' be disabled by setting this field to `FALSE`. In that case, only the vector
+#' dataset would be passed to the algorithm, i.e., without automatically
+#' passing any layer specifications.
+#' When enabled and the `"input"` or `"like"` argument for an algorithm is
+#' given as a `GDALVector` object, corresponding arguments will be set
+#' automatically based on properties of the object (when the argument is
+#' available to the algorithm):
+#' * `"input-format"`: set to the `GDALVector` object's driver short name
+#' * `"input-layer"`: set to the `GDALVector` layer name if it is not a SQL
+#' layer
+#' * `"sql"`: set to the SQL statement if the `GDALVector` layer is defined by
+#' one
 #' * `"dialect"`: set to the SQL dialect if one is specified for a SQL layer
 #' * `"like-layer"`: set to the `GDALVector` layer name if it is not a SQL
 #' layer

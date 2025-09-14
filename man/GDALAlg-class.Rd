@@ -83,15 +83,19 @@ automatically when the \code{"input"} argument or the \code{"like"} argument is 
 object of class \code{GDALVector}. Argument values specified explicitly will
 override the automatic setting (as long as they result in a parsable set of
 arguments). Automatically setting arguments from \code{GDALVector} input can
-be disabled by setting this field to \code{FALSE}.
-When enabled and the \code{"input"} or \code{"like"} argument for an algorithm is a
-\code{GDALVector} object, the following arguments will be set automatically based
-on properties of the object (when the argument is available to the
-algorithm):
+be disabled by setting this field to \code{FALSE}. In that case, only the vector
+dataset would be passed to the algorithm, i.e., without automatically
+passing any layer specifications.
+When enabled and the \code{"input"} or \code{"like"} argument for an algorithm is
+given as a \code{GDALVector} object, corresponding arguments will be set
+automatically based on properties of the object (when the argument is
+available to the algorithm):
 \itemize{
-\item \code{"input-format"}: set to the object's driver short name
-\item \code{"input-layer"}: set to the object's layer name if it is not a SQL layer
-\item \code{"sql"}: set to the SQL statement if the object's layer is defined by one
+\item \code{"input-format"}: set to the \code{GDALVector} object's driver short name
+\item \code{"input-layer"}: set to the \code{GDALVector} layer name if it is not a SQL
+layer
+\item \code{"sql"}: set to the SQL statement if the \code{GDALVector} layer is defined by
+one
 \item \code{"dialect"}: set to the SQL dialect if one is specified for a SQL layer
 \item \code{"like-layer"}: set to the \code{GDALVector} layer name if it is not a SQL
 layer
