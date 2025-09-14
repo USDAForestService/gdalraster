@@ -1,4 +1,6 @@
-# gdalraster 2.2.1.9011 (dev)
+# gdalraster 2.2.1.9012 (dev)
+
+* `gdal_run()`: add argument `setVectorArgsFromObject` (#790) (2025-09-13)
 
 * `gdal_usage()`: include the list of potential step algorithms for `"raster pipeline"` and `"vector pipeline"` (#789, adds **yyjsonr** to `Imports`) (2025-09-10)
 
