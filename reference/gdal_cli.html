@@ -72,7 +72,7 @@ interface (CLI) algorithms.</p>
 <span></span>
 <span><span class="fu">gdal_usage</span><span class="op">(</span>cmd <span class="op">=</span> <span class="cn">NULL</span><span class="op">)</span></span>
 <span></span>
-<span><span class="fu">gdal_run</span><span class="op">(</span><span class="va">cmd</span>, <span class="va">args</span><span class="op">)</span></span>
+<span><span class="fu">gdal_run</span><span class="op">(</span><span class="va">cmd</span>, <span class="va">args</span>, setVectorArgsFromObject <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
 <span></span>
 <span><span class="fu">gdal_alg</span><span class="op">(</span>cmd <span class="op">=</span> <span class="cn">NULL</span>, args <span class="op">=</span> <span class="cn">NULL</span>, parse <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
 <span></span>
@@ -108,6 +108,14 @@ Defaults to <code>"gdal"</code>, the main entry point to CLI commands.</p></dd>
 <dt id="arg-args">args<a class="anchor" aria-label="anchor" href="#arg-args"></a></dt>
 <dd><p>Either a character vector or a named list containing input
 arguments of the algorithm (see section <code>Algorithm Argument Syntax</code> below).</p></dd>
+
+
+<dt id="arg-setvectorargsfromobject">setVectorArgsFromObject<a class="anchor" aria-label="anchor" href="#arg-setvectorargsfromobject"></a></dt>
+<dd><p>Logical value, <code>TRUE</code> to set algorithm
+arguments automatically when the <code>"input"</code> argument or the <code>"like"</code> argument
+is an object of class <code>GDALVector</code> (the default). Can be set to <code>FALSE</code> to
+disable automatically setting algorithm arguments from <code>GDALVector</code> input
+(see Note).</p></dd>
 
 
 <dt id="arg-parse">parse<a class="anchor" aria-label="anchor" href="#arg-parse"></a></dt>
@@ -166,6 +174,24 @@ character can be substituted for the dash characters that are used in some
 names. This avoids having to surround names in backticks when they are used
 to access list elements in the form <code>args$arg_name</code> (the form
 <code>args[["arg-name"]]</code> also works).</p>
+<p>When <code>setVectorArgsFromObject</code> is <code>TRUE</code> (the default) and the <code>"input"</code> or
+<code>"like"</code> argument for an algorithm is given as a <code>GDALVector</code> object,
+corresponding algorithm arguments will be set automatically based on
+properties of the object (when the argument is available to the algorithm):</p><ul><li><p><code>"input-format"</code>: set to the <code>GDALVector</code> object's driver short name</p></li>
+<li><p><code>"input-layer"</code>: set to the <code>GDALVector</code> layer name if it is not a SQL
+layer</p></li>
+<li><p><code>"sql"</code>: set to the SQL statement if the <code>GDALVector</code> layer is defined by
+one</p></li>
+<li><p><code>"dialect"</code>: set to the SQL dialect if one is specified for a SQL layer</p></li>
+<li><p><code>"like-layer"</code>: set to the <code>GDALVector</code> layer name if it is not a SQL
+layer</p></li>
+<li><p><code>"like-sql"</code>: set to the SQL statement if the <code>GDALVector</code> layer is
+defined by one</p></li>
+</ul><p>Argument values specified explicitly will override the automatic setting (as
+long as they result in a parsable set of arguments). If
+<code>setVectorArgsFromObject</code> is <code>FALSE</code>, then only the vector dataset is passed
+to the algorithm, i.e., without automatically passing any layer
+specifications.</p>
     </div>
     <div class="section level2">
     <h2 id="algorithm-argument-syntax">Algorithm Argument Syntax<a class="anchor" aria-label="anchor" href="#algorithm-argument-syntax"></a></h2>

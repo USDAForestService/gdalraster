@@ -162,13 +162,17 @@ automatically when the <code>"input"</code> argument or the <code>"like"</code> 
 object of class <code>GDALVector</code>. Argument values specified explicitly will
 override the automatic setting (as long as they result in a parsable set of
 arguments). Automatically setting arguments from <code>GDALVector</code> input can
-be disabled by setting this field to <code>FALSE</code>.
-When enabled and the <code>"input"</code> or <code>"like"</code> argument for an algorithm is a
-<code>GDALVector</code> object, the following arguments will be set automatically based
-on properties of the object (when the argument is available to the
-algorithm):</p><ul><li><p><code>"input-format"</code>: set to the object's driver short name</p></li>
-<li><p><code>"input-layer"</code>: set to the object's layer name if it is not a SQL layer</p></li>
-<li><p><code>"sql"</code>: set to the SQL statement if the object's layer is defined by one</p></li>
+be disabled by setting this field to <code>FALSE</code>. In that case, only the vector
+dataset would be passed to the algorithm, i.e., without automatically
+passing any layer specifications.
+When enabled and the <code>"input"</code> or <code>"like"</code> argument for an algorithm is
+given as a <code>GDALVector</code> object, corresponding arguments will be set
+automatically based on properties of the object (when the argument is
+available to the algorithm):</p><ul><li><p><code>"input-format"</code>: set to the <code>GDALVector</code> object's driver short name</p></li>
+<li><p><code>"input-layer"</code>: set to the <code>GDALVector</code> layer name if it is not a SQL
+layer</p></li>
+<li><p><code>"sql"</code>: set to the SQL statement if the <code>GDALVector</code> layer is defined by
+one</p></li>
 <li><p><code>"dialect"</code>: set to the SQL dialect if one is specified for a SQL layer</p></li>
 <li><p><code>"like-layer"</code>: set to the <code>GDALVector</code> layer name if it is not a SQL
 layer</p></li>
