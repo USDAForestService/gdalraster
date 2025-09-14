@@ -69,6 +69,11 @@
 #' Defaults to `"gdal"`, the main entry point to CLI commands.
 #' @param args Either a character vector or a named list containing input
 #' arguments of the algorithm (see section `Algorithm Argument Syntax` below).
+#' @param setVectorArgsFromObject Logical value, `TRUE` to set algorithm
+#' arguments automatically when the `"input"` argument or the `"like"` argument
+#' is an object of class `GDALVector` (the default). Can be set to `FALSE` to
+#' disable automatically setting algorithm arguments from `GDALVector` input
+#' (see Note).
 #' @param parse Logical value, `TRUE` to attempt parsing `args` if they are
 #' given in `gdal_alg()` (the default). Set to `FALSE` to instantiate the
 #' algorithm without parsing arguments. The \code{$parseCommandLineArgs()}
@@ -142,6 +147,27 @@
 #' names. This avoids having to surround names in backticks when they are used
 #' to access list elements in the form \code{args$arg_name} (the form
 #' \code{args[["arg-name"]]} also works).
+#'
+#' When `setVectorArgsFromObject` is `TRUE` (the default) and the `"input"` or
+#' `"like"` argument for an algorithm is given as a `GDALVector` object,
+#' corresponding algorithm arguments will be set automatically based on
+#' properties of the object (when the argument is available to the algorithm):
+#' * `"input-format"`: set to the `GDALVector` object's driver short name
+#' * `"input-layer"`: set to the `GDALVector` layer name if it is not a SQL
+#' layer
+#' * `"sql"`: set to the SQL statement if the `GDALVector` layer is defined by
+#' one
+#' * `"dialect"`: set to the SQL dialect if one is specified for a SQL layer
+#' * `"like-layer"`: set to the `GDALVector` layer name if it is not a SQL
+#' layer
+#' * `"like-sql"`: set to the SQL statement if the `GDALVector` layer is
+#' defined by one
+#'
+#' Argument values specified explicitly will override the automatic setting (as
+#' long as they result in a parsable set of arguments). If
+#' `setVectorArgsFromObject` is `FALSE`, then only the vector dataset is passed
+#' to the algorithm, i.e., without automatically passing any layer
+#' specifications.
 #'
 #' @seealso
 #' [`GDALAlg-class`][GDALAlg]
@@ -303,7 +329,7 @@ gdal_usage <- function(cmd = NULL) {
 
 #' @name gdal_cli
 #' @export
-gdal_run <- function(cmd, args) {
+gdal_run <- function(cmd, args, setVectorArgsFromObject = TRUE) {
     if (gdal_version_num() < gdal_compute_version(3, 11, 3)) {
         stop("gdal_run() requires GDAL >= 3.11.3", call. = FALSE)
     }
@@ -316,9 +342,22 @@ gdal_run <- function(cmd, args) {
     if (missing(args) || is.null(args) || all(is.na(args)))
         stop("'args' is required", call. = FALSE)
     if (!is.character(args) && !is.list(args))
-        stop("'args must be a character vector or named list", call. = FALSE)
+        stop("'args' must be a character vector or named list", call. = FALSE)
+
+    if (missing(setVectorArgsFromObject) || is.null(setVectorArgsFromObject) ||
+        all(is.na(setVectorArgsFromObject))) {
+
+        setVectorArgsFromObject <- TRUE
+    }
+    if (!is.logical(setVectorArgsFromObject) ||
+        length(setVectorArgsFromObject) != 1) {
+
+        stop("'setVectorArgsFromObject' must be a single logical value",
+             call. = FALSE)
+    }
 
     alg <- new(GDALAlg, cmd, args)
+    alg$setVectorArgsFromObject <- setVectorArgsFromObject
 
     if (!alg$parseCommandLineArgs()) {
         cat("parseCommandLineArgs() failed\n")
