@@ -565,3 +565,55 @@ plot_raster <- function(data, xsize=NULL, ysize=NULL, nbands=NULL,
 
     invisible()
 }
+
+#' Plot WKT or WKB geometries
+#'
+#' `plot_geom()` plots one or more geometries given as either WKT or WKB raw
+#' vectors, using `wk::wk_plot()`.
+#'
+#' @param x Either a character vector containing one or more WKT strings, a raw
+#' vector of WKB, or a list of WKB raw vectors.
+#' @param xlab Title for the x axis.
+#' @param ylab Title for the y axis.
+#' @param main The main title (on top).
+#' @param ... Optional arguments passed to `wk::wk_plot()`.
+#' @return The input, invisibly.
+#'
+#' @examples
+#' # a Delaunay triangulation of 10 random points
+#' set.seed(4)
+#' x <- sample.int(100, 10)
+#' y <- sample.int(100, 10)
+#'
+#' g <- g_create("MULTIPOINT", cbind(x, y))
+#' g_wk2wk(g)
+#'
+#' plot_geom(g)
+#'
+#' g2 <- g_delaunay_triangulation(g)
+#' g_wk2wk(g2)
+#'
+#' plot_geom(g2, add = TRUE)
+#' @export
+plot_geom <- function(x, xlab = "x", ylab = "y",  main = "", ...) {
+    geom_in <- NULL
+    if (is.raw(x)) {
+        geom_in <- list(x)
+    } else if (is.list(x) && length(x) > 0 && is.raw(x[[1]])) {
+        geom_in <- x
+    } else if (is.character(x)) {
+        if (length(x) == 1)
+            geom_in <- list(g_wk2wk(x))
+        else
+            geom_in <- g_wk2wk(x)
+    } else {
+        stop("'x' must be a character vector, raw vector or list",
+             call. = FALSE)
+    }
+
+    wk_obj <- wk::wkb(geom_in)
+    wk::wk_plot(wk_obj, ..., xlab = xlab, ylab = ylab)
+    graphics::title(main = main)
+
+    invisible(x)
+}
