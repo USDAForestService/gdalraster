@@ -9,6 +9,7 @@
 \alias{g_is_ring}
 \alias{g_name}
 \alias{g_summary}
+\alias{g_geom_count}
 \title{Obtain information about WKB/WKT geometries}
 \usage{
 g_is_empty(geom, quiet = FALSE)
@@ -24,6 +25,8 @@ g_is_ring(geom, quiet = FALSE)
 g_name(geom, quiet = FALSE)
 
 g_summary(geom, quiet = FALSE)
+
+g_geom_count(geom, quiet = FALSE)
 }
 \arguments{
 \item{geom}{Either a raw vector of WKB or list of raw vectors, or a
@@ -62,6 +65,12 @@ vector of the same length as the number of input geometries.
 \code{g_summary()} returns text summaries of WKB/WKT geometries in a
 character vector of the same length as the number of input
 geometries. Requires GDAL >= 3.7.
+
+\code{g_geom_count()} returns the number of elements in a geometry or number of
+geometries in container. Only geometries of type \verb{Polygon[25D]},
+\verb{MultiPoint[25D]}, \verb{MultiLineString[25D]}, \verb{MultiPolygon[25D]} or
+\verb{GeometryCollection[25D]} may return a valid value. Other geometry types will
+silently return \code{0}.
 }
 \examples{
 g1 <- "POLYGON ((0 0, 10 10, 10 0, 0 0))"
@@ -98,6 +107,8 @@ if (gdal_version_num() >= gdal_compute_version(3, 7, 0)) {
   feat_set <- lyr$fetch(5)
   g_summary(feat_set$geom) |> print()
 }
+
+g_geom_count(feat$geom)
 
 lyr$close()
 }

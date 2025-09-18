@@ -259,9 +259,9 @@ bbox_transform <- function(bbox, srs_from, srs_to,
 #'
 #' @note
 #' With `as_iso = FALSE` (the default), geometries are exported as extended
-#' dimension (Z) WKB/WKT for types Point, LineString, Polygon, MultiPoint,
-#' MultiLineString, MultiPolygon and GeometryCollection. For other geometry
-#' types, it is equivalent to ISO.
+#' dimension (Z) WKB/WKT for types `Point`, `LineString`, `Polygon`,
+#' `MultiPoint`, `MultiLineString`, `MultiPolygon` and `GeometryCollection`.
+#' For other geometry types, it is equivalent to ISO.
 #'
 #' When the return value is a list of WKB raw vectors, an element in the
 #' returned list will contain `NULL` (and a warning emitted) if the
@@ -322,7 +322,7 @@ g_wk2wk <- function(geom, as_iso = FALSE, byte_order = "LSB") {
     }
 }
 
-#' Create WKB/WKT geometries from vertices, and add sub-geometries
+#' Create WKB/WKT geometries from vertices, and add/get sub-geometries
 #'
 #' These functions create WKB/WKT geometries from input vertices, and build
 #' container geometry types from sub-geometries.
@@ -332,19 +332,24 @@ g_wk2wk <- function(geom, as_iso = FALSE, byte_order = "LSB") {
 #'
 #' `g_create()` creates a geometry object from the given point(s) and returns
 #' a raw vector of WKB (the default) or a character string of WKT. Currently
-#' supports creating Point, MultiPoint, LineString, Polygon, and
-#' GeometryCollection.
-#' If multiple input points are given for creating Point type, then multiple
+#' supports creating `Point`, `MultiPoint`, `LineString`, `Polygon`, and
+#' `GeometryCollection.`
+#' If multiple input points are given for creating `Point` type, then multiple
 #' geometries will be returned as a list of WKB raw vectors, or character
 #' vector of WKT strings (if `as_wkb = FALSE`). Otherwise, a single geometry
-#' is created from the input points. Only an empty GeometryCollection can be
+#' is created from the input points. Only an empty `GeometryCollection` can be
 #' created with this function, for subsequent use with `g_add_geom()`.
 #'
 #' `g_add_geom()` adds a geometry to a geometry container, e.g.,
-#' Polygon to Polygon (to add an interior ring), Point to MultiPoint,
-#' LineString to MultiLineString, Polygon to MultiPolygon, or mixed
-#' geometry types to a GeometryCollection. Returns a new geometry, i.e,
+#' `Polygon` to `Polygon` (to add an interior ring), `Point` to `MultiPoint`,
+#' `LineString` to `MultiLineString`, `Polygon` to `MultiPolygon`, or mixed
+#' geometry types to a `GeometryCollection`. Returns a new geometry, i.e,
 #' the container geometry is not modified.
+#'
+#' `g_get_geom()` fetches a geometry from a geometry container (1-based
+#' indexing). For a polygon, requesting the first sub-geometry returns the
+#' exterior ring (`sub_geom_idx = 1`), and the interior rings are returned for
+#' `sub_geom_idx > 1`.
 #'
 #' @param geom_type Character string (case-insensitive), one of `"POINT"`,
 #' `"MULTIPOINT"`, `"LINESTRING"`, `"POLYGON"` (see Note) or
@@ -363,6 +368,8 @@ g_wk2wk <- function(geom, as_iso = FALSE, byte_order = "LSB") {
 #' @param sub_geom Either a raw vector of WKB or a character string of WKT.
 #' @param container Either a raw vector of WKB or a character string of WKT for
 #' a container geometry type.
+#' @param sub_geom_idx An integer value giving the 1-based index of a
+#' sub-geometry (numeric values will be coerced to integer by truncation).
 #' @return
 #' A geometry as WKB raw vector by default, or a WKT string if
 #' `as_wkb = FALSE`. In the case of multiple input points for creating Point
@@ -370,15 +377,15 @@ g_wk2wk <- function(geom, as_iso = FALSE, byte_order = "LSB") {
 #' will be returned.
 #'
 #' @note
-#' A POLYGON can be created for a single ring which will be the
-#' exterior ring. Additional POLYGONs can be created and added to an
-#' existing POLYGON with `g_add_geom()`. These will become interior rings.
+#' A `POLYGON` can be created for a single ring which will be the
+#' exterior ring. Additional `POLYGON`s can be created and added to an
+#' existing `POLYGON` with `g_add_geom()`. These will become interior rings.
 #' Alternatively, an empty polygon can be created with `g_create("POLYGON")`,
-#' followed by creation and addition of POLYGONs as subgeometries. In that
-#' case, the first added POLYGON will be the exterior ring. The next ones will
+#' followed by creation and addition of `POLYGON`s as sub-geometries. In that
+#' case, the first added `POLYGON` will be the exterior ring. The next ones will
 #' be the interior rings.
 #'
-#' Only an empty GeometryCollection can be created with `g_create()`, which
+#' Only an empty `GeometryCollection` can be created with `g_create()`, which
 #' can then be used as a container with `g_add_geom()`. If given, input points
 #' will be ignored by `g_create()` if `geom_type = "GEOMETRYCOLLECTION"`.
 #'
@@ -393,7 +400,7 @@ g_wk2wk <- function(geom, as_iso = FALSE, byte_order = "LSB") {
 #' g_create("POINT", c(1, 2)) |> g_wk2wk()
 #' g_create("POINT", c(1, 2), as_wkb = FALSE) |> g_wk2wk()
 #'
-#' # create multipoint from a matrix of xyz points
+#' # create MultiPoint from a matrix of xyz points
 #' x <- c(9, 1)
 #' y <- c(1, 9)
 #' z <- c(0, 10)
@@ -402,17 +409,23 @@ g_wk2wk <- function(geom, as_iso = FALSE, byte_order = "LSB") {
 #' g_wk2wk(mp)
 #' g_wk2wk(mp, as_iso = TRUE)
 #'
-#' # create an empty container and add subgeometries
+#' # create an empty container and add sub-geometries
 #' mp2 <- g_create("MULTIPOINT")
 #' mp2 <- g_create("POINT", c(11, 2)) |> g_add_geom(mp2)
 #' mp2 <- g_create("POINT", c(12, 3)) |> g_add_geom(mp2)
 #' g_wk2wk(mp2)
 #'
-#' # plot WKT strings or a list of WKB raw vectors with wk::wk_plot()
-#' pts <- c(0, 0, 3, 0, 3, 4, 0, 0)
+#' # get sub-geometry from container
+#' g_get_geom(mp2, 2, as_wkb = FALSE)
+#'
+#' # plot WKT strings or a list of WKB raw vectors
+#' pts <- c(0, 0,
+#'          3, 0,
+#'          3, 4,
+#'          0, 0)
 #' m <- matrix(pts, ncol = 2, byrow = TRUE)
-#' g <- g_create("POLYGON", m, as_wkb = FALSE)
-#' wk::wkt(g) |> wk::wk_plot()
+#' (g <- g_create("POLYGON", m, as_wkb = FALSE))
+#' plot_geom(g)
 #' @export
 g_create <- function(geom_type, pts = NULL, as_wkb = TRUE, as_iso = FALSE,
                      byte_order = "LSB") {
@@ -465,6 +478,8 @@ g_create <- function(geom_type, pts = NULL, as_wkb = TRUE, as_iso = FALSE,
 g_add_geom <- function(sub_geom, container, as_wkb = TRUE, as_iso = FALSE,
                        byte_order = "LSB") {
 
+    if ((is.character(sub_geom) || is.list(sub_geom)) && length(sub_geom) > 1)
+        stop("'sub_geom' must be a single geometry", call. = FALSE)
     if (is.character(sub_geom))
         sub_geom <- g_wk2wk(sub_geom)
     if (!is.raw(sub_geom)) {
@@ -472,6 +487,11 @@ g_add_geom <- function(sub_geom, container, as_wkb = TRUE, as_iso = FALSE,
              call. = FALSE)
     }
 
+    if ((is.character(container) || is.list(container))
+        && length(container) > 1) {
+
+        stop("'sub_geom' must be a single geometry", call. = FALSE)
+    }
     if (is.character(container))
         container <- g_wk2wk(container)
     if (!is.raw(container)) {
@@ -507,6 +527,53 @@ g_add_geom <- function(sub_geom, container, as_wkb = TRUE, as_iso = FALSE,
 
 }
 
+#' @name g_factory
+#' @export
+g_get_geom <- function(container, sub_geom_idx, as_wkb = TRUE, as_iso = FALSE,
+                       byte_order = "LSB") {
+
+    if ((is.character(container) || is.list(container))
+        && length(container) > 1) {
+
+        stop("'sub_geom' must be a single geometry", call. = FALSE)
+    }
+    if (is.character(container))
+        container <- g_wk2wk(container)
+    if (!is.raw(container)) {
+        stop("'container' must be a raw vector or character string",
+             call. = FALSE)
+    }
+
+    if (!(is.numeric(sub_geom_idx) && length(sub_geom_idx) == 1))
+        stop("'sub_geom_idx' must be a single numeric value", call. = FALSE)
+
+    # as_wkb
+    if (is.null(as_wkb))
+        as_wkb <- TRUE
+    if (!is.logical(as_wkb) || length(as_wkb) > 1)
+        stop("'as_wkb' must be a single logical value", call. = FALSE)
+    # as_iso
+    if (is.null(as_iso))
+        as_iso <- FALSE
+    if (!is.logical(as_iso) || length(as_iso) > 1)
+        stop("'as_iso' must be a single logical value", call. = FALSE)
+    # byte_order
+    if (is.null(byte_order))
+        byte_order <- "LSB"
+    if (!is.character(byte_order) || length(byte_order) > 1)
+        stop("'byte_order' must be a character string", call. = FALSE)
+    byte_order <- toupper(byte_order)
+    if (byte_order != "LSB" && byte_order != "MSB")
+        stop("invalid 'byte_order'", call. = FALSE)
+
+    wkb <- .g_get_geom(container, sub_geom_idx - 1, as_iso, byte_order)
+
+    if (as_wkb)
+        return(wkb)
+    else
+        return(g_wk2wk(wkb, as_iso))
+}
+
 #' Obtain information about WKB/WKT geometries
 #'
 #' These functions return information about WKB/WKT geometries. The input
@@ -539,6 +606,12 @@ g_add_geom <- function(sub_geom, container, as_wkb = TRUE, as_iso = FALSE,
 #' `g_summary()` returns text summaries of WKB/WKT geometries in a
 #' character vector of the same length as the number of input
 #' geometries. Requires GDAL >= 3.7.
+#'
+#' `g_geom_count()` returns the number of elements in a geometry or number of
+#' geometries in container. Only geometries of type `Polygon[25D]`,
+#' `MultiPoint[25D]`, `MultiLineString[25D]`, `MultiPolygon[25D]` or
+#' `GeometryCollection[25D]` may return a valid value. Other geometry types will
+#' silently return `0`.
 #'
 #' @param geom Either a raw vector of WKB or list of raw vectors, or a
 #' character vector containing one or more WKT strings.
@@ -582,6 +655,8 @@ g_add_geom <- function(sub_geom, container, as_wkb = TRUE, as_iso = FALSE,
 #'   feat_set <- lyr$fetch(5)
 #'   g_summary(feat_set$geom) |> print()
 #' }
+#'
+#' g_geom_count(feat$geom)
 #'
 #' lyr$close()
 #' @export
@@ -770,6 +845,34 @@ g_summary <- function(geom, quiet = FALSE) {
             ret <- .g_summary(g_wk2wk(geom), quiet)
         } else {
             ret <- sapply(g_wk2wk(geom), .g_summary, quiet)
+        }
+    } else {
+        stop("'geom' must be a character vector, raw vector, or list",
+             call. = FALSE)
+    }
+
+    return(ret)
+}
+
+#' @name g_query
+#' @export
+g_geom_count <- function(geom, quiet = FALSE) {
+    # quiet
+    if (is.null(quiet))
+        quiet <- FALSE
+    if (!is.logical(quiet) || length(quiet) > 1)
+        stop("'quiet' must be a single logical value", call. = FALSE)
+
+    ret <- NULL
+    if (.is_raw_or_null(geom)) {
+        ret <- .g_geom_count(geom, quiet)
+    } else if (is.list(geom) && .is_raw_or_null(geom[[1]])) {
+        ret <- sapply(geom, .g_geom_count, quiet)
+    } else if (is.character(geom)) {
+        if (length(geom) == 1) {
+            ret <- .g_geom_count(g_wk2wk(geom), quiet)
+        } else {
+            ret <- sapply(g_wk2wk(geom), .g_geom_count, quiet)
         }
     } else {
         stop("'geom' must be a character vector, raw vector, or list",
@@ -2525,13 +2628,13 @@ g_geodesic_length <- function(geom, srs, traditional_gis_order = TRUE,
 #'
 #' `g_boundary()` computes the "boundary" as defined by the DE9IM
 #' (\url{https://en.wikipedia.org/wiki/DE-9IM}):
-#' * the boundary of a Polygon is the set of linear rings dividing the
+#' * the boundary of a `Polygon` is the set of linear rings dividing the
 #' exterior from the interior
-#' * the boundary of a LineString is the two end points
-#' * the boundary of a Point/MultiPoint is defined as empty
+#' * the boundary of a `LineString` is the two end points
+#' * the boundary of a `Point`/`MultiPoint` is defined as empty
 #'
 #' `g_buffer()` always returns a polygonal result. The negative or
-#' zero-distance buffer of lines and points is always an empty Polygon.
+#' zero-distance buffer of lines and points is always an empty `Polygon`.
 #'
 #' `g_convex_hull()` uses the Graham Scan algorithm.
 #'
@@ -2541,7 +2644,7 @@ g_geodesic_length <- function(geom, srs, traditional_gis_order = TRUE,
 #' the same dimension and number of components as the input. The simplification
 #' uses a maximum distance difference algorithm similar to the one used in the
 #' Douglas-Peucker algorithm. In particular, if the input is an areal geometry
-#' (Polygon or MultiPolygon), the result has the same number of shells and
+#' (`Polygon` or `MultiPolygon`), the result has the same number of shells and
 #' holes (rings) as the input, in the same order. The result rings touch at no
 #' more than the number of touching point in the input (although they may touch
 #' at fewer points).
@@ -2551,10 +2654,11 @@ g_geodesic_length <- function(geom, srs, traditional_gis_order = TRUE,
 #' guaranteed to remain simple after simplification. Note that in general D-P
 #' does not preserve topology - e.g. polygons can be split, collapse to lines
 #' or disappear, holes can be created or disappear, and lines can cross. To
-#' simplify geometry while preserving topology use TopologyPreservingSimplifier.
-#' (However, using D-P is significantly faster).
+#' simplify geometry while preserving topology use
+#' `TopologyPreservingSimplifier`. (However, using D-P is significantly faster.)
 #'
-#' N.B., `preserve_topology = TRUE` does not preserve boundaries shared between
+#' @note
+#' `preserve_topology = TRUE` does not preserve boundaries shared between
 #' polygons.
 #'
 #' @examples
