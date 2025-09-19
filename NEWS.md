@@ -1,4 +1,6 @@
-# gdalraster 2.2.1.9013 (dev)
+# gdalraster 2.2.1.9014 (dev)
+
+* class `GDALRaster`: add a constructor with `allowed_drivers` argument (#793) (2025-09-19)
 
 * add `plot_geom()`: plot WKT or WKB geometries (2025-09-18)
 
