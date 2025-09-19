@@ -158,6 +158,7 @@
   \code{\link[=gdal_version]{gdal_version}},
   \code{\link[=gdal_compute_version]{gdal_compute_version()}},
   \code{\link[=gdal_formats]{gdal_formats()}},
+  \code{\link[=gdal_get_driver_md]{gdal_get_driver_md()}},
   \code{\link[=get_cache_used]{get_cache_used()}},
   \code{\link[=get_cache_max]{get_cache_max()}},
   \code{\link[=set_cache_max]{set_cache_max()}},
