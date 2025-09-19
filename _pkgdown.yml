@@ -137,6 +137,7 @@ reference:
   - g_transform
   - geos_version
   - has_geos
+  - plot_geom
 - subtitle: General data management
 - contents:
   - addFilesInZip

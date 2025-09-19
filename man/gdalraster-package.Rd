@@ -112,7 +112,8 @@
   \code{\link[=g_coords]{g_coords()}},
   \code{\link[=g_envelope]{g_envelope()}},
   \code{\link[=g_transform]{g_transform()}},
-  \code{\link[=geos_version]{geos_version()}}
+  \code{\link[=geos_version]{geos_version()}},
+  \code{\link[=plot_geom]{plot_geom()}}
 
   \item Spatial Reference Systems API:
   \code{\link[=srs_convert]{srs_convert}},

@@ -1,4 +1,6 @@
-# gdalraster 2.2.1.9012 (dev)
+# gdalraster 2.2.1.9013 (dev)
+
+* add `plot_geom()`: plot WKT or WKB geometries (2025-09-18)
 
 * `gdal_run()`: add argument `setVectorArgsFromObject` (#790) (2025-09-13)
 

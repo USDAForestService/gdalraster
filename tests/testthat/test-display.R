@@ -55,3 +55,11 @@ test_that("plot_raster works", {
     expect_silent(plot_raster(ds, pixel_fn = Arg, interpolate = FALSE))
     ds$close()
 })
+
+test_that("plot_geom works", {
+    set.seed(1)
+    x <- sample.int(100, 10)
+    y <- sample.int(100, 10)
+    g <- g_create("MULTIPOINT", cbind(x, y))
+    expect_identical(plot_geom(g), g)
+})
