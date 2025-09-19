@@ -87,6 +87,9 @@ class GDALRaster {
                bool read_only,
                const Rcpp::Nullable<Rcpp::CharacterVector> &open_options,
                bool shared);
+    GDALRaster(const Rcpp::CharacterVector &filename, bool read_only,
+               const Rcpp::Nullable<Rcpp::CharacterVector> &open_options,
+               bool shared, const Rcpp::CharacterVector &allowed_drivers);
     ~GDALRaster();
 
     // read/write fields exposed to R
@@ -213,8 +216,9 @@ class GDALRaster {
 
  private:
     std::string m_fname {};
-    Rcpp::CharacterVector m_open_options {};
+    Rcpp::CharacterVector m_open_options;
     bool m_shared;
+    Rcpp::CharacterVector m_allowed_drivers;
     GDALDatasetH m_hDataset {nullptr};
     GDALAccess m_eAccess {GA_ReadOnly};
 };
