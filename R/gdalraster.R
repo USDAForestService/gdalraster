@@ -30,6 +30,8 @@
 #' specifying dataset open options.
 #' @param shared Logical. `FALSE` to open the dataset without using shared
 #' mode. Default is `TRUE` (see Note).
+#' @param allowed_drivers Optional character vector of driver short names that
+#' must be considered. By default, all known raster drivers are considered.
 #' @returns An object of class `GDALRaster`, which contains a pointer to the
 #' opened dataset.
 #' Class methods that operate on the dataset are described in Details, along
@@ -48,6 +50,8 @@
 #' ds <- new(GDALRaster, filename, read_only = TRUE|FALSE, open_options)
 #' # to open without using shared mode:
 #' new(GDALRaster, filename, read_only, open_options, shared = FALSE)
+#' # to specify certain allowed driver(s):
+#' new(GDALRaster, filename, read_only, open_options, shared, allowed_drivers)
 #'
 #' ## Read/write fields (per-object settings)
 #' ds$infoOptions
@@ -156,6 +160,12 @@
 #' Alternate constructor for specifying the `shared` mode for dataset opening.
 #' The `shared` argument defaults to `TRUE` but can be set to `FALSE` with this
 #' constructor (see Note).
+#' All arguments are required with this form of the constructor, but
+#' `open_options` can be `NULL`. Returns an object of class `GDALRaster`.
+#'
+#' \code{new(GDALRaster, filename, read_only, open_options, shared, allowed_drivers)}\cr
+#' Alternate constructor for specifying the driver(s) allowed for dataset
+#' opening as a character vector of driver short names.
 #' All arguments are required with this form of the constructor, but
 #' `open_options` can be `NULL`. Returns an object of class `GDALRaster`.
 #'

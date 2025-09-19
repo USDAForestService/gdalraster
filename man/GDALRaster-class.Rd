@@ -23,6 +23,9 @@ specifying dataset open options.}
 
 \item{shared}{Logical. \code{FALSE} to open the dataset without using shared
 mode. Default is \code{TRUE} (see Note).}
+
+\item{allowed_drivers}{Optional character vector of driver short names that
+must be considered. By default, all known raster drivers are considered.}
 }
 \value{
 An object of class \code{GDALRaster}, which contains a pointer to the
@@ -78,6 +81,8 @@ ds <- new(GDALRaster, filename, read_only = FALSE)
 ds <- new(GDALRaster, filename, read_only = TRUE|FALSE, open_options)
 # to open without using shared mode:
 new(GDALRaster, filename, read_only, open_options, shared = FALSE)
+# to specify certain allowed driver(s):
+new(GDALRaster, filename, read_only, open_options, shared, allowed_drivers)
 
 ## Read/write fields (per-object settings)
 ds$infoOptions
@@ -189,6 +194,12 @@ Returns an object of class \code{GDALRaster}.
 Alternate constructor for specifying the \code{shared} mode for dataset opening.
 The \code{shared} argument defaults to \code{TRUE} but can be set to \code{FALSE} with this
 constructor (see Note).
+All arguments are required with this form of the constructor, but
+\code{open_options} can be \code{NULL}. Returns an object of class \code{GDALRaster}.
+
+\code{new(GDALRaster, filename, read_only, open_options, shared, allowed_drivers)}\cr
+Alternate constructor for specifying the driver(s) allowed for dataset
+opening as a character vector of driver short names.
 All arguments are required with this form of the constructor, but
 \code{open_options} can be \code{NULL}. Returns an object of class \code{GDALRaster}.
 }

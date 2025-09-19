@@ -1,11 +1,17 @@
 # Tests for src/gdalraster.cpp
 test_that("class constructors work as expected", {
-    # TODO
+    # TODO: constructors are tested throughout, but add systematic tests here
     # ...
 
     # not recognized as being in a supported file format
     f <- system.file("extdata/doctype.xml", package="gdalraster")
     expect_error(ds <- new(GDALRaster, f))
+
+    # allowed drivers
+    evt_file <- system.file("extdata/storml_evt.tif", package="gdalraster")
+    expect_no_error(ds <- new(GDALRaster, evt_file, TRUE, NULL, TRUE, "GTiff"))
+    ds$close()
+    expect_error(ds <- new(GDALRaster, evt_file, TRUE, NULL, TRUE, "VRT"))
 })
 
 test_that("info() prints output to the console", {
