@@ -3158,6 +3158,66 @@ bool validateCreationOptions(const std::string &format,
 }
 
 
+//' Get metadata for a GDAL format driver
+//'
+//' `gdal_get_driver_md()` returns metadata for a driver.
+//'
+//' @param format Character string giving a format driver short name
+//' (e.g., `"GTiff"`).
+//' @param mdi_name Optional character string giving the name of a specific
+//' metadata item. Defaults to empty string (`""`) meaning fetch all metadata
+//' items.
+//' @returns Either a named list of metadata items and their values as character
+//' strings, or a single character string if `mdi_name` is specified. Returns
+//' `NULL` if no metadata items are found for the given inputs.
+//'
+//' @seealso
+//' [getCreationOptions()]
+//'
+//' @examples
+//' dmd <- gdal_get_driver_md("GTiff")
+//' str(dmd)
+// [[Rcpp::export()]]
+SEXP gdal_get_driver_md(const std::string &format,
+                        const std::string &mdi_name = "") {
+
+    GDALDriverH hDriver = nullptr;
+    hDriver = GDALGetDriverByName(format.c_str());
+    if (hDriver == nullptr)
+        Rcpp::stop("failed to get driver from format name");
+
+    if (mdi_name != "") {
+        const char *pszMD = GDALGetMetadataItem(hDriver, mdi_name.c_str(),
+                                                nullptr);
+        if (pszMD) {
+            return Rcpp::wrap(pszMD);
+        }
+        else {
+            return R_NilValue;
+        }
+    }
+    else {
+        char **papszMD = nullptr;
+        papszMD = GDALGetMetadata(hDriver, nullptr);
+        int items = CSLCount(papszMD);
+        if (items > 0) {
+            Rcpp::List md = Rcpp::List::create();
+            for (int i = 0; i < items; ++i) {
+                char *pszKey = nullptr;
+                const char *pszValue = CPLParseNameValue(papszMD[i], &pszKey);
+                if (pszValue)
+                    md.push_back(pszValue, pszKey);
+                CPLFree(pszKey);
+            }
+            return md;
+        }
+        else {
+            return R_NilValue;
+        }
+    }
+}
+
+
 //' Add a file inside a new or existing ZIP file
 //' Mainly for create/append to Seek-Optimized ZIP
 //'

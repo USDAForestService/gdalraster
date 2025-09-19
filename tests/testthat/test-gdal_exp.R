@@ -486,3 +486,14 @@ test_that("validateCreationOptions works", {
                                                    "TILED=YES")))
     expect_false(validateCreationOptions("GTiff", "COMPRESS=invalid"))
 })
+
+test_that("gdal_get_driver_md works", {
+    expect_no_error(md <- gdal_get_driver_md("GTiff"))
+    expect_true(is.list(md))
+    expect_equal(md$DMD_LONGNAME, "GeoTIFF")
+
+    expect_no_error(mdi <- gdal_get_driver_md("GTiff", "DCAP_RASTER"))
+    expect_equal(mdi, "YES")
+
+    expect_true(is.null(gdal_get_driver_md("GTiff", "invalid")))
+})
