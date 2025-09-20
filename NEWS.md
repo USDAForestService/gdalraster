@@ -1,4 +1,6 @@
-# gdalraster 2.2.1.9014 (dev)
+# gdalraster 2.2.1.9015 (dev)
+
+* add `g_geom_count()` and `g_get_geom()` (#796) (2025-09-19)
 
 * class `GDALRaster`: add a constructor with `allowed_drivers` argument (#793) (2025-09-19)
 
