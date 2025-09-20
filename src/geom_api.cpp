@@ -649,8 +649,7 @@ Rcpp::LogicalVector g_is_valid(const Rcpp::RObject &geom,
                                bool quiet = false) {
 // Test if the geometry is valid.
 // This function is built on the GEOS library, check it for the definition
-// of the geometry operation. If OGR is built without the GEOS library,
-// this function will always return FALSE.
+// of the geometry operation.
 
     if (geom.isNULL() || !Rcpp::is<Rcpp::RawVector>(geom))
         return Rcpp::LogicalVector::create(NA_LOGICAL);
@@ -689,9 +688,7 @@ SEXP g_make_valid(const Rcpp::RObject &geom,
 // Running OGRGeometryFactory::removeLowerDimensionSubGeoms() as a
 // post-processing step is often desired.
 // This function is built on the GEOS >= 3.8 library, check it for the
-// definition of the geometry operation. If OGR is built without GEOS >= 3.8,
-// this function will return a clone of the input geometry if it is valid, or
-// NULL if it is invalid
+// definition of the geometry operation.
 
     if (geom.isNULL() || !Rcpp::is<Rcpp::RawVector>(geom))
         return R_NilValue;
@@ -1342,8 +1339,7 @@ Rcpp::LogicalVector g_disjoint(const Rcpp::RObject &this_geom,
 // of the input geometries, call g_is_valid() before, otherwise the result
 // might be wrong.
 // This function is built on the GEOS library, check it for the definition of
-// the geometry operation. If OGR is built without the GEOS library, this
-// function will always fail, issuing a CPLE_NotSupported error.
+// the geometry operation.
 
     if (this_geom.isNULL() || !Rcpp::is<Rcpp::RawVector>(this_geom))
         return Rcpp::LogicalVector::create(NA_LOGICAL);
@@ -1398,8 +1394,7 @@ Rcpp::LogicalVector g_touches(const Rcpp::RObject &this_geom,
 // of the input geometries, call g_is_valid() before, otherwise the result
 // might be wrong.
 // This function is built on the GEOS library, check it for the definition of
-// the geometry operation. If OGR is built without the GEOS library, this
-// function will always fail, issuing a CPLE_NotSupported error.
+// the geometry operation.
 
     if (this_geom.isNULL() || !Rcpp::is<Rcpp::RawVector>(this_geom))
         return Rcpp::LogicalVector::create(NA_LOGICAL);
@@ -1454,8 +1449,7 @@ Rcpp::LogicalVector g_contains(const Rcpp::RObject &this_geom,
 // of the input geometries, call g_is_valid() before, otherwise the result
 // might be wrong.
 // This function is built on the GEOS library, check it for the definition of
-// the geometry operation. If OGR is built without the GEOS library, this
-// function will always fail, issuing a CPLE_NotSupported error.
+// the geometry operation.
 
     if (this_geom.isNULL() || !Rcpp::is<Rcpp::RawVector>(this_geom))
         return Rcpp::LogicalVector::create(NA_LOGICAL);
@@ -1510,8 +1504,7 @@ Rcpp::LogicalVector g_within(const Rcpp::RObject &this_geom,
 // of the input geometries, call g_is_valid() before, otherwise the result
 // might be wrong.
 // This function is built on the GEOS library, check it for the definition of
-// the geometry operation. If OGR is built without the GEOS library, this
-// function will always fail, issuing a CPLE_NotSupported error.
+// the geometry operation.
 
     if (this_geom.isNULL() || !Rcpp::is<Rcpp::RawVector>(this_geom))
         return Rcpp::LogicalVector::create(NA_LOGICAL);
@@ -1566,8 +1559,7 @@ Rcpp::LogicalVector g_crosses(const Rcpp::RObject &this_geom,
 // of the input geometries, call g_is_valid() before, otherwise the result
 // might be wrong.
 // This function is built on the GEOS library, check it for the definition of
-// the geometry operation. If OGR is built without the GEOS library, this
-// function will always fail, issuing a CPLE_NotSupported error.
+// the geometry operation.
 
     if (this_geom.isNULL() || !Rcpp::is<Rcpp::RawVector>(this_geom))
         return Rcpp::LogicalVector::create(NA_LOGICAL);
@@ -1624,8 +1616,7 @@ Rcpp::LogicalVector g_overlaps(const Rcpp::RObject &this_geom,
 // of the input geometries, call g_is_valid() before, otherwise the result
 // might be wrong.
 // This function is built on the GEOS library, check it for the definition of
-// the geometry operation. If OGR is built without the GEOS library, this
-// function will always fail, issuing a CPLE_NotSupported error.
+// the geometry operation.
 
     if (this_geom.isNULL() || !Rcpp::is<Rcpp::RawVector>(this_geom))
         return Rcpp::LogicalVector::create(NA_LOGICAL);
@@ -1888,10 +1879,7 @@ SEXP g_delaunay_triangulation(const Rcpp::RObject &geom,
                               bool quiet = false) {
 // Return a Delaunay triangulation of the vertices of the geometry.
 //
-// This function is built on the GEOS library, v3.4 or above. If OGR is built
-// without the GEOS library, this function will always fail, issuing a
-// CPLE_NotSupported error.
-
+// This function is built on the GEOS library, v3.4 or above.
     std::vector<int> geos_ver = getGEOSVersion();
     int geos_maj_ver = geos_ver[0];
     int geos_min_ver = geos_ver[1];
@@ -2044,6 +2032,73 @@ SEXP g_simplify(const Rcpp::RObject &geom, double tolerance,
     return wkb;
 }
 
+//' @noRd
+// [[Rcpp::export(name = ".g_unary_union")]]
+SEXP g_unary_union(const Rcpp::RObject &geom, bool as_iso,
+                   const std::string &byte_order, bool quiet) {
+// Returns the union of all components of a single geometry. Usually used to
+// convert a collection into the smallest set of polygons that cover the same
+// area.
+//
+// See https://postgis.net/docs/ST_UnaryUnion.html for more details.
+//
+// Requires GDAL >= 3.7
+#if GDAL_VERSION_NUM < GDAL_COMPUTE_VERSION(3, 7, 0)
+    Rcpp::stop("g_unary_union() requires GDAL >= 3.7");
+
+#else
+    if (geom.isNULL() || !Rcpp::is<Rcpp::RawVector>(geom))
+        return R_NilValue;
+
+    const Rcpp::RawVector geom_in(geom);
+    if (geom_in.size() == 0)
+        return R_NilValue;
+
+    OGRGeometryH hGeom = createGeomFromWkb(geom_in);
+    if (hGeom == nullptr) {
+        if (!quiet) {
+            Rcpp::warning(
+                "failed to create geometry object from WKB, NULL returned");
+        }
+        return R_NilValue;
+    }
+
+    OGRGeometryH hUnion = OGR_G_UnaryUnion(hGeom);
+
+    if (hUnion == nullptr) {
+        OGR_G_DestroyGeometry(hGeom);
+        if (!quiet) {
+            Rcpp::warning("OGR_G_UnaryUnion() gave NULL geometry");
+        }
+        return R_NilValue;
+    }
+
+    const int nWKBSize = OGR_G_WkbSize(hUnion);
+    if (!nWKBSize) {
+        OGR_G_DestroyGeometry(hGeom);
+        OGR_G_DestroyGeometry(hUnion);
+        if (!quiet) {
+            Rcpp::warning("failed to obtain WKB size of output geometry");
+        }
+        return R_NilValue;
+    }
+
+    Rcpp::RawVector wkb = Rcpp::no_init(nWKBSize);
+    bool result = exportGeomToWkb(hUnion, &wkb[0], as_iso, byte_order);
+    OGR_G_DestroyGeometry(hGeom);
+    OGR_G_DestroyGeometry(hUnion);
+    if (!result) {
+        if (!quiet) {
+           Rcpp::warning(
+                "failed to export WKB raw vector for output geometry");
+        }
+        return R_NilValue;
+    }
+
+    return wkb;
+#endif
+}
+
 
 // *** binary operations ***
 
@@ -2062,8 +2117,7 @@ SEXP g_intersection(const Rcpp::RObject &this_geom,
 // of the input geometries, call IsValid() before, otherwise the result might
 // be wrong.
 // This function is built on the GEOS library, check it for the definition of
-// the geometry operation. If OGR is built without the GEOS library, this
-// function will always fail, issuing a CPLE_NotSupported error.
+// the geometry operation.
 
     if (this_geom.isNULL() || !Rcpp::is<Rcpp::RawVector>(this_geom))
         return R_NilValue;
@@ -2152,8 +2206,7 @@ SEXP g_union(const Rcpp::RObject &this_geom,
 // of the input geometries, call IsValid() before, otherwise the result might
 // be wrong.
 // This function is built on the GEOS library, check it for the definition of
-// the geometry operation. If OGR is built without the GEOS library, this
-// function will always fail, issuing a CPLE_NotSupported error.
+// the geometry operation.
 
     if (this_geom.isNULL() || !Rcpp::is<Rcpp::RawVector>(this_geom))
         return R_NilValue;
@@ -2242,8 +2295,7 @@ SEXP g_difference(const Rcpp::RObject &this_geom,
 // of the input geometries, call IsValid() before, otherwise the result might
 // be wrong.
 // This function is built on the GEOS library, check it for the definition of
-// the geometry operation. If OGR is built without the GEOS library, this
-// function will always fail, issuing a CPLE_NotSupported error.
+// the geometry operation.
 
     if (this_geom.isNULL() || !Rcpp::is<Rcpp::RawVector>(this_geom))
         return R_NilValue;
@@ -2332,8 +2384,7 @@ SEXP g_sym_difference(const Rcpp::RObject &this_geom,
 // of the input geometries, call IsValid() before, otherwise the result might
 // be wrong.
 // This function is built on the GEOS library, check it for the definition of
-// the geometry operation. If OGR is built without the GEOS library, this
-// function will always fail, issuing a CPLE_NotSupported error.
+// the geometry operation.
 
     if (this_geom.isNULL() || !Rcpp::is<Rcpp::RawVector>(this_geom))
         return R_NilValue;
@@ -2422,8 +2473,7 @@ double g_distance(const Rcpp::RObject &this_geom,
 // Returns the shortest distance between the two geometries. The distance is
 // expressed into the same unit as the coordinates of the geometries.
 // This function is built on the GEOS library, check it for the definition of
-// the geometry operation. If OGR is built without the GEOS library, this
-// function will always fail, issuing a CPLE_NotSupported error.
+// the geometry operation.
 
     double ret = -1;
 
@@ -2670,8 +2720,7 @@ Rcpp::NumericVector g_centroid(const Rcpp::RObject &geom,
 // (polygons). SQL/MM-Part 3 defines the operation for surfaces and
 // multisurfaces (multipolygons).
 // This function is built on the GEOS library, check it for the definition of
-// the geometry operation. If OGR is built without the GEOS library, this
-// function will always fail, issuing a CPLE_NotSupported error.
+// the geometry operation.
 
     if (geom.isNULL() || !Rcpp::is<Rcpp::RawVector>(geom))
         return Rcpp::NumericVector::create(NA_REAL, NA_REAL);
@@ -2986,7 +3035,6 @@ Rcpp::NumericVector bbox_from_wkt(const std::string &wkt, double extend_x = 0,
 //' rectangle in both directions along the y-axis
 //' (results in `ymin = bbox[2] - extend_y`, `ymax = bbox[4] + extend_y`).
 //' @return Character string for an OGC WKT polygon.
-//' `NA` is returned if GDAL was built without the GEOS library.
 //'
 //' @seealso
 //' [bbox_from_wkt()], [g_buffer()]

@@ -2448,6 +2448,11 @@ has_geos <- function() {
 }
 
 #' @noRd
+.g_unary_union <- function(geom, as_iso, byte_order, quiet) {
+    .Call(`_gdalraster_g_unary_union`, geom, as_iso, byte_order, quiet)
+}
+
+#' @noRd
 .g_intersection <- function(this_geom, other_geom, as_iso = FALSE, byte_order = "LSB", quiet = FALSE) {
     .Call(`_gdalraster_g_intersection`, this_geom, other_geom, as_iso, byte_order, quiet)
 }
@@ -2543,7 +2548,6 @@ bbox_from_wkt <- function(wkt, extend_x = 0, extend_y = 0) {
 #' rectangle in both directions along the y-axis
 #' (results in `ymin = bbox[2] - extend_y`, `ymax = bbox[4] + extend_y`).
 #' @return Character string for an OGC WKT polygon.
-#' `NA` is returned if GDAL was built without the GEOS library.
 #'
 #' @seealso
 #' [bbox_from_wkt()], [g_buffer()]
