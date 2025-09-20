@@ -172,9 +172,10 @@ reference:
   - vsi_unlink_batch
 - subtitle: GDAL configuration
 - contents:
-  - gdal_formats
   - gdal_version
   - gdal_compute_version
+  - gdal_formats
+  - gdal_get_driver_md
   - get_cache_max
   - get_cache_used
   - set_cache_max

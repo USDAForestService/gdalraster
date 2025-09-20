@@ -1429,6 +1429,29 @@ validateCreationOptions <- function(format, options) {
     .Call(`_gdalraster_validateCreationOptions`, format, options)
 }
 
+#' Get metadata for a GDAL format driver
+#'
+#' `gdal_get_driver_md()` returns metadata for a driver.
+#'
+#' @param format Character string giving a format driver short name
+#' (e.g., `"GTiff"`).
+#' @param mdi_name Optional character string giving the name of a specific
+#' metadata item. Defaults to empty string (`""`) meaning fetch all metadata
+#' items.
+#' @returns Either a named list of metadata items and their values as character
+#' strings, or a single character string if `mdi_name` is specified. Returns
+#' `NULL` if no metadata items are found for the given inputs.
+#'
+#' @seealso
+#' [getCreationOptions()]
+#'
+#' @examples
+#' dmd <- gdal_get_driver_md("GTiff")
+#' str(dmd)
+gdal_get_driver_md <- function(format, mdi_name = "") {
+    .Call(`_gdalraster_gdal_get_driver_md`, format, mdi_name)
+}
+
 #' Add a file inside a new or existing ZIP file
 #' Mainly for create/append to Seek-Optimized ZIP
 #'

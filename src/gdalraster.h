@@ -265,6 +265,8 @@ std::string getCreationOptions(const std::string &format);
 bool validateCreationOptions(const std::string &format,
                              const Rcpp::CharacterVector &options);
 
+SEXP gdal_get_driver_md(const std::string &format, const std::string &mdi_name);
+
 bool copyDatasetFiles(const Rcpp::CharacterVector &new_filename,
                       const Rcpp::CharacterVector &old_filename,
                       const std::string &format);
