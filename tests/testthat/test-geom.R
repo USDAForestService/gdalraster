@@ -1285,6 +1285,8 @@ test_that("make_valid works", {
 })
 
 test_that("normalize works", {
+    skip_if(gdal_version_num() < gdal_compute_version(3, 3, 0))
+
     g <- "POLYGON ((0 1,1 1,1 0,0 0,0 1))"
     expect_no_error(g_normalize(g))
     expect_no_error(g_normalize(g, as_wkb = NULL, as_iso = NULL,
