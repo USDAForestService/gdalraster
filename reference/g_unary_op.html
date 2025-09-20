@@ -112,6 +112,14 @@ WKB raw vectors, or a character vector containing one or more WKT strings.</p>
 <span>  as_iso <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  byte_order <span class="op">=</span> <span class="st">"LSB"</span>,</span>
 <span>  quiet <span class="op">=</span> <span class="cn">FALSE</span></span>
+<span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu">g_unary_union</span><span class="op">(</span></span>
+<span>  <span class="va">geom</span>,</span>
+<span>  as_wkb <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  as_iso <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  byte_order <span class="op">=</span> <span class="st">"LSB"</span>,</span>
+<span>  quiet <span class="op">=</span> <span class="cn">FALSE</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
 
@@ -202,6 +210,10 @@ in the GDAL API. Requires GEOS &gt;= 3.4.</p>
 <p><code>g_simplify()</code> computes a simplified geometry. By default, it simplifies
 the input geometries while preserving topology (see Note). Wrapper of
 <code>OGR_G_Simplify()</code> / <code>OGR_G_SimplifyPreserveTopology()</code> in the GDAL API.</p>
+<p><code>g_unary_union()</code> returns the union of all components of a single geometry.
+Usually used to convert a collection into the smallest set of polygons that
+cover the same area. See <a href="https://postgis.net/docs/ST_UnaryUnion.html" class="external-link">https://postgis.net/docs/ST_UnaryUnion.html</a>
+for more details. Requires GDAL &gt;= 3.7.</p>
     </div>
     <div class="section level2">
     <h2 id="note">Note<a class="anchor" aria-label="anchor" href="#note"></a></h2>
@@ -258,6 +270,14 @@ polygons.</p>
 <span class="r-in"><span><span class="va">g5</span> <span class="op">&lt;-</span> <span class="st">"LINESTRING(0 0,1 1,10 0)"</span></span></span>
 <span class="r-in"><span><span class="fu">g_simplify</span><span class="op">(</span><span class="va">g5</span>, tolerance <span class="op">=</span> <span class="fl">5</span>, as_wkb <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] "LINESTRING (0 0,10 0)"</span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># g_unary_union() requires GDAL &gt;= 3.7</span></span></span>
+<span class="r-in"><span><span class="kw">if</span> <span class="op">(</span><span class="fu"><a href="gdal_version.html">gdal_version_num</a></span><span class="op">(</span><span class="op">)</span> <span class="op">&gt;=</span> <span class="fu"><a href="gdal_compute_version.html">gdal_compute_version</a></span><span class="op">(</span><span class="fl">3</span>, <span class="fl">7</span>, <span class="fl">0</span><span class="op">)</span><span class="op">)</span> <span class="op">{</span></span></span>
+<span class="r-in"><span>  <span class="va">g6</span> <span class="op">&lt;-</span> <span class="st">"GEOMETRYCOLLECTION(POINT(0.5 0.5), POLYGON((0 0,0 1,1 1,1 0,0 0)),</span></span></span>
+<span class="r-in"><span><span class="st">         POLYGON((1 0,1 1,2 1,2 0,1 0)))"</span></span></span>
+<span class="r-in"><span>  <span class="fu">g_unary_union</span><span class="op">(</span><span class="va">g6</span>, as_wkb <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="op">}</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "POLYGON ((0 1,1 1,2 1,2 0,1 0,0 0,0 1))"</span>
 </code></pre></div>
     </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
