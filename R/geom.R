@@ -911,8 +911,8 @@ g_geom_count <- function(geom, quiet = FALSE) {
 #'
 #' `g_normalize()` organizes the elements, rings, and coordinate order of
 #' geometries in a consistent way, so that geometries that represent the same
-#' object can be easily compared. Requires GDAL >= 3.3. Normalization ensures
-#' the following:
+#' object can be easily compared. Wrapper of `OGR_G_Normalize()` in the GDAL
+#' API. Requires GDAL >= 3.3. Normalization ensures the following:
 #'
 #' * Lines are oriented to have smallest coordinate first (apart from duplicate
 #' endpoints)

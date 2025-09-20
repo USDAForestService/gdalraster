@@ -116,8 +116,8 @@ categorized.
 
 \code{g_normalize()} organizes the elements, rings, and coordinate order of
 geometries in a consistent way, so that geometries that represent the same
-object can be easily compared. Requires GDAL >= 3.3. Normalization ensures
-the following:
+object can be easily compared. Wrapper of \code{OGR_G_Normalize()} in the GDAL
+API. Requires GDAL >= 3.3. Normalization ensures the following:
 \itemize{
 \item Lines are oriented to have smallest coordinate first (apart from duplicate
 endpoints)
