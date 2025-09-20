@@ -1,4 +1,6 @@
-# gdalraster 2.2.1.9015 (dev)
+# gdalraster 2.2.1.9016 (dev)
+
+* add `gdal_get_driver_md()`: retrieve driver metadata (#795) (2025-09-19)
 
 * add `g_geom_count()` and `g_get_geom()` (#796) (2025-09-19)
 
