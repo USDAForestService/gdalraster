@@ -2333,6 +2333,11 @@ has_geos <- function() {
 }
 
 #' @noRd
+.g_normalize <- function(geom, as_iso, byte_order, quiet) {
+    .Call(`_gdalraster_g_normalize`, geom, as_iso, byte_order, quiet)
+}
+
+#' @noRd
 .g_set_3D <- function(geom, is_3d, as_iso, byte_order, quiet) {
     .Call(`_gdalraster_g_set_3D`, geom, is_3d, as_iso, byte_order, quiet)
 }

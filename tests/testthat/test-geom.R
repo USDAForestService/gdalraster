@@ -1284,6 +1284,31 @@ test_that("make_valid works", {
     expect_true(g_equals(g_wk2wk(wkb_list[[4]]), expected_wkt4))
 })
 
+test_that("normalize works", {
+    g <- "POLYGON ((0 1,1 1,1 0,0 0,0 1))"
+    expect_no_error(g_normalize(g))
+    expect_no_error(g_normalize(g, as_wkb = NULL, as_iso = NULL,
+                              byte_order = NULL, quiet = NULL))
+    g_norm <- g_normalize(g, as_wkb = FALSE)
+    g_expect <- "POLYGON ((0 0,0 1,1 1,1 0,0 0))"
+    expect_equal(g_norm, g_expect)
+    # wkb input
+    g_norm <- g_normalize(g_wk2wk(g), as_wkb = FALSE)
+    expect_equal(g_norm, g_expect)
+    # vector/list input
+    g_expect <- c(g_expect, g_expect, NA)
+    # character vector of wkt input
+    expect_warning(g_norm <- g_normalize(c(g, g, NA), as_wkb = FALSE,
+                                         quiet = TRUE)) |>
+        expect_warning()  # for as_wkb = FALSE
+    expect_equal(g_norm, g_expect)
+    # list of wkb input
+    expect_warning(g_norm <- g_normalize(g_wk2wk(c(g, g, NA)), as_wkb = FALSE,
+                                         quiet = TRUE)) |>
+        expect_warning()  # for as_wkb = FALSE
+    expect_equal(g_norm, g_expect)
+})
+
 test_that("g_set_3D / g_set_measured work", {
     pt_xyzm <- g_create("POINT", c(1, 9, 100, 2000))
     expect_true(g_is_3D(pt_xyzm))
