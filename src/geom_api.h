@@ -117,6 +117,9 @@ SEXP g_simplify(const Rcpp::RObject &geom, double tolerance,
                 bool preserve_topology, bool as_iso,
                 const std::string &byte_order, bool quiet);
 
+SEXP g_unary_union(const Rcpp::RObject &geom, bool as_iso,
+                   const std::string &byte_order, bool quiet);
+
 SEXP g_intersection(const Rcpp::RObject &this_geom,
                     const Rcpp::RObject &other_geom,
                     bool as_iso, const std::string &byte_order,

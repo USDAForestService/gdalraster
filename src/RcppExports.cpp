@@ -1499,6 +1499,20 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// g_unary_union
+SEXP g_unary_union(const Rcpp::RObject& geom, bool as_iso, const std::string& byte_order, bool quiet);
+RcppExport SEXP _gdalraster_g_unary_union(SEXP geomSEXP, SEXP as_isoSEXP, SEXP byte_orderSEXP, SEXP quietSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< const Rcpp::RObject& >::type geom(geomSEXP);
+    Rcpp::traits::input_parameter< bool >::type as_iso(as_isoSEXP);
+    Rcpp::traits::input_parameter< const std::string& >::type byte_order(byte_orderSEXP);
+    Rcpp::traits::input_parameter< bool >::type quiet(quietSEXP);
+    rcpp_result_gen = Rcpp::wrap(g_unary_union(geom, as_iso, byte_order, quiet));
+    return rcpp_result_gen;
+END_RCPP
+}
 // g_intersection
 SEXP g_intersection(const Rcpp::RObject& this_geom, const Rcpp::RObject& other_geom, bool as_iso, const std::string& byte_order, bool quiet);
 RcppExport SEXP _gdalraster_g_intersection(SEXP this_geomSEXP, SEXP other_geomSEXP, SEXP as_isoSEXP, SEXP byte_orderSEXP, SEXP quietSEXP) {
@@ -2378,6 +2392,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_gdalraster_g_convex_hull", (DL_FUNC) &_gdalraster_g_convex_hull, 4},
     {"_gdalraster_g_delaunay_triangulation", (DL_FUNC) &_gdalraster_g_delaunay_triangulation, 6},
     {"_gdalraster_g_simplify", (DL_FUNC) &_gdalraster_g_simplify, 6},
+    {"_gdalraster_g_unary_union", (DL_FUNC) &_gdalraster_g_unary_union, 4},
     {"_gdalraster_g_intersection", (DL_FUNC) &_gdalraster_g_intersection, 5},
     {"_gdalraster_g_union", (DL_FUNC) &_gdalraster_g_union, 5},
     {"_gdalraster_g_difference", (DL_FUNC) &_gdalraster_g_difference, 5},

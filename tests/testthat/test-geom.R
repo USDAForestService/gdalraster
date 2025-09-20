@@ -1099,6 +1099,40 @@ test_that("unary ops return correct values", {
                                         as_wkb = FALSE)) |>
         expect_warning()  # for as_wkb = FALSE
     expect_equal(g_simp, g_expect)
+
+    # g_unary_union - requires GDAL >= 3.7
+    skip_if(gdal_version_num() < gdal_compute_version(3, 7, 0))
+
+    # from gdal/autotest/cpp/test_ogr_geos.cpp:
+    # CheckEqualGeometries() doesn't work with GEOS 3.6 with the above
+    # expected polygon, because of the order of the nodes, and for some
+    # reason OGR_G_Normalize() in CheckEqualGeometries() doesn't fix this,
+    # so just fallback to bounding box and area comparison
+    g1 <- "GEOMETRYCOLLECTION(POINT(0.5 0.5), POLYGON((0 0,0 1,1 1,1 0,0 0)), POLYGON((1 0,1 1,2 1,2 0,1 0)))"
+    g_uu <- g_unary_union(g1, as_wkb = FALSE)
+    g_expect <- "POLYGON ((0 1,1 1,2 1,2 0,1 0,0 0,0 1))"
+    expect_equal(g_area(g_uu), g_area(g_expect), tolerance = 0.1)
+    # wkb input
+    g_uu <- g_unary_union(g_wk2wk(g1), as_wkb = FALSE)
+    expect_equal(g_area(g_uu), g_area(g_expect), tolerance = 0.1)
+    # same but testing defaults in case any arguments are nulled out
+    g_uu <- g_unary_union(g_wk2wk(g1), as_wkb = FALSE, as_iso = NULL,
+                          byte_order = NULL, quiet = NULL)
+    expect_equal(g_area(g_uu), g_area(g_expect), tolerance = 0.1)
+    # empty raw vector
+    expect_true(is.null(g_unary_union(raw(0))))
+    # vector/list input
+    # character vector of wkt input
+    wkt_vec <- c(g1, g1, NA)
+    expect_warning(g_uu <- g_unary_union(wkt_vec, as_wkb = FALSE)) |>
+        expect_warning()  # input vector element is NA
+    expect_equal(g_area(g_uu), c(g_area(g_expect), g_area(g_expect), NA)) |>
+        expect_warning()  # input vector element is NA
+    # list of wkb input
+    expect_warning(wkb_list <- g_wk2wk(wkt_vec))
+    expect_warning(g_uu <- g_unary_union(wkb_list, as_wkb = FALSE))
+    expect_equal(g_area(g_uu), c(g_area(g_expect), g_area(g_expect), NA)) |>
+        expect_warning()  # input vector element is NA
 })
 
 test_that("geometry measures are correct", {

@@ -7,6 +7,7 @@
 \alias{g_convex_hull}
 \alias{g_delaunay_triangulation}
 \alias{g_simplify}
+\alias{g_unary_union}
 \title{Unary operations on WKB or WKT geometries}
 \usage{
 g_buffer(
@@ -49,6 +50,14 @@ g_simplify(
   geom,
   tolerance,
   preserve_topology = TRUE,
+  as_wkb = TRUE,
+  as_iso = FALSE,
+  byte_order = "LSB",
+  quiet = FALSE
+)
+
+g_unary_union(
+  geom,
   as_wkb = TRUE,
   as_iso = FALSE,
   byte_order = "LSB",
@@ -128,6 +137,11 @@ in the GDAL API. Requires GEOS >= 3.4.
 \code{g_simplify()} computes a simplified geometry. By default, it simplifies
 the input geometries while preserving topology (see Note). Wrapper of
 \code{OGR_G_Simplify()} / \code{OGR_G_SimplifyPreserveTopology()} in the GDAL API.
+
+\code{g_unary_union()} returns the union of all components of a single geometry.
+Usually used to convert a collection into the smallest set of polygons that
+cover the same area. See \url{https://postgis.net/docs/ST_UnaryUnion.html}
+for more details. Requires GDAL >= 3.7.
 }
 \note{
 Definitions of these operations are given in the GEOS documentation
@@ -187,4 +201,11 @@ g_delaunay_triangulation(g4, as_wkb = FALSE)
 
 g5 <- "LINESTRING(0 0,1 1,10 0)"
 g_simplify(g5, tolerance = 5, as_wkb = FALSE)
+
+# g_unary_union() requires GDAL >= 3.7
+if (gdal_version_num() >= gdal_compute_version(3, 7, 0)) {
+  g6 <- "GEOMETRYCOLLECTION(POINT(0.5 0.5), POLYGON((0 0,0 1,1 1,1 0,0 0)),
+         POLYGON((1 0,1 1,2 1,2 0,1 0)))"
+  g_unary_union(g6, as_wkb = FALSE)
+}
 }

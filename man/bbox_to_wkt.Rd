@@ -20,7 +20,6 @@ rectangle in both directions along the y-axis
 }
 \value{
 Character string for an OGC WKT polygon.
-\code{NA} is returned if GDAL was built without the GEOS library.
 }
 \description{
 \code{bbox_to_wkt()} returns a WKT POLYGON string for the given bounding box.
