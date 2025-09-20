@@ -475,6 +475,11 @@ test_that("g_factory functions work", {
     expect_no_error(g_coll <- g_add_geom(mult_pt2, g_coll))
     expect_true(g_is_valid(g_coll))
 
+    # get subgeometry from container
+    expect_no_error(g_sub2 <- g_get_geom(g_coll, 2))
+    expect_equal(g_geom_count(g_sub2), 2)  # mult_pt2
+    expect_true(g_equals(g_get_geom(g_sub2, 1), "POINT(9 1)"))
+
     # polygon to polygon (add inner ring)
     container <- "POLYGON((0 0,0 10,10 10,0 0),(0.25 0.5,1 1.1,0.5 1,0.25 0.5))"
     # sub_geom <- "POLYGON((5.25 5.5,6 6.1,5.5 6,5.25 5.5))"
@@ -485,7 +490,19 @@ test_that("g_factory functions work", {
     wkt_expect <- "POLYGON((0 0,0 10,10 10,0 0),(0.25 0.5,1.0 1.1,0.5 1.0,0.25 0.5),(5.25 5.5,6.0 6.1,5.5 6.0,5.25 5.5))"
     empty_expected <- g_difference(new_wkb, wkt_expect)
     expect_true(g_is_empty(empty_expected))
-    # expect_true(g_equals(new_wkb, wkt_expect))
+
+    container <- new_wkb
+    # get rings of a polygon
+    # exterior
+    new_wkb <- g_get_geom(container, 1)
+    wkt_expect <- "POLYGON((0 0,0 10,10 10,0 0))"
+    empty_expected <- g_difference(new_wkb, wkt_expect)
+    expect_true(g_is_empty(empty_expected))
+    # last interior
+    new_wkb <- g_get_geom(container, 3)
+    wkt_expect <- "POLYGON((5.25 5.5,6.0 6.1,5.5 6.0,5.25 5.5))"
+    empty_expected <- g_difference(new_wkb, wkt_expect)
+    expect_true(g_is_empty(empty_expected))
 
     # multipoint with an empty point inside
     geom <- "MULTIPOINT(0 1)"
@@ -813,6 +830,14 @@ test_that("geometry properties are correct", {
     res <- g_envelope(g1, as_3d = TRUE)
     names(res) <- NULL
     expect_equal(res, c(0, 10, 0, 10, 0, 0))
+
+    # g_geom_count
+    expect_equal(g_geom_count(g1), 1)
+    expect_equal(g_geom_count(g_wk2wk(g1)), 1)
+    expect_equal(g_geom_count(wkt_3d), 2)
+    expect_equal(g_geom_count(list(g_wk2wk(g1), g_wk2wk(wkt_3d))), c(1, 2))
+    expect_equal(g_geom_count(c(g1, wkt_3d)), c(1, 2))
+    expect_equal(g_geom_count("GEOMETRYCOLLECTION EMPTY"), 0)
 
     # g_summary requires GDAL >= 3.7
     skip_if(gdal_version_num() < 3070000 )

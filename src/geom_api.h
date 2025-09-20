@@ -41,6 +41,10 @@ Rcpp::RawVector g_add_geom(const Rcpp::RawVector &sub_geom,
                            const Rcpp::RawVector &container,
                            bool as_iso, const std::string &byte_order);
 
+int g_geom_count(const Rcpp::RObject &geom, bool quiet);
+SEXP g_get_geom(const Rcpp::RawVector &container, int sub_geom_idx,
+                bool as_iso, const std::string &byte_order);
+
 Rcpp::LogicalVector g_is_valid(const Rcpp::RObject &geom, bool quiet);
 SEXP g_make_valid(const Rcpp::RObject &geom, const std::string &method,
                   bool keep_collapsed, bool as_iso,

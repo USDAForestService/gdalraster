@@ -4,7 +4,8 @@
 \alias{g_factory}
 \alias{g_create}
 \alias{g_add_geom}
-\title{Create WKB/WKT geometries from vertices, and add sub-geometries}
+\alias{g_get_geom}
+\title{Create WKB/WKT geometries from vertices, and add/get sub-geometries}
 \usage{
 g_create(
   geom_type,
@@ -17,6 +18,14 @@ g_create(
 g_add_geom(
   sub_geom,
   container,
+  as_wkb = TRUE,
+  as_iso = FALSE,
+  byte_order = "LSB"
+)
+
+g_get_geom(
+  container,
+  sub_geom_idx,
   as_wkb = TRUE,
   as_iso = FALSE,
   byte_order = "LSB"
@@ -46,6 +55,9 @@ WKB. One of \code{"LSB"} (the default) or \code{"MSB"} (uncommon).}
 
 \item{container}{Either a raw vector of WKB or a character string of WKT for
 a container geometry type.}
+
+\item{sub_geom_idx}{An integer value giving the 1-based index of a
+sub-geometry (numeric values will be coerced to integer by truncation).}
 }
 \value{
 A geometry as WKB raw vector by default, or a WKT string if
@@ -62,30 +74,35 @@ These functions use the GEOS library via GDAL headers.
 
 \code{g_create()} creates a geometry object from the given point(s) and returns
 a raw vector of WKB (the default) or a character string of WKT. Currently
-supports creating Point, MultiPoint, LineString, Polygon, and
-GeometryCollection.
-If multiple input points are given for creating Point type, then multiple
+supports creating \code{Point}, \code{MultiPoint}, \code{LineString}, \code{Polygon}, and
+\code{GeometryCollection.}
+If multiple input points are given for creating \code{Point} type, then multiple
 geometries will be returned as a list of WKB raw vectors, or character
 vector of WKT strings (if \code{as_wkb = FALSE}). Otherwise, a single geometry
-is created from the input points. Only an empty GeometryCollection can be
+is created from the input points. Only an empty \code{GeometryCollection} can be
 created with this function, for subsequent use with \code{g_add_geom()}.
 
 \code{g_add_geom()} adds a geometry to a geometry container, e.g.,
-Polygon to Polygon (to add an interior ring), Point to MultiPoint,
-LineString to MultiLineString, Polygon to MultiPolygon, or mixed
-geometry types to a GeometryCollection. Returns a new geometry, i.e,
+\code{Polygon} to \code{Polygon} (to add an interior ring), \code{Point} to \code{MultiPoint},
+\code{LineString} to \code{MultiLineString}, \code{Polygon} to \code{MultiPolygon}, or mixed
+geometry types to a \code{GeometryCollection}. Returns a new geometry, i.e,
 the container geometry is not modified.
+
+\code{g_get_geom()} fetches a geometry from a geometry container (1-based
+indexing). For a polygon, requesting the first sub-geometry returns the
+exterior ring (\code{sub_geom_idx = 1}), and the interior rings are returned for
+\code{sub_geom_idx > 1}.
 }
 \note{
-A POLYGON can be created for a single ring which will be the
-exterior ring. Additional POLYGONs can be created and added to an
-existing POLYGON with \code{g_add_geom()}. These will become interior rings.
+A \code{POLYGON} can be created for a single ring which will be the
+exterior ring. Additional \code{POLYGON}s can be created and added to an
+existing \code{POLYGON} with \code{g_add_geom()}. These will become interior rings.
 Alternatively, an empty polygon can be created with \code{g_create("POLYGON")},
-followed by creation and addition of POLYGONs as subgeometries. In that
-case, the first added POLYGON will be the exterior ring. The next ones will
+followed by creation and addition of \code{POLYGON}s as sub-geometries. In that
+case, the first added \code{POLYGON} will be the exterior ring. The next ones will
 be the interior rings.
 
-Only an empty GeometryCollection can be created with \code{g_create()}, which
+Only an empty \code{GeometryCollection} can be created with \code{g_create()}, which
 can then be used as a container with \code{g_add_geom()}. If given, input points
 will be ignored by \code{g_create()} if \code{geom_type = "GEOMETRYCOLLECTION"}.
 }
@@ -100,7 +117,7 @@ g_create("POINT", c(1, 2), as_wkb = FALSE)
 g_create("POINT", c(1, 2)) |> g_wk2wk()
 g_create("POINT", c(1, 2), as_wkb = FALSE) |> g_wk2wk()
 
-# create multipoint from a matrix of xyz points
+# create MultiPoint from a matrix of xyz points
 x <- c(9, 1)
 y <- c(1, 9)
 z <- c(0, 10)
@@ -109,15 +126,21 @@ mp <- g_create("MULTIPOINT", pts)
 g_wk2wk(mp)
 g_wk2wk(mp, as_iso = TRUE)
 
-# create an empty container and add subgeometries
+# create an empty container and add sub-geometries
 mp2 <- g_create("MULTIPOINT")
 mp2 <- g_create("POINT", c(11, 2)) |> g_add_geom(mp2)
 mp2 <- g_create("POINT", c(12, 3)) |> g_add_geom(mp2)
 g_wk2wk(mp2)
 
-# plot WKT strings or a list of WKB raw vectors with wk::wk_plot()
-pts <- c(0, 0, 3, 0, 3, 4, 0, 0)
+# get sub-geometry from container
+g_get_geom(mp2, 2, as_wkb = FALSE)
+
+# plot WKT strings or a list of WKB raw vectors
+pts <- c(0, 0,
+         3, 0,
+         3, 4,
+         0, 0)
 m <- matrix(pts, ncol = 2, byrow = TRUE)
-g <- g_create("POLYGON", m, as_wkb = FALSE)
-wk::wkt(g) |> wk::wk_plot()
+(g <- g_create("POLYGON", m, as_wkb = FALSE))
+plot_geom(g)
 }

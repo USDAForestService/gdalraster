@@ -2290,6 +2290,16 @@ has_geos <- function() {
 }
 
 #' @noRd
+.g_geom_count <- function(geom, quiet = FALSE) {
+    .Call(`_gdalraster_g_geom_count`, geom, quiet)
+}
+
+#' @noRd
+.g_get_geom <- function(container, sub_geom_idx, as_iso, byte_order) {
+    .Call(`_gdalraster_g_get_geom`, container, sub_geom_idx, as_iso, byte_order)
+}
+
+#' @noRd
 .g_is_valid <- function(geom, quiet = FALSE) {
     .Call(`_gdalraster_g_is_valid`, geom, quiet)
 }

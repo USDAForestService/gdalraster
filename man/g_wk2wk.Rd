@@ -35,9 +35,9 @@ or a character vector of WKT strings.
 }
 \note{
 With \code{as_iso = FALSE} (the default), geometries are exported as extended
-dimension (Z) WKB/WKT for types Point, LineString, Polygon, MultiPoint,
-MultiLineString, MultiPolygon and GeometryCollection. For other geometry
-types, it is equivalent to ISO.
+dimension (Z) WKB/WKT for types \code{Point}, \code{LineString}, \code{Polygon},
+\code{MultiPoint}, \code{MultiLineString}, \code{MultiPolygon} and \code{GeometryCollection}.
+For other geometry types, it is equivalent to ISO.
 
 When the return value is a list of WKB raw vectors, an element in the
 returned list will contain \code{NULL} (and a warning emitted) if the

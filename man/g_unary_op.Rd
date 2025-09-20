@@ -137,14 +137,14 @@ copied here.
 \code{g_boundary()} computes the "boundary" as defined by the DE9IM
 (\url{https://en.wikipedia.org/wiki/DE-9IM}):
 \itemize{
-\item the boundary of a Polygon is the set of linear rings dividing the
+\item the boundary of a \code{Polygon} is the set of linear rings dividing the
 exterior from the interior
-\item the boundary of a LineString is the two end points
-\item the boundary of a Point/MultiPoint is defined as empty
+\item the boundary of a \code{LineString} is the two end points
+\item the boundary of a \code{Point}/\code{MultiPoint} is defined as empty
 }
 
 \code{g_buffer()} always returns a polygonal result. The negative or
-zero-distance buffer of lines and points is always an empty Polygon.
+zero-distance buffer of lines and points is always an empty \code{Polygon}.
 
 \code{g_convex_hull()} uses the Graham Scan algorithm.
 
@@ -155,7 +155,7 @@ Simplifies a geometry, ensuring that the result is a valid geometry having
 the same dimension and number of components as the input. The simplification
 uses a maximum distance difference algorithm similar to the one used in the
 Douglas-Peucker algorithm. In particular, if the input is an areal geometry
-(Polygon or MultiPolygon), the result has the same number of shells and
+(\code{Polygon} or \code{MultiPolygon}), the result has the same number of shells and
 holes (rings) as the input, in the same order. The result rings touch at no
 more than the number of touching point in the input (although they may touch
 at fewer points).
@@ -165,11 +165,11 @@ that any polygonal geometries returned are valid. Simple lines are not
 guaranteed to remain simple after simplification. Note that in general D-P
 does not preserve topology - e.g. polygons can be split, collapse to lines
 or disappear, holes can be created or disappear, and lines can cross. To
-simplify geometry while preserving topology use TopologyPreservingSimplifier.
-(However, using D-P is significantly faster).
+simplify geometry while preserving topology use
+\code{TopologyPreservingSimplifier}. (However, using D-P is significantly faster.)
 }
 
-N.B., \code{preserve_topology = TRUE} does not preserve boundaries shared between
+\code{preserve_topology = TRUE} does not preserve boundaries shared between
 polygons.
 }
 \examples{

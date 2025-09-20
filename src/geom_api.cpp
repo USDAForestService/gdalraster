@@ -479,13 +479,13 @@ Rcpp::RawVector g_add_geom(const Rcpp::RawVector &sub_geom,
 
     hSubGeom = createGeomFromWkb(sub_geom);
     if (hSubGeom == nullptr) {
-        Rcpp::stop("failed to create geometry object from WKB, NA returned");
+        Rcpp::stop("failed to create object from 'sub_geom' WKB");
     }
 
     hGeom = createGeomFromWkb(container);
     if (hGeom == nullptr) {
         OGR_G_DestroyGeometry(hSubGeom);
-        Rcpp::stop("failed to create geometry object from WKB, NA returned");
+        Rcpp::stop("failed to create object from 'container' WKB");
     }
 
     const char *save_opt = nullptr;
@@ -537,6 +537,108 @@ Rcpp::RawVector g_add_geom(const Rcpp::RawVector &sub_geom,
     OGR_G_DestroyGeometry(hGeom);
     if (!result)
         Rcpp::stop("failed to export WKB raw vector for output geometry");
+
+    return wkb;
+}
+
+//' @noRd
+// [[Rcpp::export(name = ".g_geom_count")]]
+int g_geom_count(const Rcpp::RObject &geom, bool quiet = false) {
+// Fetch the number of elements in a geometry or number of geometries in
+// container. Only geometries of type wkbPolygon[25D], wkbMultiPoint[25D],
+// wkbMultiLineString[25D], wkbMultiPolygon[25D] or wkbGeometryCollection[25D]
+// may return a valid value. Other geometry types will silently return 0.
+
+    int ret = 0;
+
+    if (geom.isNULL() || !Rcpp::is<Rcpp::RawVector>(geom))
+        return ret;
+
+    const Rcpp::RawVector geom_in(geom);
+    if (geom_in.size() == 0)
+        return ret;
+
+    OGRGeometryH hGeom = createGeomFromWkb(geom_in);
+
+    if (hGeom == nullptr) {
+        if (!quiet) {
+            Rcpp::warning(
+                "failed to create geometry object from WKB, NA returned");
+        }
+        return NA_INTEGER;
+    }
+
+    ret = OGR_G_GetGeometryCount(hGeom);
+    OGR_G_DestroyGeometry(hGeom);
+    return ret;
+}
+
+//' @noRd
+// [[Rcpp::export(name = ".g_get_geom")]]
+SEXP g_get_geom(const Rcpp::RawVector &container, int sub_geom_idx,
+                bool as_iso, const std::string &byte_order) {
+// Fetch geometry from a geometry container. For a polygon,
+// OGR_G_GetGeometryRef(iSubGeom) returns the exterior ring if iSubGeom == 0,
+// and the interior rings for iSubGeom > 0.
+
+    if (container.isNULL() || !Rcpp::is<Rcpp::RawVector>(container))
+        return R_NilValue;
+
+    const Rcpp::RawVector geom_in(container);
+    if (geom_in.size() == 0)
+        return geom_in;
+
+    OGRGeometryH hGeom = createGeomFromWkb(geom_in);
+    if (hGeom == nullptr) {
+        Rcpp::warning(
+            "failed to create geometry object from WKB, NULL returned");
+        return R_NilValue;
+    }
+
+    if (sub_geom_idx < 0)
+        Rcpp::stop("'sub_geom_idx' must be >= 0");
+
+    OGRGeometryH hSubGeom = nullptr;
+    bool destroy_sub_geom = false;
+    hSubGeom = OGR_G_GetGeometryRef(hGeom, sub_geom_idx);
+    if (hSubGeom == nullptr) {
+        OGR_G_DestroyGeometry(hGeom);
+        Rcpp::warning("failed to get sub-geometry reference");
+        return R_NilValue;
+    }
+
+    OGRwkbGeometryType container_type = OGR_G_GetGeometryType(hGeom);
+    OGRwkbGeometryType sub_geom_type = OGR_G_GetGeometryType(hSubGeom);
+    if (wkbFlatten(container_type) == wkbPolygon &&
+            (wkbFlatten(sub_geom_type) == wkbLineString ||
+             wkbFlatten(sub_geom_type) == wkbLinearRing)) {
+
+        hSubGeom = OGR_G_ForceTo(OGR_G_Clone(hSubGeom), container_type,
+                                 nullptr);
+
+        destroy_sub_geom = true;
+    }
+
+    const int nWKBSize = OGR_G_WkbSize(hSubGeom);
+    if (!nWKBSize) {
+        OGR_G_DestroyGeometry(hGeom);
+        if (destroy_sub_geom)
+            OGR_G_DestroyGeometry(hSubGeom);
+
+        Rcpp::warning("failed to obtain WKB size of output geometry");
+        return R_NilValue;
+    }
+
+    Rcpp::RawVector wkb = Rcpp::no_init(nWKBSize);
+    bool result = exportGeomToWkb(hSubGeom, &wkb[0], as_iso, byte_order);
+    OGR_G_DestroyGeometry(hGeom);
+    if (destroy_sub_geom)
+        OGR_G_DestroyGeometry(hSubGeom);
+
+    if (!result) {
+        Rcpp::warning("failed to export WKB raw vector for output geometry");
+        return R_NilValue;
+    }
 
     return wkb;
 }
