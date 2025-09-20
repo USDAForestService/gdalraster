@@ -2587,6 +2587,11 @@ g_geodesic_length <- function(geom, srs, traditional_gis_order = TRUE,
 #' the input geometries while preserving topology (see Note). Wrapper of
 #' `OGR_G_Simplify()` / `OGR_G_SimplifyPreserveTopology()` in the GDAL API.
 #'
+#' `g_unary_union()` returns the union of all components of a single geometry.
+#' Usually used to convert a collection into the smallest set of polygons that
+#' cover the same area. See \url{https://postgis.net/docs/ST_UnaryUnion.html}
+#' for more details. Requires GDAL >= 3.7.
+#'
 #' @param geom Either a raw vector of WKB or list of raw vectors, or a
 #' character vector containing one or more WKT strings.
 #' @param dist Numeric buffer distance in units of the input `geom`.
@@ -2657,7 +2662,6 @@ g_geodesic_length <- function(geom, srs, traditional_gis_order = TRUE,
 #' simplify geometry while preserving topology use
 #' `TopologyPreservingSimplifier`. (However, using D-P is significantly faster.)
 #'
-#' @note
 #' `preserve_topology = TRUE` does not preserve boundaries shared between
 #' polygons.
 #'
@@ -2676,6 +2680,13 @@ g_geodesic_length <- function(geom, srs, traditional_gis_order = TRUE,
 #'
 #' g5 <- "LINESTRING(0 0,1 1,10 0)"
 #' g_simplify(g5, tolerance = 5, as_wkb = FALSE)
+#'
+#' # g_unary_union() requires GDAL >= 3.7
+#' if (gdal_version_num() >= gdal_compute_version(3, 7, 0)) {
+#'   g6 <- "GEOMETRYCOLLECTION(POINT(0.5 0.5), POLYGON((0 0,0 1,1 1,1 0,0 0)),
+#'          POLYGON((1 0,1 1,2 1,2 0,1 0)))"
+#'   g_unary_union(g6, as_wkb = FALSE)
+#' }
 #' @export
 g_buffer <- function(geom, dist, quad_segs = 30L, as_wkb = TRUE,
                      as_iso = FALSE, byte_order = "LSB", quiet = FALSE) {
@@ -2965,6 +2976,58 @@ g_simplify <- function(geom, tolerance, preserve_topology = TRUE,
         } else {
             wkb <- lapply(g_wk2wk(geom), .g_simplify, tolerance,
                           preserve_topology, as_iso, byte_order, quiet)
+        }
+    } else {
+        stop("'geom' must be a character vector, raw vector, or list",
+             call. = FALSE)
+    }
+
+    if (as_wkb)
+        return(wkb)
+    else
+        return(g_wk2wk(wkb, as_iso))
+}
+
+#' @name g_unary_op
+#' @export
+g_unary_union <- function(geom, as_wkb = TRUE, as_iso = FALSE,
+                          byte_order = "LSB", quiet = FALSE) {
+
+    # as_wkb
+    if (is.null(as_wkb))
+        as_wkb <- TRUE
+    if (!is.logical(as_wkb) || length(as_wkb) > 1)
+        stop("'as_wkb' must be a single logical value", call. = FALSE)
+    # as_iso
+    if (is.null(as_iso))
+        as_iso <- FALSE
+    if (!is.logical(as_iso) || length(as_iso) > 1)
+        stop("'as_iso' must be a single logical value", call. = FALSE)
+    # byte_order
+    if (is.null(byte_order))
+        byte_order <- "LSB"
+    if (!is.character(byte_order) || length(byte_order) > 1)
+        stop("'byte_order' must be a character string", call. = FALSE)
+    byte_order <- toupper(byte_order)
+    if (byte_order != "LSB" && byte_order != "MSB")
+        stop("invalid 'byte_order'", call. = FALSE)
+    # quiet
+    if (is.null(quiet))
+        quiet <- FALSE
+    if (!is.logical(quiet) || length(quiet) > 1)
+        stop("'quiet' must be a single logical value", call. = FALSE)
+
+    wkb <- NULL
+    if (.is_raw_or_null(geom)) {
+        wkb <- .g_unary_union(geom, as_iso, byte_order, quiet)
+    } else if (is.list(geom) && .is_raw_or_null(geom[[1]])) {
+        wkb <- lapply(geom, .g_unary_union, as_iso, byte_order, quiet)
+    } else if (is.character(geom)) {
+        if (length(geom) == 1) {
+            wkb <- .g_unary_union(g_wk2wk(geom), as_iso, byte_order, quiet)
+        } else {
+            wkb <- lapply(g_wk2wk(geom), .g_unary_union, as_iso, byte_order,
+                          quiet)
         }
     } else {
         stop("'geom' must be a character vector, raw vector, or list",
