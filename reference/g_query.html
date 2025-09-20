@@ -77,7 +77,9 @@ vectors, or a character vector containing one or more WKT strings.</p>
 <span></span>
 <span><span class="fu">g_name</span><span class="op">(</span><span class="va">geom</span>, quiet <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span>
 <span></span>
-<span><span class="fu">g_summary</span><span class="op">(</span><span class="va">geom</span>, quiet <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></code></pre></div>
+<span><span class="fu">g_summary</span><span class="op">(</span><span class="va">geom</span>, quiet <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu">g_geom_count</span><span class="op">(</span><span class="va">geom</span>, quiet <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div class="section level2">
@@ -114,6 +116,11 @@ vector of the same length as the number of input geometries.</p>
 <p><code>g_summary()</code> returns text summaries of WKB/WKT geometries in a
 character vector of the same length as the number of input
 geometries. Requires GDAL &gt;= 3.7.</p>
+<p><code>g_geom_count()</code> returns the number of elements in a geometry or number of
+geometries in container. Only geometries of type <code>Polygon[25D]</code>,
+<code>MultiPoint[25D]</code>, <code>MultiLineString[25D]</code>, <code>MultiPolygon[25D]</code> or
+<code>GeometryCollection[25D]</code> may return a valid value. Other geometry types will
+silently return <code>0</code>.</p>
     </div>
     <div class="section level2">
     <h2 id="see-also">See also<a class="anchor" aria-label="anchor" href="#see-also"></a></h2>
@@ -173,6 +180,9 @@ geometries. Requires GDAL &gt;= 3.7.</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [3] "MULTIPOLYGON : 2 geometries: POLYGON : 54 points POLYGON : 7 points"                                         </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [4] "MULTIPOLYGON : 1 geometries: POLYGON : 159 points"                                                           </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [5] "MULTIPOLYGON : 4 geometries: POLYGON : 1376 points POLYGON : 17 points POLYGON : 5 points POLYGON : 9 points"</span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="fu">g_geom_count</span><span class="op">(</span><span class="va">feat</span><span class="op">$</span><span class="va">geom</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 3</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="va">lyr</span><span class="op">$</span><span class="fu">close</span><span class="op">(</span><span class="op">)</span></span></span>
 </code></pre></div>
