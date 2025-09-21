@@ -1460,11 +1460,6 @@ gdal_get_driver_md <- function(format, mdi_name = "") {
     .Call(`_gdalraster_addFileInZip`, zip_filename, overwrite, archive_filename, in_filename, options, quiet)
 }
 
-#' @noRd
-.mdim_as_classic <- function(filename, array_name, idx_xdim, idx_ydim, read_only = TRUE, group_name = "", allowed_drivers = NULL, open_options = NULL) {
-    .Call(`_gdalraster_mdim_as_classic`, filename, array_name, idx_xdim, idx_ydim, read_only, group_name, allowed_drivers, open_options)
-}
-
 #' Copy a source file to a target filename
 #'
 #' `vsi_copy_file()` is a wrapper for `VSICopyFile()` in the GDAL Common

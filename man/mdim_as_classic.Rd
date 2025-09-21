@@ -42,8 +42,7 @@ considered.}
 options as \code{"NAME=VALUE"} pairs.}
 }
 \value{
-An object of class \code{GDALRaster}, or \code{NULL} with a warning if an
-error occurs.
+An object of class \code{GDALRaster}.
 }
 \description{
 \code{mdim_as_classic()} returns a 2D raster view on an MDArray in a GDAL

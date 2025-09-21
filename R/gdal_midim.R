@@ -26,8 +26,8 @@
 #' considered.
 #' @param open_options Optional character vector of format-specific dataset open
 #' options as `"NAME=VALUE"` pairs.
-#' @returns An object of class `GDALRaster`, or `NULL` with a warning if an
-#' error occurs.
+#' @returns An object of class `GDALRaster`.
+#'
 #' @note
 #' The indexing of array dimensions is 0-based to be consistent with the
 #' `<ARRAY-SPEC>` notation that may be used with GDAL CLI commands, e.g.,
@@ -102,14 +102,9 @@ mdim_as_classic <- function(filename, array_name, idx_xdim, idx_ydim,
             stop("'open_options' must be a character vector", call. = FALSE)
     }
 
-    # returns a 1-element list containing a GDALRaster object, or NULL
-    x <- .mdim_as_classic(filename, array_name, idx_xdim, idx_ydim, read_only,
-                          group_name, allowed_drivers, open_options)
+    # signature for mdim_as_classic() object factory
+    ds <- new(GDALRaster, filename, array_name, idx_xdim, idx_ydim, read_only,
+              group_name, allowed_drivers, open_options, TRUE)
 
-    if (!is.null(x) && is(x[[1]], "Rcpp_GDALRaster")) {
-        return(x[[1]])
-    } else {
-        warning("failed to get MDArray view as classic dataset", call. = FALSE)
-        return(NULL)
-    }
+    return(ds);
 }

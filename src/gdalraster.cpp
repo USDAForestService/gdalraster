@@ -2355,6 +2355,11 @@ RCPP_MODULE(mod_GDALRaster) {
     .factory<const GDALRaster* const&, const std::string&, const std::string&,
              const std::string&, double, bool, bool, bool>
              (autoCreateWarpedVRT)
+    // mdim_as_classic() object factory with 9 parameters
+    .factory<const Rcpp::CharacterVector&, const std::string&, int, int, bool,
+             const std::string&, const Rcpp::Nullable<Rcpp::CharacterVector>&,
+             const Rcpp::Nullable<Rcpp::CharacterVector>&, bool>
+             (mdim_as_classic)
 
     // exposed read/write fields
     .field("infoOptions", &GDALRaster::infoOptions)

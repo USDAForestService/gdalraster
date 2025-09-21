@@ -16,16 +16,17 @@
 // Return a view of an MDArray as a "classic" GDALDataset (i.e., 2D)
 //
 // GDALMDArrayAsClassicDataset()
-// Returns a 1-element list carrying a GDALRaster object, or R_NilValue on error
+//
 // Public wrapper in R/gdal_mdim.R
-//' @noRd
-// [[Rcpp::export(name = ".mdim_as_classic")]]
-SEXP mdim_as_classic(
+// Implemented as a GDALRaster object factory registered in
+// RCPP_MODULE(mod_GDALRaster), see src/gdalraster.cpp.
+// Unique function signature based on number of parameters.
+// Called in R with `ds <- new(GDALRaster, ...)` giving all 9 parameters
+GDALRaster *mdim_as_classic(
     const Rcpp::CharacterVector &filename, const std::string &array_name,
-    int idx_xdim, int idx_ydim, bool read_only = true,
-    const std::string &group_name = "",
-    const Rcpp::Nullable<Rcpp::CharacterVector> &allowed_drivers = R_NilValue,
-    const Rcpp::Nullable<Rcpp::CharacterVector> &open_options = R_NilValue) {
+    int idx_xdim, int idx_ydim, bool read_only, const std::string &group_name,
+    const Rcpp::Nullable<Rcpp::CharacterVector> &allowed_drivers,
+    const Rcpp::Nullable<Rcpp::CharacterVector> &open_options, bool reserved) {
 
 // requires GDAL >= 3.2 for GDALGroupOpenGroupFromFullname()
 #if GDAL_VERSION_NUM < GDAL_COMPUTE_VERSION(3, 2, 0)
@@ -34,14 +35,11 @@ SEXP mdim_as_classic(
 
     std::string fname_in = Rcpp::as<std::string>(check_gdal_filename(filename));
 
-    if (idx_xdim < 0) {
-        Rcpp::Rcout << "'idx_xdim' must be a positive integer\n";
-        return R_NilValue;
-    }
-    if (idx_ydim < 0) {
-        Rcpp::Rcout << "'idx_ydim' must be a positive integer\n";
-        return R_NilValue;
-    }
+    if (idx_xdim < 0)
+        Rcpp::stop("'idx_xdim' must be a positive integer");
+
+    if (idx_ydim < 0)
+        Rcpp::stop("'idx_ydim' must be a positive integer");
 
     std::vector<char *> oAllowedDrivers = {};
     if (allowed_drivers.isNotNull()) {
@@ -77,18 +75,14 @@ SEXP mdim_as_classic(
                      oOpenOptions.empty() ? nullptr : oOpenOptions.data(),
                      nullptr);
 
-    if (!hDS) {
-        Rcpp::Rcout << "failed to open multidim raster dataset\n";
-        return R_NilValue;
-    }
+    if (!hDS)
+        Rcpp::stop("failed to open multidim raster dataset");
 
     GDALGroupH hRootGroup = nullptr;
     hRootGroup = GDALDatasetGetRootGroup(hDS);
     GDALReleaseDataset(hDS);
-    if (!hRootGroup) {
-        Rcpp::Rcout << "failed to get object for the root group\n";
-        return R_NilValue;
-    }
+    if (!hRootGroup)
+        Rcpp::stop("failed to get object for the root group");
 
     GDALMDArrayH hVar = nullptr;
     if (group_name != "") {
@@ -96,26 +90,20 @@ SEXP mdim_as_classic(
         hSubGroup = GDALGroupOpenGroupFromFullname(hRootGroup,
                                                    group_name.c_str(),
                                                    nullptr);
-        if (!hSubGroup) {
-            Rcpp::Rcout << "failed to get object for the sub-group\n";
-            return R_NilValue;
-        }
+        if (!hSubGroup)
+            Rcpp::stop("failed to get object for the sub-group");
 
         hVar = GDALGroupOpenMDArray(hSubGroup, array_name.c_str(), nullptr);
         GDALGroupRelease(hSubGroup);
         GDALGroupRelease(hRootGroup);
-        if (!hVar) {
-            Rcpp::Rcout << "failed to get object for the MDArray\n";
-            return R_NilValue;
-        }
+        if (!hVar)
+            Rcpp::stop("failed to get object for the MDArray");
     }
     else {
         hVar = GDALGroupOpenMDArray(hRootGroup, array_name.c_str(), nullptr);
         GDALGroupRelease(hRootGroup);
-        if (!hVar) {
-            Rcpp::Rcout << "failed to get object for the MDArray\n";
-            return R_NilValue;
-        }
+        if (!hVar)
+            Rcpp::stop("failed to get object for the MDArray");
     }
 
     GDALDatasetH hClassicDS = nullptr;
@@ -124,16 +112,15 @@ SEXP mdim_as_classic(
                                              static_cast<size_t>(idx_ydim));
 
     GDALMDArrayRelease(hVar);
-    if (!hClassicDS) {
-        Rcpp::Rcout << "failed to get MDArray as classic dataset\n";
-        return R_NilValue;
-    }
+    if (!hClassicDS)
+        Rcpp::stop("failed to get MDArray as classic dataset");
 
     GDALRaster *ds = new GDALRaster();
+    if (ds == nullptr) {
+        GDALClose(hClassicDS);
+        Rcpp::stop("failed to create GDALRaster object");
+    }
     ds->setGDALDatasetH_(hClassicDS, !read_only);
-    const GDALRaster &ds_ref = *ds;
-    Rcpp::List out = Rcpp::List::create();
-    out.push_back(Rcpp::wrap(ds_ref));
-    return out;
+    return ds;
 #endif
 }
