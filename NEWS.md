@@ -1,6 +1,8 @@
-# gdalraster 2.2.1.9017 (dev)
+# gdalraster 2.2.1.9018 (dev)
 
-* add `g_unary_union()`, wrapper for `OGR_G_UnaryUnion()` (#797) (2025-09-20)
+* add `g_normalize()`: wrapper for `OGR_G_Normalize()` (#798) (2025-09-20)
+
+* add `g_unary_union()`: wrapper for `OGR_G_UnaryUnion()` (#797) (2025-09-20)
 
 * add `gdal_get_driver_md()`: retrieve driver metadata (#795) (2025-09-19)
 
