@@ -1190,6 +1190,20 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// g_normalize
+SEXP g_normalize(const Rcpp::RObject& geom, bool as_iso, const std::string& byte_order, bool quiet);
+RcppExport SEXP _gdalraster_g_normalize(SEXP geomSEXP, SEXP as_isoSEXP, SEXP byte_orderSEXP, SEXP quietSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< const Rcpp::RObject& >::type geom(geomSEXP);
+    Rcpp::traits::input_parameter< bool >::type as_iso(as_isoSEXP);
+    Rcpp::traits::input_parameter< const std::string& >::type byte_order(byte_orderSEXP);
+    Rcpp::traits::input_parameter< bool >::type quiet(quietSEXP);
+    rcpp_result_gen = Rcpp::wrap(g_normalize(geom, as_iso, byte_order, quiet));
+    return rcpp_result_gen;
+END_RCPP
+}
 // g_set_3D
 SEXP g_set_3D(const Rcpp::RObject& geom, bool is_3d, bool as_iso, const std::string& byte_order, bool quiet);
 RcppExport SEXP _gdalraster_g_set_3D(SEXP geomSEXP, SEXP is_3dSEXP, SEXP as_isoSEXP, SEXP byte_orderSEXP, SEXP quietSEXP) {
@@ -2369,6 +2383,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_gdalraster_g_get_geom", (DL_FUNC) &_gdalraster_g_get_geom, 4},
     {"_gdalraster_g_is_valid", (DL_FUNC) &_gdalraster_g_is_valid, 2},
     {"_gdalraster_g_make_valid", (DL_FUNC) &_gdalraster_g_make_valid, 6},
+    {"_gdalraster_g_normalize", (DL_FUNC) &_gdalraster_g_normalize, 4},
     {"_gdalraster_g_set_3D", (DL_FUNC) &_gdalraster_g_set_3D, 5},
     {"_gdalraster_g_set_measured", (DL_FUNC) &_gdalraster_g_set_measured, 5},
     {"_gdalraster_g_swap_xy", (DL_FUNC) &_gdalraster_g_swap_xy, 4},

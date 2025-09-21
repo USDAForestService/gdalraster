@@ -909,6 +909,17 @@ g_geom_count <- function(geom, quiet = FALSE) {
 #'   * `FALSE` (the default): collapses are converted to empty geometries
 #'   * `TRUE`: collapses are converted to a valid geometry of lower dimension
 #'
+#' `g_normalize()` organizes the elements, rings, and coordinate order of
+#' geometries in a consistent way, so that geometries that represent the same
+#' object can be easily compared. Wrapper of `OGR_G_Normalize()` in the GDAL
+#' API. Requires GDAL >= 3.3. Normalization ensures the following:
+#'
+#' * Lines are oriented to have smallest coordinate first (apart from duplicate
+#' endpoints)
+#' * Rings start with their smallest coordinate (using XY ordering)
+#' * Polygon shell rings are oriented clockwise, and holes counter-clockwise
+#' * Collection elements are sorted by their first coordinate
+#'
 #' `g_set_3D()` adds or removes the explicit Z coordinate dimension. Removing
 #' the Z coordinate dimension of a geometry will remove any existing Z values.
 #' Adding the Z dimension to a geometry collection, a compound curve, a
@@ -951,7 +962,7 @@ g_geom_count <- function(geom, quiet = FALSE) {
 #' [g_is_valid()], [g_is_3D()], [g_is_measured()]
 #'
 #' @examples
-#' # g_make_valid() requires GEOS >= 3.8, otherwise is only a validity test
+#' ## g_make_valid() requires GEOS >= 3.8, otherwise is only a validity test
 #' geos_version()
 #'
 #' # valid
@@ -966,6 +977,13 @@ g_geom_count <- function(geom, quiet = FALSE) {
 #' wkt <- "LINESTRING (0 0)"
 #' g_make_valid(wkt)  # NULL
 #'
+#' ## g_normalize() requires GDAL >= 3.3
+#' if (gdal_version_num() >= gdal_compute_version(3, 3, 0)) {
+#'   g <- "POLYGON ((0 1,1 1,1 0,0 0,0 1))"
+#'   g_normalize(g) |> g_wk2wk()
+#' }
+#'
+#' ## set 3D / set measured
 #' pt_xyzm <- g_create("POINT", c(1, 9, 100, 2000))
 #'
 #' g_wk2wk(pt_xyzm, as_iso = TRUE)
@@ -974,6 +992,7 @@ g_geom_count <- function(geom, quiet = FALSE) {
 #'
 #' g_set_measured(pt_xyzm, is_measured = FALSE) |> g_wk2wk(as_iso = TRUE)
 #'
+#' ## swap XY
 #' g <- "GEOMETRYCOLLECTION(POINT(1 2),
 #'                          LINESTRING(1 2,2 3),
 #'                          POLYGON((0 0,0 1,1 1,0 0)))"
@@ -1032,6 +1051,57 @@ g_make_valid <- function(geom, method = "LINEWORK", keep_collapsed = FALSE,
         } else {
             wkb <- lapply(g_wk2wk(geom), .g_make_valid, method, keep_collapsed,
                           as_iso, byte_order, quiet)
+        }
+    } else {
+        stop("'geom' must be a character vector, raw vector, or list",
+             call. = FALSE)
+    }
+
+    if (as_wkb)
+        return(wkb)
+    else
+        return(g_wk2wk(wkb, as_iso))
+}
+
+#' @name g_util
+#' @export
+g_normalize <- function(geom, as_wkb = TRUE, as_iso = FALSE, byte_order = "LSB",
+                        quiet = FALSE) {
+
+    # as_wkb
+    if (is.null(as_wkb))
+        as_wkb <- TRUE
+    if (!is.logical(as_wkb) || length(as_wkb) > 1)
+        stop("'as_wkb' must be a single logical value", call. = FALSE)
+    # as_iso
+    if (is.null(as_iso))
+        as_iso <- FALSE
+    if (!is.logical(as_iso) || length(as_iso) > 1)
+        stop("'as_iso' must be a single logical value", call. = FALSE)
+    # byte_order
+    if (is.null(byte_order))
+        byte_order <- "LSB"
+    if (!is.character(byte_order) || length(byte_order) > 1)
+        stop("'byte_order' must be a character string", call. = FALSE)
+    byte_order <- toupper(byte_order)
+    if (byte_order != "LSB" && byte_order != "MSB")
+        stop("invalid 'byte_order'", call. = FALSE)
+    # quiet
+    if (is.null(quiet))
+        quiet <- FALSE
+    if (!is.logical(quiet) || length(quiet) > 1)
+        stop("'quiet' must be a single logical value", call. = FALSE)
+
+    wkb <- NULL
+    if (.is_raw_or_null(geom)) {
+        wkb <- .g_normalize(geom, as_iso, byte_order, quiet)
+    } else if (is.list(geom) && .is_raw_or_null(geom[[1]])) {
+        wkb <- lapply(geom, .g_normalize, as_iso, byte_order, quiet)
+    } else if (is.character(geom)) {
+        if (length(geom) == 1) {
+            wkb <- .g_normalize(g_wk2wk(geom), as_iso, byte_order, quiet)
+        } else {
+            wkb <- lapply(g_wk2wk(geom), .g_normalize, as_iso, byte_order, quiet)
         }
     } else {
         stop("'geom' must be a character vector, raw vector, or list",

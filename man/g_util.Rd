@@ -3,6 +3,7 @@
 \name{g_util}
 \alias{g_util}
 \alias{g_make_valid}
+\alias{g_normalize}
 \alias{g_set_3D}
 \alias{g_set_measured}
 \alias{g_swap_xy}
@@ -12,6 +13,14 @@ g_make_valid(
   geom,
   method = "LINEWORK",
   keep_collapsed = FALSE,
+  as_wkb = TRUE,
+  as_iso = FALSE,
+  byte_order = "LSB",
+  quiet = FALSE
+)
+
+g_normalize(
+  geom,
   as_wkb = TRUE,
   as_iso = FALSE,
   byte_order = "LSB",
@@ -105,6 +114,18 @@ categorized.
 }
 }
 
+\code{g_normalize()} organizes the elements, rings, and coordinate order of
+geometries in a consistent way, so that geometries that represent the same
+object can be easily compared. Wrapper of \code{OGR_G_Normalize()} in the GDAL
+API. Requires GDAL >= 3.3. Normalization ensures the following:
+\itemize{
+\item Lines are oriented to have smallest coordinate first (apart from duplicate
+endpoints)
+\item Rings start with their smallest coordinate (using XY ordering)
+\item Polygon shell rings are oriented clockwise, and holes counter-clockwise
+\item Collection elements are sorted by their first coordinate
+}
+
 \code{g_set_3D()} adds or removes the explicit Z coordinate dimension. Removing
 the Z coordinate dimension of a geometry will remove any existing Z values.
 Adding the Z dimension to a geometry collection, a compound curve, a
@@ -121,7 +142,7 @@ Wrapper of \code{OGR_G_SetMeasured()} in the GDAL API.
 Wrapper of \code{OGR_G_SwapXY()} in the GDAL API.
 }
 \examples{
-# g_make_valid() requires GEOS >= 3.8, otherwise is only a validity test
+## g_make_valid() requires GEOS >= 3.8, otherwise is only a validity test
 geos_version()
 
 # valid
@@ -136,6 +157,13 @@ g_make_valid(wkt, as_wkb = FALSE)
 wkt <- "LINESTRING (0 0)"
 g_make_valid(wkt)  # NULL
 
+## g_normalize() requires GDAL >= 3.3
+if (gdal_version_num() >= gdal_compute_version(3, 3, 0)) {
+  g <- "POLYGON ((0 1,1 1,1 0,0 0,0 1))"
+  g_normalize(g) |> g_wk2wk()
+}
+
+## set 3D / set measured
 pt_xyzm <- g_create("POINT", c(1, 9, 100, 2000))
 
 g_wk2wk(pt_xyzm, as_iso = TRUE)
@@ -144,6 +172,7 @@ g_set_3D(pt_xyzm, is_3d = FALSE) |> g_wk2wk(as_iso = TRUE)
 
 g_set_measured(pt_xyzm, is_measured = FALSE) |> g_wk2wk(as_iso = TRUE)
 
+## swap XY
 g <- "GEOMETRYCOLLECTION(POINT(1 2),
                          LINESTRING(1 2,2 3),
                          POLYGON((0 0,0 1,1 1,0 0)))"

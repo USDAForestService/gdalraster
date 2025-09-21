@@ -50,6 +50,9 @@ SEXP g_make_valid(const Rcpp::RObject &geom, const std::string &method,
                   bool keep_collapsed, bool as_iso,
                   const std::string &byte_order, bool quiet);
 
+SEXP g_normalize(const Rcpp::RObject &geom, bool as_iso,
+                 const std::string &byte_order, bool quiet);
+
 SEXP g_set_3D(const Rcpp::RObject &geom, bool is_3d, bool as_iso,
               const std::string &byte_order, bool quiet);
 

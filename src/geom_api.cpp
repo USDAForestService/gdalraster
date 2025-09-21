@@ -809,6 +809,77 @@ SEXP g_make_valid(const Rcpp::RObject &geom,
 }
 
 //' @noRd
+// [[Rcpp::export(name = ".g_normalize")]]
+SEXP g_normalize(const Rcpp::RObject &geom, bool as_iso,
+                 const std::string &byte_order, bool quiet) {
+// GEOS doc:
+// Organize the elements, rings, and coordinate order of geometries in a
+// consistent way, so that geometries that represent the same object can be
+// easily compared. Normalization ensures the following:
+// * Lines are oriented to have smallest coordinate first (apart from duplicate
+//   endpoints)
+// * Rings start with their smallest coordinate (using XY ordering)
+// * Polygon shell rings are oriented CW, and holes CCW
+// * Collection elements are sorted by their first coordinate
+
+// Requires GDAL >= 3.3
+#if GDAL_VERSION_NUM < GDAL_COMPUTE_VERSION(3, 3, 0)
+    Rcpp::stop("g_normalize() requires GDAL >= 3.3");
+
+#else
+    if (geom.isNULL() || !Rcpp::is<Rcpp::RawVector>(geom))
+        return R_NilValue;
+
+    const Rcpp::RawVector geom_in(geom);
+    if (geom_in.size() == 0)
+        return R_NilValue;
+
+    OGRGeometryH hGeom = createGeomFromWkb(geom_in);
+    if (hGeom == nullptr) {
+        if (!quiet) {
+            Rcpp::warning(
+                "failed to create geometry object from WKB, NULL returned");
+        }
+        return R_NilValue;
+    }
+
+    OGRGeometryH hNormal = OGR_G_Normalize(hGeom);
+
+    if (hNormal == nullptr) {
+        OGR_G_DestroyGeometry(hGeom);
+        if (!quiet) {
+            Rcpp::warning("OGR_G_UnaryUnion() gave NULL geometry");
+        }
+        return R_NilValue;
+    }
+
+    const int nWKBSize = OGR_G_WkbSize(hNormal);
+    if (!nWKBSize) {
+        OGR_G_DestroyGeometry(hGeom);
+        OGR_G_DestroyGeometry(hNormal);
+        if (!quiet) {
+            Rcpp::warning("failed to obtain WKB size of output geometry");
+        }
+        return R_NilValue;
+    }
+
+    Rcpp::RawVector wkb = Rcpp::no_init(nWKBSize);
+    bool result = exportGeomToWkb(hNormal, &wkb[0], as_iso, byte_order);
+    OGR_G_DestroyGeometry(hGeom);
+    OGR_G_DestroyGeometry(hNormal);
+    if (!result) {
+        if (!quiet) {
+           Rcpp::warning(
+                "failed to export WKB raw vector for output geometry");
+        }
+        return R_NilValue;
+    }
+
+    return wkb;
+#endif
+}
+
+//' @noRd
 // [[Rcpp::export(name = ".g_set_3D")]]
 SEXP g_set_3D(const Rcpp::RObject &geom, bool is_3d, bool as_iso,
               const std::string &byte_order, bool quiet) {
