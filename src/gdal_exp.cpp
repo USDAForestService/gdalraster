@@ -97,6 +97,7 @@ Rcpp::DataFrame gdal_formats(const std::string &format = "") {
     Rcpp::CharacterVector short_name = Rcpp::CharacterVector::create();
     Rcpp::CharacterVector long_name = Rcpp::CharacterVector::create();
     Rcpp::LogicalVector raster_fmt = Rcpp::LogicalVector::create();
+    Rcpp::LogicalVector mdim_fmt = Rcpp::LogicalVector::create();
     Rcpp::LogicalVector vector_fmt = Rcpp::LogicalVector::create();
     Rcpp::CharacterVector rw_flag = Rcpp::CharacterVector::create();
     Rcpp::LogicalVector virtual_io = Rcpp::LogicalVector::create();
@@ -114,10 +115,14 @@ Rcpp::DataFrame gdal_formats(const std::string &format = "") {
         }
 
         if (CPLFetchBool(papszMD, GDAL_DCAP_RASTER, false) ||
+            CPLFetchBool(papszMD, GDAL_DCAP_MULTIDIM_RASTER, false) ||
             CPLFetchBool(papszMD, GDAL_DCAP_VECTOR, false)) {
 
             CPLFetchBool(papszMD, GDAL_DCAP_RASTER, false) ?
                     raster_fmt.push_back(true) : raster_fmt.push_back(false);
+
+            CPLFetchBool(papszMD, GDAL_DCAP_MULTIDIM_RASTER, false) ?
+                    mdim_fmt.push_back(true) : mdim_fmt.push_back(false);
 
             CPLFetchBool(papszMD, GDAL_DCAP_VECTOR, false) ?
                     vector_fmt.push_back(true) : vector_fmt.push_back(false);
@@ -149,6 +154,7 @@ Rcpp::DataFrame gdal_formats(const std::string &format = "") {
     Rcpp::DataFrame df_out = Rcpp::DataFrame::create();
     df_out.push_back(short_name, "short_name");
     df_out.push_back(raster_fmt, "raster");
+    df_out.push_back(mdim_fmt, "multidim_raster");
     df_out.push_back(vector_fmt, "vector");
     df_out.push_back(rw_flag, "rw_flag");
     df_out.push_back(virtual_io, "virtual_io");

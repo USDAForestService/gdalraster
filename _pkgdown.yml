@@ -70,6 +70,9 @@ reference:
 - subtitle: Raster data types
 - contents:
   - data_type_helpers
+- subtitle: Multidimensional raster
+- contents:
+  - mdim_as_classic
 - subtitle: Geotransform conversion
 - contents:
   - apply_geotransform

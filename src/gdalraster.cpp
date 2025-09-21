@@ -216,7 +216,9 @@ GDALRaster::GDALRaster(const Rcpp::CharacterVector &filename, bool read_only,
 
 GDALRaster::~GDALRaster() {
     if (m_hDataset) {
-        if (m_shared)
+        // use GDALClose() on shared, and driver-less datasets such as the one
+        // returned by mdim_as_classic()
+        if (m_shared || !GDALGetDatasetDriver(m_hDataset))
             GDALClose(m_hDataset);
         else
             GDALReleaseDataset(m_hDataset);
@@ -252,21 +254,21 @@ void GDALRaster::open(bool read_only) {
     if (m_hDataset != nullptr)
         close();
 
-    std::vector<char *> dsoo(m_open_options.size() + 1);
+    std::vector<char *> dsoo = {};
     if (m_open_options.size() > 0) {
         for (R_xlen_t i = 0; i < m_open_options.size(); ++i) {
-            dsoo[i] = (char *) m_open_options[i];
+            dsoo.push_back((char *) m_open_options[i]);
         }
+        dsoo.push_back(nullptr);
     }
-    dsoo[m_open_options.size()] = nullptr;
 
-    std::vector<char *> allowed_drivers(m_allowed_drivers.size() + 1);
+    std::vector<char *> allowed_drivers = {};
     if (m_allowed_drivers.size() > 0) {
         for (R_xlen_t i = 0; i < m_allowed_drivers.size(); ++i) {
-            allowed_drivers[i] = (char *) m_allowed_drivers[i];
+            allowed_drivers.push_back((char *) m_allowed_drivers[i]);
         }
+        allowed_drivers.push_back(nullptr);
     }
-    allowed_drivers[m_allowed_drivers.size()] = nullptr;
 
     unsigned int nOpenFlags = GDAL_OF_RASTER;
     if (read_only) {
@@ -282,14 +284,10 @@ void GDALRaster::open(bool read_only) {
 
     nOpenFlags |= GDAL_OF_VERBOSE_ERROR;
 
-    if (m_allowed_drivers.size() > 0) {
-        m_hDataset = GDALOpenEx(m_fname.c_str(), nOpenFlags,
-                                allowed_drivers.data(), dsoo.data(), nullptr);
-    }
-    else {
-        m_hDataset = GDALOpenEx(m_fname.c_str(), nOpenFlags, nullptr,
-                                dsoo.data(), nullptr);
-    }
+    m_hDataset = GDALOpenEx(
+        m_fname.c_str(), nOpenFlags,
+        allowed_drivers.empty() ? nullptr : allowed_drivers.data(),
+        dsoo.empty() ? nullptr : dsoo.data(), nullptr);
 
     if (m_hDataset == nullptr)
         Rcpp::stop("open raster failed");
@@ -304,6 +302,16 @@ bool GDALRaster::isOpen() const {
 
 void GDALRaster::info() const {
     checkAccess_(GA_ReadOnly);
+
+    // see https://github.com/OSGeo/gdal/issues/13106
+    // avoid crash with a driver-less dataset and GDAL < 3.12
+    GDALDriverH hDriver = GDALGetDatasetDriver(m_hDataset);
+    if (!hDriver && GDAL_VERSION_NUM < GDAL_COMPUTE_VERSION(3, 12, 0)) {
+        Rcpp::Rcout <<
+            "info() unavailable for driver-less dataset and GDAL < 3.12\n";
+
+        return;
+    }
 
     const Rcpp::CharacterVector argv = infoOptions;
     std::vector<char *> opt(1);
@@ -331,6 +339,18 @@ void GDALRaster::info() const {
 Rcpp::String GDALRaster::infoAsJSON() const {
     checkAccess_(GA_ReadOnly);
 
+    Rcpp::String out = "";
+
+    // see https://github.com/OSGeo/gdal/issues/13106
+    // avoid crash with a driver-less dataset and GDAL < 3.12
+    GDALDriverH hDriver = GDALGetDatasetDriver(m_hDataset);
+    if (!hDriver && GDAL_VERSION_NUM < GDAL_COMPUTE_VERSION(3, 12, 0)) {
+        Rcpp::Rcout <<
+            "info() unavailable for driver-less dataset and GDAL < 3.12\n";
+
+        return out;
+    }
+
     const Rcpp::CharacterVector argv = infoOptions;
     std::vector<char *> opt = {nullptr};
     if (argv.size() == 1 && argv[0] == "") {
@@ -353,7 +373,6 @@ Rcpp::String GDALRaster::infoAsJSON() const {
         Rcpp::stop("creation of GDALInfoOptions failed (check $infoOptions)");
 
     char *pszGDALInfoOutput = GDALInfo(m_hDataset, psOptions);
-    Rcpp::String out = "";
     if (pszGDALInfoOutput != nullptr)
         out = pszGDALInfoOutput;
 
@@ -2172,7 +2191,9 @@ void GDALRaster::close() {
         return;
 
 #if GDAL_VERSION_NUM >= GDAL_COMPUTE_VERSION(3, 7, 0)
-    if (m_shared) {
+    // use GDALClose() on shared, and driver-less datasets such as the one
+    // returned by mdim_as_classic()
+    if (m_shared || !GDALGetDatasetDriver(m_hDataset)) {
         if (GDALClose(m_hDataset) != CE_None)
             Rcpp::warning("error occurred during GDALClose()!");
     }
@@ -2180,7 +2201,7 @@ void GDALRaster::close() {
         GDALReleaseDataset(m_hDataset);
     }
 #else
-    if (m_shared)
+    if (m_shared || !GDALGetDatasetDriver(m_hDataset))
         GDALClose(m_hDataset);
     else
         GDALReleaseDataset(m_hDataset);
@@ -2198,8 +2219,14 @@ void GDALRaster::show() const {
     std::string crs_name = Rcpp::as<std::string>(fn(getProjection()));
 
     Rcpp::Rcout << "C++ object of class GDALRaster\n";
-    Rcpp::Rcout << " Driver : " << getDriverLongName() << " (" <<
-                                   getDriverShortName() << ")\n";
+    GDALDriverH hDriver = GDALGetDatasetDriver(m_hDataset);
+    if (hDriver) {
+        Rcpp::Rcout << " Driver : " << getDriverLongName() << " (" <<
+                                       getDriverShortName() << ")\n";
+    }
+    else {
+        Rcpp::Rcout << " Driver :\n";
+    }
     Rcpp::Rcout << " DSN    : " << getDescription(0) << "\n";
     Rcpp::Rcout << " Dim    : " << std::to_string(xsize) << ", " <<
                                    std::to_string(ysize) << ", " <<

@@ -55,6 +55,9 @@
   \code{\link[=GDALRaster]{GDALRaster$getDefaultRAT()}},
   \code{\link[=GDALRaster]{GDALRaster$setDefaultRAT()}}
 
+  \item multidimensional raster:
+  \code{\link[=mdim_as_classic]{mdim_as_classic()}}
+
   \item geotransform conversion:
   \code{\link[=apply_geotransform]{apply_geotransform()}},
   \code{\link[=get_pixel_line]{get_pixel_line()}},
