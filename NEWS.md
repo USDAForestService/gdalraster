@@ -1,6 +1,6 @@
 # gdalraster 2.2.1.9020 (dev)
 
-* add `mdim_as_classic()`: return a view of an MDArray as a "classic" GDALDataset (i.e., 2D) (2025-09-21)
+* add `mdim_as_classic()`: return a view of an MDArray as a "classic" GDALDataset (i.e., 2D), and add column `multidim_raster` (`TRUE`|`FALSE`) in the data frame output of `gdal_formats()` (#799) (2025-09-21)
 
 * add `g_normalize()`: wrapper for `OGR_G_Normalize()` (#798) (2025-09-20)
 
