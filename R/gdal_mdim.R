@@ -38,15 +38,11 @@
 #' with its `$open()` method.
 #'
 #' @seealso
-#' [`GDALRaster-class`][GDALRaster]
+#' [`GDALRaster-class`][GDALRaster], [mdim_info()]
 #'
 #' @examples
 #' f <- system.file("extdata/byte.nc", package="gdalraster")
-#'
-#' # array "Band1" dimensions are y, x
-#' if (gdal_version_num() >= gdal_compute_version(3, 11, 3)) {
-#'   gdal_run("mdim info", f)$output() |> writeLines()
-#' }
+#' mdim_info(f) |> writeLines()
 #'
 #' (ds <- mdim_as_classic(f, "Band1", 1, 0))
 #'

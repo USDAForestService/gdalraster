@@ -73,6 +73,7 @@ reference:
 - subtitle: Multidimensional raster
 - contents:
   - mdim_as_classic
+  - mdim_info
 - subtitle: Geotransform conversion
 - contents:
   - apply_geotransform

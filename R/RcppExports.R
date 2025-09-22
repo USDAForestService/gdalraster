@@ -1460,6 +1460,50 @@ gdal_get_driver_md <- function(format, mdi_name = "") {
     .Call(`_gdalraster_addFileInZip`, zip_filename, overwrite, archive_filename, in_filename, options, quiet)
 }
 
+#' Report structure and content of a multidimensional dataset
+#'
+#' `mdim_info()` is a wrapper of the \command{gdalmdiminfo} command-line
+#' utility (see \url{https://gdal.org/en/stable/programs/gdalmdiminfo.html}).
+#' This function lists various information about a GDAL supported
+#' multidimensional raster dataset as JSON output. It follows the JSON schema
+#' [gdalmdiminfo_output.schema.json](https://github.com/OSGeo/gdal/blob/release/3.11/apps/data/gdalmdiminfo_output.schema.json).
+#' Requires GDAL >= 3.2.
+#'
+#' @param filename Character string giving the data source name of the
+#' multidimensional raster (e.g., file, VSI path).
+#' @param array_name Character string giving the name of the MDarray in
+#' `filename`.
+#' @param pretty Logical value, `FALSE` to output a single line without any
+#' indentation. Defaults to `TRUE`.
+#' @param detailed Logical value, `TRUE` for verbose output. Report attribute
+#' data types and array values. Defaults to `FALSE`.
+#' @param limit Integer value. Number of values in each dimension that is used
+#' to limit the display of array values. By default, unlimited. Only taken into
+#' account if used with `detailed = TRUE`. Set to a positive integer to enable.
+#' @param stats Logical value, `TRUE` to read and display array statistics.
+#' Forces computation if no statistics are stored in an array. Defaults to
+#' `FALSE`.
+#' @param array_options Optional character vector of `"NAME=VALUE"` pairs to
+#' filter reported arrays. Such option is format specific. Consult driver
+#' documentation (passed to `GDALGroup::GetMDArrayNames()`).
+#' @param allowed_drivers Optional character vector of driver short names that
+#' must be considered. By default, all known multidimensional raster drivers are
+#' considered.
+#' @param open_options Optional character vector of format-specific dataset open
+#' options as `"NAME=VALUE"` pairs.
+#' @returns A JSON string containing information about the multidimensional
+#' raster dataset.
+#'
+#' @seealso
+#' [mdim_as_classic()]
+#'
+#' @examplesIf gdal_version_num() >= gdal_compute_version(3, 2, 0)
+#' f <- system.file("extdata/byte.nc", package="gdalraster")
+#' mdim_info(f) |> writeLines()
+mdim_info <- function(filename, array_name = "", pretty = TRUE, detailed = FALSE, limit = -1L, stats = FALSE, array_options = NULL, allowed_drivers = NULL, open_options = NULL) {
+    .Call(`_gdalraster_mdim_info`, filename, array_name, pretty, detailed, limit, stats, array_options, allowed_drivers, open_options)
+}
+
 #' Copy a source file to a target filename
 #'
 #' `vsi_copy_file()` is a wrapper for `VSICopyFile()` in the GDAL Common

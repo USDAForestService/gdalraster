@@ -415,4 +415,11 @@ GDALRaster *mdim_as_classic(
     const Rcpp::Nullable<Rcpp::CharacterVector> &allowed_drivers,
     const Rcpp::Nullable<Rcpp::CharacterVector> &open_options,
     bool reserved);
+
+std::string mdim_info(
+    const Rcpp::CharacterVector &filename, const std::string &array_name,
+    bool pretty, bool detailed, int limit, bool stats,
+    const Rcpp::Nullable<Rcpp::CharacterVector> &array_options,
+    const Rcpp::Nullable<Rcpp::CharacterVector> &allowed_drivers,
+    const Rcpp::Nullable<Rcpp::CharacterVector> &open_options);
 #endif  // GDALRASTER_H_

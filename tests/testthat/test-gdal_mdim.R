@@ -29,3 +29,20 @@ test_that("mdim_as_classic works", {
     # filename is not set / driver-less dataset:
     expect_error(ds$open(read_only = TRUE))
 })
+
+test_that("mdim_info works", {
+    f <- system.file("extdata/byte.nc", package="gdalraster")
+    expect_no_error(info <- mdim_info(f, array_options = "SHOW_ALL=YES"))
+    expect_vector(info, ptype = character(), size = 1)
+    expect_true(startsWith(info, "{"))
+    expect_true(nchar(info) > 1000)
+
+    expect_no_error(
+        info <- mdim_info(f, "Band1", pretty = FALSE, detailed = TRUE,
+                        limit = 5, allowed_drivers = "netCDF",
+                        open_options = "HONOUR_VALID_RANGE=NO"))
+
+    expect_vector(info, ptype = character(), size = 1)
+    expect_true(startsWith(info, "{"))
+    expect_true(nchar(info) > 1000)
+})
