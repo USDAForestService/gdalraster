@@ -767,6 +767,25 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// mdim_info
+std::string mdim_info(const Rcpp::CharacterVector& filename, const std::string& array_name, bool pretty, bool detailed, int limit, bool stats, const Rcpp::Nullable<Rcpp::CharacterVector>& array_options, const Rcpp::Nullable<Rcpp::CharacterVector>& allowed_drivers, const Rcpp::Nullable<Rcpp::CharacterVector>& open_options);
+RcppExport SEXP _gdalraster_mdim_info(SEXP filenameSEXP, SEXP array_nameSEXP, SEXP prettySEXP, SEXP detailedSEXP, SEXP limitSEXP, SEXP statsSEXP, SEXP array_optionsSEXP, SEXP allowed_driversSEXP, SEXP open_optionsSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< const Rcpp::CharacterVector& >::type filename(filenameSEXP);
+    Rcpp::traits::input_parameter< const std::string& >::type array_name(array_nameSEXP);
+    Rcpp::traits::input_parameter< bool >::type pretty(prettySEXP);
+    Rcpp::traits::input_parameter< bool >::type detailed(detailedSEXP);
+    Rcpp::traits::input_parameter< int >::type limit(limitSEXP);
+    Rcpp::traits::input_parameter< bool >::type stats(statsSEXP);
+    Rcpp::traits::input_parameter< const Rcpp::Nullable<Rcpp::CharacterVector>& >::type array_options(array_optionsSEXP);
+    Rcpp::traits::input_parameter< const Rcpp::Nullable<Rcpp::CharacterVector>& >::type allowed_drivers(allowed_driversSEXP);
+    Rcpp::traits::input_parameter< const Rcpp::Nullable<Rcpp::CharacterVector>& >::type open_options(open_optionsSEXP);
+    rcpp_result_gen = Rcpp::wrap(mdim_info(filename, array_name, pretty, detailed, limit, stats, array_options, allowed_drivers, open_options));
+    return rcpp_result_gen;
+END_RCPP
+}
 // vsi_copy_file
 int vsi_copy_file(const Rcpp::CharacterVector& src_file, const Rcpp::CharacterVector& target_file, bool show_progress);
 RcppExport SEXP _gdalraster_vsi_copy_file(SEXP src_fileSEXP, SEXP target_fileSEXP, SEXP show_progressSEXP) {
@@ -2348,6 +2367,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_gdalraster_validateCreationOptions", (DL_FUNC) &_gdalraster_validateCreationOptions, 2},
     {"_gdalraster_gdal_get_driver_md", (DL_FUNC) &_gdalraster_gdal_get_driver_md, 2},
     {"_gdalraster_addFileInZip", (DL_FUNC) &_gdalraster_addFileInZip, 6},
+    {"_gdalraster_mdim_info", (DL_FUNC) &_gdalraster_mdim_info, 9},
     {"_gdalraster_vsi_copy_file", (DL_FUNC) &_gdalraster_vsi_copy_file, 3},
     {"_gdalraster_vsi_curl_clear_cache", (DL_FUNC) &_gdalraster_vsi_curl_clear_cache, 3},
     {"_gdalraster_vsi_read_dir", (DL_FUNC) &_gdalraster_vsi_read_dir, 4},

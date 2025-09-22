@@ -1,4 +1,6 @@
-# gdalraster 2.2.1.9020 (dev)
+# gdalraster 2.2.1.9021 (dev)
+
+* add `mdim_info()`: report structure and content of a multidimensional dataset, wrapper for `gdalmdiminfo` (2025-09-22)
 
 * add `mdim_as_classic()`: return a view of an MDArray as a "classic" GDALDataset (i.e., 2D), and add column `multidim_raster` (`TRUE`|`FALSE`) in the data frame output of `gdal_formats()` (#799) (2025-09-21)
 
