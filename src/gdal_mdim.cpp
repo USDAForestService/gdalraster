@@ -36,10 +36,10 @@ GDALRaster *mdim_as_classic(
     std::string fname_in = Rcpp::as<std::string>(check_gdal_filename(filename));
 
     if (idx_xdim < 0)
-        Rcpp::stop("'idx_xdim' must be a positive integer");
+        Rcpp::stop("'idx_xdim' must be >= 0");
 
     if (idx_ydim < 0)
-        Rcpp::stop("'idx_ydim' must be a positive integer");
+        Rcpp::stop("'idx_ydim' must be >= 0");
 
     std::vector<char *> oAllowedDrivers = {};
     if (allowed_drivers.isNotNull()) {
