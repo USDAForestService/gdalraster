@@ -21,6 +21,8 @@
 #' (the default).
 #' @param group_name Optional character string giving the fully qualified name
 #' of a group containing `array_name`.
+#' @param view_expr Optional character string giving an expression for basic
+#' array slicing and indexing, or field access (see section `View Expressions`).
 #' @param allowed_drivers Optional character vector of driver short names that
 #' must be considered. By default, all known multidimensional raster drivers are
 #' considered.
@@ -28,10 +30,63 @@
 #' options as `"NAME=VALUE"` pairs.
 #' @returns An object of class `GDALRaster`.
 #'
+#' @section View Expressions:
+#' A character string can be passed in argument `view_expr` to specify array
+#' slicing or field access. The slice expression uses the same syntax as NumPy
+#' basic slicing and indexing (0-based), or it can use field access by name.
+#' See \url{https://numpy.org/doc/stable/user/basics.indexing.html}.
+#'
+#' GDAL support for view expression on an MDArray is documented for
+#' `GDALMDArray::GetView()` (see
+#' \url{https://gdal.org/en/stable/api/gdalmdarray_cpp.html}) and copied here:
+#'
+#' Multiple [] bracket elements can be concatenated, with a slice expression or
+#' field name inside each.
+#'
+#' For basic slicing and indexing, inside each [] bracket element, a list of
+#' indexes that apply to successive source dimensions, can be specified, using
+#' integer indexing (e.g. 1), range indexing (start:stop:step), ellipsis (...)
+#' or newaxis, using a comma separator.
+#'
+#' Example expressions with a 2-dimensional array whose content is
+#' `[[0,1,2,3],[4,5,6,7]]`.
+#' * `"[1][2]"`: returns a 0-dimensional/scalar array with the value at
+#' index 1 in the first dimension, and index 2 in the second dimension from the
+#' source array. That is, `5`.
+#' * `"[1,2]"`: same as above, but a bit more performant.
+#' * `"[1]"`: returns a 1-dimensional array, sliced at index `1` in the
+#' first dimension. That is `[4,5,6,7]`.
+#' * `"[:,2]"`: returns a 1-dimensional array, sliced at index `2` in the
+#' second dimension. That is `[2,6]`.
+#' * `"[:,2:3:]"`: returns a 2-dimensional array, sliced at index `2` in
+#' the second dimension. That is `[[2],[6]]`.
+#' * `"[::,2]"`: Same as above.
+#' * `"[...,2]"`: same as above, in that case, since the ellipsis only
+#' expands to one dimension here.
+#' * `"[:,::2]"`: returns a 2-dimensional array, with even-indexed
+#' elements of the second dimension. That is `[[0,2],[4,6]]`.
+#' * `"[:,1::2]"`: returns a 2-dimensional array, with odd-indexed
+#' elements of the second dimension. That is `[[1,3],[5,7]]`.
+#' * `"[:,1:3:]"`: returns a 2-dimensional array, with elements of the
+#' second dimension with index in the range `[1,3]`. That is `[[1,2],[5,6]]`.
+#' * `"[::-1,:]"`: returns a 2-dimensional array, with the values in
+#' first dimension reversed. That is `[[4,5,6,7],[0,1,2,3]]`.
+#' * `"[newaxis,...]"`: returns a 3-dimensional array, with an additional
+#' dimension of size `1` put at the beginning. That is
+#' `[[[0,1,2,3],[4,5,6,7]]]`.
+#'
+#' One difference with NumPy behavior is that ranges that would result in zero
+#' elements are not allowed (dimensions of size 0 not being allowed in the GDAL
+#' multidimensional model).
+#'
+#' For field access, the syntax to use is `"['field_name']"`. Multiple field
+#' specification is not supported currently. Both type of access can be
+#' combined, e.g. `"[1]['field_name']"`.
+#'
 #' @note
-#' The indexing of array dimensions is 0-based to be consistent with the
+#' The indexing of array dimensions is 0-based consistent with the
 #' `<ARRAY-SPEC>` notation that may be used with GDAL CLI commands, e.g.,
-#' `gdal_usage("mdim convert")` (requires GDAL > 3.11.3).
+#' `gdal_usage("mdim convert")` (CLI bindings require GDAL > 3.11.3).
 #' See \url{https://gdal.org/en/stable/programs/gdal_mdim_convert.html}.
 #'
 #' Once the returned `GDALRaster` object has been closed, it cannot be re-opened
@@ -42,7 +97,7 @@
 #'
 #' @examples
 #' f <- system.file("extdata/byte.nc", package="gdalraster")
-#' mdim_info(f) |> writeLines()
+#' # mdim_info(f) |> writeLines()
 #'
 #' (ds <- mdim_as_classic(f, "Band1", 1, 0))
 #'
@@ -52,7 +107,8 @@
 #' @export
 mdim_as_classic <- function(filename, array_name, idx_xdim, idx_ydim,
                             read_only = TRUE, group_name = NULL,
-                            allowed_drivers = NULL, open_options = NULL) {
+                            view_expr = NULL, allowed_drivers = NULL,
+                            open_options = NULL) {
 
     if (missing(filename) || is.null(filename) || all(is.na(filename)))
         stop("'filename' is required", call. = FALSE)
@@ -84,6 +140,11 @@ mdim_as_classic <- function(filename, array_name, idx_xdim, idx_ydim,
     if (!(is.character(group_name) && length(group_name) == 1))
         stop("'group_name' must be a character string", call. = FALSE)
 
+    if (missing(view_expr) || is.null(view_expr) || all(is.na(view_expr)))
+        view_expr <- ""
+    if (!(is.character(view_expr) && length(view_expr) == 1))
+        stop("'view_expr' must be a character string", call. = FALSE)
+
     if (missing(allowed_drivers) || all(is.na(allowed_drivers)))
         allowed_drivers <- NULL
     if (!is.null(allowed_drivers)) {
@@ -100,7 +161,7 @@ mdim_as_classic <- function(filename, array_name, idx_xdim, idx_ydim,
 
     # signature for mdim_as_classic() object factory
     ds <- new(GDALRaster, filename, array_name, idx_xdim, idx_ydim, read_only,
-              group_name, allowed_drivers, open_options, TRUE)
+              group_name, view_expr, allowed_drivers, open_options)
 
     return(ds);
 }

@@ -412,9 +412,9 @@ Rcpp::IntegerMatrix createColorRamp(int start_index,
 GDALRaster *mdim_as_classic(
     const Rcpp::CharacterVector &filename, const std::string &array_name,
     int idx_xdim, int idx_ydim, bool read_only, const std::string &group_name,
+    const std::string &view_expr,
     const Rcpp::Nullable<Rcpp::CharacterVector> &allowed_drivers,
-    const Rcpp::Nullable<Rcpp::CharacterVector> &open_options,
-    bool reserved);
+    const Rcpp::Nullable<Rcpp::CharacterVector> &open_options);
 
 std::string mdim_info(
     const Rcpp::CharacterVector &filename, const std::string &array_name,
