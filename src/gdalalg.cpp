@@ -11,6 +11,7 @@
 #include <algorithm>
 #include <cctype>
 #include <cstring>
+#include <memory>
 #include <sstream>
 #include <string>
 #include <vector>
@@ -1535,11 +1536,10 @@ SEXP GDALAlg::getOutputArgValue_(const GDALAlgorithmArgH &hArg) const {
             // raster
             if (ds_type & GDAL_OF_RASTER) {
                 std::string ds_name(GDALArgDatasetValueGetName(hArgDSValue));
-                GDALRaster *ds = new GDALRaster();
+                auto ds = std::make_unique<GDALRaster>();
                 ds->setFilename(ds_name);
                 ds->setGDALDatasetH_(hDS, with_update);
-                const GDALRaster &ds_ref = *ds;
-                out = Rcpp::wrap(ds_ref);
+                out = Rcpp::wrap(*ds.release());
             }
             // vector
             else if (ds_type & GDAL_OF_VECTOR) {
@@ -1561,14 +1561,13 @@ SEXP GDALAlg::getOutputArgValue_(const GDALAlgorithmArgH &hArg) const {
                         layer_name = OGR_L_GetName(hLayer);
                 }
 
-                GDALVector *lyr = new GDALVector();
+                auto lyr = std::make_unique<GDALVector>();
                 lyr->setDsn_(ds_name);
                 lyr->setGDALDatasetH_(hDS, true);
                 lyr->setOGRLayerH_(hLayer, layer_name);
                 if (hLayer)
                     lyr->setFieldNames_();
-                const GDALVector &lyr_ref = *lyr;
-                out = Rcpp::wrap(lyr_ref);
+                out = Rcpp::wrap(*lyr.release());
             }
             // multidim raster - currently only as dataset name
             else if (ds_type & GDAL_OF_MULTIDIM_RASTER) {
