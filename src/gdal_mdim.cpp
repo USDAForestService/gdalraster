@@ -9,6 +9,7 @@
 #include <cpl_conv.h>
 #include <gdal_utils.h>
 
+#include <memory>
 #include <string>
 #include <vector>
 
@@ -27,8 +28,9 @@
 GDALRaster *mdim_as_classic(
     const Rcpp::CharacterVector &filename, const std::string &array_name,
     int idx_xdim, int idx_ydim, bool read_only, const std::string &group_name,
+    const std::string &view_expr,
     const Rcpp::Nullable<Rcpp::CharacterVector> &allowed_drivers,
-    const Rcpp::Nullable<Rcpp::CharacterVector> &open_options, bool reserved) {
+    const Rcpp::Nullable<Rcpp::CharacterVector> &open_options) {
 
 // requires GDAL >= 3.2 for GDALGroupOpenGroupFromFullname()
 #if GDAL_VERSION_NUM < GDAL_COMPUTE_VERSION(3, 2, 0)
@@ -109,21 +111,33 @@ GDALRaster *mdim_as_classic(
     }
 
     GDALDatasetH hClassicDS = nullptr;
-    hClassicDS = GDALMDArrayAsClassicDataset(hVar,
-                                             static_cast<size_t>(idx_xdim),
-                                             static_cast<size_t>(idx_ydim));
+    if (view_expr != "") {
+        GDALMDArrayH hVarView = nullptr;
+        hVarView = GDALMDArrayGetView(hVar, view_expr.c_str());
+        GDALMDArrayRelease(hVar);
+        if (!hVarView)
+            Rcpp::stop("failed to get object for the MDArray view expression");
 
-    GDALMDArrayRelease(hVar);
+        hClassicDS = GDALMDArrayAsClassicDataset(hVarView,
+                                                static_cast<size_t>(idx_xdim),
+                                                static_cast<size_t>(idx_ydim));
+
+        GDALMDArrayRelease(hVarView);
+    }
+    else {
+        hClassicDS = GDALMDArrayAsClassicDataset(hVar,
+                                                static_cast<size_t>(idx_xdim),
+                                                static_cast<size_t>(idx_ydim));
+
+        GDALMDArrayRelease(hVar);
+    }
+
     if (!hClassicDS)
         Rcpp::stop("failed to get MDArray as classic dataset");
 
-    GDALRaster *ds = new GDALRaster();
-    if (ds == nullptr) {
-        GDALClose(hClassicDS);
-        Rcpp::stop("failed to create GDALRaster object");
-    }
+    auto ds = std::make_unique<GDALRaster>();
     ds->setGDALDatasetH_(hClassicDS, !read_only);
-    return ds;
+    return ds.release();
 #endif
 }
 
