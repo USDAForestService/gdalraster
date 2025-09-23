@@ -5,7 +5,7 @@
 \title{Return a view of an MDArray as a "classic" GDALDataset (i.e., 2D)}
 \usage{
 mdim_as_classic(
-  filename,
+  dsn,
   array_name,
   idx_xdim,
   idx_ydim,
@@ -17,7 +17,7 @@ mdim_as_classic(
 )
 }
 \arguments{
-\item{filename}{Character string giving the data source name of the
+\item{dsn}{Character string giving the data source name of the
 multidimensional raster (e.g., file, VSI path).}
 
 \item{array_name}{Character string giving the name of the MDarray in

@@ -270,12 +270,12 @@ std::string mdim_info(
         argv.push_back(nullptr);
 
     GDALMultiDimInfoOptions *psOptions = nullptr;
-    if (!argv.empty()) {
-        psOptions = GDALMultiDimInfoOptionsNew(argv.data(), nullptr);
-        if (!psOptions) {
-            GDALReleaseDataset(hDS);
-            Rcpp::stop("mdim_info() failed (could not create options struct)");
-        }
+    psOptions = GDALMultiDimInfoOptionsNew(argv.empty() ? nullptr : argv.data(),
+                                           nullptr);
+
+    if (!psOptions) {
+        GDALReleaseDataset(hDS);
+        Rcpp::stop("mdim_info() failed (could not create options struct)");
     }
 
     std::string info_out = "";
@@ -285,8 +285,7 @@ std::string mdim_info(
         info_out = pszInfo;
     CPLFree(pszInfo);
 
-    if (psOptions)
-        GDALMultiDimInfoOptionsFree(psOptions);
+    GDALMultiDimInfoOptionsFree(psOptions);
 
     GDALReleaseDataset(hDS);
 
@@ -311,8 +310,8 @@ std::string mdim_info(
 //' name). This can be a format that supports multidimensional output (such as
 //' NetCDF: Network Common Data Form, Multidimensional VRT), or a "classic" 2D
 //' format, if only one single 2D array results from the other specified
-//' conversion operations. When this option is not specified, the format is
-//' guessed when possible from the extension of `dst_dsn`.
+//' conversion operations. When this option is not specified (i.e., empty string
+//' `""`), the format is guessed when possible from the extension of `dst_dsn`.
 //' @param creation_options Optional character vector of format-specific
 //' creation options as `"NAME=VALUE"` pairs. A list of options supported for a
 //' format can be obtained with `getCreationOptions()`, but the documentation
@@ -347,9 +346,8 @@ std::string mdim_info(
 //' @examplesIf gdal_version_num() >= gdal_compute_version(3, 2, 0)
 //' f <- system.file("extdata/byte.nc", package="gdalraster")
 // [[Rcpp::export()]]
-std::string mdim_translate(
-    const Rcpp::CharacterVector &src_dsn,
-    const Rcpp::CharacterVector &dst_dsn,
+bool mdim_translate(
+    const Rcpp::CharacterVector &src_dsn, const Rcpp::CharacterVector &dst_dsn,
     const std::string &output_format = "",
     const Rcpp::Nullable<Rcpp::CharacterVector> &creation_options = R_NilValue,
     const Rcpp::Nullable<Rcpp::CharacterVector> &array_specs = R_NilValue,
@@ -358,8 +356,7 @@ std::string mdim_translate(
     const Rcpp::Nullable<Rcpp::CharacterVector> &scaleaxes_specs = R_NilValue,
     const Rcpp::Nullable<Rcpp::CharacterVector> &allowed_drivers = R_NilValue,
     const Rcpp::Nullable<Rcpp::CharacterVector> &open_options = R_NilValue,
-    bool strict = false,
-    bool quiet = false) {
+    bool strict = false, bool quiet = false) {
 
 #if GDAL_VERSION_NUM < GDAL_COMPUTE_VERSION(3, 2, 0)
     Rcpp::stop("mdim_info() requires GDAL >= 3.2");
@@ -391,14 +388,19 @@ std::string mdim_translate(
 
     unsigned int nOpenFlags = GDAL_OF_MULTIDIM_RASTER;
 
-    GDALDatasetH hDS = nullptr;
-    hDS = GDALOpenEx(src_dsn_in.c_str(), nOpenFlags,
-                     oAllowedDrivers.empty() ? nullptr : oAllowedDrivers.data(),
-                     oOpenOptions.empty() ? nullptr : oOpenOptions.data(),
-                     nullptr);
+    // only 1 source dataset is supported currently but takes a list of
+    // datasets as input
+    std::vector<GDALDatasetH> src_ds = {};
+    GDALDatasetH hSrcDS = nullptr;
+    hSrcDS = GDALOpenEx(
+        src_dsn_in.c_str(), nOpenFlags,
+        oAllowedDrivers.empty() ? nullptr : oAllowedDrivers.data(),
+        oOpenOptions.empty() ? nullptr : oOpenOptions.data(), nullptr);
 
-    if (!hDS)
-        Rcpp::stop("failed to open multidim raster dataset");
+    if (!hSrcDS)
+        Rcpp::stop("failed to open source multidim raster dataset");
+    else
+        src_ds.push_back(hSrcDS);
 
     std::vector<char *> argv = {};
 
@@ -407,47 +409,86 @@ std::string mdim_translate(
         argv.push_back(const_cast<char *>(output_format.c_str()));
     }
 
-    if (!pretty)
-        argv.push_back(const_cast<char *>("-nopretty"));
-
-    if (detailed)
-        argv.push_back(const_cast<char *>("-detailed"));
-
-    if (stats)
-        argv.push_back(const_cast<char *>("-stats"));
-
-    if (array_options.isNotNull()) {
-        Rcpp::CharacterVector array_options_in(array_options);
-        for (R_xlen_t i = 0; i < array_options_in.size(); ++i) {
-            argv.push_back(const_cast<char *>("-arrayoption"));
-            argv.push_back((char *) array_options_in[i]);
+    if (creation_options.isNotNull()) {
+        Rcpp::CharacterVector creation_options_in(creation_options);
+        for (R_xlen_t i = 0; i < creation_options_in.size(); ++i) {
+            argv.push_back(const_cast<char *>("-co"));
+            argv.push_back((char *) creation_options_in[i]);
         }
     }
+
+    if (array_specs.isNotNull()) {
+        Rcpp::CharacterVector array_specs_in(array_specs);
+        for (R_xlen_t i = 0; i < array_specs_in.size(); ++i) {
+            argv.push_back(const_cast<char *>("-array"));
+            argv.push_back((char *) array_specs_in[i]);
+        }
+    }
+
+    if (group_specs.isNotNull()) {
+        Rcpp::CharacterVector group_specs_in(group_specs);
+        for (R_xlen_t i = 0; i < group_specs_in.size(); ++i) {
+            argv.push_back(const_cast<char *>("-group"));
+            argv.push_back((char *) group_specs_in[i]);
+        }
+    }
+
+    if (subset_specs.isNotNull()) {
+        Rcpp::CharacterVector subset_specs_in(subset_specs);
+        for (R_xlen_t i = 0; i < subset_specs_in.size(); ++i) {
+            argv.push_back(const_cast<char *>("-subset"));
+            argv.push_back((char *) subset_specs_in[i]);
+        }
+    }
+
+    if (scaleaxes_specs.isNotNull()) {
+        Rcpp::CharacterVector scaleaxes_specs_in(scaleaxes_specs);
+        for (R_xlen_t i = 0; i < scaleaxes_specs_in.size(); ++i) {
+            argv.push_back(const_cast<char *>("-scaleaxes "));
+            argv.push_back((char *) scaleaxes_specs_in[i]);
+        }
+    }
+
+    if (!strict)
+        argv.push_back(const_cast<char *>("-strict"));
+
+    if (quiet)
+        argv.push_back(const_cast<char *>("-quiet"));
 
     if (!argv.empty())
         argv.push_back(nullptr);
 
-    GDALMultiDimInfoOptions *psOptions = nullptr;
-    if (!argv.empty()) {
-        psOptions = GDALMultiDimInfoOptionsNew(argv.data(), nullptr);
-        if (!psOptions) {
-            GDALReleaseDataset(hDS);
-            Rcpp::stop("mdim_info() failed (could not create options struct)");
-        }
+    GDALMultiDimTranslateOptions *psOptions = nullptr;
+    psOptions = GDALMultiDimTranslateOptionsNew(
+        argv.empty() ? nullptr : argv.data(), nullptr);
+
+    if (!psOptions) {
+        GDALReleaseDataset(hSrcDS);
+        Rcpp::stop("mdim_translate() failed (could not create options struct)");
     }
 
-    std::string info_out = "";
-    char *pszInfo = nullptr;
-    pszInfo = GDALMultiDimInfo(hDS, psOptions);
-    if (pszInfo)
-        info_out = pszInfo;
-    CPLFree(pszInfo);
+    if (!quiet) {
+        GDALMultiDimTranslateOptionsSetProgress(psOptions, GDALTermProgressR,
+                                                nullptr);
+    }
 
-    if (psOptions)
-        GDALMultiDimInfoOptionsFree(psOptions);
+    GDALDatasetH hDstDS = GDALMultiDimTranslate(dst_dsn_in.c_str(), nullptr, 1,
+                                                src_ds.data(), psOptions,
+                                                nullptr);
 
-    GDALReleaseDataset(hDS);
+    GDALMultiDimTranslateOptionsFree(psOptions);
 
-    return info_out;
+    bool ret = false;
+    if (hDstDS) {
+        GDALClose(hDstDS);
+        ret = true;
+    }
+
+    GDALReleaseDataset(src_ds[0]);
+
+    if (!ret)
+        Rcpp::stop("mdim_translate() failed");
+
+    return ret;
 #endif
 }

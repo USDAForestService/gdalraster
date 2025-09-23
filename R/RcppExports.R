@@ -1469,7 +1469,7 @@ gdal_get_driver_md <- function(format, mdi_name = "") {
 #' [gdalmdiminfo_output.schema.json](https://github.com/OSGeo/gdal/blob/release/3.11/apps/data/gdalmdiminfo_output.schema.json).
 #' Requires GDAL >= 3.2.
 #'
-#' @param filename Character string giving the data source name of the
+#' @param dsn Character string giving the data source name of the
 #' multidimensional raster (e.g., file, VSI path).
 #' @param array_name Character string giving the name of the MDarray in
 #' `filename`.
@@ -1500,8 +1500,63 @@ gdal_get_driver_md <- function(format, mdi_name = "") {
 #' @examplesIf gdal_version_num() >= gdal_compute_version(3, 2, 0)
 #' f <- system.file("extdata/byte.nc", package="gdalraster")
 #' mdim_info(f) |> writeLines()
-mdim_info <- function(filename, array_name = "", pretty = TRUE, detailed = FALSE, limit = -1L, stats = FALSE, array_options = NULL, allowed_drivers = NULL, open_options = NULL) {
-    .Call(`_gdalraster_mdim_info`, filename, array_name, pretty, detailed, limit, stats, array_options, allowed_drivers, open_options)
+mdim_info <- function(dsn, array_name = "", pretty = TRUE, detailed = FALSE, limit = -1L, stats = FALSE, array_options = NULL, allowed_drivers = NULL, open_options = NULL) {
+    .Call(`_gdalraster_mdim_info`, dsn, array_name, pretty, detailed, limit, stats, array_options, allowed_drivers, open_options)
+}
+
+#' Convert multidimensional data between different formats
+#'
+#' `mdim_translate()` is a wrapper of the \command{gdalmdimtranslate}
+#' command-line utility (see
+#' \url{https://gdal.org/en/stable/programs/gdalmdimtranslate.html}).
+#' This function converts multidimensional data between different formats and
+#' performs subsetting. Requires GDAL >= 3.2.
+#'
+#' @param src_dsn Character string giving the name of the source
+#' multidimensional raster dataset (e.g., file, VSI path).
+#' @param dst_dsn Character string giving the name of the destination
+#' multidimensional raster dataset (e.g., file, VSI path).
+#' @param output_format Character string giving the output format (driver short
+#' name). This can be a format that supports multidimensional output (such as
+#' NetCDF: Network Common Data Form, Multidimensional VRT), or a "classic" 2D
+#' format, if only one single 2D array results from the other specified
+#' conversion operations. When this option is not specified (i.e., empty string
+#' `""`), the format is guessed when possible from the extension of `dst_dsn`.
+#' @param creation_options Optional character vector of format-specific
+#' creation options as `"NAME=VALUE"` pairs. A list of options supported for a
+#' format can be obtained with `getCreationOptions()`, but the documentation
+#' for the format is the definitive source of information on driver creation
+#' options (see \url{https://gdal.org/en/stable/drivers/raster/index.html}).
+#' Array-level creation options may be passed by prefixing them with `ARRAY:`.
+#' @param array_specs Optional character vector of one or more array
+#' specifications, instead of coverting the whole dataset (see Details).
+#' @param group_specs Optional character vector of one or more array
+#' specifications, instead of coverting the whole dataset (see Details).
+#' @param subset_specs Optional character vector of one or more subset
+#' specifications, that perform trimming or slicing along a dimension, provided
+#' that it is indexed by a 1D variable of numeric or string data type, and
+#' whose values are monotonically sorted (see Details).
+#' @param scaleaxes_specs Optional character vector of one or more scale axes
+#' specifications, that apply an integral scale factor to one or several
+#' dimensions, that is extract 1 value every N values (without resampling) (see
+#' Details).
+#' @param open_options Optional character vector of format-specific dataset open
+#' options as `"NAME=VALUE"` pairs.
+#' @param strict Logical value, `FALSE` (the default) some failures during the
+#' translation are tolerated, such as not being able to write group attributes.
+#' If set to `TRUE`, such failures will cause the process to fail.
+#' @param quiet Logical value, set to `TRUE` to disable progress reporting.
+#' Defaults to `FALSE`.
+#' @returns Logical value indicating success (invisible `TRUE`, output written to
+#' `dst_dsn`). An error is raised if the operation fails.
+#'
+#' @seealso
+#' [mdim_as_classic()], [mdim_info()]
+#'
+#' @examplesIf gdal_version_num() >= gdal_compute_version(3, 2, 0)
+#' f <- system.file("extdata/byte.nc", package="gdalraster")
+mdim_translate <- function(src_dsn, dst_dsn, output_format = "", creation_options = NULL, array_specs = NULL, group_specs = NULL, subset_specs = NULL, scaleaxes_specs = NULL, allowed_drivers = NULL, open_options = NULL, strict = FALSE, quiet = FALSE) {
+    .Call(`_gdalraster_mdim_translate`, src_dsn, dst_dsn, output_format, creation_options, array_specs, group_specs, subset_specs, scaleaxes_specs, allowed_drivers, open_options, strict, quiet)
 }
 
 #' Copy a source file to a target filename

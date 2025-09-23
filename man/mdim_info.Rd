@@ -5,7 +5,7 @@
 \title{Report structure and content of a multidimensional dataset}
 \usage{
 mdim_info(
-  filename,
+  dsn,
   array_name = "",
   pretty = TRUE,
   detailed = FALSE,
@@ -17,7 +17,7 @@ mdim_info(
 )
 }
 \arguments{
-\item{filename}{Character string giving the data source name of the
+\item{dsn}{Character string giving the data source name of the
 multidimensional raster (e.g., file, VSI path).}
 
 \item{array_name}{Character string giving the name of the MDarray in
