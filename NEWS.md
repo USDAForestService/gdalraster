@@ -1,4 +1,6 @@
-# gdalraster 2.2.1.9021 (dev)
+# gdalraster 2.2.1.9022 (dev)
+
+* code linting: use `unique_ptr` (#801) (2025-09-22) 
 
 * add `mdim_info()`: report structure and content of a multidimensional dataset, wrapper for `gdalmdiminfo` (2025-09-22)
 
