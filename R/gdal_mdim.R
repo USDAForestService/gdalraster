@@ -101,7 +101,7 @@
 #'
 #' (ds <- mdim_as_classic(f, "Band1", 1, 0))
 #'
-#' plot_raster(ds, interpolate = FALSE, legend = TRUE, main = "byte.nc")
+#' plot_raster(ds, interpolate = FALSE, legend = TRUE, main = "Band1")
 #'
 #' ds$close()
 #' @export

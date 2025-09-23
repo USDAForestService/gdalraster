@@ -344,8 +344,16 @@ std::string mdim_info(
 //' [mdim_as_classic()], [mdim_info()]
 //'
 //' @examplesIf gdal_version_num() >= gdal_compute_version(3, 2, 0)
-//' f <- system.file("extdata/byte.nc", package="gdalraster")
-// [[Rcpp::export()]]
+//' f_src <- system.file("extdata/byte.nc", package="gdalraster")
+//'
+//' ## slice with array view
+//' f_dst <- tempfile(fileext = ".nc")
+//' mdim_translate(f, f2, array_specs = "name=Band1,view=[0:10,...]")
+//' (ds <- mdim_as_classic(f_dst, "Band1", 1, 0))
+//' plot_raster(ds, interpolate = FALSE, legend = TRUE,
+//'             main = "Band1[0:10,...]")
+//'
+// [[Rcpp::export(invisible = true)]]
 bool mdim_translate(
     const Rcpp::CharacterVector &src_dsn, const Rcpp::CharacterVector &dst_dsn,
     const std::string &output_format = "",
@@ -359,7 +367,7 @@ bool mdim_translate(
     bool strict = false, bool quiet = false) {
 
 #if GDAL_VERSION_NUM < GDAL_COMPUTE_VERSION(3, 2, 0)
-    Rcpp::stop("mdim_info() requires GDAL >= 3.2");
+    Rcpp::stop("mdim_translate() requires GDAL >= 3.2");
 #else
     std::string src_dsn_in = Rcpp::as<std::string>(check_gdal_filename(src_dsn));
     std::string dst_dsn_in = Rcpp::as<std::string>(check_gdal_filename(dst_dsn));
@@ -449,7 +457,7 @@ bool mdim_translate(
         }
     }
 
-    if (!strict)
+    if (strict)
         argv.push_back(const_cast<char *>("-strict"));
 
     if (quiet)

@@ -79,7 +79,14 @@ performs subsetting. Requires GDAL >= 3.2.
 }
 \examples{
 \dontshow{if (gdal_version_num() >= gdal_compute_version(3, 2, 0)) withAutoprint(\{ # examplesIf}
-f <- system.file("extdata/byte.nc", package="gdalraster")
+f_src <- system.file("extdata/byte.nc", package="gdalraster")
+
+## slice with array view
+f_dst <- tempfile(fileext = ".nc")
+mdim_translate(f, f2, array_specs = "name=Band1,view=[0:10,...]")
+(ds <- mdim_as_classic(f_dst, "Band1", 1, 0))
+plot_raster(ds, interpolate = FALSE, legend = TRUE,
+            main = "Band1[0:10,...]")
 \dontshow{\}) # examplesIf}
 }
 \seealso{

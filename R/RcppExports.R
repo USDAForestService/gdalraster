@@ -1554,9 +1554,17 @@ mdim_info <- function(dsn, array_name = "", pretty = TRUE, detailed = FALSE, lim
 #' [mdim_as_classic()], [mdim_info()]
 #'
 #' @examplesIf gdal_version_num() >= gdal_compute_version(3, 2, 0)
-#' f <- system.file("extdata/byte.nc", package="gdalraster")
+#' f_src <- system.file("extdata/byte.nc", package="gdalraster")
+#'
+#' ## slice with array view
+#' f_dst <- tempfile(fileext = ".nc")
+#' mdim_translate(f, f2, array_specs = "name=Band1,view=[0:10,...]")
+#' (ds <- mdim_as_classic(f_dst, "Band1", 1, 0))
+#' plot_raster(ds, interpolate = FALSE, legend = TRUE,
+#'             main = "Band1[0:10,...]")
+#'
 mdim_translate <- function(src_dsn, dst_dsn, output_format = "", creation_options = NULL, array_specs = NULL, group_specs = NULL, subset_specs = NULL, scaleaxes_specs = NULL, allowed_drivers = NULL, open_options = NULL, strict = FALSE, quiet = FALSE) {
-    .Call(`_gdalraster_mdim_translate`, src_dsn, dst_dsn, output_format, creation_options, array_specs, group_specs, subset_specs, scaleaxes_specs, allowed_drivers, open_options, strict, quiet)
+    invisible(.Call(`_gdalraster_mdim_translate`, src_dsn, dst_dsn, output_format, creation_options, array_specs, group_specs, subset_specs, scaleaxes_specs, allowed_drivers, open_options, strict, quiet))
 }
 
 #' Copy a source file to a target filename
