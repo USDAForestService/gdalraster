@@ -1,6 +1,8 @@
-# gdalraster 2.2.1.9022 (dev)
+# gdalraster 2.2.1.9023 (dev)
 
-* code linting: use `unique_ptr` (#801) (2025-09-22) 
+* `mdim_as_classic()`: add argument `view_expr` for array slicing or field access by name (#802) (2025-09-22)
+
+* code linting: use `unique_ptr` (#801) (2025-09-22)
 
 * add `mdim_info()`: report structure and content of a multidimensional dataset, wrapper for `gdalmdiminfo` (2025-09-22)
 
