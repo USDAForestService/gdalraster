@@ -75,6 +75,7 @@ dimensions will be represented as raster bands. Requires GDAL &gt;= 3.2.</p>
 <span>  <span class="va">idx_ydim</span>,</span>
 <span>  read_only <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>  group_name <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  view_expr <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  allowed_drivers <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  open_options <span class="op">=</span> <span class="cn">NULL</span></span>
 <span><span class="op">)</span></span></code></pre></div>
@@ -114,6 +115,11 @@ used as the Y/height axis (0-based).</p></dd>
 of a group containing <code>array_name</code>.</p></dd>
 
 
+<dt id="arg-view-expr">view_expr<a class="anchor" aria-label="anchor" href="#arg-view-expr"></a></dt>
+<dd><p>Optional character string giving an expression for basic
+array slicing and indexing, or field access (see section <code>View Expressions</code>).</p></dd>
+
+
 <dt id="arg-allowed-drivers">allowed_drivers<a class="anchor" aria-label="anchor" href="#arg-allowed-drivers"></a></dt>
 <dd><p>Optional character vector of driver short names that
 must be considered. By default, all known multidimensional raster drivers are
@@ -131,12 +137,61 @@ options as <code>"NAME=VALUE"</code> pairs.</p></dd>
     </div>
     <div class="section level2">
     <h2 id="note">Note<a class="anchor" aria-label="anchor" href="#note"></a></h2>
-    <p>The indexing of array dimensions is 0-based to be consistent with the
+    <p>The indexing of array dimensions is 0-based consistent with the
 <code>&lt;ARRAY-SPEC&gt;</code> notation that may be used with GDAL CLI commands, e.g.,
-<code>gdal_usage("mdim convert")</code> (requires GDAL &gt; 3.11.3).
+<code>gdal_usage("mdim convert")</code> (CLI bindings require GDAL &gt; 3.11.3).
 See <a href="https://gdal.org/en/stable/programs/gdal_mdim_convert.html" class="external-link">https://gdal.org/en/stable/programs/gdal_mdim_convert.html</a>.</p>
 <p>Once the returned <code>GDALRaster</code> object has been closed, it cannot be re-opened
 with its <code>$open()</code> method.</p>
+    </div>
+    <div class="section level2">
+    <h2 id="view-expressions">View Expressions<a class="anchor" aria-label="anchor" href="#view-expressions"></a></h2>
+
+
+<p>A character string can be passed in argument <code>view_expr</code> to specify array
+slicing or field access. The slice expression uses the same syntax as NumPy
+basic slicing and indexing (0-based), or it can use field access by name.
+See <a href="https://numpy.org/doc/stable/user/basics.indexing.html" class="external-link">https://numpy.org/doc/stable/user/basics.indexing.html</a>.</p>
+<p>GDAL support for view expression on an MDArray is documented for
+<code>GDALMDArray::GetView()</code> (see
+<a href="https://gdal.org/en/stable/api/gdalmdarray_cpp.html" class="external-link">https://gdal.org/en/stable/api/gdalmdarray_cpp.html</a>) and copied here:</p>
+<p>Multiple [] bracket elements can be concatenated, with a slice expression or
+field name inside each.</p>
+<p>For basic slicing and indexing, inside each [] bracket element, a list of
+indexes that apply to successive source dimensions, can be specified, using
+integer indexing (e.g. 1), range indexing (start:stop:step), ellipsis (...)
+or newaxis, using a comma separator.</p>
+<p>Example expressions with a 2-dimensional array whose content is
+<code>[[0,1,2,3],[4,5,6,7]]</code>.</p><ul><li><p><code>"[1][2]"</code>: returns a 0-dimensional/scalar array with the value at
+index 1 in the first dimension, and index 2 in the second dimension from the
+source array. That is, <code>5</code>.</p></li>
+<li><p><code>"[1,2]"</code>: same as above, but a bit more performant.</p></li>
+<li><p><code>"[1]"</code>: returns a 1-dimensional array, sliced at index <code>1</code> in the
+first dimension. That is <code>[4,5,6,7]</code>.</p></li>
+<li><p><code>"[:,2]"</code>: returns a 1-dimensional array, sliced at index <code>2</code> in the
+second dimension. That is <code>[2,6]</code>.</p></li>
+<li><p><code>"[:,2:3:]"</code>: returns a 2-dimensional array, sliced at index <code>2</code> in
+the second dimension. That is <code>[[2],[6]]</code>.</p></li>
+<li><p><code>"[::,2]"</code>: Same as above.</p></li>
+<li><p><code>"[...,2]"</code>: same as above, in that case, since the ellipsis only
+expands to one dimension here.</p></li>
+<li><p><code>"[:,::2]"</code>: returns a 2-dimensional array, with even-indexed
+elements of the second dimension. That is <code>[[0,2],[4,6]]</code>.</p></li>
+<li><p><code>"[:,1::2]"</code>: returns a 2-dimensional array, with odd-indexed
+elements of the second dimension. That is <code>[[1,3],[5,7]]</code>.</p></li>
+<li><p><code>"[:,1:3:]"</code>: returns a 2-dimensional array, with elements of the
+second dimension with index in the range <code>[1,3]</code>. That is <code>[[1,2],[5,6]]</code>.</p></li>
+<li><p><code>"[::-1,:]"</code>: returns a 2-dimensional array, with the values in
+first dimension reversed. That is <code>[[4,5,6,7],[0,1,2,3]]</code>.</p></li>
+<li><p><code>"[newaxis,...]"</code>: returns a 3-dimensional array, with an additional
+dimension of size <code>1</code> put at the beginning. That is
+<code>[[[0,1,2,3],[4,5,6,7]]]</code>.</p></li>
+</ul><p>One difference with NumPy behavior is that ranges that would result in zero
+elements are not allowed (dimensions of size 0 not being allowed in the GDAL
+multidimensional model).</p>
+<p>For field access, the syntax to use is <code>"['field_name']"</code>. Multiple field
+specification is not supported currently. Both type of access can be
+combined, e.g. <code>"[1]['field_name']"</code>.</p>
     </div>
     <div class="section level2">
     <h2 id="see-also">See also<a class="anchor" aria-label="anchor" href="#see-also"></a></h2>
@@ -146,116 +201,7 @@ with its <code>$open()</code> method.</p>
     <div class="section level2">
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="va">f</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"extdata/byte.nc"</span>, package<span class="op">=</span><span class="st">"gdalraster"</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="fu"><a href="mdim_info.html">mdim_info</a></span><span class="op">(</span><span class="va">f</span><span class="op">)</span> <span class="op">|&gt;</span> <span class="fu"><a href="https://rdrr.io/r/base/writeLines.html" class="external-link">writeLines</a></span><span class="op">(</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> {</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   "type": "group",</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   "driver": "netCDF",</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   "name": "/",</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   "attributes": {</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>     "GDAL_AREA_OR_POINT": "Area",</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>     "Conventions": "CF-1.5",</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>     "GDAL": "GDAL 3.8.0dev-refs/heads-dirty, released 2023/10/09 (debug build)",</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>     "history": "Mon Oct 09 18:27:35 2023: GDAL CreateCopy( byte.nc, ... )"</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   },</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   "dimensions": [</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>     {</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>       "name": "x",</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>       "full_name": "/x",</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>       "size": 20,</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>       "type": "HORIZONTAL_X",</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>       "indexing_variable": {</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>         "x": {</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>           "datatype": "Float64",</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>           "dimensions": [</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>             "/x"</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>           ],</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>           "dimension_size": [</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>             20</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>           ],</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>           "attributes": {</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>             "standard_name": "projection_x_coordinate",</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>             "long_name": "x coordinate of projection"</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>           },</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>           "unit": "m"</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>         }</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>       }</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>     },</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>     {</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>       "name": "y",</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>       "full_name": "/y",</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>       "size": 20,</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>       "type": "HORIZONTAL_Y",</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>       "indexing_variable": {</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>         "y": {</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>           "datatype": "Float64",</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>           "dimensions": [</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>             "/y"</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>           ],</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>           "dimension_size": [</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>             20</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>           ],</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>           "attributes": {</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>             "standard_name": "projection_y_coordinate",</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>             "long_name": "y coordinate of projection"</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>           },</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>           "unit": "m"</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>         }</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>       }</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>     }</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   ],</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   "arrays": {</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>     "x": {</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>       "datatype": "Float64",</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>       "dimensions": [</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>         "/x"</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>       ],</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>       "dimension_size": [</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>         20</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>       ],</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>       "attributes": {</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>         "standard_name": "projection_x_coordinate",</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>         "long_name": "x coordinate of projection"</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>       },</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>       "unit": "m"</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>     },</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>     "y": {</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>       "datatype": "Float64",</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>       "dimensions": [</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>         "/y"</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>       ],</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>       "dimension_size": [</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>         20</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>       ],</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>       "attributes": {</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>         "standard_name": "projection_y_coordinate",</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>         "long_name": "y coordinate of projection"</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>       },</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>       "unit": "m"</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>     },</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>     "Band1": {</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>       "datatype": "Byte",</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>       "dimensions": [</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>         "/y",</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>         "/x"</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>       ],</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>       "dimension_size": [</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>         20,</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>         20</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>       ],</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>       "attributes": {</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>         "long_name": "GDAL Band Number 1",</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>         "valid_range": [0, 255]</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>       },</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>       "srs": {</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>         "wkt": "PROJCRS[\"NAD27 / UTM zone 11N\",BASEGEOGCRS[\"NAD27\",DATUM[\"North American Datum 1927\",ELLIPSOID[\"Clarke 1866\",6378206.4,294.978698213898,LENGTHUNIT[\"metre\",1]]],PRIMEM[\"Greenwich\",0,ANGLEUNIT[\"degree\",0.0174532925199433]],ID[\"EPSG\",4267]],CONVERSION[\"UTM zone 11N\",METHOD[\"Transverse Mercator\",ID[\"EPSG\",9807]],PARAMETER[\"Latitude of natural origin\",0,ANGLEUNIT[\"degree\",0.0174532925199433],ID[\"EPSG\",8801]],PARAMETER[\"Longitude of natural origin\",-117,ANGLEUNIT[\"degree\",0.0174532925199433],ID[\"EPSG\",8802]],PARAMETER[\"Scale factor at natural origin\",0.9996,SCALEUNIT[\"unity\",1],ID[\"EPSG\",8805]],PARAMETER[\"False easting\",500000,LENGTHUNIT[\"metre\",1],ID[\"EPSG\",8806]],PARAMETER[\"False northing\",0,LENGTHUNIT[\"metre\",1],ID[\"EPSG\",8807]]],CS[Cartesian,2],AXIS[\"easting\",east,ORDER[1],LENGTHUNIT[\"metre\",1]],AXIS[\"northing\",north,ORDER[2],LENGTHUNIT[\"metre\",1]],ID[\"EPSG\",26711]]",</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>         "data_axis_to_srs_axis_mapping": [2, 1]</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>       }</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>     }</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   },</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   "structural_info": {</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>     "NC_FORMAT": "CLASSIC"</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   }</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> }</span>
+<span class="r-in"><span><span class="co"># mdim_info(f) |&gt; writeLines()</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="op">(</span><span class="va">ds</span> <span class="op">&lt;-</span> <span class="fu">mdim_as_classic</span><span class="op">(</span><span class="va">f</span>, <span class="st">"Band1"</span>, <span class="fl">1</span>, <span class="fl">0</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> C++ object of class GDALRaster</span>
