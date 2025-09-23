@@ -26,7 +26,7 @@
 // Unique function signature based on number of parameters.
 // Called in R with `ds <- new(GDALRaster, ...)` giving all 9 parameters
 GDALRaster *mdim_as_classic(
-    const Rcpp::CharacterVector &filename, const std::string &array_name,
+    const Rcpp::CharacterVector &dsn, const std::string &array_name,
     int idx_xdim, int idx_ydim, bool read_only, const std::string &group_name,
     const std::string &view_expr,
     const Rcpp::Nullable<Rcpp::CharacterVector> &allowed_drivers,
@@ -37,7 +37,7 @@ GDALRaster *mdim_as_classic(
     Rcpp::stop("mdim_as_classic() requires GDAL >= 3.2");
 #else
 
-    std::string fname_in = Rcpp::as<std::string>(check_gdal_filename(filename));
+    std::string dsn_in = Rcpp::as<std::string>(check_gdal_filename(dsn));
 
     if (idx_xdim < 0)
         Rcpp::stop("'idx_xdim' must be >= 0");
@@ -74,7 +74,7 @@ GDALRaster *mdim_as_classic(
         nOpenFlags |= GDAL_OF_UPDATE;
 
     GDALDatasetH hDS = nullptr;
-    hDS = GDALOpenEx(fname_in.c_str(), nOpenFlags,
+    hDS = GDALOpenEx(dsn_in.c_str(), nOpenFlags,
                      oAllowedDrivers.empty() ? nullptr : oAllowedDrivers.data(),
                      oOpenOptions.empty() ? nullptr : oOpenOptions.data(),
                      nullptr);
@@ -151,7 +151,7 @@ GDALRaster *mdim_as_classic(
 //' [gdalmdiminfo_output.schema.json](https://github.com/OSGeo/gdal/blob/release/3.11/apps/data/gdalmdiminfo_output.schema.json).
 //' Requires GDAL >= 3.2.
 //'
-//' @param filename Character string giving the data source name of the
+//' @param dsn Character string giving the data source name of the
 //' multidimensional raster (e.g., file, VSI path).
 //' @param array_name Character string giving the name of the MDarray in
 //' `filename`.
@@ -184,7 +184,7 @@ GDALRaster *mdim_as_classic(
 //' mdim_info(f) |> writeLines()
 // [[Rcpp::export()]]
 std::string mdim_info(
-    const Rcpp::CharacterVector &filename,
+    const Rcpp::CharacterVector &dsn,
     const std::string &array_name = "",
     bool pretty = true,
     bool detailed = false,
@@ -197,7 +197,7 @@ std::string mdim_info(
 #if GDAL_VERSION_NUM < GDAL_COMPUTE_VERSION(3, 2, 0)
     Rcpp::stop("mdim_info() requires GDAL >= 3.2");
 #else
-    std::string fname_in = Rcpp::as<std::string>(check_gdal_filename(filename));
+    std::string dsn_in = Rcpp::as<std::string>(check_gdal_filename(dsn));
 
     std::vector<char *> oAllowedDrivers = {};
     if (allowed_drivers.isNotNull()) {
@@ -224,7 +224,7 @@ std::string mdim_info(
     unsigned int nOpenFlags = GDAL_OF_MULTIDIM_RASTER;
 
     GDALDatasetH hDS = nullptr;
-    hDS = GDALOpenEx(fname_in.c_str(), nOpenFlags,
+    hDS = GDALOpenEx(dsn_in.c_str(), nOpenFlags,
                      oAllowedDrivers.empty() ? nullptr : oAllowedDrivers.data(),
                      oOpenOptions.empty() ? nullptr : oOpenOptions.data(),
                      nullptr);
@@ -254,6 +254,164 @@ std::string mdim_info(
         argv.push_back(const_cast<char *>("-limit"));
         argv.push_back(const_cast<char *>(limit_str.c_str()));
     }
+
+    if (stats)
+        argv.push_back(const_cast<char *>("-stats"));
+
+    if (array_options.isNotNull()) {
+        Rcpp::CharacterVector array_options_in(array_options);
+        for (R_xlen_t i = 0; i < array_options_in.size(); ++i) {
+            argv.push_back(const_cast<char *>("-arrayoption"));
+            argv.push_back((char *) array_options_in[i]);
+        }
+    }
+
+    if (!argv.empty())
+        argv.push_back(nullptr);
+
+    GDALMultiDimInfoOptions *psOptions = nullptr;
+    if (!argv.empty()) {
+        psOptions = GDALMultiDimInfoOptionsNew(argv.data(), nullptr);
+        if (!psOptions) {
+            GDALReleaseDataset(hDS);
+            Rcpp::stop("mdim_info() failed (could not create options struct)");
+        }
+    }
+
+    std::string info_out = "";
+    char *pszInfo = nullptr;
+    pszInfo = GDALMultiDimInfo(hDS, psOptions);
+    if (pszInfo)
+        info_out = pszInfo;
+    CPLFree(pszInfo);
+
+    if (psOptions)
+        GDALMultiDimInfoOptionsFree(psOptions);
+
+    GDALReleaseDataset(hDS);
+
+    return info_out;
+#endif
+}
+
+
+//' Convert multidimensional data between different formats
+//'
+//' `mdim_translate()` is a wrapper of the \command{gdalmdimtranslate}
+//' command-line utility (see
+//' \url{https://gdal.org/en/stable/programs/gdalmdimtranslate.html}).
+//' This function converts multidimensional data between different formats and
+//' performs subsetting. Requires GDAL >= 3.2.
+//'
+//' @param src_dsn Character string giving the name of the source
+//' multidimensional raster dataset (e.g., file, VSI path).
+//' @param dst_dsn Character string giving the name of the destination
+//' multidimensional raster dataset (e.g., file, VSI path).
+//' @param output_format Character string giving the output format (driver short
+//' name). This can be a format that supports multidimensional output (such as
+//' NetCDF: Network Common Data Form, Multidimensional VRT), or a "classic" 2D
+//' format, if only one single 2D array results from the other specified
+//' conversion operations. When this option is not specified, the format is
+//' guessed when possible from the extension of `dst_dsn`.
+//' @param creation_options Optional character vector of format-specific
+//' creation options as `"NAME=VALUE"` pairs. A list of options supported for a
+//' format can be obtained with `getCreationOptions()`, but the documentation
+//' for the format is the definitive source of information on driver creation
+//' options (see \url{https://gdal.org/en/stable/drivers/raster/index.html}).
+//' Array-level creation options may be passed by prefixing them with `ARRAY:`.
+//' @param array_specs Optional character vector of one or more array
+//' specifications, instead of coverting the whole dataset (see Details).
+//' @param group_specs Optional character vector of one or more array
+//' specifications, instead of coverting the whole dataset (see Details).
+//' @param subset_specs Optional character vector of one or more subset
+//' specifications, that perform trimming or slicing along a dimension, provided
+//' that it is indexed by a 1D variable of numeric or string data type, and
+//' whose values are monotonically sorted (see Details).
+//' @param scaleaxes_specs Optional character vector of one or more scale axes
+//' specifications, that apply an integral scale factor to one or several
+//' dimensions, that is extract 1 value every N values (without resampling) (see
+//' Details).
+//' @param open_options Optional character vector of format-specific dataset open
+//' options as `"NAME=VALUE"` pairs.
+//' @param strict Logical value, `FALSE` (the default) some failures during the
+//' translation are tolerated, such as not being able to write group attributes.
+//' If set to `TRUE`, such failures will cause the process to fail.
+//' @param quiet Logical value, set to `TRUE` to disable progress reporting.
+//' Defaults to `FALSE`.
+//' @returns Logical value indicating success (invisible `TRUE`, output written to
+//' `dst_dsn`). An error is raised if the operation fails.
+//'
+//' @seealso
+//' [mdim_as_classic()], [mdim_info()]
+//'
+//' @examplesIf gdal_version_num() >= gdal_compute_version(3, 2, 0)
+//' f <- system.file("extdata/byte.nc", package="gdalraster")
+// [[Rcpp::export()]]
+std::string mdim_translate(
+    const Rcpp::CharacterVector &src_dsn,
+    const Rcpp::CharacterVector &dst_dsn,
+    const std::string &output_format = "",
+    const Rcpp::Nullable<Rcpp::CharacterVector> &creation_options = R_NilValue,
+    const Rcpp::Nullable<Rcpp::CharacterVector> &array_specs = R_NilValue,
+    const Rcpp::Nullable<Rcpp::CharacterVector> &group_specs = R_NilValue,
+    const Rcpp::Nullable<Rcpp::CharacterVector> &subset_specs = R_NilValue,
+    const Rcpp::Nullable<Rcpp::CharacterVector> &scaleaxes_specs = R_NilValue,
+    const Rcpp::Nullable<Rcpp::CharacterVector> &allowed_drivers = R_NilValue,
+    const Rcpp::Nullable<Rcpp::CharacterVector> &open_options = R_NilValue,
+    bool strict = false,
+    bool quiet = false) {
+
+#if GDAL_VERSION_NUM < GDAL_COMPUTE_VERSION(3, 2, 0)
+    Rcpp::stop("mdim_info() requires GDAL >= 3.2");
+#else
+    std::string src_dsn_in = Rcpp::as<std::string>(check_gdal_filename(src_dsn));
+    std::string dst_dsn_in = Rcpp::as<std::string>(check_gdal_filename(dst_dsn));
+
+    std::vector<char *> oAllowedDrivers = {};
+    if (allowed_drivers.isNotNull()) {
+        Rcpp::CharacterVector allowed_drivers_in(allowed_drivers);
+        if (allowed_drivers_in.size() > 0) {
+            for (R_xlen_t i = 0; i < allowed_drivers_in.size(); ++i) {
+                oAllowedDrivers.push_back((char *) allowed_drivers_in[i]);
+            }
+        }
+        oAllowedDrivers.push_back(nullptr);
+    }
+
+    std::vector<char *> oOpenOptions = {};
+    if (open_options.isNotNull()) {
+        Rcpp::CharacterVector open_options_in(open_options);
+        if (open_options_in.size() > 0) {
+            for (R_xlen_t i = 0; i < open_options_in.size(); ++i) {
+                oOpenOptions.push_back((char *) open_options_in[i]);
+            }
+        }
+        oOpenOptions.push_back(nullptr);
+    }
+
+    unsigned int nOpenFlags = GDAL_OF_MULTIDIM_RASTER;
+
+    GDALDatasetH hDS = nullptr;
+    hDS = GDALOpenEx(src_dsn_in.c_str(), nOpenFlags,
+                     oAllowedDrivers.empty() ? nullptr : oAllowedDrivers.data(),
+                     oOpenOptions.empty() ? nullptr : oOpenOptions.data(),
+                     nullptr);
+
+    if (!hDS)
+        Rcpp::stop("failed to open multidim raster dataset");
+
+    std::vector<char *> argv = {};
+
+    if (output_format != "") {
+        argv.push_back(const_cast<char *>("-of"));
+        argv.push_back(const_cast<char *>(output_format.c_str()));
+    }
+
+    if (!pretty)
+        argv.push_back(const_cast<char *>("-nopretty"));
+
+    if (detailed)
+        argv.push_back(const_cast<char *>("-detailed"));
 
     if (stats)
         argv.push_back(const_cast<char *>("-stats"));

@@ -9,7 +9,7 @@
 #' or more arrays are supported. In the case of > 2D arrays,additional
 #' dimensions will be represented as raster bands. Requires GDAL >= 3.2.
 #'
-#' @param filename Character string giving the data source name of the
+#' @param dsn Character string giving the data source name of the
 #' multidimensional raster (e.g., file, VSI path).
 #' @param array_name Character string giving the name of the MDarray in
 #' `filename`.
@@ -105,15 +105,15 @@
 #'
 #' ds$close()
 #' @export
-mdim_as_classic <- function(filename, array_name, idx_xdim, idx_ydim,
+mdim_as_classic <- function(dsn, array_name, idx_xdim, idx_ydim,
                             read_only = TRUE, group_name = NULL,
                             view_expr = NULL, allowed_drivers = NULL,
                             open_options = NULL) {
 
-    if (missing(filename) || is.null(filename) || all(is.na(filename)))
-        stop("'filename' is required", call. = FALSE)
-    if (!(is.character(filename) && length(filename) == 1))
-        stop("'filename' must be a character string", call. = FALSE)
+    if (missing(dsn) || is.null(dsn) || all(is.na(dsn)))
+        stop("'dsn' is required", call. = FALSE)
+    if (!(is.character(dsn) && length(dsn) == 1))
+        stop("'dsn' must be a character string", call. = FALSE)
 
     if (missing(array_name) || is.null(array_name) || all(is.na(array_name)))
         stop("'array_name' is required", call. = FALSE)
@@ -160,7 +160,7 @@ mdim_as_classic <- function(filename, array_name, idx_xdim, idx_ydim,
     }
 
     # signature for mdim_as_classic() object factory
-    ds <- new(GDALRaster, filename, array_name, idx_xdim, idx_ydim, read_only,
+    ds <- new(GDALRaster, dsn, array_name, idx_xdim, idx_ydim, read_only,
               group_name, view_expr, allowed_drivers, open_options)
 
     return(ds);
