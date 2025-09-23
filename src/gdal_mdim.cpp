@@ -231,17 +231,19 @@ std::string mdim_info(
     if (detailed)
         argv.push_back(const_cast<char *>("-detailed"));
 
+    std::string limit_str;
     if (limit > 0 && !detailed) {
         Rcpp::Rcout << "'limit' only taken into account if 'detailed = TRUE'\n";
     }
     else if (limit > 0) {
+        limit_str = std::to_string(limit);
         argv.push_back(const_cast<char *>("-limit"));
-        argv.push_back(const_cast<char *>(std::to_string(limit).c_str()));
+        argv.push_back(const_cast<char *>(limit_str.c_str()));
     }
-    
+
     if (stats)
         argv.push_back(const_cast<char *>("-stats"));
-    
+
     if (array_options.isNotNull()) {
         Rcpp::CharacterVector array_options_in(array_options);
         for (R_xlen_t i = 0; i < array_options_in.size(); ++i) {
@@ -256,7 +258,7 @@ std::string mdim_info(
     GDALMultiDimInfoOptions *psOptions = nullptr;
     if (!argv.empty()) {
         psOptions = GDALMultiDimInfoOptionsNew(argv.data(), nullptr);
-        if (psOptions == nullptr) {
+        if (!psOptions) {
             GDALReleaseDataset(hDS);
             Rcpp::stop("mdim_info() failed (could not create options struct)");
         }
