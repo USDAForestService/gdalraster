@@ -10,6 +10,7 @@
 #include <ogr_srs_api.h>
 
 #include <cstdint>
+#include <memory>
 #include <string>
 #include <vector>
 
@@ -256,11 +257,11 @@ GDALVector *create_ogr(const std::string &format,
 
     if (layer == "" && layer_defn.isNull()) {
         GDALReleaseDataset(hDstDS);
-        GDALVector *ds = new GDALVector;
+        auto ds = std::make_unique<GDALVector>();
         ds->setDsn_(dsn_in);
         // for internal use, return object has no dataset or layer in this case
         // currently would not be usable from R, but could change in the future
-        return ds;
+        return ds.release();
     }
 
     if (!GDALDatasetTestCapability(hDstDS, ODsCCreateLayer)) {
@@ -304,12 +305,12 @@ GDALVector *create_ogr(const std::string &format,
         Rcpp::stop("the layer was created but field creation failed");
     }
     else {
-        GDALVector *lyr = new GDALVector;
+        auto lyr = std::make_unique<GDALVector>();
         lyr->setDsn_(dsn_in);
         lyr->setGDALDatasetH_(hDstDS, true);
         lyr->setOGRLayerH_(hLayer, layer);
         lyr->setFieldNames_();
-        return lyr;
+        return lyr.release();
     }
 }
 
@@ -1421,12 +1422,12 @@ GDALVector *ogr_layer_create(
         Rcpp::stop("failed to create layer");
     }
     else {
-        GDALVector *lyr = new GDALVector;
+        auto lyr = std::make_unique<GDALVector>();
         lyr->setDsn_(dsn_in);
         lyr->setGDALDatasetH_(hDS, true);
         lyr->setOGRLayerH_(hLayer, layer);
         lyr->setFieldNames_();
-        return lyr;
+        return lyr.release();
     }
 }
 

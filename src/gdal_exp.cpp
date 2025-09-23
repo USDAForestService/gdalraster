@@ -699,15 +699,10 @@ GDALRaster *create(const std::string &format,
     if (hDstDS == nullptr)
         Rcpp::stop("create() failed");
 
-    GDALRaster *ds = nullptr;
-    ds = new GDALRaster();
-    if (ds == nullptr) {
-        GDALClose(hDstDS);
-        Rcpp::stop("create() failed");
-    }
+    auto ds = std::make_unique<GDALRaster>();
     ds->setFilename(dst_filename_in);
     ds->setGDALDatasetH_(hDstDS, true);
-    return ds;
+    return ds.release();
 }
 
 
@@ -769,15 +764,10 @@ GDALRaster *createCopy(const std::string &format,
     if (hDstDS == nullptr)
         Rcpp::stop("createCopy() failed");
 
-    GDALRaster *ds = nullptr;
-    ds = new GDALRaster();
-    if (ds == nullptr) {
-        GDALClose(hDstDS);
-        Rcpp::stop("create() failed");
-    }
+    auto ds = std::make_unique<GDALRaster>();
     ds->setFilename(dst_filename_in);
     ds->setGDALDatasetH_(hDstDS, true);
-    return ds;
+    return ds.release();
 }
 
 
@@ -1174,10 +1164,10 @@ GDALRaster *autoCreateWarpedVRT(const GDALRaster* const &src_ds,
     if (hWarpedDS == nullptr)
         Rcpp::stop("GDALAutoCreateWarpedVRT() returned NULL on error");
 
-    GDALRaster *ds = new GDALRaster;
+    auto ds = std::make_unique<GDALRaster>();
     ds->setFilename("");
     ds->setGDALDatasetH_(hWarpedDS, true);
-    return ds;
+    return ds.release();
 }
 
 
