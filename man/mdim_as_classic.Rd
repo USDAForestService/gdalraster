@@ -51,7 +51,7 @@ An object of class \code{GDALRaster}.
 \description{
 \code{mdim_as_classic()} returns a 2D raster view on an MDArray in a GDAL
 Multidimensional Raster dataset, as an object of class \code{GDALRaster}. Only 2D
-or more arrays are supported. In the case of > 2D arrays,additional
+or more arrays are supported. In the case of > 2D arrays, additional
 dimensions will be represented as raster bands. Requires GDAL >= 3.2.
 }
 \note{

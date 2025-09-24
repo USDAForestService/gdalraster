@@ -2,7 +2,7 @@
 % Please edit documentation in R/RcppExports.R
 \name{mdim_translate}
 \alias{mdim_translate}
-\title{Convert multidimensional data between different formats}
+\title{Convert multidimensional data between different formats, and subset}
 \usage{
 mdim_translate(
   src_dsn,
@@ -41,23 +41,23 @@ options (see \url{https://gdal.org/en/stable/drivers/raster/index.html}).
 Array-level creation options may be passed by prefixing them with \verb{ARRAY:}.}
 
 \item{array_specs}{Optional character vector of one or more array
-specifications, instead of coverting the whole dataset (see Details).}
+specifications, instead of converting the whole dataset (see Details).}
 
 \item{group_specs}{Optional character vector of one or more array
-specifications, instead of coverting the whole dataset (see Details).}
+specifications, instead of converting the whole dataset (see Details).}
 
 \item{subset_specs}{Optional character vector of one or more subset
 specifications, that perform trimming or slicing along a dimension, provided
 that it is indexed by a 1D variable of numeric or string data type, and
 whose values are monotonically sorted (see Details).}
 
-\item{scaleaxes_specs}{Optional character vector of one or more scale axes
+\item{scaleaxes_specs}{Optional character vector of one or more scale-axes
 specifications, that apply an integral scale factor to one or several
-dimensions, that is extract 1 value every N values (without resampling) (see
+dimensions, i.e., extract 1 value every N values (without resampling) (see
 Details).}
 
-\item{open_options}{Optional character vector of format-specific dataset open
-options as \code{"NAME=VALUE"} pairs.}
+\item{open_options}{Optional character vector of format-specific dataset
+open options as \code{"NAME=VALUE"} pairs.}
 
 \item{strict}{Logical value, \code{FALSE} (the default) some failures during the
 translation are tolerated, such as not being able to write group attributes.
@@ -67,11 +67,11 @@ If set to \code{TRUE}, such failures will cause the process to fail.}
 Defaults to \code{FALSE}.}
 }
 \value{
-Logical value indicating success (invisible \code{TRUE}, output written to
-\code{dst_dsn}). An error is raised if the operation fails.
+Logical value indicating success (invisible \code{TRUE}, output written
+to \code{dst_dsn}). An error is raised if the operation fails.
 }
 \description{
-\code{mdim_translate()} is a wrapper of the \command{gdalmdimtranslate}
+\code{mdim_translate()} is an interface to the \command{gdalmdimtranslate}
 command-line utility (see
 \url{https://gdal.org/en/stable/programs/gdalmdimtranslate.html}).
 This function converts multidimensional data between different formats and
@@ -103,13 +103,61 @@ applied to the corresponding indexing variable.
 }
 }
 }
+\details{
+\subsection{\code{group_specs}}{
+Instead of converting the whole dataset, select one or more groups, and
+possibly perform operations on them. One or more group specifications can
+be given in a character vector, to operate on different groups. If only one
+group is specified, its content will be copied directly to the target root
+group. If several are specified, they are copied under the target root
+group.
+
+A group specification may be just a group name, potentially using a fully
+qualified syntax (\code{"/group/subgroup/subsubgroup_name"}). Or it can be a
+combination of options with the syntax:
+
+\if{html}{\out{<div class="sourceCode">}}\preformatted{name=\{src_group_name\}[,dstname=\{dst_group_name\}][,recursive=no]
+}\if{html}{\out{</div>}}
+
+}
+
+\subsection{\code{subset_specs}}{
+Perform subsetting (trimming or slicing) operations along dimensions,
+provided that the dimension is indexed by a 1D variable of numeric or string
+data type, and whose values are monotonically sorted. One or more subset
+specifications can be given in a character vector. A subset specification
+string follows exactly the OGC WCS 2.0 KVP encoding for subsetting.
+
+Syntax is \code{dim_name(min_val,max_val)} or \code{dim_name(sliced_val)}. The first
+syntax will subset the dimension dim_name to values in the
+\verb{[min_val,max_val]} range. The second syntax will slice the dimension
+\code{dim_name} to value \code{sliced_val} (and this dimension will be removed from
+the arrays that reference to it)
+
+Using a subset specification is incompatible with specifying a view option
+in \code{array_specs}.
+}
+
+\subsection{\code{scaleaxes_specs}}{
+Applies an integral scale factor to one or several dimensions, i.e., extract
+1 value every N values (without resampling). A scale-axes specification
+string follows exactly the syntax of the KVP encoding of the SCALEAXES
+parameter of OGC WCS 2.0 Scaling Extension, but limited to integer scale
+factors.
+
+Syntax is \verb{<dim1_name>(<scale_factor>)[,<dim2_name>(<scale_factor>)]...}
+
+Using a scale-axes specification is incompatible with specifying a view
+option in \code{array_specs}.
+}
+}
 \examples{
 \dontshow{if (gdal_version_num() >= gdal_compute_version(3, 2, 0)) withAutoprint(\{ # examplesIf}
 f_src <- system.file("extdata/byte.nc", package="gdalraster")
 
 ## slice along the Y axis with array view
 f_dst <- tempfile(fileext = ".nc")
-mdim_translate(f, f2, array_specs = "name=Band1,view=[0:10,...]")
+mdim_translate(f_src, f_dst, array_specs = "name=Band1,view=[0:10,...]")
 (ds <- mdim_as_classic(f_dst, "Band1", 1, 0))
 
 plot_raster(ds, interpolate = FALSE, legend = TRUE,

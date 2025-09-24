@@ -1462,7 +1462,7 @@ gdal_get_driver_md <- function(format, mdi_name = "") {
 
 #' Report structure and content of a multidimensional dataset
 #'
-#' `mdim_info()` is a wrapper of the \command{gdalmdiminfo} command-line
+#' `mdim_info()` is an interface to the \command{gdalmdiminfo} command-line
 #' utility (see \url{https://gdal.org/en/stable/programs/gdalmdiminfo.html}).
 #' This function lists various information about a GDAL supported
 #' multidimensional raster dataset as JSON output. It follows the JSON schema
@@ -1487,10 +1487,10 @@ gdal_get_driver_md <- function(format, mdi_name = "") {
 #' filter reported arrays. Such option is format specific. Consult driver
 #' documentation (passed to `GDALGroup::GetMDArrayNames()`).
 #' @param allowed_drivers Optional character vector of driver short names that
-#' must be considered. By default, all known multidimensional raster drivers are
-#' considered.
-#' @param open_options Optional character vector of format-specific dataset open
-#' options as `"NAME=VALUE"` pairs.
+#' must be considered. By default, all known multidimensional raster drivers
+#' are considered.
+#' @param open_options Optional character vector of format-specific dataset
+#' openoptions as `"NAME=VALUE"` pairs.
 #' @returns A JSON string containing information about the multidimensional
 #' raster dataset.
 #'
@@ -1504,9 +1504,9 @@ mdim_info <- function(dsn, array_name = "", pretty = TRUE, detailed = FALSE, lim
     .Call(`_gdalraster_mdim_info`, dsn, array_name, pretty, detailed, limit, stats, array_options, allowed_drivers, open_options)
 }
 
-#' Convert multidimensional data between different formats
+#' Convert multidimensional data between different formats, and subset
 #'
-#' `mdim_translate()` is a wrapper of the \command{gdalmdimtranslate}
+#' `mdim_translate()` is an interface to the \command{gdalmdimtranslate}
 #' command-line utility (see
 #' \url{https://gdal.org/en/stable/programs/gdalmdimtranslate.html}).
 #' This function converts multidimensional data between different formats and
@@ -1536,6 +1536,53 @@ mdim_info <- function(dsn, array_name = "", pretty = TRUE, detailed = FALSE, lim
 #'   applied to the corresponding indexing variable.
 #' }
 #'
+#' @details
+#' \subsection{`group_specs`}{
+#' Instead of converting the whole dataset, select one or more groups, and
+#' possibly perform operations on them. One or more group specifications can
+#' be given in a character vector, to operate on different groups. If only one
+#' group is specified, its content will be copied directly to the target root
+#' group. If several are specified, they are copied under the target root
+#' group.
+#'
+#' A group specification may be just a group name, potentially using a fully
+#' qualified syntax (`"/group/subgroup/subsubgroup_name"`). Or it can be a
+#' combination of options with the syntax:
+#' ```
+#' name={src_group_name}[,dstname={dst_group_name}][,recursive=no]
+#' ```
+#' }
+#'
+#' \subsection{`subset_specs`}{
+#' Perform subsetting (trimming or slicing) operations along dimensions,
+#' provided that the dimension is indexed by a 1D variable of numeric or string
+#' data type, and whose values are monotonically sorted. One or more subset
+#' specifications can be given in a character vector. A subset specification
+#' string follows exactly the OGC WCS 2.0 KVP encoding for subsetting.
+#'
+#' Syntax is `dim_name(min_val,max_val)` or `dim_name(sliced_val)`. The first
+#' syntax will subset the dimension dim_name to values in the
+#' `[min_val,max_val]` range. The second syntax will slice the dimension
+#' `dim_name` to value `sliced_val` (and this dimension will be removed from
+#' the arrays that reference to it)
+#'
+#' Using a subset specification is incompatible with specifying a view option
+#' in `array_specs`.
+#' }
+#'
+#' \subsection{`scaleaxes_specs`}{
+#' Applies an integral scale factor to one or several dimensions, i.e., extract
+#' 1 value every N values (without resampling). A scale-axes specification
+#' string follows exactly the syntax of the KVP encoding of the SCALEAXES
+#' parameter of OGC WCS 2.0 Scaling Extension, but limited to integer scale
+#' factors.
+#'
+#' Syntax is `<dim1_name>(<scale_factor>)[,<dim2_name>(<scale_factor>)]...`
+#'
+#' Using a scale-axes specification is incompatible with specifying a view
+#' option in `array_specs`.
+#' }
+#'
 #' @param src_dsn Character string giving the name of the source
 #' multidimensional raster dataset (e.g., file, VSI path).
 #' @param dst_dsn Character string giving the name of the destination
@@ -1553,26 +1600,26 @@ mdim_info <- function(dsn, array_name = "", pretty = TRUE, detailed = FALSE, lim
 #' options (see \url{https://gdal.org/en/stable/drivers/raster/index.html}).
 #' Array-level creation options may be passed by prefixing them with `ARRAY:`.
 #' @param array_specs Optional character vector of one or more array
-#' specifications, instead of coverting the whole dataset (see Details).
+#' specifications, instead of converting the whole dataset (see Details).
 #' @param group_specs Optional character vector of one or more array
-#' specifications, instead of coverting the whole dataset (see Details).
+#' specifications, instead of converting the whole dataset (see Details).
 #' @param subset_specs Optional character vector of one or more subset
 #' specifications, that perform trimming or slicing along a dimension, provided
 #' that it is indexed by a 1D variable of numeric or string data type, and
 #' whose values are monotonically sorted (see Details).
-#' @param scaleaxes_specs Optional character vector of one or more scale axes
+#' @param scaleaxes_specs Optional character vector of one or more scale-axes
 #' specifications, that apply an integral scale factor to one or several
-#' dimensions, that is extract 1 value every N values (without resampling) (see
+#' dimensions, i.e., extract 1 value every N values (without resampling) (see
 #' Details).
-#' @param open_options Optional character vector of format-specific dataset open
-#' options as `"NAME=VALUE"` pairs.
+#' @param open_options Optional character vector of format-specific dataset
+#' open options as `"NAME=VALUE"` pairs.
 #' @param strict Logical value, `FALSE` (the default) some failures during the
 #' translation are tolerated, such as not being able to write group attributes.
 #' If set to `TRUE`, such failures will cause the process to fail.
 #' @param quiet Logical value, set to `TRUE` to disable progress reporting.
 #' Defaults to `FALSE`.
-#' @returns Logical value indicating success (invisible `TRUE`, output written to
-#' `dst_dsn`). An error is raised if the operation fails.
+#' @returns Logical value indicating success (invisible `TRUE`, output written
+#' to `dst_dsn`). An error is raised if the operation fails.
 #'
 #' @seealso
 #' [mdim_as_classic()], [mdim_info()]
@@ -1582,7 +1629,7 @@ mdim_info <- function(dsn, array_name = "", pretty = TRUE, detailed = FALSE, lim
 #'
 #' ## slice along the Y axis with array view
 #' f_dst <- tempfile(fileext = ".nc")
-#' mdim_translate(f, f2, array_specs = "name=Band1,view=[0:10,...]")
+#' mdim_translate(f_src, f_dst, array_specs = "name=Band1,view=[0:10,...]")
 #' (ds <- mdim_as_classic(f_dst, "Band1", 1, 0))
 #'
 #' plot_raster(ds, interpolate = FALSE, legend = TRUE,

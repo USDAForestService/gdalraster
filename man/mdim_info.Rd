@@ -42,18 +42,18 @@ filter reported arrays. Such option is format specific. Consult driver
 documentation (passed to \code{GDALGroup::GetMDArrayNames()}).}
 
 \item{allowed_drivers}{Optional character vector of driver short names that
-must be considered. By default, all known multidimensional raster drivers are
-considered.}
+must be considered. By default, all known multidimensional raster drivers
+are considered.}
 
-\item{open_options}{Optional character vector of format-specific dataset open
-options as \code{"NAME=VALUE"} pairs.}
+\item{open_options}{Optional character vector of format-specific dataset
+openoptions as \code{"NAME=VALUE"} pairs.}
 }
 \value{
 A JSON string containing information about the multidimensional
 raster dataset.
 }
 \description{
-\code{mdim_info()} is a wrapper of the \command{gdalmdiminfo} command-line
+\code{mdim_info()} is an interface to the \command{gdalmdiminfo} command-line
 utility (see \url{https://gdal.org/en/stable/programs/gdalmdiminfo.html}).
 This function lists various information about a GDAL supported
 multidimensional raster dataset as JSON output. It follows the JSON schema
