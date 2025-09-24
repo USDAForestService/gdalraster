@@ -102,8 +102,7 @@ slicing or subsetting on a dimension, the equivalent operation will be
 applied to the corresponding indexing variable.
 }
 }
-}
-\details{
+
 \subsection{\code{group_specs}}{
 Instead of converting the whole dataset, select one or more groups, and
 possibly perform operations on them. One or more group specifications can
