@@ -87,7 +87,7 @@ An array specification may be just an array name, potentially using a fully
 qualified syntax (\code{"/group/subgroup/array_name"}). Or it can be a
 combination of options with the syntax:
 
-\if{html}{\out{<div class="sourceCode">}}\preformatted{name=\{src_array_name\}[,dstname=\{dst_array_name\}][,resample=yes][,transpose=[\{axis1\},\{axis2\},...][,view=\{view_expr\}]
+\if{html}{\out{<div class="sourceCode">}}\preformatted{"name=\{src_array_name\}[,dstname=\{dst_array_name\}][,resample=yes][,transpose=[\{axis1\},\{axis2\},...][,view=\{view_expr\}]""
 }\if{html}{\out{</div>}}
 
 The following options are processed in that order:
@@ -115,7 +115,7 @@ A group specification may be just a group name, potentially using a fully
 qualified syntax (\code{"/group/subgroup/subsubgroup_name"}). Or it can be a
 combination of options with the syntax:
 
-\if{html}{\out{<div class="sourceCode">}}\preformatted{name=\{src_group_name\}[,dstname=\{dst_group_name\}][,recursive=no]
+\if{html}{\out{<div class="sourceCode">}}\preformatted{"name=\{src_group_name\}[,dstname=\{dst_group_name\}][,recursive=no]""
 }\if{html}{\out{</div>}}
 
 }

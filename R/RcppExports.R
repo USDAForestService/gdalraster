@@ -1522,7 +1522,7 @@ mdim_info <- function(dsn, array_name = "", pretty = TRUE, detailed = FALSE, lim
 #' qualified syntax (`"/group/subgroup/array_name"`). Or it can be a
 #' combination of options with the syntax:
 #' ```
-#' name={src_array_name}[,dstname={dst_array_name}][,resample=yes][,transpose=[{axis1},{axis2},...][,view={view_expr}]
+#' "name={src_array_name}[,dstname={dst_array_name}][,resample=yes][,transpose=[{axis1},{axis2},...][,view={view_expr}]""
 #' ```
 #' The following options are processed in that order:
 #'
@@ -1548,7 +1548,7 @@ mdim_info <- function(dsn, array_name = "", pretty = TRUE, detailed = FALSE, lim
 #' qualified syntax (`"/group/subgroup/subsubgroup_name"`). Or it can be a
 #' combination of options with the syntax:
 #' ```
-#' name={src_group_name}[,dstname={dst_group_name}][,recursive=no]
+#' "name={src_group_name}[,dstname={dst_group_name}][,recursive=no]""
 #' ```
 #' }
 #'
