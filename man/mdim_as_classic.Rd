@@ -131,5 +131,5 @@ plot_raster(ds, interpolate = FALSE, legend = TRUE, main = "Band1")
 ds$close()
 }
 \seealso{
-\code{\link[=GDALRaster]{GDALRaster-class}}, \code{\link[=mdim_info]{mdim_info()}}
+\code{\link[=GDALRaster]{GDALRaster-class}}, \code{\link[=mdim_info]{mdim_info()}}, \code{\link[=mdim_translate]{mdim_translate()}}
 }

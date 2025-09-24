@@ -177,7 +177,7 @@ GDALRaster *mdim_as_classic(
 //' raster dataset.
 //'
 //' @seealso
-//' [mdim_as_classic()]
+//' [mdim_as_classic()], [mdim_translate()]
 //'
 //' @examplesIf gdal_version_num() >= gdal_compute_version(3, 2, 0)
 //' f <- system.file("extdata/byte.nc", package="gdalraster")
@@ -302,6 +302,30 @@ std::string mdim_info(
 //' This function converts multidimensional data between different formats and
 //' performs subsetting. Requires GDAL >= 3.2.
 //'
+//' @details
+//' \subsection{`array_specs`}{
+//' Instead of converting the whole dataset, select one or more arrays, and
+//' possibly perform operations on them. One or more array specifications can
+//' be given as elements of a character vector.
+//'
+//' An array specification may be just an array name, potentially using a fully
+//' qualified syntax (`"/group/subgroup/array_name"`). Or it can be a
+//' combination of options with the syntax:
+//' ```
+//' name={src_array_name}[,dstname={dst_array_name}][,resample=yes][,transpose=[{axis1},{axis2},...][,view={view_expr}]
+//' ```
+//' The following options are processed in that order:
+//'
+//' * `resample=yes` asks for the array to run through
+//'   `GDALMDArray::GetResampled()`.
+//' * `[{axis1},{axis2},...]` is the argument of `GDALMDArray::Transpose()`. For
+//'   example, `transpose=[1,0]` switches the axis order of a 2D array.
+//' * `{view_expr}` is the value of the `viewExpr` argument of
+//'   `GDALMDArray::GetView()`. When specifying a `view_expr` that performs a
+//'   slicing or subsetting on a dimension, the equivalent operation will be
+//'   applied to the corresponding indexing variable.
+//' }
+//'
 //' @param src_dsn Character string giving the name of the source
 //' multidimensional raster dataset (e.g., file, VSI path).
 //' @param dst_dsn Character string giving the name of the destination
@@ -346,13 +370,16 @@ std::string mdim_info(
 //' @examplesIf gdal_version_num() >= gdal_compute_version(3, 2, 0)
 //' f_src <- system.file("extdata/byte.nc", package="gdalraster")
 //'
-//' ## slice with array view
+//' ## slice along the Y axis with array view
 //' f_dst <- tempfile(fileext = ".nc")
 //' mdim_translate(f, f2, array_specs = "name=Band1,view=[0:10,...]")
 //' (ds <- mdim_as_classic(f_dst, "Band1", 1, 0))
+//'
 //' plot_raster(ds, interpolate = FALSE, legend = TRUE,
 //'             main = "Band1[0:10,...]")
 //'
+//' dsclose()
+//' \dontshow{deleteDataset(f_dst)}
 // [[Rcpp::export(invisible = true)]]
 bool mdim_translate(
     const Rcpp::CharacterVector &src_dsn, const Rcpp::CharacterVector &dst_dsn,

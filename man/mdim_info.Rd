@@ -67,5 +67,5 @@ mdim_info(f) |> writeLines()
 \dontshow{\}) # examplesIf}
 }
 \seealso{
-\code{\link[=mdim_as_classic]{mdim_as_classic()}}
+\code{\link[=mdim_as_classic]{mdim_as_classic()}}, \code{\link[=mdim_translate]{mdim_translate()}}
 }

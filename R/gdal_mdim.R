@@ -93,7 +93,7 @@
 #' with its `$open()` method.
 #'
 #' @seealso
-#' [`GDALRaster-class`][GDALRaster], [mdim_info()]
+#' [`GDALRaster-class`][GDALRaster], [mdim_info()], [mdim_translate()]
 #'
 #' @examples
 #' f <- system.file("extdata/byte.nc", package="gdalraster")
