@@ -326,7 +326,6 @@ std::string mdim_info(
 //'   applied to the corresponding indexing variable.
 //' }
 //'
-//' @details
 //' \subsection{`group_specs`}{
 //' Instead of converting the whole dataset, select one or more groups, and
 //' possibly perform operations on them. One or more group specifications can
