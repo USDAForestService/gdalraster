@@ -21,7 +21,7 @@ mdim_info(
 multidimensional raster (e.g., file, VSI path).}
 
 \item{array_name}{Character string giving the name of the MDarray in
-\code{filename}.}
+\code{dsn}.}
 
 \item{pretty}{Logical value, \code{FALSE} to output a single line without any
 indentation. Defaults to \code{TRUE}.}

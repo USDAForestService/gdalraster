@@ -21,7 +21,7 @@ mdim_as_classic(
 multidimensional raster (e.g., file, VSI path).}
 
 \item{array_name}{Character string giving the name of the MDarray in
-\code{filename}.}
+\code{dsn}.}
 
 \item{idx_xdim}{Integer value giving the index of the dimension that will be
 used as the X/width axis (0-based).}

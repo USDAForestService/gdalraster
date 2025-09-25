@@ -154,7 +154,7 @@ GDALRaster *mdim_as_classic(
 //' @param dsn Character string giving the data source name of the
 //' multidimensional raster (e.g., file, VSI path).
 //' @param array_name Character string giving the name of the MDarray in
-//' `filename`.
+//' `dsn`.
 //' @param pretty Logical value, `FALSE` to output a single line without any
 //' indentation. Defaults to `TRUE`.
 //' @param detailed Logical value, `TRUE` for verbose output. Report attribute

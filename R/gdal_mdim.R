@@ -12,7 +12,7 @@
 #' @param dsn Character string giving the data source name of the
 #' multidimensional raster (e.g., file, VSI path).
 #' @param array_name Character string giving the name of the MDarray in
-#' `filename`.
+#' `dsn`.
 #' @param idx_xdim Integer value giving the index of the dimension that will be
 #' used as the X/width axis (0-based).
 #' @param idx_ydim Integer value giving the index of the dimension that will be
