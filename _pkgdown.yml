@@ -74,6 +74,7 @@ reference:
 - contents:
   - mdim_as_classic
   - mdim_info
+  - mdim_translate
 - subtitle: Geotransform conversion
 - contents:
   - apply_geotransform
