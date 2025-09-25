@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">gdalraster</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">2.2.1.9023</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">2.2.1.9030</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -53,10 +53,11 @@
     </div>
 
     <div class="section level2">
-<h2 class="pkg-version" data-toc-text="2.2.1.9023" id="gdalraster-2219023-dev">gdalraster 2.2.1.9023 (dev)<a class="anchor" aria-label="anchor" href="#gdalraster-2219023-dev"></a></h2>
-<ul><li><p><code><a href="../reference/mdim_as_classic.html">mdim_as_classic()</a></code>: add argument <code>view_expr</code> for array slicing or field access by name (<a href="https://github.com/USDAForestService/gdalraster/issues/802" class="external-link">#802</a>) (2025-09-22)</p></li>
+<h2 class="pkg-version" data-toc-text="2.2.1.9030" id="gdalraster-2219030-dev">gdalraster 2.2.1.9030 (dev)<a class="anchor" aria-label="anchor" href="#gdalraster-2219030-dev"></a></h2>
+<ul><li><p>add <code><a href="../reference/mdim_translate.html">mdim_translate()</a></code>: convert multidimensional data between different formats, and subset, interface to <code>gdalmdimtranslate</code> utility (2025-09-25)</p></li>
+<li><p><code><a href="../reference/mdim_as_classic.html">mdim_as_classic()</a></code>: add argument <code>view_expr</code> for array slicing or field access by name (<a href="https://github.com/USDAForestService/gdalraster/issues/802" class="external-link">#802</a>) (2025-09-22)</p></li>
 <li><p>code linting: use <code>unique_ptr</code> (<a href="https://github.com/USDAForestService/gdalraster/issues/801" class="external-link">#801</a>) (2025-09-22)</p></li>
-<li><p>add <code><a href="../reference/mdim_info.html">mdim_info()</a></code>: report structure and content of a multidimensional dataset, wrapper for <code>gdalmdiminfo</code> (2025-09-22)</p></li>
+<li><p>add <code><a href="../reference/mdim_info.html">mdim_info()</a></code>: report structure and content of a multidimensional dataset, interface to <code>gdalmdiminfo</code> utility (2025-09-22)</p></li>
 <li><p>add <code><a href="../reference/mdim_as_classic.html">mdim_as_classic()</a></code>: return a view of an MDArray as a “classic” GDALDataset (i.e., 2D), and add column <code>multidim_raster</code> (<code>TRUE</code>|<code>FALSE</code>) in the data frame output of <code><a href="../reference/gdal_formats.html">gdal_formats()</a></code> (<a href="https://github.com/USDAForestService/gdalraster/issues/799" class="external-link">#799</a>) (2025-09-21)</p></li>
 <li><p>add <code><a href="../reference/g_util.html">g_normalize()</a></code>: wrapper for <code>OGR_G_Normalize()</code> (<a href="https://github.com/USDAForestService/gdalraster/issues/798" class="external-link">#798</a>) (2025-09-20)</p></li>
 <li><p>add <code><a href="../reference/g_unary_op.html">g_unary_union()</a></code>: wrapper for <code>OGR_G_UnaryUnion()</code> (<a href="https://github.com/USDAForestService/gdalraster/issues/797" class="external-link">#797</a>) (2025-09-20)</p></li>
