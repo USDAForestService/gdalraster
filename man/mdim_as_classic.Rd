@@ -121,6 +121,7 @@ combined, e.g. \code{"[1]['field_name']"}.
 }
 
 \examples{
+\dontshow{if (gdal_version_num() >= gdal_compute_version(3, 2, 0) && isTRUE(gdal_formats("netCDF")$multidim_raster)) withAutoprint(\{ # examplesIf}
 f <- system.file("extdata/byte.nc", package="gdalraster")
 # mdim_info(f) |> writeLines()
 
@@ -129,6 +130,7 @@ f <- system.file("extdata/byte.nc", package="gdalraster")
 plot_raster(ds, interpolate = FALSE, legend = TRUE, main = "Band1")
 
 ds$close()
+\dontshow{\}) # examplesIf}
 }
 \seealso{
 \code{\link[=GDALRaster]{GDALRaster-class}}, \code{\link[=mdim_info]{mdim_info()}}, \code{\link[=mdim_translate]{mdim_translate()}}

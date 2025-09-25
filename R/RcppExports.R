@@ -1487,8 +1487,9 @@ gdal_get_driver_md <- function(format, mdi_name = "") {
 #' filter reported arrays. Such option is format specific. Consult driver
 #' documentation (passed to `GDALGroup::GetMDArrayNames()`).
 #' @param allowed_drivers Optional character vector of driver short names that
-#' must be considered. By default, all known multidimensional raster drivers
-#' are considered.
+#' must be considered when opening `dsn`. It is generally not necessary to
+#' specify it, but it can be used to skip automatic driver detection, when it
+#' fails to select the appropriate driver.
 #' @param open_options Optional character vector of format-specific dataset
 #' openoptions as `"NAME=VALUE"` pairs.
 #' @returns A JSON string containing information about the multidimensional
@@ -1497,7 +1498,7 @@ gdal_get_driver_md <- function(format, mdi_name = "") {
 #' @seealso
 #' [mdim_as_classic()], [mdim_translate()]
 #'
-#' @examplesIf gdal_version_num() >= gdal_compute_version(3, 2, 0)
+#' @examplesIf gdal_version_num() >= gdal_compute_version(3, 2, 0) && isTRUE(gdal_formats("netCDF")$multidim_raster)
 #' f <- system.file("extdata/byte.nc", package="gdalraster")
 #' mdim_info(f) |> writeLines()
 mdim_info <- function(dsn, array_name = "", pretty = TRUE, detailed = FALSE, limit = -1L, stats = FALSE, array_options = NULL, allowed_drivers = NULL, open_options = NULL) {
@@ -1513,6 +1514,20 @@ mdim_info <- function(dsn, array_name = "", pretty = TRUE, detailed = FALSE, lim
 #' performs subsetting. Requires GDAL >= 3.2.
 #'
 #' @details
+#' \subsection{Array creation options}{
+#' Array creation options must be prefixed with `ARRAY:`. The scope may be
+#' further restricted to arrays of a certain dimension by adding
+#' `IF(DIM={ndims}):` after `ARRAY:`. For example,
+#' `"ARRAY:IF(DIM=2):BLOCKSIZE=256,256"` will restrict `BLOCKSIZE=256,256` to
+#' arrays of dimension 2. Restriction to arrays of a given name is done with
+#' adding `IF(NAME={name}):` after `ARRAY:`. `{name}` can also be a fully
+#' qualified name. A non-driver specific array option, `"AUTOSCALE=YES"` can
+#' be used to ask (non indexing) variables of type `Float32` or `Float64` to be
+#' scaled to `UInt16` with scale and offset values being computed from the
+#' minimum and maximum of the source array. The integer data type used can be
+#' set with `"AUTOSCALE_DATA_TYPE=Byte|UInt16|Int16|UInt32|Int32"`.
+#' }
+#'
 #' \subsection{`array_specs`}{
 #' Instead of converting the whole dataset, select one or more arrays, and
 #' possibly perform operations on them. One or more array specifications can
@@ -1600,7 +1615,8 @@ mdim_info <- function(dsn, array_name = "", pretty = TRUE, detailed = FALSE, lim
 #' format can be obtained with `getCreationOptions()`, but the documentation
 #' for the format is the definitive source of information on driver creation
 #' options (see \url{https://gdal.org/en/stable/drivers/raster/index.html}).
-#' Array-level creation options may be passed by prefixing them with `ARRAY:`.
+#' Array-level creation options may be passed by prefixing them with `ARRAY:`
+#' (see Details).
 #' @param array_specs Optional character vector of one or more array
 #' specifications, instead of converting the whole dataset (see Details).
 #' @param group_specs Optional character vector of one or more array
@@ -1613,8 +1629,12 @@ mdim_info <- function(dsn, array_name = "", pretty = TRUE, detailed = FALSE, lim
 #' specification, that apply an integral scale factor to one or several
 #' dimensions, i.e., extract 1 value every N values (without resampling) (see
 #' Details).
+#' @param allowed_drivers Optional character vector of driver short names that
+#' must be considered when opening `src_dsn`. It is generally not necessary to
+#' specify it, but it can be used to skip automatic driver detection, when it
+#' fails to select the appropriate driver.
 #' @param open_options Optional character vector of format-specific dataset
-#' open options as `"NAME=VALUE"` pairs.
+#' open options for `src_dsn` as `"NAME=VALUE"` pairs.
 #' @param strict Logical value, `FALSE` (the default) some failures during the
 #' translation are tolerated, such as not being able to write group attributes.
 #' If set to `TRUE`, such failures will cause the process to fail.
@@ -1626,24 +1646,56 @@ mdim_info <- function(dsn, array_name = "", pretty = TRUE, detailed = FALSE, lim
 #' @seealso
 #' [mdim_as_classic()], [mdim_info()]
 #'
-#' @examplesIf gdal_version_num() >= gdal_compute_version(3, 2, 0)
+#' @examplesIf gdal_version_num() >= gdal_compute_version(3, 2, 0) && isTRUE(gdal_formats("netCDF")$multidim_raster)
 #' f_src <- system.file("extdata/byte.nc", package="gdalraster")
-#' (ds <- mdim_as_classic(f_src, "Band1", 1, 0))
+#'
+#' ## COMPRESS option for MDArray creation
+#' opt <- NULL
+#' if (isTRUE(gdal_get_driver_md("netCDF")$NETCDF_HAS_HDF4 == "YES"))
+#'   opt <- "ARRAY:IF(NAME=Band1):COMPRESS=DEFLATE"
+#'
+#' f_dst <- tempfile(fileext = ".nc")
+#' mdim_translate(f_src, f_dst, creation_options = opt)
+#' (ds <- mdim_as_classic(f_dst, "Band1", 1, 0))
 #'
 #' plot_raster(ds, interpolate = FALSE, legend = TRUE, main = "Band1")
 #'
 #' ds$close()
 #'
 #' ## slice along the Y axis with array view
-#' f_dst <- tempfile(fileext = ".nc")
-#' mdim_translate(f_src, f_dst, array_specs = "name=Band1,view=[10:20,...]")
-#' (ds <- mdim_as_classic(f_dst, "Band1", 1, 0))
+#' f_dst2 <- tempfile(fileext = ".nc")
+#' mdim_translate(f_src, f_dst2, array_specs = "name=Band1,view=[10:20,...]")
+#' (ds <- mdim_as_classic(f_dst2, "Band1", 1, 0))
 #'
 #' plot_raster(ds, interpolate = FALSE, legend = TRUE,
 #'             main = "Band1[10:20,...]")
 #'
-#' dsclose()
+#' ds$close()
+#'
+#' ## trim X and Y by subsetting
+#' f_dst3 <- tempfile(fileext = ".nc")
+#' subsets <- c("x(441000,441800)", "y(3750400,3751000)")
+#' mdim_translate(f_src, f_dst3, subset_specs = subsets)
+#' (ds <- mdim_as_classic(f_dst3, "Band1", 1, 0))
+#'
+#' plot_raster(ds, interpolate = FALSE, legend = TRUE,
+#'             main = "Band1 trimmed")
+#'
+#' ds$close()
+#'
+#' ## subsample along X and Y
+#' f_dst4 <- tempfile(fileext = ".nc")
+#' mdim_translate(f_src, f_dst4, scaleaxes_specs = "x(2),y(2)")
+#' (ds <- mdim_as_classic(f_dst4, "Band1", 1, 0))
+#'
+#' plot_raster(ds, interpolate = FALSE, legend = TRUE,
+#'             main = "Band1 subsampled")
+#'
+#' ds$close()
 #' \dontshow{deleteDataset(f_dst)}
+#' \dontshow{deleteDataset(f_dst2)}
+#' \dontshow{deleteDataset(f_dst3)}
+#' \dontshow{deleteDataset(f_dst4)}
 mdim_translate <- function(src_dsn, dst_dsn, output_format = "", creation_options = NULL, array_specs = NULL, group_specs = NULL, subset_specs = NULL, scaleaxes_specs = NULL, allowed_drivers = NULL, open_options = NULL, strict = FALSE, quiet = FALSE) {
     invisible(.Call(`_gdalraster_mdim_translate`, src_dsn, dst_dsn, output_format, creation_options, array_specs, group_specs, subset_specs, scaleaxes_specs, allowed_drivers, open_options, strict, quiet))
 }

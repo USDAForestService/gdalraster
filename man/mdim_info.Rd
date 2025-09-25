@@ -42,8 +42,9 @@ filter reported arrays. Such option is format specific. Consult driver
 documentation (passed to \code{GDALGroup::GetMDArrayNames()}).}
 
 \item{allowed_drivers}{Optional character vector of driver short names that
-must be considered. By default, all known multidimensional raster drivers
-are considered.}
+must be considered when opening \code{dsn}. It is generally not necessary to
+specify it, but it can be used to skip automatic driver detection, when it
+fails to select the appropriate driver.}
 
 \item{open_options}{Optional character vector of format-specific dataset
 openoptions as \code{"NAME=VALUE"} pairs.}
@@ -61,7 +62,7 @@ multidimensional raster dataset as JSON output. It follows the JSON schema
 Requires GDAL >= 3.2.
 }
 \examples{
-\dontshow{if (gdal_version_num() >= gdal_compute_version(3, 2, 0)) withAutoprint(\{ # examplesIf}
+\dontshow{if (gdal_version_num() >= gdal_compute_version(3, 2, 0) && isTRUE(gdal_formats("netCDF")$multidim_raster)) withAutoprint(\{ # examplesIf}
 f <- system.file("extdata/byte.nc", package="gdalraster")
 mdim_info(f) |> writeLines()
 \dontshow{\}) # examplesIf}

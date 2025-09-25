@@ -38,7 +38,8 @@ creation options as \code{"NAME=VALUE"} pairs. A list of options supported for a
 format can be obtained with \code{getCreationOptions()}, but the documentation
 for the format is the definitive source of information on driver creation
 options (see \url{https://gdal.org/en/stable/drivers/raster/index.html}).
-Array-level creation options may be passed by prefixing them with \verb{ARRAY:}.}
+Array-level creation options may be passed by prefixing them with \verb{ARRAY:}
+(see Details).}
 
 \item{array_specs}{Optional character vector of one or more array
 specifications, instead of converting the whole dataset (see Details).}
@@ -56,8 +57,13 @@ specification, that apply an integral scale factor to one or several
 dimensions, i.e., extract 1 value every N values (without resampling) (see
 Details).}
 
+\item{allowed_drivers}{Optional character vector of driver short names that
+must be considered when opening \code{src_dsn}. It is generally not necessary to
+specify it, but it can be used to skip automatic driver detection, when it
+fails to select the appropriate driver.}
+
 \item{open_options}{Optional character vector of format-specific dataset
-open options as \code{"NAME=VALUE"} pairs.}
+open options for \code{src_dsn} as \code{"NAME=VALUE"} pairs.}
 
 \item{strict}{Logical value, \code{FALSE} (the default) some failures during the
 translation are tolerated, such as not being able to write group attributes.
@@ -78,6 +84,20 @@ This function converts multidimensional data between different formats and
 performs subsetting. Requires GDAL >= 3.2.
 }
 \details{
+\subsection{Array creation options}{
+Array creation options must be prefixed with \verb{ARRAY:}. The scope may be
+further restricted to arrays of a certain dimension by adding
+\verb{IF(DIM=\{ndims\}):} after \verb{ARRAY:}. For example,
+\code{"ARRAY:IF(DIM=2):BLOCKSIZE=256,256"} will restrict \verb{BLOCKSIZE=256,256} to
+arrays of dimension 2. Restriction to arrays of a given name is done with
+adding \verb{IF(NAME=\{name\}):} after \verb{ARRAY:}. \code{{name}} can also be a fully
+qualified name. A non-driver specific array option, \code{"AUTOSCALE=YES"} can
+be used to ask (non indexing) variables of type \code{Float32} or \code{Float64} to be
+scaled to \code{UInt16} with scale and offset values being computed from the
+minimum and maximum of the source array. The integer data type used can be
+set with \code{"AUTOSCALE_DATA_TYPE=Byte|UInt16|Int16|UInt32|Int32"}.
+}
+
 \subsection{\code{array_specs}}{
 Instead of converting the whole dataset, select one or more arrays, and
 possibly perform operations on them. One or more array specifications can
@@ -154,24 +174,56 @@ option in \code{array_specs}.
 }
 }
 \examples{
-\dontshow{if (gdal_version_num() >= gdal_compute_version(3, 2, 0)) withAutoprint(\{ # examplesIf}
+\dontshow{if (gdal_version_num() >= gdal_compute_version(3, 2, 0) && isTRUE(gdal_formats("netCDF")$multidim_raster)) withAutoprint(\{ # examplesIf}
 f_src <- system.file("extdata/byte.nc", package="gdalraster")
-(ds <- mdim_as_classic(f_src, "Band1", 1, 0))
+
+## COMPRESS option for MDArray creation
+opt <- NULL
+if (isTRUE(gdal_get_driver_md("netCDF")$NETCDF_HAS_HDF4 == "YES"))
+  opt <- "ARRAY:IF(NAME=Band1):COMPRESS=DEFLATE"
+
+f_dst <- tempfile(fileext = ".nc")
+mdim_translate(f_src, f_dst, creation_options = opt)
+(ds <- mdim_as_classic(f_dst, "Band1", 1, 0))
 
 plot_raster(ds, interpolate = FALSE, legend = TRUE, main = "Band1")
 
 ds$close()
 
 ## slice along the Y axis with array view
-f_dst <- tempfile(fileext = ".nc")
-mdim_translate(f_src, f_dst, array_specs = "name=Band1,view=[10:20,...]")
-(ds <- mdim_as_classic(f_dst, "Band1", 1, 0))
+f_dst2 <- tempfile(fileext = ".nc")
+mdim_translate(f_src, f_dst2, array_specs = "name=Band1,view=[10:20,...]")
+(ds <- mdim_as_classic(f_dst2, "Band1", 1, 0))
 
 plot_raster(ds, interpolate = FALSE, legend = TRUE,
             main = "Band1[10:20,...]")
 
-dsclose()
+ds$close()
+
+## trim X and Y by subsetting
+f_dst3 <- tempfile(fileext = ".nc")
+subsets <- c("x(441000,441800)", "y(3750400,3751000)")
+mdim_translate(f_src, f_dst3, subset_specs = subsets)
+(ds <- mdim_as_classic(f_dst3, "Band1", 1, 0))
+
+plot_raster(ds, interpolate = FALSE, legend = TRUE,
+            main = "Band1 trimmed")
+
+ds$close()
+
+## subsample along X and Y
+f_dst4 <- tempfile(fileext = ".nc")
+mdim_translate(f_src, f_dst4, scaleaxes_specs = "x(2),y(2)")
+(ds <- mdim_as_classic(f_dst4, "Band1", 1, 0))
+
+plot_raster(ds, interpolate = FALSE, legend = TRUE,
+            main = "Band1 subsampled")
+
+ds$close()
 \dontshow{deleteDataset(f_dst)}
+\dontshow{deleteDataset(f_dst2)}
+\dontshow{deleteDataset(f_dst3)}
+\dontshow{deleteDataset(f_dst4)}
 \dontshow{\}) # examplesIf}
 }
 \seealso{

@@ -95,7 +95,7 @@
 #' @seealso
 #' [`GDALRaster-class`][GDALRaster], [mdim_info()], [mdim_translate()]
 #'
-#' @examples
+#' @examplesIf gdal_version_num() >= gdal_compute_version(3, 2, 0) && isTRUE(gdal_formats("netCDF")$multidim_raster)
 #' f <- system.file("extdata/byte.nc", package="gdalraster")
 #' # mdim_info(f) |> writeLines()
 #'

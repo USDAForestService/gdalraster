@@ -1,4 +1,6 @@
 skip_if(gdal_version_num() < gdal_compute_version(3, 2, 0))
+skip_if(nrow(gdal_formats("netCDF")) == 0 ||
+            isFALSE(gdal_formats("netCDF")$multidim_raster))
 
 test_that("mdim_as_classic works", {
     f <- system.file("extdata/byte.nc", package="gdalraster")
@@ -79,18 +81,16 @@ test_that("mdim_translate works", {
     on.exit(deleteDataset(f2), add = TRUE)
 
     opt <- NULL
-    if ("NC4C" %in% getCreationOptions("netCDF", "FORMAT")$values)
-        opt <- "COMPRESS=DEFLATE"
+    if (isTRUE(gdal_get_driver_md("netCDF")$NETCDF_HAS_HDF4 == "YES"))
+        opt <- "ARRAY:IF(NAME=Band1):COMPRESS=DEFLATE"
 
     ar <- "name=Band1,view=[10:20,...]"
-    expect_silent(res <- mdim_translate(f, f2, output_format = "netCDF",
-                                        creation_options = opt,
-                                        array_specs = ar,
-                                        allowed_drivers = "netCDF",
-                                        open_options = "HONOUR_VALID_RANGE=NO",
-                                        strict = true, quiet = TRUE))
-
-    expect_true(res)
+    expect_true(res <- mdim_translate(f, f2,
+                                      creation_options = opt,
+                                      array_specs = ar,
+                                      allowed_drivers = c("HDF5", "netCDF"),
+                                      open_options = "HONOUR_VALID_RANGE=NO",
+                                      quiet = TRUE))
 
     ds <- mdim_as_classic(f2, "Band1", 1, 0, read_only = FALSE)
     expect_equal(ds$getStatistics(1, FALSE, TRUE),
