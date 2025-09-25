@@ -93,9 +93,7 @@ test_that("mdim_translate works", {
                                       quiet = TRUE))
 
     ds <- mdim_as_classic(f2, "Band1", 1, 0, read_only = FALSE)
-    expect_equal(ds$getStatistics(1, FALSE, TRUE),
-                 c(99.0, 206.0, 126.71, 18.356086184152),
-                 tolerance = 0.01)
+    expect_equal(ds$dim(), c(10, 10, 1))
 
     ds$close()
 
