@@ -75,6 +75,8 @@ test_that("mdim_info works", {
 })
 
 test_that("mdim_translate works", {
+    skip_if(gdal_version_num() < gdal_compute_version(3, 8, 0))
+
     f <- system.file("extdata/byte.nc", package="gdalraster")
 
     f2 <- tempfile(fileext = ".nc")
