@@ -51,8 +51,8 @@ specifications, that perform trimming or slicing along a dimension, provided
 that it is indexed by a 1D variable of numeric or string data type, and
 whose values are monotonically sorted (see Details).}
 
-\item{scaleaxes_specs}{Optional character vector of one or more scale-axes
-specifications, that apply an integral scale factor to one or several
+\item{scaleaxes_specs}{Optional character string for a scale-axes
+specification, that apply an integral scale factor to one or several
 dimensions, i.e., extract 1 value every N values (without resampling) (see
 Details).}
 
@@ -115,7 +115,7 @@ A group specification may be just a group name, potentially using a fully
 qualified syntax (\code{"/group/subgroup/subsubgroup_name"}). Or it can be a
 combination of options with the syntax:
 
-\if{html}{\out{<div class="sourceCode">}}\preformatted{"name=\{src_group_name\}[,dstname=\{dst_group_name\}][,recursive=no]""
+\if{html}{\out{<div class="sourceCode">}}\preformatted{"name=\{src_group_name\}[,dstname=\{dst_group_name\}][,recursive=no]"
 }\if{html}{\out{</div>}}
 
 }
@@ -144,7 +144,10 @@ string follows exactly the syntax of the KVP encoding of the SCALEAXES
 parameter of OGC WCS 2.0 Scaling Extension, but limited to integer scale
 factors.
 
-Syntax is \verb{<dim1_name>(<scale_factor>)[,<dim2_name>(<scale_factor>)]...}
+Syntax is a character string of the form:
+
+\if{html}{\out{<div class="sourceCode">}}\preformatted{`<dim1_name>(<scale_factor>)[,<dim2_name>(<scale_factor>)]...`
+}\if{html}{\out{</div>}}
 
 Using a scale-axes specification is incompatible with specifying a view
 option in \code{array_specs}.
@@ -153,14 +156,19 @@ option in \code{array_specs}.
 \examples{
 \dontshow{if (gdal_version_num() >= gdal_compute_version(3, 2, 0)) withAutoprint(\{ # examplesIf}
 f_src <- system.file("extdata/byte.nc", package="gdalraster")
+(ds <- mdim_as_classic(f_src, "Band1", 1, 0))
+
+plot_raster(ds, interpolate = FALSE, legend = TRUE, main = "Band1")
+
+ds$close()
 
 ## slice along the Y axis with array view
 f_dst <- tempfile(fileext = ".nc")
-mdim_translate(f_src, f_dst, array_specs = "name=Band1,view=[0:10,...]")
+mdim_translate(f_src, f_dst, array_specs = "name=Band1,view=[10:20,...]")
 (ds <- mdim_as_classic(f_dst, "Band1", 1, 0))
 
 plot_raster(ds, interpolate = FALSE, legend = TRUE,
-            main = "Band1[0:10,...]")
+            main = "Band1[10:20,...]")
 
 dsclose()
 \dontshow{deleteDataset(f_dst)}

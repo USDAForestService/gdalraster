@@ -430,7 +430,7 @@ bool mdim_translate(
     const Rcpp::Nullable<Rcpp::CharacterVector> &array_specs,
     const Rcpp::Nullable<Rcpp::CharacterVector> &group_specs,
     const Rcpp::Nullable<Rcpp::CharacterVector> &subset_specs,
-    const Rcpp::Nullable<Rcpp::CharacterVector> &scaleaxes_specs,
+    const Rcpp::Nullable<Rcpp::String> &scaleaxes_specs,
     const Rcpp::Nullable<Rcpp::CharacterVector> &allowed_drivers,
     const Rcpp::Nullable<Rcpp::CharacterVector> &open_options,
     bool strict, bool quiet);

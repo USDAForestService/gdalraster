@@ -1548,7 +1548,7 @@ mdim_info <- function(dsn, array_name = "", pretty = TRUE, detailed = FALSE, lim
 #' qualified syntax (`"/group/subgroup/subsubgroup_name"`). Or it can be a
 #' combination of options with the syntax:
 #' ```
-#' "name={src_group_name}[,dstname={dst_group_name}][,recursive=no]""
+#' "name={src_group_name}[,dstname={dst_group_name}][,recursive=no]"
 #' ```
 #' }
 #'
@@ -1576,7 +1576,10 @@ mdim_info <- function(dsn, array_name = "", pretty = TRUE, detailed = FALSE, lim
 #' parameter of OGC WCS 2.0 Scaling Extension, but limited to integer scale
 #' factors.
 #'
-#' Syntax is `<dim1_name>(<scale_factor>)[,<dim2_name>(<scale_factor>)]...`
+#' Syntax is a character string of the form:
+#' ```
+#' `<dim1_name>(<scale_factor>)[,<dim2_name>(<scale_factor>)]...`
+#' ```
 #'
 #' Using a scale-axes specification is incompatible with specifying a view
 #' option in `array_specs`.
@@ -1606,8 +1609,8 @@ mdim_info <- function(dsn, array_name = "", pretty = TRUE, detailed = FALSE, lim
 #' specifications, that perform trimming or slicing along a dimension, provided
 #' that it is indexed by a 1D variable of numeric or string data type, and
 #' whose values are monotonically sorted (see Details).
-#' @param scaleaxes_specs Optional character vector of one or more scale-axes
-#' specifications, that apply an integral scale factor to one or several
+#' @param scaleaxes_specs Optional character string for a scale-axes
+#' specification, that apply an integral scale factor to one or several
 #' dimensions, i.e., extract 1 value every N values (without resampling) (see
 #' Details).
 #' @param open_options Optional character vector of format-specific dataset
@@ -1625,14 +1628,19 @@ mdim_info <- function(dsn, array_name = "", pretty = TRUE, detailed = FALSE, lim
 #'
 #' @examplesIf gdal_version_num() >= gdal_compute_version(3, 2, 0)
 #' f_src <- system.file("extdata/byte.nc", package="gdalraster")
+#' (ds <- mdim_as_classic(f_src, "Band1", 1, 0))
+#'
+#' plot_raster(ds, interpolate = FALSE, legend = TRUE, main = "Band1")
+#'
+#' ds$close()
 #'
 #' ## slice along the Y axis with array view
 #' f_dst <- tempfile(fileext = ".nc")
-#' mdim_translate(f_src, f_dst, array_specs = "name=Band1,view=[0:10,...]")
+#' mdim_translate(f_src, f_dst, array_specs = "name=Band1,view=[10:20,...]")
 #' (ds <- mdim_as_classic(f_dst, "Band1", 1, 0))
 #'
 #' plot_raster(ds, interpolate = FALSE, legend = TRUE,
-#'             main = "Band1[0:10,...]")
+#'             main = "Band1[10:20,...]")
 #'
 #' dsclose()
 #' \dontshow{deleteDataset(f_dst)}

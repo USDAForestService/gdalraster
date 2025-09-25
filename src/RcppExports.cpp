@@ -787,7 +787,7 @@ BEGIN_RCPP
 END_RCPP
 }
 // mdim_translate
-bool mdim_translate(const Rcpp::CharacterVector& src_dsn, const Rcpp::CharacterVector& dst_dsn, const std::string& output_format, const Rcpp::Nullable<Rcpp::CharacterVector>& creation_options, const Rcpp::Nullable<Rcpp::CharacterVector>& array_specs, const Rcpp::Nullable<Rcpp::CharacterVector>& group_specs, const Rcpp::Nullable<Rcpp::CharacterVector>& subset_specs, const Rcpp::Nullable<Rcpp::CharacterVector>& scaleaxes_specs, const Rcpp::Nullable<Rcpp::CharacterVector>& allowed_drivers, const Rcpp::Nullable<Rcpp::CharacterVector>& open_options, bool strict, bool quiet);
+bool mdim_translate(const Rcpp::CharacterVector& src_dsn, const Rcpp::CharacterVector& dst_dsn, const std::string& output_format, const Rcpp::Nullable<Rcpp::CharacterVector>& creation_options, const Rcpp::Nullable<Rcpp::CharacterVector>& array_specs, const Rcpp::Nullable<Rcpp::CharacterVector>& group_specs, const Rcpp::Nullable<Rcpp::CharacterVector>& subset_specs, const Rcpp::Nullable<Rcpp::String>& scaleaxes_specs, const Rcpp::Nullable<Rcpp::CharacterVector>& allowed_drivers, const Rcpp::Nullable<Rcpp::CharacterVector>& open_options, bool strict, bool quiet);
 RcppExport SEXP _gdalraster_mdim_translate(SEXP src_dsnSEXP, SEXP dst_dsnSEXP, SEXP output_formatSEXP, SEXP creation_optionsSEXP, SEXP array_specsSEXP, SEXP group_specsSEXP, SEXP subset_specsSEXP, SEXP scaleaxes_specsSEXP, SEXP allowed_driversSEXP, SEXP open_optionsSEXP, SEXP strictSEXP, SEXP quietSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
@@ -799,7 +799,7 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< const Rcpp::Nullable<Rcpp::CharacterVector>& >::type array_specs(array_specsSEXP);
     Rcpp::traits::input_parameter< const Rcpp::Nullable<Rcpp::CharacterVector>& >::type group_specs(group_specsSEXP);
     Rcpp::traits::input_parameter< const Rcpp::Nullable<Rcpp::CharacterVector>& >::type subset_specs(subset_specsSEXP);
-    Rcpp::traits::input_parameter< const Rcpp::Nullable<Rcpp::CharacterVector>& >::type scaleaxes_specs(scaleaxes_specsSEXP);
+    Rcpp::traits::input_parameter< const Rcpp::Nullable<Rcpp::String>& >::type scaleaxes_specs(scaleaxes_specsSEXP);
     Rcpp::traits::input_parameter< const Rcpp::Nullable<Rcpp::CharacterVector>& >::type allowed_drivers(allowed_driversSEXP);
     Rcpp::traits::input_parameter< const Rcpp::Nullable<Rcpp::CharacterVector>& >::type open_options(open_optionsSEXP);
     Rcpp::traits::input_parameter< bool >::type strict(strictSEXP);
