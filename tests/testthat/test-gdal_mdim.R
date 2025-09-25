@@ -1,4 +1,6 @@
 skip_if(gdal_version_num() < gdal_compute_version(3, 2, 0))
+skip_if(nrow(gdal_formats("netCDF")) == 0 ||
+            isFALSE(gdal_formats("netCDF")$multidim_raster))
 
 test_that("mdim_as_classic works", {
     f <- system.file("extdata/byte.nc", package="gdalraster")
@@ -64,10 +66,67 @@ test_that("mdim_info works", {
 
     expect_no_error(
         info <- mdim_info(f, "Band1", pretty = FALSE, detailed = TRUE,
-                        limit = 5, allowed_drivers = "netCDF",
-                        open_options = "HONOUR_VALID_RANGE=NO"))
+                          limit = 5, allowed_drivers = "netCDF",
+                          open_options = "HONOUR_VALID_RANGE=NO"))
 
     expect_vector(info, ptype = character(), size = 1)
     expect_true(startsWith(info, "{"))
     expect_true(nchar(info) > 1000)
+})
+
+test_that("mdim_translate works", {
+    skip_if(gdal_version_num() < gdal_compute_version(3, 8, 0))
+
+    f <- system.file("extdata/byte.nc", package="gdalraster")
+
+    f2 <- tempfile(fileext = ".nc")
+    on.exit(deleteDataset(f2), add = TRUE)
+
+    opt <- NULL
+    if (isTRUE(gdal_get_driver_md("netCDF")$NETCDF_HAS_HDF4 == "YES"))
+        opt <- "ARRAY:IF(NAME=Band1):COMPRESS=DEFLATE"
+
+    ar <- "name=Band1,view=[10:20,...]"
+    expect_true(res <- mdim_translate(f, f2,
+                                      creation_options = opt,
+                                      array_specs = ar,
+                                      allowed_drivers = c("HDF5", "netCDF"),
+                                      open_options = "HONOUR_VALID_RANGE=NO",
+                                      quiet = TRUE))
+
+    ds <- mdim_as_classic(f2, "Band1", 1, 0, read_only = FALSE)
+    expect_equal(ds$dim(), c(20, 10, 1))
+
+    ds$close()
+
+    f3 <- tempfile(fileext = ".nc")
+    on.exit(deleteDataset(f3), add = TRUE)
+
+    expect_true(mdim_translate(f, f3, group_specs = "name=/"))
+
+    ds <- mdim_as_classic(f3, "Band1", 1, 0)
+    expect_equal(ds$dim(), c(20, 20, 1))
+
+    ds$close()
+
+    f4 <- tempfile(fileext = ".nc")
+    on.exit(deleteDataset(f4), add = TRUE)
+
+    subsets <- c("x(441000,441800)", "y(3750400,3751000)")
+    expect_true(mdim_translate(f, f4, subset_specs = subsets))
+
+    ds <- mdim_as_classic(f4, "Band1", 1, 0)
+    expect_equal(ds$dim(), c(13, 10, 1))
+
+    ds$close()
+
+    f5 <- tempfile(fileext = ".nc")
+    on.exit(deleteDataset(f5), add = TRUE)
+
+    expect_true(mdim_translate(f, f5, scaleaxes_specs = "x(2),y(2)"))
+
+    ds <- mdim_as_classic(f5, "Band1", 1, 0)
+    expect_equal(ds$dim(), c(10, 10, 1))
+
+    ds$close()
 })

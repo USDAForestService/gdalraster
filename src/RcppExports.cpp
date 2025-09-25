@@ -768,12 +768,12 @@ BEGIN_RCPP
 END_RCPP
 }
 // mdim_info
-std::string mdim_info(const Rcpp::CharacterVector& filename, const std::string& array_name, bool pretty, bool detailed, int limit, bool stats, const Rcpp::Nullable<Rcpp::CharacterVector>& array_options, const Rcpp::Nullable<Rcpp::CharacterVector>& allowed_drivers, const Rcpp::Nullable<Rcpp::CharacterVector>& open_options);
-RcppExport SEXP _gdalraster_mdim_info(SEXP filenameSEXP, SEXP array_nameSEXP, SEXP prettySEXP, SEXP detailedSEXP, SEXP limitSEXP, SEXP statsSEXP, SEXP array_optionsSEXP, SEXP allowed_driversSEXP, SEXP open_optionsSEXP) {
+std::string mdim_info(const Rcpp::CharacterVector& dsn, const std::string& array_name, bool pretty, bool detailed, int limit, bool stats, const Rcpp::Nullable<Rcpp::CharacterVector>& array_options, const Rcpp::Nullable<Rcpp::CharacterVector>& allowed_drivers, const Rcpp::Nullable<Rcpp::CharacterVector>& open_options);
+RcppExport SEXP _gdalraster_mdim_info(SEXP dsnSEXP, SEXP array_nameSEXP, SEXP prettySEXP, SEXP detailedSEXP, SEXP limitSEXP, SEXP statsSEXP, SEXP array_optionsSEXP, SEXP allowed_driversSEXP, SEXP open_optionsSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< const Rcpp::CharacterVector& >::type filename(filenameSEXP);
+    Rcpp::traits::input_parameter< const Rcpp::CharacterVector& >::type dsn(dsnSEXP);
     Rcpp::traits::input_parameter< const std::string& >::type array_name(array_nameSEXP);
     Rcpp::traits::input_parameter< bool >::type pretty(prettySEXP);
     Rcpp::traits::input_parameter< bool >::type detailed(detailedSEXP);
@@ -782,7 +782,29 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< const Rcpp::Nullable<Rcpp::CharacterVector>& >::type array_options(array_optionsSEXP);
     Rcpp::traits::input_parameter< const Rcpp::Nullable<Rcpp::CharacterVector>& >::type allowed_drivers(allowed_driversSEXP);
     Rcpp::traits::input_parameter< const Rcpp::Nullable<Rcpp::CharacterVector>& >::type open_options(open_optionsSEXP);
-    rcpp_result_gen = Rcpp::wrap(mdim_info(filename, array_name, pretty, detailed, limit, stats, array_options, allowed_drivers, open_options));
+    rcpp_result_gen = Rcpp::wrap(mdim_info(dsn, array_name, pretty, detailed, limit, stats, array_options, allowed_drivers, open_options));
+    return rcpp_result_gen;
+END_RCPP
+}
+// mdim_translate
+bool mdim_translate(const Rcpp::CharacterVector& src_dsn, const Rcpp::CharacterVector& dst_dsn, const std::string& output_format, const Rcpp::Nullable<Rcpp::CharacterVector>& creation_options, const Rcpp::Nullable<Rcpp::CharacterVector>& array_specs, const Rcpp::Nullable<Rcpp::CharacterVector>& group_specs, const Rcpp::Nullable<Rcpp::CharacterVector>& subset_specs, const Rcpp::Nullable<Rcpp::String>& scaleaxes_specs, const Rcpp::Nullable<Rcpp::CharacterVector>& allowed_drivers, const Rcpp::Nullable<Rcpp::CharacterVector>& open_options, bool strict, bool quiet);
+RcppExport SEXP _gdalraster_mdim_translate(SEXP src_dsnSEXP, SEXP dst_dsnSEXP, SEXP output_formatSEXP, SEXP creation_optionsSEXP, SEXP array_specsSEXP, SEXP group_specsSEXP, SEXP subset_specsSEXP, SEXP scaleaxes_specsSEXP, SEXP allowed_driversSEXP, SEXP open_optionsSEXP, SEXP strictSEXP, SEXP quietSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< const Rcpp::CharacterVector& >::type src_dsn(src_dsnSEXP);
+    Rcpp::traits::input_parameter< const Rcpp::CharacterVector& >::type dst_dsn(dst_dsnSEXP);
+    Rcpp::traits::input_parameter< const std::string& >::type output_format(output_formatSEXP);
+    Rcpp::traits::input_parameter< const Rcpp::Nullable<Rcpp::CharacterVector>& >::type creation_options(creation_optionsSEXP);
+    Rcpp::traits::input_parameter< const Rcpp::Nullable<Rcpp::CharacterVector>& >::type array_specs(array_specsSEXP);
+    Rcpp::traits::input_parameter< const Rcpp::Nullable<Rcpp::CharacterVector>& >::type group_specs(group_specsSEXP);
+    Rcpp::traits::input_parameter< const Rcpp::Nullable<Rcpp::CharacterVector>& >::type subset_specs(subset_specsSEXP);
+    Rcpp::traits::input_parameter< const Rcpp::Nullable<Rcpp::String>& >::type scaleaxes_specs(scaleaxes_specsSEXP);
+    Rcpp::traits::input_parameter< const Rcpp::Nullable<Rcpp::CharacterVector>& >::type allowed_drivers(allowed_driversSEXP);
+    Rcpp::traits::input_parameter< const Rcpp::Nullable<Rcpp::CharacterVector>& >::type open_options(open_optionsSEXP);
+    Rcpp::traits::input_parameter< bool >::type strict(strictSEXP);
+    Rcpp::traits::input_parameter< bool >::type quiet(quietSEXP);
+    rcpp_result_gen = Rcpp::wrap(mdim_translate(src_dsn, dst_dsn, output_format, creation_options, array_specs, group_specs, subset_specs, scaleaxes_specs, allowed_drivers, open_options, strict, quiet));
     return rcpp_result_gen;
 END_RCPP
 }
@@ -2368,6 +2390,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_gdalraster_gdal_get_driver_md", (DL_FUNC) &_gdalraster_gdal_get_driver_md, 2},
     {"_gdalraster_addFileInZip", (DL_FUNC) &_gdalraster_addFileInZip, 6},
     {"_gdalraster_mdim_info", (DL_FUNC) &_gdalraster_mdim_info, 9},
+    {"_gdalraster_mdim_translate", (DL_FUNC) &_gdalraster_mdim_translate, 12},
     {"_gdalraster_vsi_copy_file", (DL_FUNC) &_gdalraster_vsi_copy_file, 3},
     {"_gdalraster_vsi_curl_clear_cache", (DL_FUNC) &_gdalraster_vsi_curl_clear_cache, 3},
     {"_gdalraster_vsi_read_dir", (DL_FUNC) &_gdalraster_vsi_read_dir, 4},

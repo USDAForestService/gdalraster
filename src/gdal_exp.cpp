@@ -1852,7 +1852,7 @@ bool ogr2ogr(const Rcpp::CharacterVector &src_dsn,
     GDALVectorTranslateOptionsFree(psOptions);
 
     if (hDstDS != nullptr) {
-        GDALReleaseDataset(hDstDS);
+        GDALClose(hDstDS);
         ret = true;
     }
 

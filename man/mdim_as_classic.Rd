@@ -5,7 +5,7 @@
 \title{Return a view of an MDArray as a "classic" GDALDataset (i.e., 2D)}
 \usage{
 mdim_as_classic(
-  filename,
+  dsn,
   array_name,
   idx_xdim,
   idx_ydim,
@@ -17,7 +17,7 @@ mdim_as_classic(
 )
 }
 \arguments{
-\item{filename}{Character string giving the data source name of the
+\item{dsn}{Character string giving the data source name of the
 multidimensional raster (e.g., file, VSI path).}
 
 \item{array_name}{Character string giving the name of the MDarray in
@@ -51,7 +51,7 @@ An object of class \code{GDALRaster}.
 \description{
 \code{mdim_as_classic()} returns a 2D raster view on an MDArray in a GDAL
 Multidimensional Raster dataset, as an object of class \code{GDALRaster}. Only 2D
-or more arrays are supported. In the case of > 2D arrays,additional
+or more arrays are supported. In the case of > 2D arrays, additional
 dimensions will be represented as raster bands. Requires GDAL >= 3.2.
 }
 \note{
@@ -121,15 +121,17 @@ combined, e.g. \code{"[1]['field_name']"}.
 }
 
 \examples{
+\dontshow{if (gdal_version_num() >= gdal_compute_version(3, 2, 0) && isTRUE(gdal_formats("netCDF")$multidim_raster)) withAutoprint(\{ # examplesIf}
 f <- system.file("extdata/byte.nc", package="gdalraster")
 # mdim_info(f) |> writeLines()
 
 (ds <- mdim_as_classic(f, "Band1", 1, 0))
 
-plot_raster(ds, interpolate = FALSE, legend = TRUE, main = "byte.nc")
+plot_raster(ds, interpolate = FALSE, legend = TRUE, main = "Band1")
 
 ds$close()
+\dontshow{\}) # examplesIf}
 }
 \seealso{
-\code{\link[=GDALRaster]{GDALRaster-class}}, \code{\link[=mdim_info]{mdim_info()}}
+\code{\link[=GDALRaster]{GDALRaster-class}}, \code{\link[=mdim_info]{mdim_info()}}, \code{\link[=mdim_translate]{mdim_translate()}}
 }

@@ -422,4 +422,16 @@ std::string mdim_info(
     const Rcpp::Nullable<Rcpp::CharacterVector> &array_options,
     const Rcpp::Nullable<Rcpp::CharacterVector> &allowed_drivers,
     const Rcpp::Nullable<Rcpp::CharacterVector> &open_options);
+
+bool mdim_translate(
+    const Rcpp::CharacterVector &src_dsn, const Rcpp::CharacterVector &dst_dsn,
+    const std::string &output_format,
+    const Rcpp::Nullable<Rcpp::CharacterVector> &creation_options,
+    const Rcpp::Nullable<Rcpp::CharacterVector> &array_specs,
+    const Rcpp::Nullable<Rcpp::CharacterVector> &group_specs,
+    const Rcpp::Nullable<Rcpp::CharacterVector> &subset_specs,
+    const Rcpp::Nullable<Rcpp::String> &scaleaxes_specs,
+    const Rcpp::Nullable<Rcpp::CharacterVector> &allowed_drivers,
+    const Rcpp::Nullable<Rcpp::CharacterVector> &open_options,
+    bool strict, bool quiet);
 #endif  // GDALRASTER_H_

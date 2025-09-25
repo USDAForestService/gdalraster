@@ -5,7 +5,7 @@
 \title{Report structure and content of a multidimensional dataset}
 \usage{
 mdim_info(
-  filename,
+  dsn,
   array_name = "",
   pretty = TRUE,
   detailed = FALSE,
@@ -17,7 +17,7 @@ mdim_info(
 )
 }
 \arguments{
-\item{filename}{Character string giving the data source name of the
+\item{dsn}{Character string giving the data source name of the
 multidimensional raster (e.g., file, VSI path).}
 
 \item{array_name}{Character string giving the name of the MDarray in
@@ -42,18 +42,19 @@ filter reported arrays. Such option is format specific. Consult driver
 documentation (passed to \code{GDALGroup::GetMDArrayNames()}).}
 
 \item{allowed_drivers}{Optional character vector of driver short names that
-must be considered. By default, all known multidimensional raster drivers are
-considered.}
+must be considered when opening \code{dsn}. It is generally not necessary to
+specify it, but it can be used to skip automatic driver detection, when it
+fails to select the appropriate driver.}
 
-\item{open_options}{Optional character vector of format-specific dataset open
-options as \code{"NAME=VALUE"} pairs.}
+\item{open_options}{Optional character vector of format-specific dataset
+openoptions as \code{"NAME=VALUE"} pairs.}
 }
 \value{
 A JSON string containing information about the multidimensional
 raster dataset.
 }
 \description{
-\code{mdim_info()} is a wrapper of the \command{gdalmdiminfo} command-line
+\code{mdim_info()} is an interface to the \command{gdalmdiminfo} command-line
 utility (see \url{https://gdal.org/en/stable/programs/gdalmdiminfo.html}).
 This function lists various information about a GDAL supported
 multidimensional raster dataset as JSON output. It follows the JSON schema
@@ -61,11 +62,11 @@ multidimensional raster dataset as JSON output. It follows the JSON schema
 Requires GDAL >= 3.2.
 }
 \examples{
-\dontshow{if (gdal_version_num() >= gdal_compute_version(3, 2, 0)) withAutoprint(\{ # examplesIf}
+\dontshow{if (gdal_version_num() >= gdal_compute_version(3, 2, 0) && isTRUE(gdal_formats("netCDF")$multidim_raster)) withAutoprint(\{ # examplesIf}
 f <- system.file("extdata/byte.nc", package="gdalraster")
 mdim_info(f) |> writeLines()
 \dontshow{\}) # examplesIf}
 }
 \seealso{
-\code{\link[=mdim_as_classic]{mdim_as_classic()}}
+\code{\link[=mdim_as_classic]{mdim_as_classic()}}, \code{\link[=mdim_translate]{mdim_translate()}}
 }

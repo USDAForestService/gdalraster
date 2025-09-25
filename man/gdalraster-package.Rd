@@ -57,7 +57,8 @@
 
   \item multidimensional raster:
   \code{\link[=mdim_as_classic]{mdim_as_classic()}},
-  \code{\link[=mdim_info]{mdim_info()}}
+  \code{\link[=mdim_info]{mdim_info()}},
+  \code{\link[=mdim_translate]{mdim_translate()}}
 
   \item geotransform conversion:
   \code{\link[=apply_geotransform]{apply_geotransform()}},
