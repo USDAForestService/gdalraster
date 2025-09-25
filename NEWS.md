@@ -1,6 +1,8 @@
-# gdalraster 2.2.1.9030 (dev)
+# gdalraster 2.2.1.9031 (dev)
 
-* add `mdim_translate()`: convert multidimensional data between different formats, and subset, interface to `gdalmdimtranslate` utility (2025-09-25)
+* `mdim_info()`: add argument `cout` to control printing output to the console, with the info string returned invisibly (2025-09-25)
+
+* add `mdim_translate()`: convert multidimensional data between different formats, and subset, interface to `gdalmdimtranslate` utility (#803) (2025-09-25)
 
 * `mdim_as_classic()`: add argument `view_expr` for array slicing or field access by name (#802) (2025-09-22)
 

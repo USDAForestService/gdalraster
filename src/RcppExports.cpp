@@ -768,8 +768,8 @@ BEGIN_RCPP
 END_RCPP
 }
 // mdim_info
-std::string mdim_info(const Rcpp::CharacterVector& dsn, const std::string& array_name, bool pretty, bool detailed, int limit, bool stats, const Rcpp::Nullable<Rcpp::CharacterVector>& array_options, const Rcpp::Nullable<Rcpp::CharacterVector>& allowed_drivers, const Rcpp::Nullable<Rcpp::CharacterVector>& open_options);
-RcppExport SEXP _gdalraster_mdim_info(SEXP dsnSEXP, SEXP array_nameSEXP, SEXP prettySEXP, SEXP detailedSEXP, SEXP limitSEXP, SEXP statsSEXP, SEXP array_optionsSEXP, SEXP allowed_driversSEXP, SEXP open_optionsSEXP) {
+std::string mdim_info(const Rcpp::CharacterVector& dsn, const std::string& array_name, bool pretty, bool detailed, int limit, bool stats, const Rcpp::Nullable<Rcpp::CharacterVector>& array_options, const Rcpp::Nullable<Rcpp::CharacterVector>& allowed_drivers, const Rcpp::Nullable<Rcpp::CharacterVector>& open_options, bool cout);
+RcppExport SEXP _gdalraster_mdim_info(SEXP dsnSEXP, SEXP array_nameSEXP, SEXP prettySEXP, SEXP detailedSEXP, SEXP limitSEXP, SEXP statsSEXP, SEXP array_optionsSEXP, SEXP allowed_driversSEXP, SEXP open_optionsSEXP, SEXP coutSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -782,7 +782,8 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< const Rcpp::Nullable<Rcpp::CharacterVector>& >::type array_options(array_optionsSEXP);
     Rcpp::traits::input_parameter< const Rcpp::Nullable<Rcpp::CharacterVector>& >::type allowed_drivers(allowed_driversSEXP);
     Rcpp::traits::input_parameter< const Rcpp::Nullable<Rcpp::CharacterVector>& >::type open_options(open_optionsSEXP);
-    rcpp_result_gen = Rcpp::wrap(mdim_info(dsn, array_name, pretty, detailed, limit, stats, array_options, allowed_drivers, open_options));
+    Rcpp::traits::input_parameter< bool >::type cout(coutSEXP);
+    rcpp_result_gen = Rcpp::wrap(mdim_info(dsn, array_name, pretty, detailed, limit, stats, array_options, allowed_drivers, open_options, cout));
     return rcpp_result_gen;
 END_RCPP
 }
@@ -2389,7 +2390,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_gdalraster_validateCreationOptions", (DL_FUNC) &_gdalraster_validateCreationOptions, 2},
     {"_gdalraster_gdal_get_driver_md", (DL_FUNC) &_gdalraster_gdal_get_driver_md, 2},
     {"_gdalraster_addFileInZip", (DL_FUNC) &_gdalraster_addFileInZip, 6},
-    {"_gdalraster_mdim_info", (DL_FUNC) &_gdalraster_mdim_info, 9},
+    {"_gdalraster_mdim_info", (DL_FUNC) &_gdalraster_mdim_info, 10},
     {"_gdalraster_mdim_translate", (DL_FUNC) &_gdalraster_mdim_translate, 12},
     {"_gdalraster_vsi_copy_file", (DL_FUNC) &_gdalraster_vsi_copy_file, 3},
     {"_gdalraster_vsi_curl_clear_cache", (DL_FUNC) &_gdalraster_vsi_curl_clear_cache, 3},

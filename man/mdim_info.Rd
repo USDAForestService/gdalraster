@@ -13,7 +13,8 @@ mdim_info(
   stats = FALSE,
   array_options = NULL,
   allowed_drivers = NULL,
-  open_options = NULL
+  open_options = NULL,
+  cout = TRUE
 )
 }
 \arguments{
@@ -48,10 +49,14 @@ fails to select the appropriate driver.}
 
 \item{open_options}{Optional character vector of format-specific dataset
 openoptions as \code{"NAME=VALUE"} pairs.}
+
+\item{cout}{Logical value, \code{TRUE} to print info to the console (the
+default), or \code{FALSE} to suppress console output.}
 }
 \value{
-A JSON string containing information about the multidimensional
-raster dataset.
+Invisibly, a JSON string containing information about the
+multidimensional raster dataset. By default, the info string is also printed
+to the console unless \code{cout} is set to \code{FALSE}.
 }
 \description{
 \code{mdim_info()} is an interface to the \command{gdalmdiminfo} command-line
@@ -64,7 +69,7 @@ Requires GDAL >= 3.2.
 \examples{
 \dontshow{if (gdal_version_num() >= gdal_compute_version(3, 2, 0) && isTRUE(gdal_formats("netCDF")$multidim_raster)) withAutoprint(\{ # examplesIf}
 f <- system.file("extdata/byte.nc", package="gdalraster")
-mdim_info(f) |> writeLines()
+mdim_info(f)
 \dontshow{\}) # examplesIf}
 }
 \seealso{
