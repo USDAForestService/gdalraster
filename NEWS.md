@@ -1,10 +1,12 @@
-# gdalraster 2.2.1.9023 (dev)
+# gdalraster 2.2.1.9030 (dev)
+
+* add `mdim_translate()`: convert multidimensional data between different formats, and subset, interface to `gdalmdimtranslate` utility (2025-09-25)
 
 * `mdim_as_classic()`: add argument `view_expr` for array slicing or field access by name (#802) (2025-09-22)
 
 * code linting: use `unique_ptr` (#801) (2025-09-22)
 
-* add `mdim_info()`: report structure and content of a multidimensional dataset, wrapper for `gdalmdiminfo` (2025-09-22)
+* add `mdim_info()`: report structure and content of a multidimensional dataset, interface to `gdalmdiminfo` utility (2025-09-22)
 
 * add `mdim_as_classic()`: return a view of an MDArray as a "classic" GDALDataset (i.e., 2D), and add column `multidim_raster` (`TRUE`|`FALSE`) in the data frame output of `gdal_formats()` (#799) (2025-09-21)
 
