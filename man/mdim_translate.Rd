@@ -107,15 +107,16 @@ An array specification may be just an array name, potentially using a fully
 qualified syntax (\code{"/group/subgroup/array_name"}). Or it can be a
 combination of options with the syntax:
 
-\if{html}{\out{<div class="sourceCode">}}\preformatted{"name=\{src_array_name\}[,dstname=\{dst_array_name\}][,resample=yes][,transpose=[\{axis1\},\{axis2\},...][,view=\{view_expr\}]""
+\if{html}{\out{<div class="sourceCode">}}\preformatted{"name=\{src_array_name\}[,dstname=\{dst_array_name\}][,resample=yes][,transpose=[\{axis1\},\{axis2\},...][,view=\{view_expr\}]"
 }\if{html}{\out{</div>}}
 
 The following options are processed in that order:
 \itemize{
 \item \code{resample=yes} asks for the array to run through
 \code{GDALMDArray::GetResampled()}.
-\item \verb{[\{axis1\},\{axis2\},...]} is the argument of \code{GDALMDArray::Transpose()}. For
-example, \verb{transpose=[1,0]} switches the axis order of a 2D array.
+\item \code{[{axis1},{axis2},...]} is the argument of
+\code{GDALMDArray::Transpose()}. For example, \verb{transpose=[1,0]} switches the
+axis order of a 2D array.
 \item \code{{view_expr}} is the value of the \code{viewExpr} argument of
 \code{GDALMDArray::GetView()}. When specifying a \code{view_expr} that performs a
 slicing or subsetting on a dimension, the equivalent operation will be
@@ -148,9 +149,9 @@ data type, and whose values are monotonically sorted. One or more subset
 specifications can be given in a character vector. A subset specification
 string follows exactly the OGC WCS 2.0 KVP encoding for subsetting.
 
-Syntax is \code{dim_name(min_val,max_val)} or \code{dim_name(sliced_val)}. The first
-syntax will subset the dimension dim_name to values in the
-\verb{[min_val,max_val]} range. The second syntax will slice the dimension
+Syntax is \code{"dim_name(min_val,max_val)"} or \code{"dim_name(sliced_val)"}. The
+first syntax will subset the dimension dim_name to values in the
+\code{[min_val,max_val]} range. The second syntax will slice the dimension
 \code{dim_name} to value \code{sliced_val} (and this dimension will be removed from
 the arrays that reference to it)
 
@@ -167,7 +168,7 @@ factors.
 
 Syntax is a character string of the form:
 
-\if{html}{\out{<div class="sourceCode">}}\preformatted{`<dim1_name>(<scale_factor>)[,<dim2_name>(<scale_factor>)]...`
+\if{html}{\out{<div class="sourceCode">}}\preformatted{"<dim1_name>(<scale_factor>)[,<dim2_name>(<scale_factor>)]..."
 }\if{html}{\out{</div>}}
 
 Using a scale-axes specification is incompatible with specifying a view

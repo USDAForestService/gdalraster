@@ -1540,14 +1540,15 @@ mdim_info <- function(dsn, array_name = "", pretty = TRUE, detailed = FALSE, lim
 #' qualified syntax (`"/group/subgroup/array_name"`). Or it can be a
 #' combination of options with the syntax:
 #' ```
-#' "name={src_array_name}[,dstname={dst_array_name}][,resample=yes][,transpose=[{axis1},{axis2},...][,view={view_expr}]""
+#' "name={src_array_name}[,dstname={dst_array_name}][,resample=yes][,transpose=[{axis1},{axis2},...][,view={view_expr}]"
 #' ```
 #' The following options are processed in that order:
 #'
 #' * `resample=yes` asks for the array to run through
 #'   `GDALMDArray::GetResampled()`.
-#' * `[{axis1},{axis2},...]` is the argument of `GDALMDArray::Transpose()`. For
-#'   example, `transpose=[1,0]` switches the axis order of a 2D array.
+#' * \code{[{axis1},{axis2},...]} is the argument of
+#'   `GDALMDArray::Transpose()`. For example, `transpose=[1,0]` switches the
+#'   axis order of a 2D array.
 #' * `{view_expr}` is the value of the `viewExpr` argument of
 #'   `GDALMDArray::GetView()`. When specifying a `view_expr` that performs a
 #'   slicing or subsetting on a dimension, the equivalent operation will be
@@ -1578,9 +1579,9 @@ mdim_info <- function(dsn, array_name = "", pretty = TRUE, detailed = FALSE, lim
 #' specifications can be given in a character vector. A subset specification
 #' string follows exactly the OGC WCS 2.0 KVP encoding for subsetting.
 #'
-#' Syntax is `dim_name(min_val,max_val)` or `dim_name(sliced_val)`. The first
-#' syntax will subset the dimension dim_name to values in the
-#' `[min_val,max_val]` range. The second syntax will slice the dimension
+#' Syntax is `"dim_name(min_val,max_val)"` or `"dim_name(sliced_val)"`. The
+#' first syntax will subset the dimension dim_name to values in the
+#' \code{[min_val,max_val]} range. The second syntax will slice the dimension
 #' `dim_name` to value `sliced_val` (and this dimension will be removed from
 #' the arrays that reference to it)
 #'
@@ -1597,7 +1598,7 @@ mdim_info <- function(dsn, array_name = "", pretty = TRUE, detailed = FALSE, lim
 #'
 #' Syntax is a character string of the form:
 #' ```
-#' `<dim1_name>(<scale_factor>)[,<dim2_name>(<scale_factor>)]...`
+#' "<dim1_name>(<scale_factor>)[,<dim2_name>(<scale_factor>)]..."
 #' ```
 #'
 #' Using a scale-axes specification is incompatible with specifying a view
