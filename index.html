@@ -83,7 +83,7 @@
 <p>The package supports:</p>
 <ul>
 <li>
-<a href="https://usdaforestservice.github.io/gdalraster/articles/use-gdal-cli-from-r.html">using “gdal” CLI algorithms</a> from R when built against GDAL &gt;= 3.11.3</li>
+<a href="https://usdaforestservice.github.io/gdalraster/articles/use-gdal-cli-from-r.html">using GDAL’s new CLI algorithms</a> from R when built against GDAL &gt;= 3.11.3</li>
 <li>manual creation of uninitialized raster and vector datasets</li>
 <li>vector layer creation and schema management</li>
 <li>read/set parameters and metadata for raster bands and vector layers</li>
@@ -91,14 +91,16 @@
 <li>build/read/set color tables and raster attribute tables</li>
 <li>virtual raster (VRT) for virtual cropping, resampling, kernel filtering, mosaicing</li>
 <li><a href="https://usdaforestservice.github.io/gdalraster/reference/index.html#raster-utilities">raster utilities</a></li>
+<li>GDAL multidimensional raster (<a href="https://usdaforestservice.github.io/gdalraster/reference/mdim_as_classic.html"><code>mdim_as_classic()</code></a>, <a href="https://usdaforestservice.github.io/gdalraster/reference/mdim_info.html"><code>mdim_info()</code></a>, <a href="https://usdaforestservice.github.io/gdalraster/reference/mdim_translate.html"><code>mdim_translate()</code></a>)</li>
 <li>coordinate transformation</li>
 <li>spatial reference systems</li>
 <li>
 <a href="https://usdaforestservice.github.io/gdalraster/reference/index.html#geometry">geometry API</a> operating on raw vectors of WKB or WKT strings</li>
-<li>OGR <a href="https://usdaforestservice.github.io/gdalraster/reference/index.html#vector-utilities">vector utilities</a>
+<li><a href="https://usdaforestservice.github.io/gdalraster/reference/index.html#vector-utilities">vector utilities</a></li>
+<li>GDAL facilities for <a href="https://usdaforestservice.github.io/gdalraster/reference/ogr_proc.html">vector geoprocessing</a>
 </li>
-<li>GDAL facilities for <a href="https://usdaforestservice.github.io/gdalraster/reference/ogr_proc.html">vector geoprocessing</a> (<code><a href="reference/ogr_proc.html">ogr_proc()</a></code>)</li>
-<li>raster and vector <a href="https://usdaforestservice.github.io/gdalraster/reference/index.html#general-data-management">dataset management</a> (inspect/copy files/rename/delete)</li>
+<li>
+<a href="https://usdaforestservice.github.io/gdalraster/reference/index.html#general-data-management">dataset management</a> (inspect/copy files/rename/delete)</li>
 <li>create/append to Seek-Optimized ZIP (<a href="https://github.com/sozip/sozip-spec" class="external-link">SOZip</a>)</li>
 <li>abstraction of <a href="https://usdaforestservice.github.io/gdalraster/reference/index.html#virtual-file-systems">file system operations</a> on URLs, cloud storage, in-memory files, etc.</li>
 <li>Standard C binary file I/O through VSI (class <a href="https://usdaforestservice.github.io/gdalraster/reference/VSIFile-class.html"><code>VSIFile</code></a>)</li>
@@ -111,8 +113,7 @@
 <a href="https://usdaforestservice.github.io/gdalraster/reference/combine.html"><code>combine()</code></a> overlays multiple rasters so that a unique ID is assigned to each unique combination of input values. Pixel counts for each unique combination are obtained, and combination IDs are optionally written to an output raster.</li>
 <li>
 <a href="https://usdaforestservice.github.io/gdalraster/reference/calc.html"><code>calc()</code></a> evaluates an R expression for each pixel in a raster layer or stack of layers. Individual pixel coordinates are available as variables in the R expression, as either x/y in the raster projected coordinate system or inverse projected longitude/latitude.</li>
-<li>
-<a href="https://usdaforestservice.github.io/gdalraster/reference/plot_raster.html"><code>plot_raster()</code></a> displays raster data using base R graphics.</li>
+<li>plot raster data, vector layers and WKB/WKT geometries</li>
 </ul>
 <p><strong>gdalraster</strong> may be useful in applications that need scalable, low-level I/O, or prefer a direct GDAL API. Comprehensive <a href="#documentation">documentation</a> is provided in the package and online.</p>
 </div>
@@ -192,7 +193,7 @@
 <li><a href="https://usdaforestservice.github.io/gdalraster/reference/">Reference Manual</a></li>
 <li><a href="https://usdaforestservice.github.io/gdalraster/articles/raster-api-tutorial.html">Raster API Tutorial</a></li>
 <li><a href="https://usdaforestservice.github.io/gdalraster/articles/vector-api-overview.html">Vector API Overview</a></li>
-<li><a href="https://usdaforestservice.github.io/gdalraster/articles/use-gdal-cli-from-r.html">Using “gdal” CLI algorithms from R</a></li>
+<li><a href="https://usdaforestservice.github.io/gdalraster/articles/use-gdal-cli-from-r.html">Using <code>gdal</code> CLI algorithms from R</a></li>
 <li><a href="https://usdaforestservice.github.io/gdalraster/articles/raster-attribute-tables.html">Raster Attribute Tables</a></li>
 <li><a href="https://usdaforestservice.github.io/gdalraster/articles/raster-display.html">Raster Display</a></li>
 <li><a href="https://usdaforestservice.github.io/gdalraster/articles/gdal-block-cache.html">GDAL Block Caching</a></li>
