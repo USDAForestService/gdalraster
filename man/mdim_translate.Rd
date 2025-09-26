@@ -181,13 +181,19 @@ f_src <- system.file("extdata/byte.nc", package="gdalraster")
 
 ## COMPRESS option for MDArray creation
 opt <- NULL
-if (isTRUE(gdal_get_driver_md("netCDF")$NETCDF_HAS_HDF4 == "YES"))
-  opt <- "ARRAY:IF(NAME=Band1):COMPRESS=DEFLATE"
+if (isTRUE(gdal_get_driver_md("netCDF")$NETCDF_HAS_NC4 == "YES")) {
+  # 4 x 4 is for illustration only, the sample dataset is only 20 x 20
+  opt <- c("ARRAY:IF(DIM=2):BLOCKSIZE=4,4",
+           "ARRAY:IF(NAME=Band1):COMPRESS=DEFLATE",
+           "ARRAY:ZLEVEL=6")
+}
 
 f_dst <- tempfile(fileext = ".nc")
 mdim_translate(f_src, f_dst, creation_options = opt)
 info <- mdim_info(f_dst, cout = FALSE) |> yyjsonr::read_json_str()
 # str(info)
+info$structural_info
+info$arrays$Band1$block_size
 info$arrays$Band1$structural_info
 
 (ds <- mdim_as_classic(f_dst, "Band1", 1, 0))
