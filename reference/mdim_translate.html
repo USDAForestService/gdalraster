@@ -198,11 +198,12 @@ be given as elements of a character vector.</p>
 <p>An array specification may be just an array name, potentially using a fully
 qualified syntax (<code>"/group/subgroup/array_name"</code>). Or it can be a
 combination of options with the syntax:</p>
-<p></p><div class="sourceCode"><pre><code><span id="cb1-1"><a href="#cb1-1" tabindex="-1"></a><span class="st">"name={src_array_name}[,dstname={dst_array_name}][,resample=yes][,transpose=[{axis1},{axis2},...][,view={view_expr}]""</span></span></code></pre><p></p></div>
+<p></p><div class="sourceCode"><pre><code><span id="cb1-1"><a href="#cb1-1" tabindex="-1"></a><span class="st">"name={src_array_name}[,dstname={dst_array_name}][,resample=yes][,transpose=[{axis1},{axis2},...][,view={view_expr}]"</span></span></code></pre><p></p></div>
 <p>The following options are processed in that order:</p><ul><li><p><code>resample=yes</code> asks for the array to run through
 <code>GDALMDArray::GetResampled()</code>.</p></li>
-<li><p><code>[{axis1},{axis2},...]</code> is the argument of <code>GDALMDArray::Transpose()</code>. For
-example, <code>transpose=[1,0]</code> switches the axis order of a 2D array.</p></li>
+<li><p><code>[{axis1},{axis2},...]</code> is the argument of
+<code>GDALMDArray::Transpose()</code>. For example, <code>transpose=[1,0]</code> switches the
+axis order of a 2D array.</p></li>
 <li><p><code>{view_expr}</code> is the value of the <code>viewExpr</code> argument of
 <code>GDALMDArray::GetView()</code>. When specifying a <code>view_expr</code> that performs a
 slicing or subsetting on a dimension, the equivalent operation will be
@@ -231,8 +232,8 @@ provided that the dimension is indexed by a 1D variable of numeric or string
 data type, and whose values are monotonically sorted. One or more subset
 specifications can be given in a character vector. A subset specification
 string follows exactly the OGC WCS 2.0 KVP encoding for subsetting.</p>
-<p>Syntax is <code>dim_name(min_val,max_val)</code> or <code>dim_name(sliced_val)</code>. The first
-syntax will subset the dimension dim_name to values in the
+<p>Syntax is <code>"dim_name(min_val,max_val)"</code> or <code>"dim_name(sliced_val)"</code>. The
+first syntax will subset the dimension dim_name to values in the
 <code>[min_val,max_val]</code> range. The second syntax will slice the dimension
 <code>dim_name</code> to value <code>sliced_val</code> (and this dimension will be removed from
 the arrays that reference to it)</p>
@@ -248,7 +249,7 @@ string follows exactly the syntax of the KVP encoding of the SCALEAXES
 parameter of OGC WCS 2.0 Scaling Extension, but limited to integer scale
 factors.</p>
 <p>Syntax is a character string of the form:</p>
-<p></p><div class="sourceCode"><pre><code><span id="cb1-1"><a href="#cb1-1" tabindex="-1"></a><span class="st">`</span><span class="at">&lt;dim1_name&gt;(&lt;scale_factor&gt;)[,&lt;dim2_name&gt;(&lt;scale_factor&gt;)]...</span><span class="st">`</span></span></code></pre><p></p></div>
+<p></p><div class="sourceCode"><pre><code><span id="cb1-1"><a href="#cb1-1" tabindex="-1"></a><span class="st">"&lt;dim1_name&gt;(&lt;scale_factor&gt;)[,&lt;dim2_name&gt;(&lt;scale_factor&gt;)]..."</span></span></code></pre><p></p></div>
 <p>Using a scale-axes specification is incompatible with specifying a view
 option in <code>array_specs</code>.</p>
 </div>
