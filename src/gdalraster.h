@@ -421,7 +421,8 @@ std::string mdim_info(
     bool pretty, bool detailed, int limit, bool stats,
     const Rcpp::Nullable<Rcpp::CharacterVector> &array_options,
     const Rcpp::Nullable<Rcpp::CharacterVector> &allowed_drivers,
-    const Rcpp::Nullable<Rcpp::CharacterVector> &open_options);
+    const Rcpp::Nullable<Rcpp::CharacterVector> &open_options,
+    bool cout);
 
 bool mdim_translate(
     const Rcpp::CharacterVector &src_dsn, const Rcpp::CharacterVector &dst_dsn,

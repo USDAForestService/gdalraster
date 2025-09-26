@@ -59,6 +59,10 @@ test_that("mdim_as_classic works", {
 
 test_that("mdim_info works", {
     f <- system.file("extdata/byte.nc", package="gdalraster")
+
+    expect_output(mdim_info(f))
+    expect_silent(mdim_info(f, cout = FALSE))
+    
     expect_no_error(info <- mdim_info(f, array_options = "SHOW_ALL=YES"))
     expect_vector(info, ptype = character(), size = 1)
     expect_true(startsWith(info, "{"))

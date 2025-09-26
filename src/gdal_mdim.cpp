@@ -174,16 +174,19 @@ GDALRaster *mdim_as_classic(
 //' fails to select the appropriate driver.
 //' @param open_options Optional character vector of format-specific dataset
 //' openoptions as `"NAME=VALUE"` pairs.
-//' @returns A JSON string containing information about the multidimensional
-//' raster dataset.
+//' @param cout Logical value, `TRUE` to print info to the console (the
+//' default), or `FALSE` to suppress console output.
+//' @returns Invisibly, a JSON string containing information about the
+//' multidimensional raster dataset. By default, the info string is also printed
+//' to the console unless `cout` is set to `FALSE`.
 //'
 //' @seealso
 //' [mdim_as_classic()], [mdim_translate()]
 //'
 //' @examplesIf gdal_version_num() >= gdal_compute_version(3, 2, 0) && isTRUE(gdal_formats("netCDF")$multidim_raster)
 //' f <- system.file("extdata/byte.nc", package="gdalraster")
-//' mdim_info(f) |> writeLines()
-// [[Rcpp::export()]]
+//' mdim_info(f)
+// [[Rcpp::export(invisible = true)]]
 std::string mdim_info(
     const Rcpp::CharacterVector &dsn,
     const std::string &array_name = "",
@@ -193,7 +196,8 @@ std::string mdim_info(
     bool stats = false,
     const Rcpp::Nullable<Rcpp::CharacterVector> &array_options = R_NilValue,
     const Rcpp::Nullable<Rcpp::CharacterVector> &allowed_drivers = R_NilValue,
-    const Rcpp::Nullable<Rcpp::CharacterVector> &open_options = R_NilValue) {
+    const Rcpp::Nullable<Rcpp::CharacterVector> &open_options = R_NilValue,
+    bool cout = true) {
 
 #if GDAL_VERSION_NUM < GDAL_COMPUTE_VERSION(3, 2, 0)
     Rcpp::stop("mdim_info() requires GDAL >= 3.2");
@@ -289,6 +293,9 @@ std::string mdim_info(
     GDALMultiDimInfoOptionsFree(psOptions);
 
     GDALReleaseDataset(hDS);
+
+    if (cout)
+        Rcpp::Rcout << info_out.c_str() << "\n";
 
     return info_out;
 #endif

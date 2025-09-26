@@ -1492,17 +1492,20 @@ gdal_get_driver_md <- function(format, mdi_name = "") {
 #' fails to select the appropriate driver.
 #' @param open_options Optional character vector of format-specific dataset
 #' openoptions as `"NAME=VALUE"` pairs.
-#' @returns A JSON string containing information about the multidimensional
-#' raster dataset.
+#' @param cout Logical value, `TRUE` to print info to the console (the
+#' default), or `FALSE` to suppress console output.
+#' @returns Invisibly, a JSON string containing information about the
+#' multidimensional raster dataset. By default, the info string is also printed
+#' to the console unless `cout` is set to `FALSE`.
 #'
 #' @seealso
 #' [mdim_as_classic()], [mdim_translate()]
 #'
 #' @examplesIf gdal_version_num() >= gdal_compute_version(3, 2, 0) && isTRUE(gdal_formats("netCDF")$multidim_raster)
 #' f <- system.file("extdata/byte.nc", package="gdalraster")
-#' mdim_info(f) |> writeLines()
-mdim_info <- function(dsn, array_name = "", pretty = TRUE, detailed = FALSE, limit = -1L, stats = FALSE, array_options = NULL, allowed_drivers = NULL, open_options = NULL) {
-    .Call(`_gdalraster_mdim_info`, dsn, array_name, pretty, detailed, limit, stats, array_options, allowed_drivers, open_options)
+#' mdim_info(f)
+mdim_info <- function(dsn, array_name = "", pretty = TRUE, detailed = FALSE, limit = -1L, stats = FALSE, array_options = NULL, allowed_drivers = NULL, open_options = NULL, cout = TRUE) {
+    invisible(.Call(`_gdalraster_mdim_info`, dsn, array_name, pretty, detailed, limit, stats, array_options, allowed_drivers, open_options, cout))
 }
 
 #' Convert multidimensional data between different formats, and subset
