@@ -1551,7 +1551,8 @@ mdim_info <- function(dsn, array_name = "", pretty = TRUE, detailed = FALSE, lim
 #' * `{view_expr}` is the value of the `viewExpr` argument of
 #'   `GDALMDArray::GetView()`. When specifying a `view_expr` that performs a
 #'   slicing or subsetting on a dimension, the equivalent operation will be
-#'   applied to the corresponding indexing variable.
+#'   applied to the corresponding indexing variable. See `?mdim_as_classic` for
+#'   details on view expressions.
 #' }
 #'
 #' \subsection{`group_specs`}{

@@ -119,7 +119,8 @@ example, \verb{transpose=[1,0]} switches the axis order of a 2D array.
 \item \code{{view_expr}} is the value of the \code{viewExpr} argument of
 \code{GDALMDArray::GetView()}. When specifying a \code{view_expr} that performs a
 slicing or subsetting on a dimension, the equivalent operation will be
-applied to the corresponding indexing variable.
+applied to the corresponding indexing variable. See \code{?mdim_as_classic} for
+details on view expressions.
 }
 }
 
