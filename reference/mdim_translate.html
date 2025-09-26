@@ -15,7 +15,7 @@ performs subsetting. Requires GDAL &amp;gt;= 3.2."></head><body>
 
     <a class="navbar-brand me-2" href="../index.html">gdalraster</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">2.2.1.9032</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">2.2.1.9033</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -266,16 +266,28 @@ option in <code>array_specs</code>.</p>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co">## COMPRESS option for MDArray creation</span></span></span>
 <span class="r-in"><span><span class="va">opt</span> <span class="op">&lt;-</span> <span class="cn">NULL</span></span></span>
-<span class="r-in"><span><span class="kw">if</span> <span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/Logic.html" class="external-link">isTRUE</a></span><span class="op">(</span><span class="fu"><a href="gdal_get_driver_md.html">gdal_get_driver_md</a></span><span class="op">(</span><span class="st">"netCDF"</span><span class="op">)</span><span class="op">$</span><span class="va">NETCDF_HAS_HDF4</span> <span class="op">==</span> <span class="st">"YES"</span><span class="op">)</span><span class="op">)</span></span></span>
-<span class="r-in"><span>  <span class="va">opt</span> <span class="op">&lt;-</span> <span class="st">"ARRAY:IF(NAME=Band1):COMPRESS=DEFLATE"</span></span></span>
+<span class="r-in"><span><span class="kw">if</span> <span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/Logic.html" class="external-link">isTRUE</a></span><span class="op">(</span><span class="fu"><a href="gdal_get_driver_md.html">gdal_get_driver_md</a></span><span class="op">(</span><span class="st">"netCDF"</span><span class="op">)</span><span class="op">$</span><span class="va">NETCDF_HAS_NC4</span> <span class="op">==</span> <span class="st">"YES"</span><span class="op">)</span><span class="op">)</span> <span class="op">{</span></span></span>
+<span class="r-in"><span>  <span class="co"># 4 x 4 is for illustration only, the sample dataset is only 20 x 20</span></span></span>
+<span class="r-in"><span>  <span class="va">opt</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"ARRAY:IF(DIM=2):BLOCKSIZE=4,4"</span>,</span></span>
+<span class="r-in"><span>           <span class="st">"ARRAY:IF(NAME=Band1):COMPRESS=DEFLATE"</span>,</span></span>
+<span class="r-in"><span>           <span class="st">"ARRAY:ZLEVEL=6"</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="op">}</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="va">f_dst</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/tempfile.html" class="external-link">tempfile</a></span><span class="op">(</span>fileext <span class="op">=</span> <span class="st">".nc"</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="fu">mdim_translate</span><span class="op">(</span><span class="va">f_src</span>, <span class="va">f_dst</span>, creation_options <span class="op">=</span> <span class="va">opt</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 0...10...20...30...40...50...60...70...80...90...100 - done.</span>
 <span class="r-in"><span><span class="va">info</span> <span class="op">&lt;-</span> <span class="fu"><a href="mdim_info.html">mdim_info</a></span><span class="op">(</span><span class="va">f_dst</span>, cout <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span> <span class="op">|&gt;</span> <span class="fu">yyjsonr</span><span class="fu">::</span><span class="fu"><a href="https://coolbutuseless.github.io/package/yyjsonr/reference/read_json_str.html" class="external-link">read_json_str</a></span><span class="op">(</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="co"># str(info)</span></span></span>
+<span class="r-in"><span><span class="va">info</span><span class="op">$</span><span class="va">structural_info</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $NC_FORMAT</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "NETCDF4"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-in"><span><span class="va">info</span><span class="op">$</span><span class="va">arrays</span><span class="op">$</span><span class="va">Band1</span><span class="op">$</span><span class="va">block_size</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 4 4</span>
 <span class="r-in"><span><span class="va">info</span><span class="op">$</span><span class="va">arrays</span><span class="op">$</span><span class="va">Band1</span><span class="op">$</span><span class="va">structural_info</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> NULL</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $COMPRESS</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "DEFLATE"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="op">(</span><span class="va">ds</span> <span class="op">&lt;-</span> <span class="fu"><a href="mdim_as_classic.html">mdim_as_classic</a></span><span class="op">(</span><span class="va">f_dst</span>, <span class="st">"Band1"</span>, <span class="fl">1</span>, <span class="fl">0</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> C++ object of class GDALRaster</span>
