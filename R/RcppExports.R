@@ -1661,6 +1661,10 @@ mdim_info <- function(dsn, array_name = "", pretty = TRUE, detailed = FALSE, lim
 #'
 #' f_dst <- tempfile(fileext = ".nc")
 #' mdim_translate(f_src, f_dst, creation_options = opt)
+#' info <- mdim_info(f_dst, cout = FALSE) |> yyjsonr::read_json_str()
+#' # str(info)
+#' info$arrays$Band1$structural_info
+#'
 #' (ds <- mdim_as_classic(f_dst, "Band1", 1, 0))
 #'
 #' plot_raster(ds, interpolate = FALSE, legend = TRUE, main = "Band1")
