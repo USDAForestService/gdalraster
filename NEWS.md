@@ -1,4 +1,4 @@
-# gdalraster 2.2.1.9031 (dev)
+# gdalraster 2.2.1.9032 (dev)
 
 * `mdim_info()`: add argument `cout` to control printing output to the console, with the info string returned invisibly (2025-09-25)
 
