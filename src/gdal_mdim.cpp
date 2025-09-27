@@ -67,7 +67,7 @@ GDALRaster *mdim_as_classic(
         oOpenOptions.push_back(nullptr);
     }
 
-    unsigned int nOpenFlags = GDAL_OF_MULTIDIM_RASTER;
+    unsigned int nOpenFlags = GDAL_OF_MULTIDIM_RASTER | GDAL_OF_VERBOSE_ERROR;
     if (read_only)
         nOpenFlags |= GDAL_OF_READONLY;
     else
