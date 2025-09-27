@@ -1,4 +1,6 @@
-# gdalraster 2.2.1.9033 (dev)
+# gdalraster 2.2.1.9034 (dev)
+
+* `mdim_as_classic()`: add open flag `GDAL_OF_VERBOSE_ERROR` and use `GDALMDArrayAsClassicDatasetEx()` if GDAL >= 3.8 (2025-09-27)
 
 * `mdim_info()`: add argument `cout` to control printing output to the console, with the info string returned invisibly (2025-09-25)
 
