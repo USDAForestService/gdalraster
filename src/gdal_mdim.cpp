@@ -99,15 +99,17 @@ GDALRaster *mdim_as_classic(
 
         hVar = GDALGroupOpenMDArray(hSubGroup, array_name.c_str(), nullptr);
         GDALGroupRelease(hSubGroup);
-        GDALGroupRelease(hRootGroup);
-        if (!hVar)
+        if (!hVar) {
+            GDALGroupRelease(hRootGroup);
             Rcpp::stop("failed to get object for the MDArray");
+        }
     }
     else {
         hVar = GDALGroupOpenMDArray(hRootGroup, array_name.c_str(), nullptr);
-        GDALGroupRelease(hRootGroup);
-        if (!hVar)
+        if (!hVar) {
+            GDALGroupRelease(hRootGroup);
             Rcpp::stop("failed to get object for the MDArray");
+        }
     }
 
     GDALDatasetH hClassicDS = nullptr;
@@ -115,23 +117,44 @@ GDALRaster *mdim_as_classic(
         GDALMDArrayH hVarView = nullptr;
         hVarView = GDALMDArrayGetView(hVar, view_expr.c_str());
         GDALMDArrayRelease(hVar);
-        if (!hVarView)
+        if (!hVarView) {
+            GDALGroupRelease(hRootGroup);
             Rcpp::stop("failed to get object for the MDArray view expression");
+        }
 
+        #if GDAL_VERSION_NUM < GDAL_COMPUTE_VERSION(3, 8, 0)
         hClassicDS = GDALMDArrayAsClassicDataset(hVarView,
                                                 static_cast<size_t>(idx_xdim),
                                                 static_cast<size_t>(idx_ydim));
+        #else
+        hClassicDS = GDALMDArrayAsClassicDatasetEx(
+            hVarView,
+            static_cast<size_t>(idx_xdim),
+            static_cast<size_t>(idx_ydim),
+            hRootGroup,
+            oOpenOptions.empty() ? nullptr : oOpenOptions.data());
+        #endif
 
         GDALMDArrayRelease(hVarView);
     }
     else {
+        #if GDAL_VERSION_NUM < GDAL_COMPUTE_VERSION(3, 8, 0)
         hClassicDS = GDALMDArrayAsClassicDataset(hVar,
                                                 static_cast<size_t>(idx_xdim),
                                                 static_cast<size_t>(idx_ydim));
+        #else
+        hClassicDS = GDALMDArrayAsClassicDatasetEx(
+            hVar,
+            static_cast<size_t>(idx_xdim),
+            static_cast<size_t>(idx_ydim),
+            hRootGroup,
+            oOpenOptions.empty() ? nullptr : oOpenOptions.data());
+        #endif
 
         GDALMDArrayRelease(hVar);
     }
 
+    GDALGroupRelease(hRootGroup);
     if (!hClassicDS)
         Rcpp::stop("failed to get MDArray as classic dataset");
 
