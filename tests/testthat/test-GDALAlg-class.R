@@ -108,6 +108,9 @@ test_that("algorithm and argument properties are returned correctly", {
     expect_equal(arginfo$dataset_type_flags, "RASTER")
     expect_equal(arginfo$dataset_output_flags, "OBJECT")
 
+    expect_true(is.list(alg$getExplicitlySetArgs()))
+    expect_equal(length(alg$getExplicitlySetArgs()), 0)
+
     rm(alginfo)
     rm(arginfo)
 
@@ -130,6 +133,12 @@ test_that("algorithm and argument properties are returned correctly", {
     expect_true(arginfo$is_explicitly_set)
     expect_equal(arginfo$dataset_type_flags, "RASTER")
     expect_equal(arginfo$dataset_output_flags, "OBJECT")
+
+    set_args <- alg$getExplicitlySetArgs()
+    expect_true(is.list(set_args))
+    expect_equal(length(set_args), 4)
+    expect_true(startsWith(set_args$input, "<raster dataset object:"))
+    expect_true(startsWith(set_args$output, "<raster dataset object:"))
 
     rm(alginfo)
     rm(arginfo)

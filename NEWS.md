@@ -1,4 +1,6 @@
-# gdalraster 2.2.1.9034 (dev)
+# gdalraster 2.2.1.9035 (dev)
+
+* add `GDALAlg::getExplicitlySetArgs()`: return a named list of arguments that have been set explicitly along with their values (2025-09-29)
 
 * `mdim_as_classic()`: add open flag `GDAL_OF_VERBOSE_ERROR` and use `GDALMDArrayAsClassicDatasetEx()` if GDAL >= 3.8 (2025-09-27)
 

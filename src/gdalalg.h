@@ -50,10 +50,10 @@ class GDALAlg {
     Rcpp::String usageAsJSON() const;
 
     // TODO:
-    // Rcpp::List getExplicitlySetArgs() const;
     // bool setArg(const Rcpp::String &arg_name, const SEXP &arg_value);
 
     bool parseCommandLineArgs();
+    Rcpp::List getExplicitlySetArgs() const;
     bool run();
     SEXP output() const;
     Rcpp::List outputs() const;
@@ -67,7 +67,7 @@ class GDALAlg {
     void instantiateAlg_();
     std::vector<std::string> getOutputArgNames_() const;
 #if __has_include(<gdalalgorithm.h>)
-    SEXP getOutputArgValue_(const GDALAlgorithmArgH &hArg) const;
+    SEXP getArgValue_(const GDALAlgorithmArgH &hArg) const;
 #endif
 
  private:
