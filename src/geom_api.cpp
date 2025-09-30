@@ -1941,6 +1941,93 @@ SEXP g_convex_hull(const Rcpp::RObject &geom, bool as_iso,
 }
 
 //' @noRd
+// [[Rcpp::export(name = ".g_concave_hull")]]
+SEXP g_concave_hull(const Rcpp::RObject &geom, double ratio, bool allow_holes,
+                    bool as_iso, const std::string &byte_order, bool quiet) {
+// https://libgeos.org/doxygen/geos__c_8h.html
+// Returns a "concave hull" of a geometry. A concave hull is a polygon which
+// contains all the points of the input, but is a better approximation than the
+// convex hull to the area occupied by the input. Frequently used to convert a
+// multi-point into a polygonal area that contains all the points in the input
+// geometry.
+
+// A set of points has a sequence of hulls of increasing concaveness, determined
+// by a numeric target parameter. The concave hull is constructed by removing
+// the longest outer edges of the Delaunay Triangulation of the space between
+// the polygons, until the target criterion parameter is reached. This can be
+// expressed as a ratio between the lengths of the longest and shortest edges.
+// 1 produces the convex hull; 0 produces a hull with maximum concaveness.
+
+// Requires GDAL >= 3.6. This function is built on the GEOS >= 3.11 library. If
+// OGR is built without the GEOS >= 3.11 library, this function will always
+// fail, issuing a CPLE_NotSupported error.
+
+#if GDAL_VERSION_NUM < GDAL_COMPUTE_VERSION(3, 6, 0)
+    Rcpp::stop("g_concave_hull() requires GDAL >= 3.6");
+#else
+
+    std::vector<int> geos_ver = getGEOSVersion();
+    int geos_maj_ver = geos_ver[0];
+    int geos_min_ver = geos_ver[1];
+    if (!(geos_maj_ver > 3 || (geos_maj_ver == 3 && geos_min_ver >= 11)))
+        Rcpp::stop("g_concave_hull() requires GEOS >= 3.11");
+
+    if (geom.isNULL() || !Rcpp::is<Rcpp::RawVector>(geom))
+        return R_NilValue;
+
+    const Rcpp::RawVector geom_in(geom);
+    if (geom_in.size() == 0)
+        return R_NilValue;
+
+    if (ratio < 0 || ratio > 1)
+        Rcpp::stop("'ratio' must be a numeric value >= 0 and <= 1");
+
+    OGRGeometryH hGeom = createGeomFromWkb(geom_in);
+    if (hGeom == nullptr) {
+        if (!quiet) {
+            Rcpp::warning(
+                "failed to create geometry object from WKB, NULL returned");
+        }
+        return R_NilValue;
+    }
+
+    OGRGeometryH hHullGeom = OGR_G_ConcaveHull(hGeom, ratio, allow_holes);
+
+    if (hHullGeom == nullptr) {
+        OGR_G_DestroyGeometry(hGeom);
+        if (!quiet) {
+            Rcpp::warning("OGR_G_ConcaveHull() gave NULL geometry");
+        }
+        return R_NilValue;
+    }
+
+    const int nWKBSize = OGR_G_WkbSize(hHullGeom);
+    if (!nWKBSize) {
+        OGR_G_DestroyGeometry(hGeom);
+        OGR_G_DestroyGeometry(hHullGeom);
+        if (!quiet) {
+            Rcpp::warning("failed to obtain WKB size of output geometry");
+        }
+        return R_NilValue;
+    }
+
+    Rcpp::RawVector wkb = Rcpp::no_init(nWKBSize);
+    bool result = exportGeomToWkb(hHullGeom, &wkb[0], as_iso, byte_order);
+    OGR_G_DestroyGeometry(hGeom);
+    OGR_G_DestroyGeometry(hHullGeom);
+    if (!result) {
+        if (!quiet) {
+           Rcpp::warning(
+                "failed to export WKB raw vector for output geometry");
+        }
+        return R_NilValue;
+    }
+
+    return wkb;
+#endif
+}
+
+//' @noRd
 // [[Rcpp::export(name = ".g_delaunay_triangulation")]]
 SEXP g_delaunay_triangulation(const Rcpp::RObject &geom,
                               double tolerance = 0.0,

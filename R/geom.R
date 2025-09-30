@@ -2648,6 +2648,12 @@ g_geodesic_length <- function(geom, srs, traditional_gis_order = TRUE,
 #' `g_convex_hull()` computes a convex hull, the smallest convex geometry that
 #' contains all the points in the input geometry. Wrapper of
 #' `OGR_G_ConvexHull()` in the GDAL API.
+#' 
+#' `g_concave_hull()` returns a "concave hull" of a geometry. A concave hull is
+#' a polygon which contains all the points of the input, but is a better
+#' approximation than the convex hull to the area occupied by the input.
+#' Frequently used to convert a multi-point into a polygonal area that contains
+#' all the points in the input geometry. Requires GDAL >= 3.6 and GEOS >= 3.11.
 #'
 #' `g_delaunay_triangulation()` returns a Delaunay triangulation of the
 #' vertices of the input geometry. Wrapper of `OGR_G_DelaunayTriangulation()`
@@ -2669,6 +2675,11 @@ g_geodesic_length <- function(geom, srs, traditional_gis_order = TRUE,
 #' curve (quadrant of a circle). Large values result in large numbers of
 #' vertices in the resulting buffer geometry while small numbers reduce the
 #' accuracy of the result.
+#' @param ratio Numeric value in interval `[0, 1]`. The target criterion
+#' parameter for `g_concave_hull()`, expressed as a ratio between the lengths
+#' of the longest and shortest edges. `1` produces the convex hull; `0` produces
+#' a hull with maximum concaveness (see Note).
+#' @param allow_holes Logical value. Whether holes are allowed.
 #' @param tolerance Numeric value. For `g_simplify()`, the simplification
 #' tolerance as distance in units of the input `geom`. Simplification removes
 #' vertices which are within the tolerance distance of the simplified linework
@@ -2698,7 +2709,7 @@ g_geodesic_length <- function(geom, srs, traditional_gis_order = TRUE,
 #'
 #' @note
 #' Definitions of these operations are given in the GEOS documentation
-#' (\url{https://libgeos.org/doxygen/}, GEOS 3.14.0dev), some of which is
+#' (\url{https://libgeos.org/doxygen/}, GEOS 3.15.0dev), some of which is
 #' copied here.
 #'
 #' `g_boundary()` computes the "boundary" as defined by the DE9IM
@@ -2712,6 +2723,14 @@ g_geodesic_length <- function(geom, srs, traditional_gis_order = TRUE,
 #' zero-distance buffer of lines and points is always an empty `Polygon`.
 #'
 #' `g_convex_hull()` uses the Graham Scan algorithm.
+#' 
+#' `g_concave_hull()`: A set of points has a sequence of hulls of increasing
+#' concaveness, determined by a numeric target parameter. The concave hull is
+#' constructed by removing the longest outer edges of the Delaunay Triangulation
+#' of the space between the polygons, until the target criterion parameter is
+#' reached. This can be expressed as a ratio between the lengths of the longes
+#' and shortest edges. `1` produces the convex hull; `0` produces a hull with
+#' maximum concaveness.
 #'
 #' `g_simplify()`:
 #' * With `preserve_topology = TRUE` (the default):\cr
@@ -2736,26 +2755,36 @@ g_geodesic_length <- function(geom, srs, traditional_gis_order = TRUE,
 #' polygons.
 #'
 #' @examples
-#' g1 <- "POLYGON((0 0,1 1,1 0,0 0))"
-#' g_boundary(g1, as_wkb = FALSE)
+#' g <- "POLYGON((0 0,1 1,1 0,0 0))"
+#' g_boundary(g, as_wkb = FALSE)
 #'
-#' g2 <- "POINT (0 0)"
-#' g_buffer(g2, dist = 10, as_wkb = FALSE)
+#' g <- "POINT (0 0)"
+#' g_buffer(g, dist = 10, as_wkb = FALSE)
 #'
-#' g3 <- "GEOMETRYCOLLECTION(POINT(0 1), POINT(0 0), POINT(1 0), POINT(1 1))"
-#' g_convex_hull(g3, as_wkb = FALSE)
+#' g <- "GEOMETRYCOLLECTION(POINT(0 1), POINT(0 0), POINT(1 0), POINT(1 1))"
+#' g_convex_hull(g, as_wkb = FALSE)
+#' 
+#' # g_concave_hull() requires GDAL >= 3.6 and GEOS >= 3.11
+#' if (gdal_version_num() >= gdal_compute_version(3, 6, 0) &&
+#'     (geos_version()$major > 3 || geos_version()$minor >= 11)) {
+#'   g <- "MULTIPOINT(0 0,0.4 0.5,0 1,1 1,0.6 0.5,1 0)"
+#'   g_concave_hull(g, 0.5, FALSE)
+#' }  
 #'
-#' g4 <- "MULTIPOINT(0 0,0 1,1 1,1 0)"
-#' g_delaunay_triangulation(g4, as_wkb = FALSE)
+#' # g_delaunay_triangulation() requires GEOS >= 3.4
+#' if (geos_version()$major > 3 || geos_version()$minor >= 4) {
+#'   g <- "MULTIPOINT(0 0,0 1,1 1,1 0)"
+#'   g_delaunay_triangulation(g, as_wkb = FALSE)
+#' }
 #'
-#' g5 <- "LINESTRING(0 0,1 1,10 0)"
-#' g_simplify(g5, tolerance = 5, as_wkb = FALSE)
+#' g <- "LINESTRING(0 0,1 1,10 0)"
+#' g_simplify(g, tolerance = 5, as_wkb = FALSE)
 #'
 #' # g_unary_union() requires GDAL >= 3.7
 #' if (gdal_version_num() >= gdal_compute_version(3, 7, 0)) {
-#'   g6 <- "GEOMETRYCOLLECTION(POINT(0.5 0.5), POLYGON((0 0,0 1,1 1,1 0,0 0)),
-#'          POLYGON((1 0,1 1,2 1,2 0,1 0)))"
-#'   g_unary_union(g6, as_wkb = FALSE)
+#'   g <- "GEOMETRYCOLLECTION(POINT(0.5 0.5), POLYGON((0 0,0 1,1 1,1 0,0 0)),
+#'         POLYGON((1 0,1 1,2 1,2 0,1 0)))"
+#'   g_unary_union(g, as_wkb = FALSE)
 #' }
 #' @export
 g_buffer <- function(geom, dist, quad_segs = 30L, as_wkb = TRUE,
@@ -2912,6 +2941,72 @@ g_convex_hull <- function(geom, as_wkb = TRUE, as_iso = FALSE,
         } else {
             wkb <- lapply(g_wk2wk(geom), .g_convex_hull, as_iso, byte_order,
                           quiet)
+        }
+    } else {
+        stop("'geom' must be a character vector, raw vector, or list",
+             call. = FALSE)
+    }
+
+    if (as_wkb)
+        return(wkb)
+    else
+        return(g_wk2wk(wkb, as_iso))
+}
+
+#' @name g_unary_op
+#' @export
+g_concave_hull <- function(geom, ratio, allow_holes, as_wkb = TRUE,
+                           as_iso = FALSE, byte_order = "LSB",
+                           quiet = FALSE) {
+    # ratio
+    if (missing(ratio) || is.null(ratio) || all(is.na(ratio)))
+        stop("'ratio' is required", call. = FALSE)
+    if (!(is.numeric(ratio) && length(ratio) == 1))
+        stop("'ratio' must be a single numeric value [0, 1]", call. = FALSE)
+    # allow_holes
+    if (missing(allow_holes) || is.null(allow_holes) || all(is.na(allow_holes)))
+        stop("'allow_holes' is required", call. = FALSE)
+    if (!(is.logical(allow_holes) && length(allow_holes) == 1)) {
+        stop("'allow_holes' must be a single logical value", call. = FALSE)
+    }
+    # as_wkb
+    if (is.null(as_wkb))
+        as_wkb <- TRUE
+    if (!is.logical(as_wkb) || length(as_wkb) > 1)
+        stop("'as_wkb' must be a single logical value", call. = FALSE)
+    # as_iso
+    if (is.null(as_iso))
+        as_iso <- FALSE
+    if (!is.logical(as_iso) || length(as_iso) > 1)
+        stop("'as_iso' must be a single logical value", call. = FALSE)
+    # byte_order
+    if (is.null(byte_order))
+        byte_order <- "LSB"
+    if (!is.character(byte_order) || length(byte_order) > 1)
+        stop("'byte_order' must be a character string", call. = FALSE)
+    byte_order <- toupper(byte_order)
+    if (byte_order != "LSB" && byte_order != "MSB")
+        stop("invalid 'byte_order'", call. = FALSE)
+    # quiet
+    if (is.null(quiet))
+        quiet <- FALSE
+    if (!is.logical(quiet) || length(quiet) > 1)
+        stop("'quiet' must be a single logical value", call. = FALSE)
+
+    wkb <- NULL
+    if (.is_raw_or_null(geom)) {
+        wkb <- .g_concave_hull(geom, ratio, allow_holes, as_iso, byte_order,
+                               quiet)
+    } else if (is.list(geom) && .is_raw_or_null(geom[[1]])) {
+        wkb <- lapply(geom, .g_concave_hull, ratio, allow_holes, as_iso,
+                      byte_order, quiet)
+    } else if (is.character(geom)) {
+        if (length(geom) == 1) {
+            wkb <- .g_concave_hull(g_wk2wk(geom), ratio, allow_holes, as_iso,
+                                   byte_order, quiet)
+        } else {
+            wkb <- lapply(g_wk2wk(geom), .g_concave_hull, ratio, allow_holes,
+                          as_iso, byte_order, quiet)
         }
     } else {
         stop("'geom' must be a character vector, raw vector, or list",

@@ -5,6 +5,7 @@
 \alias{g_buffer}
 \alias{g_boundary}
 \alias{g_convex_hull}
+\alias{g_concave_hull}
 \alias{g_delaunay_triangulation}
 \alias{g_simplify}
 \alias{g_unary_union}
@@ -30,6 +31,16 @@ g_boundary(
 
 g_convex_hull(
   geom,
+  as_wkb = TRUE,
+  as_iso = FALSE,
+  byte_order = "LSB",
+  quiet = FALSE
+)
+
+g_concave_hull(
+  geom,
+  ratio,
+  allow_holes,
   as_wkb = TRUE,
   as_iso = FALSE,
   byte_order = "LSB",
@@ -86,6 +97,13 @@ WKB. One of \code{"LSB"} (the default) or \code{"MSB"} (uncommon).}
 
 \item{quiet}{Logical value, \code{TRUE} to suppress warnings. Defaults to \code{FALSE}.}
 
+\item{ratio}{Numeric value in interval \verb{[0, 1]}. The target criterion
+parameter for \code{g_concave_hull()}, expressed as a ratio between the lengths
+of the longest and shortest edges. \code{1} produces the convex hull; \code{0} produces
+a hull with maximum concaveness (see Note).}
+
+\item{allow_holes}{Logical value. Whether holes are allowed.}
+
 \item{tolerance}{Numeric value. For \code{g_simplify()}, the simplification
 tolerance as distance in units of the input \code{geom}. Simplification removes
 vertices which are within the tolerance distance of the simplified linework
@@ -130,6 +148,12 @@ Wrapper of \code{OGR_G_Buffer()} in the GDAL API.
 contains all the points in the input geometry. Wrapper of
 \code{OGR_G_ConvexHull()} in the GDAL API.
 
+\code{g_concave_hull()} returns a "concave hull" of a geometry. A concave hull is
+a polygon which contains all the points of the input, but is a better
+approximation than the convex hull to the area occupied by the input.
+Frequently used to convert a multi-point into a polygonal area that contains
+all the points in the input geometry. Requires GDAL >= 3.6 and GEOS >= 3.11.
+
 \code{g_delaunay_triangulation()} returns a Delaunay triangulation of the
 vertices of the input geometry. Wrapper of \code{OGR_G_DelaunayTriangulation()}
 in the GDAL API. Requires GEOS >= 3.4.
@@ -145,7 +169,7 @@ for more details. Requires GDAL >= 3.7.
 }
 \note{
 Definitions of these operations are given in the GEOS documentation
-(\url{https://libgeos.org/doxygen/}, GEOS 3.14.0dev), some of which is
+(\url{https://libgeos.org/doxygen/}, GEOS 3.15.0dev), some of which is
 copied here.
 
 \code{g_boundary()} computes the "boundary" as defined by the DE9IM
@@ -161,6 +185,14 @@ exterior from the interior
 zero-distance buffer of lines and points is always an empty \code{Polygon}.
 
 \code{g_convex_hull()} uses the Graham Scan algorithm.
+
+\code{g_concave_hull()}: A set of points has a sequence of hulls of increasing
+concaveness, determined by a numeric target parameter. The concave hull is
+constructed by removing the longest outer edges of the Delaunay Triangulation
+of the space between the polygons, until the target criterion parameter is
+reached. This can be expressed as a ratio between the lengths of the longes
+and shortest edges. \code{1} produces the convex hull; \code{0} produces a hull with
+maximum concaveness.
 
 \code{g_simplify()}:
 \itemize{
@@ -187,25 +219,35 @@ simplify geometry while preserving topology use
 polygons.
 }
 \examples{
-g1 <- "POLYGON((0 0,1 1,1 0,0 0))"
-g_boundary(g1, as_wkb = FALSE)
+g <- "POLYGON((0 0,1 1,1 0,0 0))"
+g_boundary(g, as_wkb = FALSE)
 
-g2 <- "POINT (0 0)"
-g_buffer(g2, dist = 10, as_wkb = FALSE)
+g <- "POINT (0 0)"
+g_buffer(g, dist = 10, as_wkb = FALSE)
 
-g3 <- "GEOMETRYCOLLECTION(POINT(0 1), POINT(0 0), POINT(1 0), POINT(1 1))"
-g_convex_hull(g3, as_wkb = FALSE)
+g <- "GEOMETRYCOLLECTION(POINT(0 1), POINT(0 0), POINT(1 0), POINT(1 1))"
+g_convex_hull(g, as_wkb = FALSE)
 
-g4 <- "MULTIPOINT(0 0,0 1,1 1,1 0)"
-g_delaunay_triangulation(g4, as_wkb = FALSE)
+# g_concave_hull() requires GDAL >= 3.6 and GEOS >= 3.11
+if (gdal_version_num() >= gdal_compute_version(3, 6, 0) &&
+    (geos_version()$major > 3 || geos_version()$minor >= 11)) {
+  g <- "MULTIPOINT(0 0,0.4 0.5,0 1,1 1,0.6 0.5,1 0)"
+  g_concave_hull(g, 0.5, FALSE)
+}  
 
-g5 <- "LINESTRING(0 0,1 1,10 0)"
-g_simplify(g5, tolerance = 5, as_wkb = FALSE)
+# g_delaunay_triangulation() requires GEOS >= 3.4
+if (geos_version()$major > 3 || geos_version()$minor >= 4) {
+  g <- "MULTIPOINT(0 0,0 1,1 1,1 0)"
+  g_delaunay_triangulation(g, as_wkb = FALSE)
+}
+
+g <- "LINESTRING(0 0,1 1,10 0)"
+g_simplify(g, tolerance = 5, as_wkb = FALSE)
 
 # g_unary_union() requires GDAL >= 3.7
 if (gdal_version_num() >= gdal_compute_version(3, 7, 0)) {
-  g6 <- "GEOMETRYCOLLECTION(POINT(0.5 0.5), POLYGON((0 0,0 1,1 1,1 0,0 0)),
-         POLYGON((1 0,1 1,2 1,2 0,1 0)))"
-  g_unary_union(g6, as_wkb = FALSE)
+  g <- "GEOMETRYCOLLECTION(POINT(0.5 0.5), POLYGON((0 0,0 1,1 1,1 0,0 0)),
+        POLYGON((1 0,1 1,2 1,2 0,1 0)))"
+  g_unary_union(g, as_wkb = FALSE)
 }
 }
