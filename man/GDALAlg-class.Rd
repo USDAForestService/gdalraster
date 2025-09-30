@@ -205,7 +205,7 @@ error occurs.
 \code{$getExplicitlySetArgs()}\cr
 Returns a named list of arguments that have been set explicitly along with
 their values. For arguments with dataset object values, the value of the list
-element is a string of the form \code{"<TYPE dataset object: <DSN>"} where \code{TYPE}
+element is a string of the form \code{"<TYPE dataset object: DSN>"} where \code{TYPE}
 is one of \code{"raster"}, \code{"vector"} or \code{"multidim raster"} and \code{DSN} is the
 dataset name (filename, URL, etc.).
 

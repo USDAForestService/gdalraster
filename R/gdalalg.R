@@ -192,7 +192,7 @@
 #' \code{$getExplicitlySetArgs()}\cr
 #' Returns a named list of arguments that have been set explicitly along with
 #' their values. For arguments with dataset object values, the value of the list
-#' element is a string of the form `"<TYPE dataset object: <DSN>"` where `TYPE`
+#' element is a string of the form `"<TYPE dataset object: DSN>"` where `TYPE`
 #' is one of `"raster"`, `"vector"` or `"multidim raster"` and `DSN` is the
 #' dataset name (filename, URL, etc.).
 #'
