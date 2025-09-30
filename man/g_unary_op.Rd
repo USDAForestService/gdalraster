@@ -232,8 +232,8 @@ g_convex_hull(g, as_wkb = FALSE)
 if (gdal_version_num() >= gdal_compute_version(3, 6, 0) &&
     (geos_version()$major > 3 || geos_version()$minor >= 11)) {
   g <- "MULTIPOINT(0 0,0.4 0.5,0 1,1 1,0.6 0.5,1 0)"
-  g_concave_hull(g, 0.5, FALSE)
-}  
+  g_concave_hull(g, ratio = 0.5, allow_holes = FALSE, as_wkb = FALSE)
+}
 
 # g_delaunay_triangulation() requires GEOS >= 3.4
 if (geos_version()$major > 3 || geos_version()$minor >= 4) {

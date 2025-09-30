@@ -2648,7 +2648,7 @@ g_geodesic_length <- function(geom, srs, traditional_gis_order = TRUE,
 #' `g_convex_hull()` computes a convex hull, the smallest convex geometry that
 #' contains all the points in the input geometry. Wrapper of
 #' `OGR_G_ConvexHull()` in the GDAL API.
-#' 
+#'
 #' `g_concave_hull()` returns a "concave hull" of a geometry. A concave hull is
 #' a polygon which contains all the points of the input, but is a better
 #' approximation than the convex hull to the area occupied by the input.
@@ -2723,7 +2723,7 @@ g_geodesic_length <- function(geom, srs, traditional_gis_order = TRUE,
 #' zero-distance buffer of lines and points is always an empty `Polygon`.
 #'
 #' `g_convex_hull()` uses the Graham Scan algorithm.
-#' 
+#'
 #' `g_concave_hull()`: A set of points has a sequence of hulls of increasing
 #' concaveness, determined by a numeric target parameter. The concave hull is
 #' constructed by removing the longest outer edges of the Delaunay Triangulation
@@ -2763,13 +2763,13 @@ g_geodesic_length <- function(geom, srs, traditional_gis_order = TRUE,
 #'
 #' g <- "GEOMETRYCOLLECTION(POINT(0 1), POINT(0 0), POINT(1 0), POINT(1 1))"
 #' g_convex_hull(g, as_wkb = FALSE)
-#' 
+#'
 #' # g_concave_hull() requires GDAL >= 3.6 and GEOS >= 3.11
 #' if (gdal_version_num() >= gdal_compute_version(3, 6, 0) &&
 #'     (geos_version()$major > 3 || geos_version()$minor >= 11)) {
 #'   g <- "MULTIPOINT(0 0,0.4 0.5,0 1,1 1,0.6 0.5,1 0)"
-#'   g_concave_hull(g, 0.5, FALSE)
-#' }  
+#'   g_concave_hull(g, ratio = 0.5, allow_holes = FALSE, as_wkb = FALSE)
+#' }
 #'
 #' # g_delaunay_triangulation() requires GEOS >= 3.4
 #' if (geos_version()$major > 3 || geos_version()$minor >= 4) {
