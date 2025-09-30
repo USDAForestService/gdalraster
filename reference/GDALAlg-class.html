@@ -27,7 +27,7 @@ documented (naming optional)."></head><body>
 
     <a class="navbar-brand me-2" href="../index.html">gdalraster</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">2.2.1.9034</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">2.2.1.9035</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -130,12 +130,13 @@ of writable fields for per-object settings.</p>
 <span id="cb1-15"><a href="#cb1-15" tabindex="-1"></a>alg<span class="sc">$</span><span class="fu">usageAsJSON</span>()</span>
 <span id="cb1-16"><a href="#cb1-16" tabindex="-1"></a></span>
 <span id="cb1-17"><a href="#cb1-17" tabindex="-1"></a>alg<span class="sc">$</span><span class="fu">parseCommandLineArgs</span>()</span>
-<span id="cb1-18"><a href="#cb1-18" tabindex="-1"></a>alg<span class="sc">$</span><span class="fu">run</span>()</span>
-<span id="cb1-19"><a href="#cb1-19" tabindex="-1"></a>alg<span class="sc">$</span><span class="fu">output</span>()</span>
-<span id="cb1-20"><a href="#cb1-20" tabindex="-1"></a>alg<span class="sc">$</span><span class="fu">outputs</span>()</span>
-<span id="cb1-21"><a href="#cb1-21" tabindex="-1"></a></span>
-<span id="cb1-22"><a href="#cb1-22" tabindex="-1"></a>alg<span class="sc">$</span><span class="fu">close</span>()</span>
-<span id="cb1-23"><a href="#cb1-23" tabindex="-1"></a>alg<span class="sc">$</span><span class="fu">release</span>()</span></code></pre><p></p></div>
+<span id="cb1-18"><a href="#cb1-18" tabindex="-1"></a>alg<span class="sc">$</span><span class="fu">getExplicitlySetArgs</span>()</span>
+<span id="cb1-19"><a href="#cb1-19" tabindex="-1"></a>alg<span class="sc">$</span><span class="fu">run</span>()</span>
+<span id="cb1-20"><a href="#cb1-20" tabindex="-1"></a>alg<span class="sc">$</span><span class="fu">output</span>()</span>
+<span id="cb1-21"><a href="#cb1-21" tabindex="-1"></a>alg<span class="sc">$</span><span class="fu">outputs</span>()</span>
+<span id="cb1-22"><a href="#cb1-22" tabindex="-1"></a></span>
+<span id="cb1-23"><a href="#cb1-23" tabindex="-1"></a>alg<span class="sc">$</span><span class="fu">close</span>()</span>
+<span id="cb1-24"><a href="#cb1-24" tabindex="-1"></a>alg<span class="sc">$</span><span class="fu">release</span>()</span></code></pre><p></p></div>
     </div>
     <div class="section level2">
     <h2 id="details">Details<a class="anchor" aria-label="anchor" href="#details"></a></h2>
@@ -199,7 +200,7 @@ Returns a named list of algorithm properties with the following elements:</p><ul
 <li><p><code>URL</code>: character string, the algorithm help URL</p></li>
 <li><p><code>has_subalgorithms</code>: logical, <code>TRUE</code> if the algorithm has sub-algorithms</p></li>
 <li><p><code>subalgorithm_names</code>: character vector of sub-algorithm names (may be
-empty)</p></li>
+empty)parseCommandLineArgsparseCommanparseCommandLineArgsparseCommandLineArgsdLineArgs</p></li>
 <li><p><code>arg_names</code>: character vector of available argument names</p></li>
 </ul><p><code>$argInfo(arg_name)</code><br>
 Returns a named list of properties for an algorithm argument given as a
@@ -266,6 +267,12 @@ Sets the value of arguments previously specified in the class constructor,
 and instantiates the actual algorithm that will be run (but without running
 it). Returns a logical value, <code>TRUE</code> indicating success or <code>FALSE</code> if an
 error occurs.</p>
+<p><code>$getExplicitlySetArgs()</code><br>
+Returns a named list of arguments that have been set explicitly along with
+their values. For arguments with dataset object values, the value of the list
+element is a string of the form <code>"&lt;TYPE dataset object: &lt;DSN&gt;"</code> where <code>TYPE</code>
+is one of <code>"raster"</code>, <code>"vector"</code> or <code>"multidim raster"</code> and <code>DSN</code> is the
+dataset name (filename, URL, etc.).</p>
 <p><code>$run()</code><br>
 Executes the algorithm, first parsing arguments if
 <code>$parseCommandLineArgs()</code> has not already been called explicitly.
