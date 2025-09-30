@@ -1,8 +1,10 @@
-# gdalraster 2.2.1.9035 (dev)
+# gdalraster 2.2.1.9036 (dev)
 
-* add `GDALAlg::getExplicitlySetArgs()`: return a named list of arguments that have been set explicitly along with their values (2025-09-29)
+* add `g_concave_hull()`: wrapper for `OGR_G_ConcaveHull()` (2025-09-30)
 
-* `mdim_as_classic()`: add open flag `GDAL_OF_VERBOSE_ERROR` and use `GDALMDArrayAsClassicDatasetEx()` if GDAL >= 3.8 (2025-09-27)
+* add `GDALAlg::getExplicitlySetArgs()`: return a named list of arguments that have been set explicitly along with their values (#807) (2025-09-29)
+
+* `mdim_as_classic()`: add open flag `GDAL_OF_VERBOSE_ERROR` and use `GDALMDArrayAsClassicDatasetEx()` if GDAL >= 3.8 (#806) (2025-09-27)
 
 * `mdim_info()`: add argument `cout` to control printing output to the console, with the info string returned invisibly (2025-09-25)
 
