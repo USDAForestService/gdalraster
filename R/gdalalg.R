@@ -52,6 +52,7 @@
 #' alg$usageAsJSON()
 #'
 #' alg$parseCommandLineArgs()
+#' alg$getExplicitlySetArgs()
 #' alg$run()
 #' alg$output()
 #' alg$outputs()
@@ -115,7 +116,7 @@
 #' * `URL`: character string, the algorithm help URL
 #' * `has_subalgorithms`: logical, `TRUE` if the algorithm has sub-algorithms
 #' * `subalgorithm_names`: character vector of sub-algorithm names (may be
-#' empty)
+#' empty)parseCommandLineArgsparseCommanparseCommandLineArgsparseCommandLineArgsdLineArgs
 #' * `arg_names`: character vector of available argument names
 #'
 #' \code{$argInfo(arg_name)}\cr
@@ -187,6 +188,13 @@
 #' and instantiates the actual algorithm that will be run (but without running
 #' it). Returns a logical value, `TRUE` indicating success or `FALSE` if an
 #' error occurs.
+#'
+#' \code{$getExplicitlySetArgs()}\cr
+#' Returns a named list of arguments that have been set explicitly along with
+#' their values. For arguments with dataset object values, the value of the list
+#' element is a string of the form `"<TYPE dataset object: <DSN>"` where `TYPE`
+#' is one of `"raster"`, `"vector"` or `"multidim raster"` and `DSN` is the
+#' dataset name (filename, URL, etc.).
 #'
 #' \code{$run()}\cr
 #' Executes the algorithm, first parsing arguments if

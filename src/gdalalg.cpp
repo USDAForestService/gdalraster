@@ -649,9 +649,14 @@ Rcpp::List GDALAlg::argInfo(const Rcpp::String &arg_name) const {
 }
 
 void GDALAlg::usage() const {
+#if GDAL_VERSION_NUM < GDALALG_MIN_GDAL_
+    Rcpp::stop(GDALALG_MIN_GDAL_MSG_);
+#else
+
     Rcpp::Environment pkg = Rcpp::Environment::namespace_env("gdalraster");
     Rcpp::Function print_usage = pkg[".print_alg_usage"];
     print_usage(Rcpp::wrap(m_cmd_str));
+#endif
 }
 
 Rcpp::String GDALAlg::usageAsJSON() const {
@@ -962,6 +967,88 @@ bool GDALAlg::parseCommandLineArgs() {
 #endif  // GDALALG_MIN_GDAL_
 }
 
+Rcpp::List GDALAlg::getExplicitlySetArgs() const {
+#if GDAL_VERSION_NUM < GDALALG_MIN_GDAL_
+    Rcpp::stop(GDALALG_MIN_GDAL_MSG_);
+#else
+    if (!m_hAlg)
+        Rcpp::stop("algorithm not instantiated");
+
+    char **papszArgNames = nullptr;
+    papszArgNames = GDALAlgorithmGetArgNames(
+        m_hActualAlg ? m_hActualAlg : m_hAlg);
+
+    Rcpp::List out = Rcpp::List::create();
+
+    int nCount = CSLCount(papszArgNames);
+    if (nCount > 0) {
+        std::vector<std::string> names(papszArgNames, papszArgNames + nCount);
+        for (std::string arg_name : names) {
+            GDALAlgorithmArgH hArg = nullptr;
+            hArg = GDALAlgorithmGetArg(m_hActualAlg ? m_hActualAlg : m_hAlg,
+                                       arg_name.c_str());
+            if (!hArg) {
+                if (!quiet) {
+                    Rcpp::Rcout << "got nullptr for arg: " << arg_name.c_str()
+                        << "\n";
+                }
+                continue;
+            }
+            if (GDALAlgorithmArgIsExplicitlySet(hArg)) {
+                // dataset object
+                if (GDALAlgorithmArgGetType(hArg) == GAAT_DATASET) {
+                    GDALArgDatasetValueH hArgDSValue = nullptr;
+                    hArgDSValue = GDALAlgorithmArgGetAsDatasetValue(hArg);
+                    if (!hArgDSValue) {
+                        if (!quiet)
+                            Rcpp::Rcout << "output dataset value is NULL\n";
+                        return R_NilValue;
+                    }
+
+                    GDALArgDatasetType ds_type =
+                        GDALAlgorithmArgGetDatasetType(hArg);
+
+                    std::string ds_name(
+                        GDALArgDatasetValueGetName(hArgDSValue));
+
+                    if (ds_type & GDAL_OF_RASTER) {
+                        ds_name = "<raster dataset object: " + ds_name + ">";
+                    }
+                    else if (ds_type & GDAL_OF_VECTOR) {
+                        ds_name = "<vector dataset object: " + ds_name + ">";
+                    }
+                    else if (ds_type & GDAL_OF_MULTIDIM_RASTER) {
+                        ds_name = ("<mutlidim raster dataset object: " +
+                                   ds_name + ">");
+                    }
+                    // unrecognized dataset type - should not occur
+                    else {
+                        out = Rcpp::wrap("<unrecognized dataset object>");
+                    }
+
+                    GDALArgDatasetValueRelease(hArgDSValue);
+                    out.push_back(ds_name, arg_name);
+                }
+                // list of GDAL datasets
+                else if ((GDALAlgorithmArgGetType(hArg) ==
+                          GAAT_DATASET_LIST)) {
+
+                    out.push_back("<list of dataset objects>", arg_name);
+                }
+                // boolean, string, integer, real, and lists of
+                else {
+                    out.push_back(getArgValue_(hArg), arg_name);
+                }
+            }
+            GDALAlgorithmArgRelease(hArg);
+        }
+    }
+    CSLDestroy(papszArgNames);
+
+    return out;
+#endif
+}
+
 bool GDALAlg::run() {
 #if GDAL_VERSION_NUM < GDALALG_MIN_GDAL_
     Rcpp::stop(GDALALG_MIN_GDAL_MSG_);
@@ -1057,7 +1144,7 @@ Rcpp::List GDALAlg::outputs() const {
         if (GDALAlgorithmArgIsOutput(hArg)) {
             Rcpp::String s(arg_name);
             s.replace_all("-", "_");
-            out.push_back(getOutputArgValue_(hArg), s);
+            out.push_back(getArgValue_(hArg), s);
         }
 
         GDALAlgorithmArgRelease(hArg);
@@ -1420,7 +1507,7 @@ std::vector<std::string> GDALAlg::getOutputArgNames_() const {
 }
 
 #if GDAL_VERSION_NUM >= GDALALG_MIN_GDAL_
-SEXP GDALAlg::getOutputArgValue_(const GDALAlgorithmArgH &hArg) const {
+SEXP GDALAlg::getArgValue_(const GDALAlgorithmArgH &hArg) const {
     if (!hArg)
         Rcpp::stop("got nullptr for GDALAlgorithmArgH hArg");
 
@@ -1640,6 +1727,8 @@ RCPP_MODULE(mod_GDALAlg) {
         "Return a list of algorithm information")
     .method("parseCommandLineArgs", &GDALAlg::parseCommandLineArgs,
         "Parse command line arguments")
+    .const_method("getExplicitlySetArgs", &GDALAlg::getExplicitlySetArgs,
+        "Return a named list of explicity set arguments and their values")
     .method("run", &GDALAlg::run,
         "Execute the algorithm")
     .const_method("output", &GDALAlg::output,
