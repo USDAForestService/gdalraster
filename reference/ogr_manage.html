@@ -17,7 +17,7 @@ fields, and edit data with SQL statements."></head><body>
 
     <a class="navbar-brand me-2" href="../index.html">gdalraster</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">2.2.1.9035</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">2.2.1.9036</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -567,7 +567,7 @@ dialects for details.</p>
 <span class="r-in"><span><span class="co"># add a field using SQL instead</span></span></span>
 <span class="r-in"><span><span class="fu">ogr_execute_sql</span><span class="op">(</span><span class="va">dsn</span>, sql <span class="op">=</span> <span class="st">"ALTER TABLE layer2 ADD field4 float"</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> info: open dataset successful on DSN:</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   '/tmp/RtmpkbucVJ/test1.gpkg'</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   '/tmp/RtmpqAGoPg/test1.gpkg'</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># rename a field</span></span></span>
 <span class="r-in"><span><span class="kw">if</span> <span class="op">(</span><span class="fu">ogr_layer_test_cap</span><span class="op">(</span><span class="va">dsn</span>, <span class="st">"layer1"</span><span class="op">)</span><span class="op">$</span><span class="va">AlterFieldDefn</span><span class="op">)</span> <span class="op">{</span></span></span>
@@ -583,7 +583,7 @@ dialects for details.</p>
 <span class="r-in"><span><span class="co"># GDAL &gt;= 3.7</span></span></span>
 <span class="r-in"><span><span class="kw">if</span> <span class="op">(</span><span class="fu"><a href="gdal_version.html">gdal_version_num</a></span><span class="op">(</span><span class="op">)</span> <span class="op">&gt;=</span> <span class="fu"><a href="gdal_compute_version.html">gdal_compute_version</a></span><span class="op">(</span><span class="fl">3</span>, <span class="fl">7</span>, <span class="fl">0</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-in"><span>  <span class="fu"><a href="ogrinfo.html">ogrinfo</a></span><span class="op">(</span><span class="va">dsn</span>, <span class="st">"layer2"</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> INFO: Open of `/tmp/RtmpkbucVJ/test1.gpkg'</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> INFO: Open of `/tmp/RtmpqAGoPg/test1.gpkg'</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>       using driver `GPKG' successful.</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Layer name: layer2</span>
@@ -634,13 +634,13 @@ dialects for details.</p>
 <span class="r-in"><span><span class="va">alt_tbl</span> <span class="op">&lt;-</span> <span class="st">"ALTER TABLE mtbs_perims ADD burn_bnd_ha float"</span></span></span>
 <span class="r-in"><span><span class="fu">ogr_execute_sql</span><span class="op">(</span>dsn <span class="op">=</span> <span class="va">perims_shp</span>, sql <span class="op">=</span> <span class="va">alt_tbl</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> info: open dataset successful on DSN:</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   '/tmp/RtmpkbucVJ/mtbs_perims.shp'</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   '/tmp/RtmpqAGoPg/mtbs_perims.shp'</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> GDAL WARNING 6: Normalized/laundered field name: 'burn_bnd_ha' to 'burn_bnd_h'</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="va">upd</span> <span class="op">&lt;-</span> <span class="st">"UPDATE mtbs_perims SET burn_bnd_ha = (burn_bnd_ac / 2.471)"</span></span></span>
 <span class="r-in"><span><span class="fu">ogr_execute_sql</span><span class="op">(</span>dsn <span class="op">=</span> <span class="va">perims_shp</span>, sql <span class="op">=</span> <span class="va">upd</span>, dialect <span class="op">=</span> <span class="st">"SQLite"</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> info: open dataset successful on DSN:</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   '/tmp/RtmpkbucVJ/mtbs_perims.shp'</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   '/tmp/RtmpqAGoPg/mtbs_perims.shp'</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> GDAL FAILURE 1: In ExecuteSQL(): sqlite3_prepare_v2(UPDATE mtbs_perims SET burn_bnd_ha = (burn_bnd_ac / 2.471)):</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   no such column: burn_bnd_ac</span>
 <span class="r-in"><span><span class="fu">ogr_layer_field_names</span><span class="op">(</span>dsn <span class="op">=</span> <span class="va">perims_shp</span>, layer <span class="op">=</span> <span class="st">"mtbs_perims"</span><span class="op">)</span></span></span>

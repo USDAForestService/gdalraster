@@ -13,7 +13,7 @@ WKB raw vectors, or a character vector containing one or more WKT strings."></he
 
     <a class="navbar-brand me-2" href="../index.html">gdalraster</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">2.2.1.9035</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">2.2.1.9036</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -94,6 +94,16 @@ WKB raw vectors, or a character vector containing one or more WKT strings.</p>
 <span>  quiet <span class="op">=</span> <span class="cn">FALSE</span></span>
 <span><span class="op">)</span></span>
 <span></span>
+<span><span class="fu">g_concave_hull</span><span class="op">(</span></span>
+<span>  <span class="va">geom</span>,</span>
+<span>  <span class="va">ratio</span>,</span>
+<span>  <span class="va">allow_holes</span>,</span>
+<span>  as_wkb <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  as_iso <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  byte_order <span class="op">=</span> <span class="st">"LSB"</span>,</span>
+<span>  quiet <span class="op">=</span> <span class="cn">FALSE</span></span>
+<span><span class="op">)</span></span>
+<span></span>
 <span><span class="fu">g_delaunay_triangulation</span><span class="op">(</span></span>
 <span>  <span class="va">geom</span>,</span>
 <span>  tolerance <span class="op">=</span> <span class="fl">0</span>,</span>
@@ -162,6 +172,17 @@ WKB. One of <code>"LSB"</code> (the default) or <code>"MSB"</code> (uncommon).</
 <dd><p>Logical value, <code>TRUE</code> to suppress warnings. Defaults to <code>FALSE</code>.</p></dd>
 
 
+<dt id="arg-ratio">ratio<a class="anchor" aria-label="anchor" href="#arg-ratio"></a></dt>
+<dd><p>Numeric value in interval <code>[0, 1]</code>. The target criterion
+parameter for <code>g_concave_hull()</code>, expressed as a ratio between the lengths
+of the longest and shortest edges. <code>1</code> produces the convex hull; <code>0</code> produces
+a hull with maximum concaveness (see Note).</p></dd>
+
+
+<dt id="arg-allow-holes">allow_holes<a class="anchor" aria-label="anchor" href="#arg-allow-holes"></a></dt>
+<dd><p>Logical value. Whether holes are allowed.</p></dd>
+
+
 <dt id="arg-tolerance">tolerance<a class="anchor" aria-label="anchor" href="#arg-tolerance"></a></dt>
 <dd><p>Numeric value. For <code>g_simplify()</code>, the simplification
 tolerance as distance in units of the input <code>geom</code>. Simplification removes
@@ -204,6 +225,11 @@ Wrapper of <code>OGR_G_Buffer()</code> in the GDAL API.</p>
 <p><code>g_convex_hull()</code> computes a convex hull, the smallest convex geometry that
 contains all the points in the input geometry. Wrapper of
 <code>OGR_G_ConvexHull()</code> in the GDAL API.</p>
+<p><code>g_concave_hull()</code> returns a "concave hull" of a geometry. A concave hull is
+a polygon which contains all the points of the input, but is a better
+approximation than the convex hull to the area occupied by the input.
+Frequently used to convert a multi-point into a polygonal area that contains
+all the points in the input geometry. Requires GDAL &gt;= 3.6 and GEOS &gt;= 3.11.</p>
 <p><code>g_delaunay_triangulation()</code> returns a Delaunay triangulation of the
 vertices of the input geometry. Wrapper of <code>OGR_G_DelaunayTriangulation()</code>
 in the GDAL API. Requires GEOS &gt;= 3.4.</p>
@@ -218,7 +244,7 @@ for more details. Requires GDAL &gt;= 3.7.</p>
     <div class="section level2">
     <h2 id="note">Note<a class="anchor" aria-label="anchor" href="#note"></a></h2>
     <p>Definitions of these operations are given in the GEOS documentation
-(<a href="https://libgeos.org/doxygen/" class="external-link">https://libgeos.org/doxygen/</a>, GEOS 3.14.0dev), some of which is
+(<a href="https://libgeos.org/doxygen/" class="external-link">https://libgeos.org/doxygen/</a>, GEOS 3.15.0dev), some of which is
 copied here.</p>
 <p><code>g_boundary()</code> computes the "boundary" as defined by the DE9IM
 (<a href="https://en.wikipedia.org/wiki/DE-9IM" class="external-link">https://en.wikipedia.org/wiki/DE-9IM</a>):</p><ul><li><p>the boundary of a <code>Polygon</code> is the set of linear rings dividing the
@@ -228,6 +254,13 @@ exterior from the interior</p></li>
 </ul><p><code>g_buffer()</code> always returns a polygonal result. The negative or
 zero-distance buffer of lines and points is always an empty <code>Polygon</code>.</p>
 <p><code>g_convex_hull()</code> uses the Graham Scan algorithm.</p>
+<p><code>g_concave_hull()</code>: A set of points has a sequence of hulls of increasing
+concaveness, determined by a numeric target parameter. The concave hull is
+constructed by removing the longest outer edges of the Delaunay Triangulation
+of the space between the polygons, until the target criterion parameter is
+reached. This can be expressed as a ratio between the lengths of the longes
+and shortest edges. <code>1</code> produces the convex hull; <code>0</code> produces a hull with
+maximum concaveness.</p>
 <p><code>g_simplify()</code>:</p><ul><li><p>With <code>preserve_topology = TRUE</code> (the default):<br>
 Simplifies a geometry, ensuring that the result is a valid geometry having
 the same dimension and number of components as the input. The simplification
@@ -251,31 +284,46 @@ polygons.</p>
 
     <div class="section level2">
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="va">g1</span> <span class="op">&lt;-</span> <span class="st">"POLYGON((0 0,1 1,1 0,0 0))"</span></span></span>
-<span class="r-in"><span><span class="fu">g_boundary</span><span class="op">(</span><span class="va">g1</span>, as_wkb <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="va">g</span> <span class="op">&lt;-</span> <span class="st">"POLYGON((0 0,1 1,1 0,0 0))"</span></span></span>
+<span class="r-in"><span><span class="fu">g_boundary</span><span class="op">(</span><span class="va">g</span>, as_wkb <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] "LINESTRING (0 0,1 1,1 0,0 0)"</span>
 <span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="va">g2</span> <span class="op">&lt;-</span> <span class="st">"POINT (0 0)"</span></span></span>
-<span class="r-in"><span><span class="fu">g_buffer</span><span class="op">(</span><span class="va">g2</span>, dist <span class="op">=</span> <span class="fl">10</span>, as_wkb <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">g</span> <span class="op">&lt;-</span> <span class="st">"POINT (0 0)"</span></span></span>
+<span class="r-in"><span><span class="fu">g_buffer</span><span class="op">(</span><span class="va">g</span>, dist <span class="op">=</span> <span class="fl">10</span>, as_wkb <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] "POLYGON ((10 0,9.98629534754574 -0.523359562429438,9.94521895368273 -1.04528463267653,9.87688340595138 -1.56434465040231,9.78147600733806 -2.07911690817759,9.65925826289068 -2.58819045102521,9.51056516295153 -3.09016994374947,9.33580426497202 -3.583679495453,9.13545457642601 -4.067366430758,8.91006524188368 -4.53990499739547,8.66025403784439 -5,8.38670567945424 -5.44639035015027,8.09016994374947 -5.87785252292473,7.77145961456971 -6.29320391049837,7.43144825477394 -6.69130606358858,7.07106781186548 -7.07106781186547,6.69130606358858 -7.43144825477394,6.29320391049838 -7.77145961456971,5.87785252292473 -8.09016994374947,5.44639035015027 -8.38670567945424,5.0 -8.66025403784439,4.53990499739547 -8.91006524188368,4.067366430758 -9.13545457642601,3.583679495453 -9.33580426497202,3.09016994374947 -9.51056516295153,2.58819045102521 -9.65925826289068,2.07911690817759 -9.78147600733806,1.56434465040231 -9.87688340595138,1.04528463267654 -9.94521895368273,0.52335956242944 -9.98629534754574,0.0 -10,-0.523359562429436 -9.98629534754574,-1.04528463267653 -9.94521895368273,-1.56434465040231 -9.87688340595138,-2.07911690817759 -9.78147600733806,-2.58819045102521 -9.65925826289068,-3.09016994374947 -9.51056516295154,-3.583679495453 -9.33580426497202,-4.067366430758 -9.13545457642601,-4.53990499739547 -8.91006524188368,-5 -8.66025403784439,-5.44639035015027 -8.38670567945424,-5.87785252292473 -8.09016994374947,-6.29320391049837 -7.77145961456971,-6.69130606358858 -7.43144825477394,-7.07106781186547 -7.07106781186548,-7.43144825477394 -6.69130606358858,-7.77145961456971 -6.29320391049838,-8.09016994374947 -5.87785252292473,-8.38670567945424 -5.44639035015027,-8.66025403784439 -5,-8.91006524188368 -4.53990499739547,-9.13545457642601 -4.067366430758,-9.33580426497202 -3.58367949545301,-9.51056516295153 -3.09016994374947,-9.65925826289068 -2.58819045102521,-9.78147600733806 -2.0791169081776,-9.87688340595138 -1.56434465040231,-9.94521895368273 -1.04528463267654,-9.98629534754574 -0.523359562429442,-10 -0.0,-9.98629534754574 0.523359562429436,-9.94521895368273 1.04528463267653,-9.87688340595138 1.56434465040231,-9.78147600733806 2.07911690817759,-9.65925826289068 2.5881904510252,-9.51056516295154 3.09016994374947,-9.33580426497202 3.583679495453,-9.13545457642601 4.067366430758,-8.91006524188368 4.53990499739547,-8.66025403784439 5.0,-8.38670567945424 5.44639035015027,-8.09016994374948 5.87785252292473,-7.77145961456971 6.29320391049837,-7.43144825477395 6.69130606358858,-7.07106781186548 7.07106781186547,-6.69130606358858 7.43144825477394,-6.29320391049838 7.77145961456971,-5.87785252292473 8.09016994374947,-5.44639035015028 8.38670567945424,-5 8.66025403784438,-4.53990499739547 8.91006524188368,-4.06736643075801 9.135454576426,-3.58367949545301 9.33580426497202,-3.09016994374948 9.51056516295153,-2.58819045102522 9.65925826289068,-2.0791169081776 9.78147600733806,-1.56434465040231 9.87688340595138,-1.04528463267654 9.94521895368273,-0.523359562429443 9.98629534754574,-0.0 10.0,0.523359562429431 9.98629534754574,1.04528463267653 9.94521895368273,1.56434465040231 9.87688340595138,2.07911690817759 9.78147600733806,2.5881904510252 9.65925826289068,3.09016994374947 9.51056516295154,3.583679495453 9.33580426497202,4.067366430758 9.13545457642601,4.53990499739547 8.91006524188368,4.99999999999999 8.66025403784439,5.44639035015027 8.38670567945424,5.87785252292473 8.09016994374948,6.29320391049837 7.77145961456971,6.69130606358858 7.43144825477395,7.07106781186547 7.07106781186548,7.43144825477394 6.69130606358859,7.77145961456971 6.29320391049838,8.09016994374947 5.87785252292473,8.38670567945424 5.44639035015028,8.66025403784438 5.0,8.91006524188368 4.53990499739547,9.135454576426 4.06736643075801,9.33580426497202 3.58367949545301,9.51056516295153 3.09016994374948,9.65925826289068 2.58819045102522,9.78147600733806 2.0791169081776,9.87688340595138 1.56434465040231,9.94521895368273 1.04528463267654,9.98629534754574 0.523359562429444,10 0))"</span>
 <span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="va">g3</span> <span class="op">&lt;-</span> <span class="st">"GEOMETRYCOLLECTION(POINT(0 1), POINT(0 0), POINT(1 0), POINT(1 1))"</span></span></span>
-<span class="r-in"><span><span class="fu">g_convex_hull</span><span class="op">(</span><span class="va">g3</span>, as_wkb <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">g</span> <span class="op">&lt;-</span> <span class="st">"GEOMETRYCOLLECTION(POINT(0 1), POINT(0 0), POINT(1 0), POINT(1 1))"</span></span></span>
+<span class="r-in"><span><span class="fu">g_convex_hull</span><span class="op">(</span><span class="va">g</span>, as_wkb <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] "POLYGON ((0 0,0 1,1 1,1 0,0 0))"</span>
 <span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="va">g4</span> <span class="op">&lt;-</span> <span class="st">"MULTIPOINT(0 0,0 1,1 1,1 0)"</span></span></span>
-<span class="r-in"><span><span class="fu">g_delaunay_triangulation</span><span class="op">(</span><span class="va">g4</span>, as_wkb <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="co"># g_concave_hull() requires GDAL &gt;= 3.6 and GEOS &gt;= 3.11</span></span></span>
+<span class="r-in"><span><span class="kw">if</span> <span class="op">(</span><span class="fu"><a href="gdal_version.html">gdal_version_num</a></span><span class="op">(</span><span class="op">)</span> <span class="op">&gt;=</span> <span class="fu"><a href="gdal_compute_version.html">gdal_compute_version</a></span><span class="op">(</span><span class="fl">3</span>, <span class="fl">6</span>, <span class="fl">0</span><span class="op">)</span> <span class="op">&amp;&amp;</span></span></span>
+<span class="r-in"><span>    <span class="op">(</span><span class="fu"><a href="geos_version.html">geos_version</a></span><span class="op">(</span><span class="op">)</span><span class="op">$</span><span class="va">major</span> <span class="op">&gt;</span> <span class="fl">3</span> <span class="op">||</span> <span class="fu"><a href="geos_version.html">geos_version</a></span><span class="op">(</span><span class="op">)</span><span class="op">$</span><span class="va">minor</span> <span class="op">&gt;=</span> <span class="fl">11</span><span class="op">)</span><span class="op">)</span> <span class="op">{</span></span></span>
+<span class="r-in"><span>  <span class="va">g</span> <span class="op">&lt;-</span> <span class="st">"MULTIPOINT(0 0,0.4 0.5,0 1,1 1,0.6 0.5,1 0)"</span></span></span>
+<span class="r-in"><span>  <span class="fu">g_concave_hull</span><span class="op">(</span><span class="va">g</span>, <span class="fl">0.5</span>, <span class="cn">FALSE</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="op">}</span>  </span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   [1] 01 03 00 00 00 01 00 00 00 07 00 00 00 9a 99 99 99 99 99 d9 3f 00 00 00 00</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [26] 00 00 e0 3f 00 00 00 00 00 00 00 00 00 00 00 00 00 00 f0 3f 33 33 33 33 33</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [51] 33 e3 3f 00 00 00 00 00 00 e0 3f 00 00 00 00 00 00 f0 3f 00 00 00 00 00 00</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [76] f0 3f 00 00 00 00 00 00 f0 3f 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [101] 00 00 00 00 00 00 00 00 00 9a 99 99 99 99 99 d9 3f 00 00 00 00 00 00 e0 3f</span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># g_delaunay_triangulation() requires GEOS &gt;= 3.4</span></span></span>
+<span class="r-in"><span><span class="kw">if</span> <span class="op">(</span><span class="fu"><a href="geos_version.html">geos_version</a></span><span class="op">(</span><span class="op">)</span><span class="op">$</span><span class="va">major</span> <span class="op">&gt;</span> <span class="fl">3</span> <span class="op">||</span> <span class="fu"><a href="geos_version.html">geos_version</a></span><span class="op">(</span><span class="op">)</span><span class="op">$</span><span class="va">minor</span> <span class="op">&gt;=</span> <span class="fl">4</span><span class="op">)</span> <span class="op">{</span></span></span>
+<span class="r-in"><span>  <span class="va">g</span> <span class="op">&lt;-</span> <span class="st">"MULTIPOINT(0 0,0 1,1 1,1 0)"</span></span></span>
+<span class="r-in"><span>  <span class="fu">g_delaunay_triangulation</span><span class="op">(</span><span class="va">g</span>, as_wkb <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="op">}</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] "GEOMETRYCOLLECTION (POLYGON ((0 1,0 0,1 0,0 1)),POLYGON ((0 1,1 0,1 1,0 1)))"</span>
 <span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="va">g5</span> <span class="op">&lt;-</span> <span class="st">"LINESTRING(0 0,1 1,10 0)"</span></span></span>
-<span class="r-in"><span><span class="fu">g_simplify</span><span class="op">(</span><span class="va">g5</span>, tolerance <span class="op">=</span> <span class="fl">5</span>, as_wkb <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">g</span> <span class="op">&lt;-</span> <span class="st">"LINESTRING(0 0,1 1,10 0)"</span></span></span>
+<span class="r-in"><span><span class="fu">g_simplify</span><span class="op">(</span><span class="va">g</span>, tolerance <span class="op">=</span> <span class="fl">5</span>, as_wkb <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] "LINESTRING (0 0,10 0)"</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># g_unary_union() requires GDAL &gt;= 3.7</span></span></span>
 <span class="r-in"><span><span class="kw">if</span> <span class="op">(</span><span class="fu"><a href="gdal_version.html">gdal_version_num</a></span><span class="op">(</span><span class="op">)</span> <span class="op">&gt;=</span> <span class="fu"><a href="gdal_compute_version.html">gdal_compute_version</a></span><span class="op">(</span><span class="fl">3</span>, <span class="fl">7</span>, <span class="fl">0</span><span class="op">)</span><span class="op">)</span> <span class="op">{</span></span></span>
-<span class="r-in"><span>  <span class="va">g6</span> <span class="op">&lt;-</span> <span class="st">"GEOMETRYCOLLECTION(POINT(0.5 0.5), POLYGON((0 0,0 1,1 1,1 0,0 0)),</span></span></span>
-<span class="r-in"><span><span class="st">         POLYGON((1 0,1 1,2 1,2 0,1 0)))"</span></span></span>
-<span class="r-in"><span>  <span class="fu">g_unary_union</span><span class="op">(</span><span class="va">g6</span>, as_wkb <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></span>
+<span class="r-in"><span>  <span class="va">g</span> <span class="op">&lt;-</span> <span class="st">"GEOMETRYCOLLECTION(POINT(0.5 0.5), POLYGON((0 0,0 1,1 1,1 0,0 0)),</span></span></span>
+<span class="r-in"><span><span class="st">        POLYGON((1 0,1 1,2 1,2 0,1 0)))"</span></span></span>
+<span class="r-in"><span>  <span class="fu">g_unary_union</span><span class="op">(</span><span class="va">g</span>, as_wkb <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="op">}</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] "POLYGON ((0 1,1 1,2 1,2 0,1 0,0 0,0 1))"</span>
 </code></pre></div>

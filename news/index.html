@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">gdalraster</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">2.2.1.9035</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">2.2.1.9036</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -53,9 +53,10 @@
     </div>
 
     <div class="section level2">
-<h2 class="pkg-version" data-toc-text="2.2.1.9035" id="gdalraster-2219035-dev">gdalraster 2.2.1.9035 (dev)<a class="anchor" aria-label="anchor" href="#gdalraster-2219035-dev"></a></h2>
-<ul><li><p>add <code>GDALAlg::getExplicitlySetArgs()</code>: return a named list of arguments that have been set explicitly along with their values (2025-09-29)</p></li>
-<li><p><code><a href="../reference/mdim_as_classic.html">mdim_as_classic()</a></code>: add open flag <code>GDAL_OF_VERBOSE_ERROR</code> and use <code>GDALMDArrayAsClassicDatasetEx()</code> if GDAL &gt;= 3.8 (2025-09-27)</p></li>
+<h2 class="pkg-version" data-toc-text="2.2.1.9036" id="gdalraster-2219036-dev">gdalraster 2.2.1.9036 (dev)<a class="anchor" aria-label="anchor" href="#gdalraster-2219036-dev"></a></h2>
+<ul><li><p>add <code><a href="../reference/g_unary_op.html">g_concave_hull()</a></code>: wrapper for <code>OGR_G_ConcaveHull()</code> (2025-09-30)</p></li>
+<li><p>add <code>GDALAlg::getExplicitlySetArgs()</code>: return a named list of arguments that have been set explicitly along with their values (<a href="https://github.com/USDAForestService/gdalraster/issues/807" class="external-link">#807</a>) (2025-09-29)</p></li>
+<li><p><code><a href="../reference/mdim_as_classic.html">mdim_as_classic()</a></code>: add open flag <code>GDAL_OF_VERBOSE_ERROR</code> and use <code>GDALMDArrayAsClassicDatasetEx()</code> if GDAL &gt;= 3.8 (<a href="https://github.com/USDAForestService/gdalraster/issues/806" class="external-link">#806</a>) (2025-09-27)</p></li>
 <li><p><code><a href="../reference/mdim_info.html">mdim_info()</a></code>: add argument <code>cout</code> to control printing output to the console, with the info string returned invisibly (2025-09-25)</p></li>
 <li><p>add <code><a href="../reference/mdim_translate.html">mdim_translate()</a></code>: convert multidimensional data between different formats, and subset, interface to <code>gdalmdimtranslate</code> utility (<a href="https://github.com/USDAForestService/gdalraster/issues/803" class="external-link">#803</a>) (2025-09-25)</p></li>
 <li><p><code><a href="../reference/mdim_as_classic.html">mdim_as_classic()</a></code>: add argument <code>view_expr</code> for array slicing or field access by name (<a href="https://github.com/USDAForestService/gdalraster/issues/802" class="external-link">#802</a>) (2025-09-22)</p></li>
