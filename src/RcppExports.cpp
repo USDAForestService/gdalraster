@@ -1523,6 +1523,22 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// g_concave_hull
+SEXP g_concave_hull(const Rcpp::RObject& geom, double ratio, bool allow_holes, bool as_iso, const std::string& byte_order, bool quiet);
+RcppExport SEXP _gdalraster_g_concave_hull(SEXP geomSEXP, SEXP ratioSEXP, SEXP allow_holesSEXP, SEXP as_isoSEXP, SEXP byte_orderSEXP, SEXP quietSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< const Rcpp::RObject& >::type geom(geomSEXP);
+    Rcpp::traits::input_parameter< double >::type ratio(ratioSEXP);
+    Rcpp::traits::input_parameter< bool >::type allow_holes(allow_holesSEXP);
+    Rcpp::traits::input_parameter< bool >::type as_iso(as_isoSEXP);
+    Rcpp::traits::input_parameter< const std::string& >::type byte_order(byte_orderSEXP);
+    Rcpp::traits::input_parameter< bool >::type quiet(quietSEXP);
+    rcpp_result_gen = Rcpp::wrap(g_concave_hull(geom, ratio, allow_holes, as_iso, byte_order, quiet));
+    return rcpp_result_gen;
+END_RCPP
+}
 // g_delaunay_triangulation
 SEXP g_delaunay_triangulation(const Rcpp::RObject& geom, double tolerance, bool only_edges, bool as_iso, const std::string& byte_order, bool quiet);
 RcppExport SEXP _gdalraster_g_delaunay_triangulation(SEXP geomSEXP, SEXP toleranceSEXP, SEXP only_edgesSEXP, SEXP as_isoSEXP, SEXP byte_orderSEXP, SEXP quietSEXP) {
@@ -2449,6 +2465,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_gdalraster_g_boundary", (DL_FUNC) &_gdalraster_g_boundary, 4},
     {"_gdalraster_g_buffer", (DL_FUNC) &_gdalraster_g_buffer, 6},
     {"_gdalraster_g_convex_hull", (DL_FUNC) &_gdalraster_g_convex_hull, 4},
+    {"_gdalraster_g_concave_hull", (DL_FUNC) &_gdalraster_g_concave_hull, 6},
     {"_gdalraster_g_delaunay_triangulation", (DL_FUNC) &_gdalraster_g_delaunay_triangulation, 6},
     {"_gdalraster_g_simplify", (DL_FUNC) &_gdalraster_g_simplify, 6},
     {"_gdalraster_g_unary_union", (DL_FUNC) &_gdalraster_g_unary_union, 4},

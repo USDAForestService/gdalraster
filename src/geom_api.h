@@ -112,6 +112,9 @@ SEXP g_buffer(const Rcpp::RObject &geom, double dist, int quad_segs,
 SEXP g_convex_hull(const Rcpp::RObject &geom, bool as_iso,
                    const std::string &byte_order, bool quiet);
 
+SEXP g_concave_hull(const Rcpp::RObject &geom, double ratio, bool allow_holes,
+                    bool as_iso, const std::string &byte_order, bool quiet);
+
 SEXP g_delaunay_triangulation(const Rcpp::RObject &geom, double tolerance,
                               bool only_edges, bool as_iso,
                               const std::string &byte_order, bool quiet);

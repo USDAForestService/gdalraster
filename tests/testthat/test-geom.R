@@ -961,6 +961,8 @@ test_that("geometry binary predicates/ops return correct values", {
 })
 
 test_that("unary ops return correct values", {
+    skip_if(!(geos_version()$major > 3 || geos_version()$minor >= 6))
+
     # g_buffer
     pt <- "POINT (0 0)"
     expect_error(g_buffer(geom = "invalid WKT", dist = 10))
@@ -1100,6 +1102,7 @@ test_that("unary ops return correct values", {
         expect_warning()  # for as_wkb = FALSE
     expect_equal(g_simp, g_expect)
 
+
     # g_unary_union - requires GDAL >= 3.7
     skip_if(gdal_version_num() < gdal_compute_version(3, 7, 0))
 
@@ -1133,6 +1136,43 @@ test_that("unary ops return correct values", {
     expect_warning(g_uu <- g_unary_union(wkb_list, as_wkb = FALSE))
     expect_equal(g_area(g_uu), c(g_area(g_expect), g_area(g_expect), NA)) |>
         expect_warning()  # input vector element is NA
+
+
+    # g_concave_hull() requires GEOS >= 3.11
+    skip_if(!(geos_version()$major > 3 || geos_version()$minor >= 11))
+
+    g1 <- "MULTIPOINT(0 0,0.4 0.5,0 1,1 1,0.6 0.5,1 0)"
+    expect_no_error(
+        g_hull <- g_concave_hull(g1, ratio = 0.5, allow_holes = FALSE))
+
+    # wkb input
+    expect_no_error(
+        g_hull <- g_concave_hull(g_wk2wk(g1), ratio = 0.5, allow_holes = FALSE))
+
+    # same but testing defaults in case optional arguments are nulled out
+    expect_no_error(
+        g_hull <- g_concave_hull(g_wk2wk(g1), ratio = 0.5, allow_holes = FALSE,
+                                 as_wkb = FALSE, as_iso = NULL,
+                                 byte_order = NULL, quiet = NULL))
+
+    # empty raw vector
+    expect_true(is.null(
+        g_concave_hull(raw(0), ratio = 0.5, allow_holes = FALSE)))
+    # vector/list input
+    # character vector of wkt input
+    expect_warning(
+        g_hull <- g_concave_hull(c(g1, NA), ratio = 0.5, allow_holes = FALSE,
+                                 as_wkb = FALSE)) |>
+            expect_warning()  # for as_wkb = FALSE
+    # list of wkb input
+    expect_warning(
+        g_hull <- g_concave_hull(g_wk2wk(c(g1, NA)), ratio = 0.5,
+                                 allow_holes = FALSE, as_wkb = FALSE)) |>
+            expect_warning()  # for as_wkb = FALSE
+    
+    # error for required args
+    expect_error(g_hull <- g_concave_hull(g1, ratio = 0.5))
+    expect_error(g_hull <- g_concave_hull(g1))
 })
 
 test_that("geometry measures are correct", {
