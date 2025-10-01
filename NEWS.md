@@ -1,4 +1,6 @@
-# gdalraster 2.2.1.9036 (dev)
+# gdalraster 2.2.1.9037 (dev)
+
+* `g_delaunay_triangulation()`: add argument `constrained`, wrapper for `OGR_G_ConstrainedDelaunayTriangulation()` (2025-09-30)
 
 * add `g_concave_hull()`: wrapper for `OGR_G_ConcaveHull()` (2025-09-30)
 
