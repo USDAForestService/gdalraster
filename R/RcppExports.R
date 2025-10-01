@@ -2703,8 +2703,8 @@ has_geos <- function() {
 }
 
 #' @noRd
-.g_delaunay_triangulation <- function(geom, tolerance = 0.0, only_edges = FALSE, as_iso = FALSE, byte_order = "LSB", quiet = FALSE) {
-    .Call(`_gdalraster_g_delaunay_triangulation`, geom, tolerance, only_edges, as_iso, byte_order, quiet)
+.g_delaunay_triangulation <- function(geom, constrained = FALSE, tolerance = 0.0, only_edges = FALSE, as_iso = FALSE, byte_order = "LSB", quiet = FALSE) {
+    .Call(`_gdalraster_g_delaunay_triangulation`, geom, constrained, tolerance, only_edges, as_iso, byte_order, quiet)
 }
 
 #' @noRd

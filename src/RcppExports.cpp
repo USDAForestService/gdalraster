@@ -1540,18 +1540,19 @@ BEGIN_RCPP
 END_RCPP
 }
 // g_delaunay_triangulation
-SEXP g_delaunay_triangulation(const Rcpp::RObject& geom, double tolerance, bool only_edges, bool as_iso, const std::string& byte_order, bool quiet);
-RcppExport SEXP _gdalraster_g_delaunay_triangulation(SEXP geomSEXP, SEXP toleranceSEXP, SEXP only_edgesSEXP, SEXP as_isoSEXP, SEXP byte_orderSEXP, SEXP quietSEXP) {
+SEXP g_delaunay_triangulation(const Rcpp::RObject& geom, bool constrained, double tolerance, bool only_edges, bool as_iso, const std::string& byte_order, bool quiet);
+RcppExport SEXP _gdalraster_g_delaunay_triangulation(SEXP geomSEXP, SEXP constrainedSEXP, SEXP toleranceSEXP, SEXP only_edgesSEXP, SEXP as_isoSEXP, SEXP byte_orderSEXP, SEXP quietSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< const Rcpp::RObject& >::type geom(geomSEXP);
+    Rcpp::traits::input_parameter< bool >::type constrained(constrainedSEXP);
     Rcpp::traits::input_parameter< double >::type tolerance(toleranceSEXP);
     Rcpp::traits::input_parameter< bool >::type only_edges(only_edgesSEXP);
     Rcpp::traits::input_parameter< bool >::type as_iso(as_isoSEXP);
     Rcpp::traits::input_parameter< const std::string& >::type byte_order(byte_orderSEXP);
     Rcpp::traits::input_parameter< bool >::type quiet(quietSEXP);
-    rcpp_result_gen = Rcpp::wrap(g_delaunay_triangulation(geom, tolerance, only_edges, as_iso, byte_order, quiet));
+    rcpp_result_gen = Rcpp::wrap(g_delaunay_triangulation(geom, constrained, tolerance, only_edges, as_iso, byte_order, quiet));
     return rcpp_result_gen;
 END_RCPP
 }
@@ -2466,7 +2467,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_gdalraster_g_buffer", (DL_FUNC) &_gdalraster_g_buffer, 6},
     {"_gdalraster_g_convex_hull", (DL_FUNC) &_gdalraster_g_convex_hull, 4},
     {"_gdalraster_g_concave_hull", (DL_FUNC) &_gdalraster_g_concave_hull, 6},
-    {"_gdalraster_g_delaunay_triangulation", (DL_FUNC) &_gdalraster_g_delaunay_triangulation, 6},
+    {"_gdalraster_g_delaunay_triangulation", (DL_FUNC) &_gdalraster_g_delaunay_triangulation, 7},
     {"_gdalraster_g_simplify", (DL_FUNC) &_gdalraster_g_simplify, 6},
     {"_gdalraster_g_unary_union", (DL_FUNC) &_gdalraster_g_unary_union, 4},
     {"_gdalraster_g_intersection", (DL_FUNC) &_gdalraster_g_intersection, 5},
