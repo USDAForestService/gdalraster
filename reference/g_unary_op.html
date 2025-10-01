@@ -13,7 +13,7 @@ WKB raw vectors, or a character vector containing one or more WKT strings."></he
 
     <a class="navbar-brand me-2" href="../index.html">gdalraster</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">2.2.1.9036</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">2.2.1.9037</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -106,6 +106,7 @@ WKB raw vectors, or a character vector containing one or more WKT strings.</p>
 <span></span>
 <span><span class="fu">g_delaunay_triangulation</span><span class="op">(</span></span>
 <span>  <span class="va">geom</span>,</span>
+<span>  constrained <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  tolerance <span class="op">=</span> <span class="fl">0</span>,</span>
 <span>  only_edges <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  as_wkb <span class="op">=</span> <span class="cn">TRUE</span>,</span>
@@ -180,7 +181,12 @@ a hull with maximum concaveness (see Note).</p></dd>
 
 
 <dt id="arg-allow-holes">allow_holes<a class="anchor" aria-label="anchor" href="#arg-allow-holes"></a></dt>
-<dd><p>Logical value. Whether holes are allowed.</p></dd>
+<dd><p>Logical value, whether holes are allowed.</p></dd>
+
+
+<dt id="arg-constrained">constrained<a class="anchor" aria-label="anchor" href="#arg-constrained"></a></dt>
+<dd><p>Logical value, <code>TRUE</code> to return a constrained Delaunay
+triangulation of the vertices of the given polygon(s). Defaults to <code>FALSE</code>.</p></dd>
 
 
 <dt id="arg-tolerance">tolerance<a class="anchor" aria-label="anchor" href="#arg-tolerance"></a></dt>
@@ -189,13 +195,13 @@ tolerance as distance in units of the input <code>geom</code>. Simplification re
 vertices which are within the tolerance distance of the simplified linework
 (as long as topology is preserved when <code>preserve_topology = TRUE</code>).
 For <code>g_delaunay_triangulation()</code>, an optional snapping tolerance to use for
-improved robustness.</p></dd>
+improved robustness (ignored if <code>constrained = TRUE</code>).</p></dd>
 
 
 <dt id="arg-only-edges">only_edges<a class="anchor" aria-label="anchor" href="#arg-only-edges"></a></dt>
 <dd><p>Logical value. If <code>TRUE</code>, <code>g_delaunay_triangulation()</code>
 will return a MULTILINESTRING, otherwise it will return a GEOMETRYCOLLECTION
-containing triangular POLYGONs (the default).</p></dd>
+containing triangular POLYGONs (the default). Ignored if <code>constrained = TRUE</code></p></dd>
 
 
 <dt id="arg-preserve-topology">preserve_topology<a class="anchor" aria-label="anchor" href="#arg-preserve-topology"></a></dt>
@@ -230,10 +236,13 @@ a polygon which contains all the points of the input, but is a better
 approximation than the convex hull to the area occupied by the input.
 Frequently used to convert a multi-point into a polygonal area that contains
 all the points in the input geometry. Requires GDAL &gt;= 3.6 and GEOS &gt;= 3.11.</p>
-<p><code>g_delaunay_triangulation()</code> returns a Delaunay triangulation of the
-vertices of the input geometry. Wrapper of <code>OGR_G_DelaunayTriangulation()</code>
-in the GDAL API. Requires GEOS &gt;= 3.4.</p>
-<p><code>g_simplify()</code> computes a simplified geometry. By default, it simplifies
+<p><code>g_delaunay_triangulation()</code></p><ul><li><p><code>constrained = FALSE</code>: returns a Delaunay triangulation of the vertices of
+the input geometry. Wrapper of <code>OGR_G_DelaunayTriangulation()</code> in the GDAL
+API. Requires GEOS &gt;= 3.4.</p></li>
+<li><p><code>constrained = TRUE</code>: returns a constrained Delaunay triangulation of the
+vertices of the given polygon(s). For non-polygonal inputs, silently returns
+an empty geometry collection. Requires GDAL &gt;= 3.12 and GEOS &gt;= 3.10.</p></li>
+</ul><p><code>g_simplify()</code> computes a simplified geometry. By default, it simplifies
 the input geometries while preserving topology (see Note). Wrapper of
 <code>OGR_G_Simplify()</code> / <code>OGR_G_SimplifyPreserveTopology()</code> in the GDAL API.</p>
 <p><code>g_unary_union()</code> returns the union of all components of a single geometry.
