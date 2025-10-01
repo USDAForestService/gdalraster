@@ -137,7 +137,8 @@ test_that("algorithm and argument properties are returned correctly", {
     set_args <- alg$getExplicitlySetArgs()
     expect_true(is.list(set_args))
     expect_equal(length(set_args), 4)
-    expect_true(startsWith(set_args$input, "<raster dataset object:"))
+    expect_true(startsWith(set_args$input, "<raster dataset object:") ||
+                startsWith(set_args$input, "<list of dataset objects"))
     expect_true(startsWith(set_args$output, "<raster dataset object:"))
 
     rm(alginfo)
