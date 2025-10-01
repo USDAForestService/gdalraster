@@ -2655,9 +2655,13 @@ g_geodesic_length <- function(geom, srs, traditional_gis_order = TRUE,
 #' Frequently used to convert a multi-point into a polygonal area that contains
 #' all the points in the input geometry. Requires GDAL >= 3.6 and GEOS >= 3.11.
 #'
-#' `g_delaunay_triangulation()` returns a Delaunay triangulation of the
-#' vertices of the input geometry. Wrapper of `OGR_G_DelaunayTriangulation()`
-#' in the GDAL API. Requires GEOS >= 3.4.
+#' `g_delaunay_triangulation()`
+#' * `constrained = FALSE`: returns a Delaunay triangulation of the vertices of
+#' the input geometry. Wrapper of `OGR_G_DelaunayTriangulation()` in the GDAL
+#' API. Requires GEOS >= 3.4.
+#' * `constrained = TRUE`: returns a constrained Delaunay triangulation of the
+#' vertices of the given polygon(s). For non-polygonal inputs, silently returns
+#' an empty geometry collection. Requires GDAL >= 3.12 and GEOS >= 3.10.
 #'
 #' `g_simplify()` computes a simplified geometry. By default, it simplifies
 #' the input geometries while preserving topology (see Note). Wrapper of
@@ -2679,16 +2683,18 @@ g_geodesic_length <- function(geom, srs, traditional_gis_order = TRUE,
 #' parameter for `g_concave_hull()`, expressed as a ratio between the lengths
 #' of the longest and shortest edges. `1` produces the convex hull; `0` produces
 #' a hull with maximum concaveness (see Note).
-#' @param allow_holes Logical value. Whether holes are allowed.
+#' @param allow_holes Logical value, whether holes are allowed.
+#' @param constrained Logical value, `TRUE` to return a constrained Delaunay
+#' triangulation of the vertices of the given polygon(s). Defaults to `FALSE`.
 #' @param tolerance Numeric value. For `g_simplify()`, the simplification
 #' tolerance as distance in units of the input `geom`. Simplification removes
 #' vertices which are within the tolerance distance of the simplified linework
 #' (as long as topology is preserved when `preserve_topology = TRUE`).
 #' For `g_delaunay_triangulation()`, an optional snapping tolerance to use for
-#' improved robustness.
+#' improved robustness (ignored if `constrained = TRUE`).
 #' @param only_edges Logical value. If `TRUE`, `g_delaunay_triangulation()`
 #' will return a MULTILINESTRING, otherwise it will return a GEOMETRYCOLLECTION
-#' containing triangular POLYGONs (the default).
+#' containing triangular POLYGONs (the default). Ignored if `constrained = TRUE`
 #' @param preserve_topology Logical value, `TRUE` to simplify geometries while
 #' preserving topology (the default). Setting to `FALSE` simplifies geometries
 #' using the standard Douglas-Peucker algorithm which is significantly faster
@@ -3021,9 +3027,16 @@ g_concave_hull <- function(geom, ratio, allow_holes, as_wkb = TRUE,
 
 #' @name g_unary_op
 #' @export
-g_delaunay_triangulation <- function(geom, tolerance = 0.0, only_edges = FALSE,
-                                     as_wkb = TRUE, as_iso = FALSE,
-                                     byte_order = "LSB", quiet = FALSE) {
+g_delaunay_triangulation <- function(geom, constrained = FALSE, tolerance = 0.0,
+                                     only_edges = FALSE, as_wkb = TRUE,
+                                     as_iso = FALSE, byte_order = "LSB",
+                                     quiet = FALSE) {
+    # constrained
+    if (is.null(constrained))
+        constrained <- FALSE
+    if (!(is.logical(constrained) && length(constrained) == 1)) {
+        stop("'constrained' must be a single logical value", call. = FALSE)
+    }
     # tolerance
     if (is.null(tolerance))
         tolerance <- 0.0
@@ -3061,19 +3074,19 @@ g_delaunay_triangulation <- function(geom, tolerance = 0.0, only_edges = FALSE,
 
     wkb <- NULL
     if (.is_raw_or_null(geom)) {
-        wkb <- .g_delaunay_triangulation(geom, tolerance, only_edges, as_iso,
-                                         byte_order, quiet)
+        wkb <- .g_delaunay_triangulation(geom, constrained, tolerance,
+                                         only_edges, as_iso, byte_order, quiet)
     } else if (is.list(geom) && .is_raw_or_null(geom[[1]])) {
-        wkb <- lapply(geom, .g_delaunay_triangulation, tolerance, only_edges,
-                      as_iso, byte_order, quiet)
+        wkb <- lapply(geom, .g_delaunay_triangulation, constrained, tolerance,
+                      only_edges, as_iso, byte_order, quiet)
     } else if (is.character(geom)) {
         if (length(geom) == 1) {
-            wkb <- .g_delaunay_triangulation(g_wk2wk(geom), tolerance,
-                                             only_edges, as_iso, byte_order,
-                                             quiet)
+            wkb <- .g_delaunay_triangulation(g_wk2wk(geom), constrained,
+                                             tolerance, only_edges, as_iso,
+                                             byte_order, quiet)
         } else {
-            wkb <- lapply(g_wk2wk(geom), .g_delaunay_triangulation, tolerance,
-                          only_edges, as_iso, byte_order, quiet)
+            wkb <- lapply(g_wk2wk(geom), .g_delaunay_triangulation, constrained,
+                          tolerance, only_edges, as_iso, byte_order, quiet)
         }
     } else {
         stop("'geom' must be a character vector, raw vector, or list",

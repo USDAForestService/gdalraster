@@ -2030,19 +2030,32 @@ SEXP g_concave_hull(const Rcpp::RObject &geom, double ratio, bool allow_holes,
 //' @noRd
 // [[Rcpp::export(name = ".g_delaunay_triangulation")]]
 SEXP g_delaunay_triangulation(const Rcpp::RObject &geom,
+                              bool constrained = false,
                               double tolerance = 0.0,
                               bool only_edges = false,
                               bool as_iso = false,
                               const std::string &byte_order = "LSB",
                               bool quiet = false) {
 // Return a Delaunay triangulation of the vertices of the geometry.
-//
-// This function is built on the GEOS library, v3.4 or above.
+
     std::vector<int> geos_ver = getGEOSVersion();
     int geos_maj_ver = geos_ver[0];
     int geos_min_ver = geos_ver[1];
-    if (!(geos_maj_ver > 3 || (geos_maj_ver == 3 && geos_min_ver >= 4))) {
-        Rcpp::stop("g_delaunay_triangulation() requires GEOS >= 3.4");
+
+    if (constrained) {
+        if (GDAL_VERSION_NUM < GDAL_COMPUTE_VERSION(3, 12, 0)) {
+            Rcpp::stop(
+                "constrained Delaunay triangulation requires GDAL >= 3.12");
+
+        }
+        if (!(geos_maj_ver > 3 || (geos_maj_ver == 3 && geos_min_ver >= 10))) {
+            Rcpp::stop("'constrained = TRUE' requires GEOS >= 3.10");
+        }
+    }
+    else {
+        if (!(geos_maj_ver > 3 || (geos_maj_ver == 3 && geos_min_ver >= 4))) {
+            Rcpp::stop("g_delaunay_triangulation() requires GEOS >= 3.4");
+        }
     }
 
     if (geom.isNULL() || !Rcpp::is<Rcpp::RawVector>(geom))
@@ -2062,14 +2075,20 @@ SEXP g_delaunay_triangulation(const Rcpp::RObject &geom,
     }
 
     OGRGeometryH hTriangulatedGeom = nullptr;
-    int only_edges_in = only_edges ? TRUE : FALSE;
-    hTriangulatedGeom = OGR_G_DelaunayTriangulation(hGeom, tolerance,
-                                                    only_edges_in);
+#if GDAL_VERSION_NUM >= GDAL_COMPUTE_VERSION(3, 12, 0)
+    if (constrained)
+        hTriangulatedGeom = OGR_G_ConstrainedDelaunayTriangulation(hGeom);
+#endif
+    if (!constrained) {
+        int only_edges_in = only_edges ? TRUE : FALSE;
+        hTriangulatedGeom = OGR_G_DelaunayTriangulation(hGeom, tolerance,
+                                                        only_edges_in);
+    }
 
     if (hTriangulatedGeom == nullptr) {
         OGR_G_DestroyGeometry(hGeom);
         if (!quiet) {
-            Rcpp::warning("OGR_G_DelaunayTriangulation() gave NULL geometry");
+            Rcpp::warning("the OGR API call returned NULL geometry");
         }
         return R_NilValue;
     }

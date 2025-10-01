@@ -1068,6 +1068,15 @@ test_that("unary ops return correct values", {
                                                     as_wkb = FALSE)) |>
         expect_warning()  # for as_wkb = FALSE
     expect_equal(g_dt, g_expect)
+    # constrained Delaunay, if GDAL >= 3.12 and GEOS >= 3.10
+    if (gdal_version_num() >= gdal_compute_version(3, 12, 0) &&
+        (geos_version()$major > 3 || geos_version()$minor >= 10)) {
+
+        g1 <- "POLYGON ((10 10, 20 40, 90 90, 90 10, 10 10))"
+        g_dt <- g_delaunay_triangulation(g1, constrained = TRUE, as_wkb = FALSE)
+        g_expect <- "GEOMETRYCOLLECTION (POLYGON ((90 10,20 40,90 90,90 10)),POLYGON ((20 40,90 10,10 10,20 40)))"
+        expect_equal(g_dt, g_expect)
+    }
 
     # g_simplify
     g1 <- "LINESTRING(0 0,1 0,10 0)"
@@ -1169,7 +1178,7 @@ test_that("unary ops return correct values", {
         g_hull <- g_concave_hull(g_wk2wk(c(g1, NA)), ratio = 0.5,
                                  allow_holes = FALSE, as_wkb = FALSE)) |>
             expect_warning()  # for as_wkb = FALSE
-    
+
     # error for required args
     expect_error(g_hull <- g_concave_hull(g1, ratio = 0.5))
     expect_error(g_hull <- g_concave_hull(g1))

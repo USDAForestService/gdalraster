@@ -49,6 +49,7 @@ g_concave_hull(
 
 g_delaunay_triangulation(
   geom,
+  constrained = FALSE,
   tolerance = 0,
   only_edges = FALSE,
   as_wkb = TRUE,
@@ -102,18 +103,21 @@ parameter for \code{g_concave_hull()}, expressed as a ratio between the lengths
 of the longest and shortest edges. \code{1} produces the convex hull; \code{0} produces
 a hull with maximum concaveness (see Note).}
 
-\item{allow_holes}{Logical value. Whether holes are allowed.}
+\item{allow_holes}{Logical value, whether holes are allowed.}
+
+\item{constrained}{Logical value, \code{TRUE} to return a constrained Delaunay
+triangulation of the vertices of the given polygon(s). Defaults to \code{FALSE}.}
 
 \item{tolerance}{Numeric value. For \code{g_simplify()}, the simplification
 tolerance as distance in units of the input \code{geom}. Simplification removes
 vertices which are within the tolerance distance of the simplified linework
 (as long as topology is preserved when \code{preserve_topology = TRUE}).
 For \code{g_delaunay_triangulation()}, an optional snapping tolerance to use for
-improved robustness.}
+improved robustness (ignored if \code{constrained = TRUE}).}
 
 \item{only_edges}{Logical value. If \code{TRUE}, \code{g_delaunay_triangulation()}
 will return a MULTILINESTRING, otherwise it will return a GEOMETRYCOLLECTION
-containing triangular POLYGONs (the default).}
+containing triangular POLYGONs (the default). Ignored if \code{constrained = TRUE}}
 
 \item{preserve_topology}{Logical value, \code{TRUE} to simplify geometries while
 preserving topology (the default). Setting to \code{FALSE} simplifies geometries
@@ -154,9 +158,15 @@ approximation than the convex hull to the area occupied by the input.
 Frequently used to convert a multi-point into a polygonal area that contains
 all the points in the input geometry. Requires GDAL >= 3.6 and GEOS >= 3.11.
 
-\code{g_delaunay_triangulation()} returns a Delaunay triangulation of the
-vertices of the input geometry. Wrapper of \code{OGR_G_DelaunayTriangulation()}
-in the GDAL API. Requires GEOS >= 3.4.
+\code{g_delaunay_triangulation()}
+\itemize{
+\item \code{constrained = FALSE}: returns a Delaunay triangulation of the vertices of
+the input geometry. Wrapper of \code{OGR_G_DelaunayTriangulation()} in the GDAL
+API. Requires GEOS >= 3.4.
+\item \code{constrained = TRUE}: returns a constrained Delaunay triangulation of the
+vertices of the given polygon(s). For non-polygonal inputs, silently returns
+an empty geometry collection. Requires GDAL >= 3.12 and GEOS >= 3.10.
+}
 
 \code{g_simplify()} computes a simplified geometry. By default, it simplifies
 the input geometries while preserving topology (see Note). Wrapper of
