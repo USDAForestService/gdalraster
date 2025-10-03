@@ -11,6 +11,9 @@
 #include <ogr_spatialref.h>
 #include <ogrsf_frmts.h>
 
+#include <Rcpp.h>
+
+#include <memory>
 #include <string>
 #include <vector>
 
@@ -205,7 +208,6 @@ std::string srs_to_projjson(const std::string &srs,
         Rcpp::stop("srs_to_projjson() requires PROJ >= 6.2");
 
     OGRSpatialReferenceH hSRS = OSRNewSpatialReference(nullptr);
-    char *pszSRS_PROJJSON = nullptr;
 
     if (OSRSetFromUserInput(hSRS, srs.c_str()) != OGRERR_NONE) {
         if (hSRS != nullptr)
@@ -229,6 +231,7 @@ std::string srs_to_projjson(const std::string &srs,
     }
     opt_list.push_back(nullptr);
 
+    char *pszSRS_PROJJSON = nullptr;
     if (OSRExportToPROJJSON(hSRS, &pszSRS_PROJJSON, opt_list.data())
         != OGRERR_NONE) {
 
@@ -422,7 +425,6 @@ std::string srs_get_name(const std::string &srs) {
     if (srs == "")
         return "";
 
-    const char *pszName = nullptr;
     OGRSpatialReferenceH hSRS = OSRNewSpatialReference(nullptr);
 
     if (OSRSetFromUserInput(hSRS, srs.c_str()) != OGRERR_NONE) {
@@ -431,9 +433,9 @@ std::string srs_get_name(const std::string &srs) {
         Rcpp::stop("error importing SRS from user input");
     }
 
-    pszName = OSRGetName(hSRS);
+    const char *pszName = OSRGetName(hSRS);
     std::string ret = "";
-    if (pszName != nullptr)
+    if (pszName)
         ret = pszName;
 
     OSRDestroySpatialReference(hSRS);
@@ -454,23 +456,22 @@ SEXP srs_find_epsg(const std::string &srs, bool all_matches = false) {
         Rcpp::stop("error importing SRS from user input");
     }
 
+    std::unique_ptr<OGRSpatialReferenceH> pahSRS;
     int nEntries = 0;
     int *panConfidence = nullptr;
-    OGRSpatialReferenceH *pahSRS = nullptr;
     OGRSpatialReference oSRS;
     std::string identified_code = "";
     Rcpp::CharacterVector authority_name = Rcpp::CharacterVector::create();
     Rcpp::CharacterVector authority_code = Rcpp::CharacterVector::create();
     Rcpp::IntegerVector confidence = Rcpp::IntegerVector::create();
 
-    pahSRS = OSRFindMatches(hSRS, nullptr, &nEntries, &panConfidence);
+    pahSRS = std::unique_ptr<OGRSpatialReferenceH>(
+        OSRFindMatches(hSRS, nullptr, &nEntries, &panConfidence));
+
     OSRDestroySpatialReference(hSRS);
 
-    if (pahSRS == nullptr)
-        return R_NilValue;
-
     for (int i = 0; i < nEntries; i++) {
-        oSRS = *reinterpret_cast<OGRSpatialReference *>(pahSRS[i]);
+        oSRS = *reinterpret_cast<OGRSpatialReference *>(pahSRS.get()[i]);
         const char *pszAuthorityName = oSRS.GetAuthorityName(nullptr);
         const char *pszAuthorityCode = oSRS.GetAuthorityCode(nullptr);
 
@@ -492,7 +493,7 @@ SEXP srs_find_epsg(const std::string &srs, bool all_matches = false) {
         confidence.push_back(panConfidence[i]);
     }
 
-    OSRFreeSRSArray(pahSRS);
+    OSRFreeSRSArray(pahSRS.release());
     CPLFree(panConfidence);
 
     if (nEntries == 0) {
@@ -741,9 +742,9 @@ SEXP srs_get_angular_units(const std::string &srs) {
         Rcpp::stop("error importing SRS from user input");
     }
 
-    char *name_tmp = nullptr;
-    double to_rad = OSRGetAngularUnits(hSRS, &name_tmp);
-    std::string name_out = std::string(name_tmp);
+    char *pszNameTmp = nullptr;
+    double to_rad = OSRGetAngularUnits(hSRS, &pszNameTmp);
+    std::string name_out(pszNameTmp);
 
     Rcpp::List list_out = Rcpp::List::create();
     list_out.push_back(name_out, "unit_name");
@@ -767,9 +768,9 @@ SEXP srs_get_linear_units(const std::string &srs) {
         Rcpp::stop("error importing SRS from user input");
     }
 
-    char *name_tmp = nullptr;
-    double to_m = OSRGetLinearUnits(hSRS, &name_tmp);
-    std::string name_out = std::string(name_tmp);
+    char *pszNameTmp = nullptr;
+    double to_m = OSRGetLinearUnits(hSRS, &pszNameTmp);
+    std::string name_out(pszNameTmp);
 
     Rcpp::List list_out = Rcpp::List::create();
     list_out.push_back(name_out, "unit_name");

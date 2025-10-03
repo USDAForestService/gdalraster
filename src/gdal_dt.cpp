@@ -9,6 +9,8 @@
 
 #include <gdal.h>
 
+#include <Rcpp.h>
+
 #include <string>
 
 

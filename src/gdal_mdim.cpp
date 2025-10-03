@@ -37,7 +37,7 @@ GDALRaster *mdim_as_classic(
     Rcpp::stop("mdim_as_classic() requires GDAL >= 3.2");
 #else
 
-    std::string dsn_in = Rcpp::as<std::string>(check_gdal_filename(dsn));
+    const std::string dsn_in = Rcpp::as<std::string>(check_gdal_filename(dsn));
 
     if (idx_xdim < 0)
         Rcpp::stop("'idx_xdim' must be >= 0");
@@ -89,7 +89,10 @@ GDALRaster *mdim_as_classic(
         Rcpp::stop("failed to get object for the root group");
 
     GDALMDArrayH hVar = nullptr;
-    if (group_name != "") {
+    if (group_name == "") {
+        hVar = GDALGroupOpenMDArray(hRootGroup, array_name.c_str(), nullptr);
+    }
+    else {
         GDALGroupH hSubGroup = nullptr;
         hSubGroup = GDALGroupOpenGroupFromFullname(hRootGroup,
                                                    group_name.c_str(),
@@ -99,67 +102,51 @@ GDALRaster *mdim_as_classic(
 
         hVar = GDALGroupOpenMDArray(hSubGroup, array_name.c_str(), nullptr);
         GDALGroupRelease(hSubGroup);
-        if (!hVar) {
-            GDALGroupRelease(hRootGroup);
-            Rcpp::stop("failed to get object for the MDArray");
-        }
     }
-    else {
-        hVar = GDALGroupOpenMDArray(hRootGroup, array_name.c_str(), nullptr);
-        if (!hVar) {
-            GDALGroupRelease(hRootGroup);
-            Rcpp::stop("failed to get object for the MDArray");
-        }
+
+    if (!hVar) {
+        GDALGroupRelease(hRootGroup);
+        Rcpp::stop("failed to get object for the MDArray");
     }
 
     GDALDatasetH hClassicDS = nullptr;
+    GDALMDArrayH hVarView = nullptr;
     if (view_expr != "") {
-        GDALMDArrayH hVarView = nullptr;
         hVarView = GDALMDArrayGetView(hVar, view_expr.c_str());
         GDALMDArrayRelease(hVar);
+        hVar = nullptr;
         if (!hVarView) {
             GDALGroupRelease(hRootGroup);
             Rcpp::stop("failed to get object for the MDArray view expression");
         }
+    }
 
-        #if GDAL_VERSION_NUM < GDAL_COMPUTE_VERSION(3, 8, 0)
-        hClassicDS = GDALMDArrayAsClassicDataset(hVarView,
-                                                static_cast<size_t>(idx_xdim),
-                                                static_cast<size_t>(idx_ydim));
-        #else
-        hClassicDS = GDALMDArrayAsClassicDatasetEx(
-            hVarView,
-            static_cast<size_t>(idx_xdim),
-            static_cast<size_t>(idx_ydim),
-            hRootGroup,
-            oOpenOptions.empty() ? nullptr : oOpenOptions.data());
-        #endif
+    #if GDAL_VERSION_NUM < GDAL_COMPUTE_VERSION(3, 8, 0)
+    hClassicDS = GDALMDArrayAsClassicDataset(
+        hVarView ? hVarView : hVar,
+        static_cast<size_t>(idx_xdim),
+        static_cast<size_t>(idx_ydim));
+    #else
+    hClassicDS = GDALMDArrayAsClassicDatasetEx(
+        hVarView ? hVarView : hVar,
+        static_cast<size_t>(idx_xdim),
+        static_cast<size_t>(idx_ydim),
+        hRootGroup,
+        oOpenOptions.empty() ? nullptr : oOpenOptions.data());
+    #endif
 
+    if (hVarView)
         GDALMDArrayRelease(hVarView);
-    }
-    else {
-        #if GDAL_VERSION_NUM < GDAL_COMPUTE_VERSION(3, 8, 0)
-        hClassicDS = GDALMDArrayAsClassicDataset(hVar,
-                                                static_cast<size_t>(idx_xdim),
-                                                static_cast<size_t>(idx_ydim));
-        #else
-        hClassicDS = GDALMDArrayAsClassicDatasetEx(
-            hVar,
-            static_cast<size_t>(idx_xdim),
-            static_cast<size_t>(idx_ydim),
-            hRootGroup,
-            oOpenOptions.empty() ? nullptr : oOpenOptions.data());
-        #endif
 
+    if (hVar)
         GDALMDArrayRelease(hVar);
-    }
 
     GDALGroupRelease(hRootGroup);
     if (!hClassicDS)
         Rcpp::stop("failed to get MDArray as classic dataset");
 
     auto ds = std::make_unique<GDALRaster>();
-    ds->setGDALDatasetH_(hClassicDS, !read_only);
+    ds->setGDALDatasetH_(hClassicDS);
     return ds.release();
 #endif
 }
@@ -225,7 +212,7 @@ std::string mdim_info(
 #if GDAL_VERSION_NUM < GDAL_COMPUTE_VERSION(3, 2, 0)
     Rcpp::stop("mdim_info() requires GDAL >= 3.2");
 #else
-    std::string dsn_in = Rcpp::as<std::string>(check_gdal_filename(dsn));
+    const std::string dsn_in = Rcpp::as<std::string>(check_gdal_filename(dsn));
 
     std::vector<char *> oAllowedDrivers = {};
     if (allowed_drivers.isNotNull()) {
@@ -544,10 +531,10 @@ bool mdim_translate(
 #if GDAL_VERSION_NUM < GDAL_COMPUTE_VERSION(3, 2, 0)
     Rcpp::stop("mdim_translate() requires GDAL >= 3.2");
 #else
-    std::string src_dsn_in =
+    const std::string src_dsn_in =
         Rcpp::as<std::string>(check_gdal_filename(src_dsn));
 
-    std::string dst_dsn_in =
+    const std::string dst_dsn_in =
         Rcpp::as<std::string>(check_gdal_filename(dst_dsn));
 
     std::vector<char *> oAllowedDrivers = {};
@@ -632,7 +619,7 @@ bool mdim_translate(
     if (scaleaxes_specs.isNotNull()) {
         scaleaxes_specs_in = Rcpp::as<Rcpp::String>(scaleaxes_specs);
         argv.push_back(const_cast<char *>("-scaleaxes"));
-        argv.push_back((char *) scaleaxes_specs_in.get_cstring());
+        argv.push_back(const_cast<char *>(scaleaxes_specs_in.get_cstring()));
     }
 
     if (strict)

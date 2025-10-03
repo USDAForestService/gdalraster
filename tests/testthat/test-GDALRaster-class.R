@@ -633,6 +633,27 @@ test_that("pixel extract internal class method returns correct data", {
 
     ds$close()
 
+    ## nodata
+    ds <- create(format="MEM", dst_filename="", xsize=2, ysize=2,
+                 nbands=1, dataType="Byte", return_obj=TRUE)
+
+    raster_data <- c(255, 0, 0, 0)
+    ds$write(band = 1, xoff = 0, yoff = 0, xsize = 2, ysize = 2, raster_data)
+    ds$setNoDataValue(band = 1, 255)
+
+    geo_xy <- matrix(c(0, 0), ncol = 2)
+
+    # warning for no geotransform
+    expect_warning(extr_nodata <- ds$pixel_extract(xy = geo_xy,
+                                                   bands = 0,
+                                                   interp_method = "near",
+                                                   krnl_dim = 1,
+                                                   xy_srs = ""))
+
+    expect_true(length(extr_nodata) == 1)
+    expect_true(is.na(extr_nodata))
+
+    ds$close()
 
     ## bilinear interpolation - 2 bands
     ds <- create(format="MEM", dst_filename="", xsize=2, ysize=2,
@@ -648,7 +669,7 @@ test_that("pixel extract internal class method returns correct data", {
     geo_xy <- matrix(c(1, -1), ncol = 2)
     # bands = 0 for all bands
     # krnl_dim ignored with bilinear but a required arg for the internal method
-    # warning for no geotransform in this case
+    # warning for no geotransform
     expect_warning(extr_bilinear <- ds$pixel_extract(xy = geo_xy,
                                                      bands = 0,
                                                      interp_method = "bilinear",

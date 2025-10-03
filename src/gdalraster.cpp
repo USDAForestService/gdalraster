@@ -14,10 +14,13 @@
 #include <gdal_alg.h>
 #include <gdal_utils.h>
 
+#include <Rcpp.h>
+
 #include <algorithm>
 #include <cmath>
 #include <complex>
 #include <cstdint>
+#include <map>
 #include <sstream>
 #include <string>
 #include <utility>
@@ -41,7 +44,8 @@ void gdal_error_handler_r(CPLErr err_class, int err_no, const char *msg) {
 
         case CE_Warning:
         {
-            // try to be compatible with sf, and terra default level 2
+            // try to be compatible with sf, and terra default level 2, wrt to
+            // whether a warning is emitted in case sharing a GDAL instance
             if (is_namespace_loaded_("sf")) {
                 std::stringstream ss_msg;
                 ss_msg << "GDAL WARNING " << err_no << ": " << msg;
@@ -55,7 +59,8 @@ void gdal_error_handler_r(CPLErr err_class, int err_no, const char *msg) {
 
         case CE_Failure:
         {
-            // try to be compatible with sf, and terra default level 2
+            // try to be compatible with sf, and terra default level 2, wrt to
+            // whether a warning is emitted in case sharing a GDAL instance
             if (is_namespace_loaded_("sf") || is_namespace_loaded_("terra")) {
                 std::stringstream ss_msg;
                 ss_msg << "GDAL FAILURE " << err_no << ": " << msg;
@@ -97,10 +102,52 @@ void gdal_init(DllInfo *dll) {
     CPLSetConfigOption("OGR_CT_FORCE_TRADITIONAL_GIS_ORDER", "YES");
 }
 
+// Map certain GDAL enums to string names for use in R
+// GDALColorInterp (GCI)
+static const std::map<std::string, GDALColorInterp> MAP_GCI = {
+    {"Undefined", GCI_Undefined},
+    {"Gray", GCI_GrayIndex},
+    {"Palette", GCI_PaletteIndex},
+    {"Red", GCI_RedBand},
+    {"Green", GCI_GreenBand},
+    {"Blue", GCI_BlueBand},
+    {"Alpha", GCI_AlphaBand},
+    {"Hue", GCI_HueBand},
+    {"Saturation", GCI_SaturationBand},
+    {"Lightness", GCI_LightnessBand},
+    {"Cyan", GCI_CyanBand},
+    {"Magenta", GCI_MagentaBand},
+    {"Yellow", GCI_YellowBand},
+    {"Black", GCI_BlackBand},
+    {"YCbCr_Y", GCI_YCbCr_YBand},
+    {"YCbCr_Cb", GCI_YCbCr_CbBand},
+    {"YCbCr_Cr", GCI_YCbCr_CrBand}
+};
+// GDALRATFieldUsage (GFU)
+static const std::map<std::string, GDALRATFieldUsage> MAP_GFU = {
+    {"Generic", GFU_Generic},
+    {"PixelCount", GFU_PixelCount},
+    {"Name", GFU_Name},
+    {"Min", GFU_Min},
+    {"Max", GFU_Max},
+    {"MinMax", GFU_MinMax},
+    {"Red", GFU_Red},
+    {"Green", GFU_Green},
+    {"Blue", GFU_Blue},
+    {"Alpha", GFU_Alpha},
+    {"RedMin", GFU_RedMin},
+    {"GreenMin", GFU_GreenMin},
+    {"BlueMin", GFU_BlueMin},
+    {"AlphaMin", GFU_AlphaMin},
+    {"RedMax", GFU_RedMax},
+    {"GreenMax", GFU_GreenMax},
+    {"BlueMax", GFU_BlueMax},
+    {"AlphaMax", GFU_AlphaMax}
+};
+
 // Internal lookup of GDALColorInterp by string descriptor
 // Returns GCI_Undefined if no match
-//' @noRd
-GDALColorInterp getGCI_(const std::string &col_interp) {
+static GDALColorInterp getGCI_(const std::string &col_interp) {
     if (MAP_GCI.count(col_interp) == 0) {
         return GCI_Undefined;
     }
@@ -112,8 +159,7 @@ GDALColorInterp getGCI_(const std::string &col_interp) {
 
 // Internal lookup of GCI string by GDALColorInterp
 // Returns "Undefined" if no match
-//' @noRd
-std::string getGCI_string_(GDALColorInterp gci) {
+static std::string getGCI_string_(GDALColorInterp gci) {
     for (auto it = MAP_GCI.begin(); it != MAP_GCI.end(); ++it)
         if (it->second == gci)
             return it->first;
@@ -123,8 +169,7 @@ std::string getGCI_string_(GDALColorInterp gci) {
 
 // Internal lookup of GDALRATFieldUsage by string descriptor
 // Returns GFU_Generic if no match
-//' @noRd
-GDALRATFieldUsage getGFU_(const std::string &fld_usage) {
+static GDALRATFieldUsage getGFU_(const std::string &fld_usage) {
     if (MAP_GFU.count(fld_usage) == 0) {
         Rcpp::warning("unrecognized GFU string, using GFU_Generic");
         return GFU_Generic;
@@ -137,8 +182,7 @@ GDALRATFieldUsage getGFU_(const std::string &fld_usage) {
 
 // Internal lookup of GFU string by GDALRATFieldUsage
 // Returns "Generic" if no match
-//' @noRd
-std::string getGFU_string_(GDALRATFieldUsage gfu) {
+static std::string getGFU_string_(GDALRATFieldUsage gfu) {
     for (auto it = MAP_GFU.begin(); it != MAP_GFU.end(); ++it)
         if (it->second == gfu)
             return it->first;
@@ -147,58 +191,43 @@ std::string getGFU_string_(GDALRATFieldUsage gfu) {
     return "Generic";
 }
 
+// ****************************************************************************
+//  Implementation of exposed class GDALRaster, which wraps a raster
+//  GDALDataset and its GDALRasterBand objects.
+//  Documented in R/gdalraster.R.
+// ****************************************************************************
 
-GDALRaster::GDALRaster() :
-            m_fname(""),
-            m_open_options(Rcpp::CharacterVector::create()),
-            m_shared(false),
-            m_allowed_drivers(Rcpp::CharacterVector::create()) {}
+GDALRaster::GDALRaster()
+        : m_fname(""), m_open_options(Rcpp::CharacterVector::create()),
+          m_shared(false), m_allowed_drivers(Rcpp::CharacterVector::create()) {}
 
-GDALRaster::GDALRaster(const Rcpp::CharacterVector &filename) :
-            GDALRaster(
-                filename,
-                true,
-                R_NilValue,
-                true,
-                Rcpp::CharacterVector::create()) {}
+GDALRaster::GDALRaster(const Rcpp::CharacterVector &filename)
+        : GDALRaster(filename, true, R_NilValue, true,
+                     Rcpp::CharacterVector::create()) {}
 
 GDALRaster::GDALRaster(const Rcpp::CharacterVector &filename,
-                       bool read_only) :
-            GDALRaster(
-                filename,
-                read_only,
-                R_NilValue,
-                true,
-                Rcpp::CharacterVector::create()) {}
+                       bool read_only)
+        : GDALRaster(filename, read_only, R_NilValue, true,
+                     Rcpp::CharacterVector::create()) {}
 
 GDALRaster::GDALRaster(const Rcpp::CharacterVector &filename, bool read_only,
-                       const Rcpp::CharacterVector &open_options) :
-            GDALRaster(
-                filename,
-                read_only,
-                open_options,
-                true,
-                Rcpp::CharacterVector::create()) {}
+                       const Rcpp::CharacterVector &open_options)
+        : GDALRaster(filename, read_only, open_options, true,
+                     Rcpp::CharacterVector::create()) {}
 
 GDALRaster::GDALRaster(const Rcpp::CharacterVector &filename, bool read_only,
                        const Rcpp::Nullable<Rcpp::CharacterVector>
                            &open_options,
-                        bool shared) :
-            GDALRaster(
-                filename,
-                read_only,
-                open_options,
-                shared,
-                Rcpp::CharacterVector::create()) {}
+                       bool shared)
+        : GDALRaster(filename, read_only, open_options, shared,
+                     Rcpp::CharacterVector::create()) {}
 
 GDALRaster::GDALRaster(const Rcpp::CharacterVector &filename, bool read_only,
                        const Rcpp::Nullable<Rcpp::CharacterVector>
                            &open_options,
-                        bool shared,
-                        const Rcpp::CharacterVector &allowed_drivers) :
-
-                m_shared(shared),
-                m_allowed_drivers(allowed_drivers) {
+                       bool shared,
+                       const Rcpp::CharacterVector &allowed_drivers)
+        : m_shared(shared), m_allowed_drivers(allowed_drivers) {
 
     m_fname = Rcpp::as<std::string>(check_gdal_filename(filename));
 
@@ -313,7 +342,7 @@ void GDALRaster::info() const {
         return;
     }
 
-    const Rcpp::CharacterVector argv = infoOptions;
+    const Rcpp::CharacterVector argv = this->infoOptions;
     std::vector<char *> opt(1);
     if (argv.size() == 0 || (argv.size() == 1 && argv[0] == "")) {
         opt[0] = nullptr;
@@ -351,15 +380,15 @@ Rcpp::String GDALRaster::infoAsJSON() const {
         return out;
     }
 
-    const Rcpp::CharacterVector argv = infoOptions;
+    const Rcpp::CharacterVector argv = this->infoOptions;
     std::vector<char *> opt = {nullptr};
     if (argv.size() == 1 && argv[0] == "") {
         opt.resize(2);
-        opt[0] = (char *) "-json";
+        opt[0] = const_cast<char *>("-json");
         opt[1] = nullptr;
     }
     else {
-        opt[0] = (char *) "-json";
+        opt[0] = const_cast<char *>("-json");
         for (R_xlen_t i = 0; i < argv.size(); ++i) {
             if (EQUAL(argv[i], "-json"))
                 continue;
@@ -370,7 +399,7 @@ Rcpp::String GDALRaster::infoAsJSON() const {
 
     GDALInfoOptions* psOptions = GDALInfoOptionsNew(opt.data(), nullptr);
     if (psOptions == nullptr)
-        Rcpp::stop("creation of GDALInfoOptions failed (check $infoOptions)");
+        Rcpp::stop("creation of GDALInfoOptions failed (check '$infoOptions')");
 
     char *pszGDALInfoOutput = GDALInfo(m_hDataset, psOptions);
     if (pszGDALInfoOutput != nullptr)
@@ -378,7 +407,7 @@ Rcpp::String GDALRaster::infoAsJSON() const {
 
     GDALInfoOptionsFree(psOptions);
 
-    out.replace_all("\n", " ");
+    // out.replace_all("\n", " ");
     CPLFree(pszGDALInfoOutput);
 
     return out;
@@ -387,13 +416,11 @@ Rcpp::String GDALRaster::infoAsJSON() const {
 Rcpp::CharacterVector GDALRaster::getFileList() const {
     checkAccess_(GA_ReadOnly);
 
-    char **papszFiles;
-    papszFiles = GDALGetFileList(m_hDataset);
-
-    int items = CSLCount(papszFiles);
-    if (items > 0) {
-        Rcpp::CharacterVector files(items);
-        for (int i=0; i < items; ++i) {
+    char **papszFiles = GDALGetFileList(m_hDataset);
+    int nItems = CSLCount(papszFiles);
+    if (nItems > 0) {
+        Rcpp::CharacterVector files(nItems);
+        for (int i = 0; i < nItems; ++i) {
             files(i) = papszFiles[i];
         }
         CSLDestroy(papszFiles);
@@ -409,7 +436,9 @@ std::string GDALRaster::getDriverShortName() const {
     checkAccess_(GA_ReadOnly);
 
     GDALDriverH hDriver = GDALGetDatasetDriver(m_hDataset);
-    if (!hDriver) return("");
+    if (!hDriver)
+        return("");
+
     return GDALGetDriverShortName(hDriver);
 }
 
@@ -417,7 +446,9 @@ std::string GDALRaster::getDriverLongName() const {
     checkAccess_(GA_ReadOnly);
 
     GDALDriverH hDriver = GDALGetDatasetDriver(m_hDataset);
-    if (!hDriver) return("");
+    if (!hDriver)
+        return("");
+
     return GDALGetDriverLongName(hDriver);
 }
 
@@ -435,29 +466,31 @@ double GDALRaster::getRasterYSize() const {
     return static_cast<double>(GDALGetRasterYSize(m_hDataset));
 }
 
-std::vector<double> GDALRaster::getGeoTransform() const {
+Rcpp::NumericVector GDALRaster::getGeoTransform() const {
     checkAccess_(GA_ReadOnly);
 
     // returned by GDALGetGeoTransform() even when CE_Failure:
-    std::vector<double> gt = {0, 1, 0, 0, 0, 1};
+    Rcpp::NumericVector gt = {0, 1, 0, 0, 0, 1};
 
     CPLErr err = CE_None;
-    err = GDALGetGeoTransform(m_hDataset, gt.data());
+    err = GDALGetGeoTransform(m_hDataset, gt.begin());
     if (!quiet && err == CE_Failure)
         Rcpp::warning("failed to get geotransform, default returned");
 
     return gt;
 }
 
-bool GDALRaster::setGeoTransform(std::vector<double> transform) {
+bool GDALRaster::setGeoTransform(const Rcpp::NumericVector &transform) {
     checkAccess_(GA_Update);
 
     if (transform.size() != 6)
         Rcpp::stop("setGeoTransform() requires a numeric vector of length 6");
 
-    if (GDALSetGeoTransform(m_hDataset, transform.data()) == CE_Failure) {
+    if (GDALSetGeoTransform(m_hDataset, const_cast<double *>(transform.begin()))
+        == CE_Failure) {
+
         if (!quiet)
-            Rcpp::Rcerr << "set geotransform failed\n";
+            Rcpp::Rcout << "set geotransform failed\n";
         return false;
     }
     else {
@@ -513,7 +546,7 @@ std::string GDALRaster::getProjectionRef() const {
     }
     else {
         if (!quiet)
-            Rcpp::Rcerr << "failed to get projection ref\n";
+            Rcpp::Rcout << "failed to get projection ref\n";
         return "";
     }
 }
@@ -523,13 +556,13 @@ bool GDALRaster::setProjection(const std::string &projection) {
 
     if (projection.size() == 0 || projection == "") {
         if (!quiet)
-            Rcpp::Rcerr << "setProjection() requires a WKT string\n";
+            Rcpp::Rcout << "setProjection() requires a WKT string\n";
         return false;
     }
 
     if (GDALSetProjection(m_hDataset, projection.c_str()) == CE_Failure) {
         if (!quiet) {
-            Rcpp::Rcerr << "set projection failed\n";
+            Rcpp::Rcout << "set projection failed\n";
         }
         return false;
     }
@@ -538,20 +571,19 @@ bool GDALRaster::setProjection(const std::string &projection) {
     }
 }
 
-std::vector<double> GDALRaster::bbox() const {
+Rcpp::NumericVector GDALRaster::bbox() const {
     checkAccess_(GA_ReadOnly);
 
-    std::vector<double> gt = getGeoTransform();
-
-    return bbox_grid_to_geo_(gt, 0.0, GDALGetRasterXSize(m_hDataset),
+    return bbox_grid_to_geo_(getGeoTransform(),
+                             0.0, GDALGetRasterXSize(m_hDataset),
                              0.0, GDALGetRasterYSize(m_hDataset));
 }
 
-std::vector<double> GDALRaster::res() const {
+Rcpp::NumericVector GDALRaster::res() const {
     checkAccess_(GA_ReadOnly);
 
-    std::vector<double> gt = getGeoTransform();
-    std::vector<double> ret = {NA_REAL, NA_REAL};
+    Rcpp::NumericVector gt = getGeoTransform();
+    Rcpp::NumericVector ret = {NA_REAL, NA_REAL};
 
     if (gt[2] == 0.0 && gt[4] == 0.0) {
         ret[0] = gt[1];
@@ -565,11 +597,11 @@ std::vector<double> GDALRaster::res() const {
     return ret;
 }
 
-std::vector<double> GDALRaster::dim() const {
+Rcpp::NumericVector GDALRaster::dim() const {
     checkAccess_(GA_ReadOnly);
 
     // return as R numeric (double) to avoid integer overflow when multiplying
-    std::vector<double> ret = {getRasterXSize(), getRasterYSize(),
+    Rcpp::NumericVector ret = {getRasterXSize(), getRasterYSize(),
                                static_cast<double>(getRasterCount())};
     return ret;
 }
@@ -619,19 +651,21 @@ Rcpp::NumericMatrix GDALRaster::pixel_extract(const Rcpp::RObject &xy,
 
     checkAccess_(GA_ReadOnly);
 
+    constexpr int KRNL_DIM_MAX_ = 1000;
+
     Rcpp::NumericMatrix xy_in;
     if (Rcpp::is<Rcpp::NumericVector>(xy) ||
         Rcpp::is<Rcpp::IntegerVector>(xy)) {
 
         if (!Rf_isMatrix(xy)) {
-            Rcpp::NumericVector v = Rcpp::as<Rcpp::NumericVector>(xy);
+            Rcpp::NumericVector v(xy);
             if (v.size() != 2)
                 Rcpp::stop("'xy' must be a two-column data frame or matrix");
 
             xy_in = Rcpp::NumericMatrix(1, 2, v.begin());
         }
         else {
-            xy_in = Rcpp::as<Rcpp::NumericMatrix>(xy);
+            xy_in = Rcpp::NumericMatrix(xy);
         }
     }
     else if (Rcpp::is<Rcpp::DataFrame>(xy)) {
@@ -642,13 +676,12 @@ Rcpp::NumericMatrix GDALRaster::pixel_extract(const Rcpp::RObject &xy,
     }
 
     if (xy_srs != "")
-        xy_in = transform_xy(xy_in, xy_srs, this->getProjection());
+        xy_in = transform_xy(xy_in, xy_srs, getProjection());
 
-    R_xlen_t num_pts = 0;
     if (xy_in.nrow() == 0)
         Rcpp::stop("input matrix is empty");
-    else
-        num_pts = xy_in.nrow();
+
+    const R_xlen_t num_pts = xy_in.nrow();
 
     if (xy_in.ncol() != 2)
         Rcpp::stop("input matrix must have 2 columns");
@@ -658,10 +691,11 @@ Rcpp::NumericMatrix GDALRaster::pixel_extract(const Rcpp::RObject &xy,
         bands_in = Rcpp::seq(1, getRasterCount());
     else
         bands_in = bands;
+
     const R_xlen_t num_bands = bands_in.size();
 
     Rcpp::CharacterVector band_names = Rcpp::CharacterVector::create();
-    for (auto& b : bands_in) {
+    for (const auto &b : bands_in) {
         GDALRasterBandH hBand = GDALGetRasterBand(m_hDataset, b);
         if (hBand == nullptr) {
             Rcpp::Rcout << "invalid band number: " << b << "\n";
@@ -676,9 +710,7 @@ Rcpp::NumericMatrix GDALRaster::pixel_extract(const Rcpp::RObject &xy,
     }
 
     GDALRIOResampleAlg eResampleAlg;
-    if (EQUAL(interp.c_str(), "nearest") ||
-        EQUAL(interp.c_str(), "near")) {
-
+    if (EQUAL(interp.c_str(), "nearest") || EQUAL(interp.c_str(), "near")) {
         eResampleAlg = GRIORA_NearestNeighbour;
     }
     else if (EQUAL(interp.c_str(), "bilinear")) {
@@ -702,16 +734,18 @@ Rcpp::NumericMatrix GDALRaster::pixel_extract(const Rcpp::RObject &xy,
 
     if (krnl_dim < 1)
         Rcpp::stop("'krnl_dim' must be a positive number");
+    if (krnl_dim > KRNL_DIM_MAX_)
+        Rcpp::stop("'krnl_dim' must be <= " + std::to_string(KRNL_DIM_MAX_));
 
-    if (eResampleAlg == GRIORA_NearestNeighbour &&
-        krnl_dim > 1 && num_bands > 1) {
+    if (eResampleAlg == GRIORA_NearestNeighbour && krnl_dim > 1 &&
+        num_bands > 1) {
 
         Rcpp::stop(
             "one band must be specified to extract pixel values for kernel");
     }
 
-    Rcpp::NumericVector inv_gt = inv_geotransform(getGeoTransform());
-    if (Rcpp::any(Rcpp::is_na(inv_gt)))
+    const Rcpp::NumericVector inv_gt = inv_geotransform(getGeoTransform());
+    if (Rcpp::is_true(Rcpp::any(Rcpp::is_na(inv_gt))))
         Rcpp::stop("failed to get inverse geotransform");
 
     const int krnl_size = krnl_dim * krnl_dim;
@@ -728,11 +762,11 @@ Rcpp::NumericMatrix GDALRaster::pixel_extract(const Rcpp::RObject &xy,
     }
     else {
         // for returning individual pixel values within the kernel
-        Rcpp::CharacterVector col_names{};
+        Rcpp::CharacterVector col_names = {};
         values = Rcpp::no_init(num_pts, krnl_size);
         for (int i = 0; i < krnl_size; ++i) {
             col_names.push_back(
-                    std::string(band_names[0]) + "_p" + std::to_string(i + 1));
+                std::string(band_names[0]) + "_p" + std::to_string(i + 1));
         }
         Rcpp::colnames(values) = col_names;
     }
@@ -740,14 +774,13 @@ Rcpp::NumericMatrix GDALRaster::pixel_extract(const Rcpp::RObject &xy,
     for (R_xlen_t band_idx = 0; band_idx < num_bands; ++band_idx) {
         if (!quiet) {
             Rcpp::Rcout << "extracting from band " << bands_in[band_idx]
-                    << "...\n";
+                << "...\n";
 
             pfnProgress(0, nullptr, nullptr);
         }
 
         for (R_xlen_t row_idx = 0; row_idx < num_pts; ++row_idx) {
             // row_idx refers to rows of the input and output matrices
-
             const double geo_x = xy_in(row_idx, 0);
             const double geo_y = xy_in(row_idx, 1);
             if (Rcpp::NumericVector::is_na(geo_x) ||
@@ -763,10 +796,8 @@ Rcpp::NumericMatrix GDALRaster::pixel_extract(const Rcpp::RObject &xy,
 
             // allow input coordinates exactly on the bottom or right edges
             // match behavior in: https://github.com/OSGeo/gdal/pull/12087
-
             const bool pt_is_on_right_edge =
                 ARE_REAL_EQUAL(grid_x, static_cast<double>(raster_xsize));
-
             const bool pt_is_on_bottom_edge =
                 ARE_REAL_EQUAL(grid_y, static_cast<double>(raster_ysize));
 
@@ -791,12 +822,10 @@ Rcpp::NumericMatrix GDALRaster::pixel_extract(const Rcpp::RObject &xy,
                 const int x_off = static_cast<int>(std::floor(grid_x));
                 const int y_off = static_cast<int>(std::floor(grid_y));
 
-                Rcpp::NumericVector v = Rcpp::as<Rcpp::NumericVector>(
-                                                read(bands_in[band_idx],
-                                                     x_off, y_off,
-                                                     1, 1, 1, 1));
+                double v = Rcpp::as<double>(read(bands_in[band_idx],
+                                                 x_off, y_off, 1, 1, 1, 1));
 
-                values(row_idx, band_idx) = v[0];
+                values(row_idx, band_idx) = v;
             }
             else if (eResampleAlg == GRIORA_Bilinear) {
                 int x_off = static_cast<int>(std::floor(grid_x - 0.5));
@@ -834,25 +863,23 @@ Rcpp::NumericMatrix GDALRaster::pixel_extract(const Rcpp::RObject &xy,
                     read_ysize = 1;
                 }
 
-                Rcpp::NumericVector v = Rcpp::as<Rcpp::NumericVector>(
-                                                read(bands_in[band_idx],
-                                                     x_off, y_off,
-                                                     read_xsize, read_ysize,
-                                                     read_xsize, read_ysize));
+                Rcpp::NumericVector v(read(bands_in[band_idx], x_off, y_off,
+                                           read_xsize, read_ysize,
+                                           read_xsize, read_ysize));
 
-                if (Rcpp::any(Rcpp::is_na(v))) {
+                if (Rcpp::is_true(Rcpp::any(Rcpp::is_na(v)))) {
                     values(row_idx, band_idx) = NA_REAL;
                     continue;
                 }
 
                 if (v.size() == 4) {
-                    // convert to unit square coordinates for the 2x2 kernel
-                    // the center of the lower left pixel in the kernel is 0,0
+                    // Convert to unit square coordinates for the 2x2 kernel.
+                    // The center of the lower left pixel in the kernel is 0,0.
                     const double x = grid_x - (x_off + 0.5);
                     const double y = (y_off + 1.5) - grid_y;
 
-                    // pixels in v are left to right, top to bottom
-                    // pixel values in the square:
+                    // Pixels in v are left to right, top to bottom.
+                    // Pixel values in the square:
                     // 0,0: v[2]
                     // 1,0: v[3]
                     // 0,1: v[0]
@@ -899,15 +926,15 @@ Rcpp::NumericMatrix GDALRaster::pixel_extract(const Rcpp::RObject &xy,
             else {
                 // all pixel values in kernel
                 const int x_off = static_cast<int>(
-                        std::floor(grid_x - ((krnl_dim / 2.0) - 0.5)));
+                    std::floor(grid_x - ((krnl_dim / 2.0) - 0.5)));
 
                 const int y_off = static_cast<int>(
-                        std::floor(grid_y - ((krnl_dim / 2.0) - 0.5)));
+                    std::floor(grid_y - ((krnl_dim / 2.0) - 0.5)));
 
-                // is any portion of the kernel outside the raster extent?
-                // the wrapper in R/gdalraster_proc.R avoids this as long
+                // Is any portion of the kernel outside the raster extent?
+                // The wrapper in R/gdalraster_proc.R avoids this as long
                 // as the point itself is inside, by reading through a VRT
-                // that extends the bounds
+                // that extends the bounds.
                 if (x_off < 0 || x_off + krnl_dim > raster_xsize ||
                     y_off < 0 || y_off + krnl_dim > raster_ysize) {
 
@@ -919,17 +946,16 @@ Rcpp::NumericMatrix GDALRaster::pixel_extract(const Rcpp::RObject &xy,
                     continue;
                 }
 
-                values.row(row_idx) = Rcpp::as<Rcpp::NumericVector>(
-                                            read(bands_in[band_idx],
-                                                 x_off, y_off,
-                                                 krnl_dim, krnl_dim,
-                                                 krnl_dim, krnl_dim));
+                values.row(row_idx) =
+                    Rcpp::NumericVector(read(bands_in[band_idx], x_off, y_off,
+                                             krnl_dim, krnl_dim,
+                                             krnl_dim, krnl_dim));
             }
 
             if (!quiet) {
                 pfnProgress((row_idx + 1.0) / num_pts, nullptr, nullptr);
             }
-            if (row_idx % 1000 == 0) {
+            if (row_idx % 10000 == 0) {
                 Rcpp::checkUserInterrupt();
             }
         }
@@ -937,7 +963,7 @@ Rcpp::NumericMatrix GDALRaster::pixel_extract(const Rcpp::RObject &xy,
 
     if (!quiet && pts_outside > 0) {
         std::string msg =
-                "point(s) were outside the raster extent, NA returned";
+            "point(s) were outside the raster extent, NA returned";
 
         Rcpp::warning(std::to_string(pts_outside) + " " + msg);
     }
@@ -954,37 +980,41 @@ Rcpp::NumericMatrix GDALRaster::get_block_indexing(int band) const {
     int nBlockXSize = -1;
     int nBlockYSize = -1;
     GDALGetBlockSize(hBand, &nBlockXSize, &nBlockYSize);
+
     const int num_blocks_x = static_cast<int>(
         std::ceil(dfRasterXSize / nBlockXSize));
+
     const int num_blocks_y = static_cast<int>(
         std::ceil(dfRasterYSize / nBlockYSize));
-    const R_xlen_t num_blocks = num_blocks_x * num_blocks_y;
-    std::vector<double> gt = getGeoTransform();
+
+    const R_xlen_t num_blocks =
+        static_cast<R_xlen_t>(num_blocks_x) * num_blocks_y;
 
     Rcpp::NumericMatrix blocks = Rcpp::no_init(num_blocks, 10);
-    Rcpp::colnames(blocks) = Rcpp::CharacterVector::create(
-                                "xblockoff", "yblockoff", "xoff", "yoff",
-                                "xsize", "ysize", "xmin", "xmax", "ymin",
-                                "ymax");
+    Rcpp::colnames(blocks) =
+        Rcpp::CharacterVector::create("xblockoff", "yblockoff", "xoff", "yoff",
+                                      "xsize", "ysize", "xmin", "xmax", "ymin",
+                                      "ymax");
 
     R_xlen_t i = 0;
     for (int y = 0; y < num_blocks_y; ++y) {
         for (int x = 0; x < num_blocks_x; ++x) {
-            double this_xoff = x * nBlockXSize;
-            double this_yoff = y * nBlockYSize;
-            std::vector<int> this_size = getActualBlockSize(band, x, y);
-            std::vector<double> this_bbox = bbox_grid_to_geo_(
-                                                gt,
-                                                this_xoff,
-                                                this_xoff + this_size[0],
-                                                this_yoff,
-                                                this_yoff + this_size[1]);
+            const double this_xoff = x * nBlockXSize;
+            const double this_yoff = y * nBlockYSize;
+            const Rcpp::NumericVector &this_size =
+                getActualBlockSize(band, x, y);
 
-            blocks.row(i) = Rcpp::NumericVector::create(
-                                            x, y, this_xoff, this_yoff,
+            Rcpp::NumericVector this_bbox =
+                bbox_grid_to_geo_(getGeoTransform(),
+                                  this_xoff, this_xoff + this_size[0],
+                                  this_yoff, this_yoff + this_size[1]);
+
+            blocks.row(i) =
+                Rcpp::NumericVector::create(x, y, this_xoff, this_yoff,
                                             this_size[0], this_size[1],
                                             this_bbox[0], this_bbox[2],
                                             this_bbox[1], this_bbox[3]);
+
             i += 1;
         }
     }
@@ -992,26 +1022,25 @@ Rcpp::NumericMatrix GDALRaster::get_block_indexing(int band) const {
     return blocks;
 }
 
-std::vector<int> GDALRaster::getBlockSize(int band) const {
+Rcpp::NumericVector GDALRaster::getBlockSize(int band) const {
     checkAccess_(GA_ReadOnly);
 
     GDALRasterBandH hBand = getBand_(band);
-    int nBlockXSize, nBlockYSize;
-    GDALGetBlockSize(hBand, &nBlockXSize, &nBlockYSize);
-    std::vector<int> ret = {nBlockXSize, nBlockYSize};
-    return ret;
+    Rcpp::IntegerVector panBlockSize = {NA_INTEGER, NA_INTEGER};
+    GDALGetBlockSize(hBand, &panBlockSize[0], &panBlockSize[1]);
+    return Rcpp::NumericVector(panBlockSize);
 }
 
-std::vector<int> GDALRaster::getActualBlockSize(int band, int xblockoff,
-                                                int yblockoff) const {
+Rcpp::NumericVector GDALRaster::getActualBlockSize(int band, int xblockoff,
+                                                   int yblockoff) const {
     checkAccess_(GA_ReadOnly);
 
     GDALRasterBandH hBand = getBand_(band);
-    int nXValid, nYValid;
+    Rcpp::IntegerVector panBlockSize = {NA_INTEGER, NA_INTEGER};
     GDALGetActualBlockSize(hBand, xblockoff, yblockoff,
-                           &nXValid, &nYValid);
-    std::vector<int> ret = {nXValid, nYValid};
-    return ret;
+                           &panBlockSize[0], &panBlockSize[1]);
+
+    return Rcpp::NumericVector(panBlockSize);
 }
 
 int GDALRaster::getOverviewCount(int band) const {
@@ -1027,23 +1056,17 @@ void GDALRaster::buildOverviews(const std::string &resampling,
 
     checkAccess_(GA_ReadOnly);
 
-    int nOvr;
-    int* panOvrList = nullptr;
-    if (levels.size() == 1 && levels[0] == 0) {
-        nOvr = 0;
-    }
-    else {
-        nOvr = levels.size();
+    int nOvr = 0;
+    int *panOvrList = nullptr;
+    if (!(levels.size() == 1 && levels[0] == 0)) {
+        nOvr = static_cast<int>(levels.size());
         panOvrList = levels.data();
     }
 
-    int nBands;
-    int* panBandList = nullptr;
-    if (bands.size() == 1 && bands[0] == 0) {
-        nBands = 0;
-    }
-    else {
-        nBands = bands.size();
+    int nBands = 0;
+    int *panBandList = nullptr;
+    if (!(bands.size() == 1 && bands[0] == 0)) {
+        nBands = static_cast<int>(bands.size());
         panBandList = bands.data();
     }
 
@@ -1068,7 +1091,7 @@ bool GDALRaster::hasNoDataValue(int band) const {
     checkAccess_(GA_ReadOnly);
 
     GDALRasterBandH hBand = getBand_(band);
-    int hasNoData;
+    int hasNoData = 0;
     GDALGetRasterNoDataValue(hBand, &hasNoData);
     return hasNoData;
 }
@@ -1094,7 +1117,7 @@ bool GDALRaster::setNoDataValue(int band, double nodata_value) {
     GDALRasterBandH hBand = getBand_(band);
     if (GDALSetRasterNoDataValue(hBand, nodata_value) == CE_Failure) {
         if (!quiet)
-            Rcpp::Rcerr << "set nodata value failed\n";
+            Rcpp::Rcout << "set nodata value failed\n";
         return false;
     }
     else {
@@ -1178,7 +1201,7 @@ bool GDALRaster::setUnitType(int band, const std::string &unit_type) {
     GDALRasterBandH hBand = getBand_(band);
     if (GDALSetRasterUnitType(hBand, unit_type.c_str()) == CE_Failure) {
         if (!quiet)
-            Rcpp::Rcerr << "set unit type failed\n";
+            Rcpp::Rcout << "set unit type failed\n";
         return false;
     }
     else {
@@ -1190,7 +1213,7 @@ bool GDALRaster::hasScale(int band) const {
     checkAccess_(GA_ReadOnly);
 
     GDALRasterBandH hBand = getBand_(band);
-    int hasScale;
+    int hasScale = 0;
     GDALGetRasterScale(hBand, &hasScale);
     return hasScale;
 }
@@ -1216,7 +1239,7 @@ bool GDALRaster::setScale(int band, double scale) {
     GDALRasterBandH hBand = getBand_(band);
     if (GDALSetRasterScale(hBand, scale) == CE_Failure) {
         if (!quiet)
-            Rcpp::Rcerr << "set scale failed\n";
+            Rcpp::Rcout << "set scale failed\n";
         return false;
     }
     else {
@@ -1228,7 +1251,7 @@ bool GDALRaster::hasOffset(int band) const {
     checkAccess_(GA_ReadOnly);
 
     GDALRasterBandH hBand = getBand_(band);
-    int hasOffset;
+    int hasOffset = 0;
     GDALGetRasterOffset(hBand, &hasOffset);
     return hasOffset;
 }
@@ -1254,7 +1277,7 @@ bool GDALRaster::setOffset(int band, double offset) {
     GDALRasterBandH hBand = getBand_(band);
     if (GDALSetRasterOffset(hBand, offset) == CE_Failure) {
         if (!quiet)
-            Rcpp::Rcerr << "set offset failed\n";
+            Rcpp::Rcout << "set offset failed\n";
         return false;
     }
     else {
@@ -1265,7 +1288,7 @@ bool GDALRaster::setOffset(int band, double offset) {
 std::string GDALRaster::getDescription(int band) const {
     checkAccess_(GA_ReadOnly);
 
-    std::string desc;
+    std::string desc = "";
 
     if (band == 0) {
         desc = GDALGetDescription(m_hDataset);
@@ -1339,7 +1362,7 @@ Rcpp::NumericVector GDALRaster::getStatistics(int band, bool approx_ok,
     checkAccess_(GA_ReadOnly);
 
     GDALRasterBandH hBand = getBand_(band);
-    double min, max, mean, sd;
+    double min = NA_REAL, max = NA_REAL, mean = NA_REAL, sd = NA_REAL;
     CPLErr err = CE_None;
     GDALProgressFunc pfnProgress = nullptr;
     void *pProgressData = nullptr;
@@ -1379,7 +1402,7 @@ void GDALRaster::clearStatistics() {
 #endif
 }
 
-std::vector<double> GDALRaster::getHistogram(int band, double min, double max,
+Rcpp::NumericVector GDALRaster::getHistogram(int band, double min, double max,
                                              int num_buckets,
                                              bool incl_out_of_range,
                                              bool approx_ok) const {
@@ -1397,8 +1420,7 @@ std::vector<double> GDALRaster::getHistogram(int band, double min, double max,
     if (err != CE_None)
         Rcpp::stop("failed to get histogram");
 
-    std::vector<double> ret(hist.begin(), hist.end());
-    return ret;
+    return Rcpp::NumericVector(hist.begin(), hist.end());
 }
 
 Rcpp::List GDALRaster::getDefaultHistogram(int band, bool force) const {
@@ -1424,7 +1446,7 @@ Rcpp::List GDALRaster::getDefaultHistogram(int band, bool force) const {
     std::vector<double> hist(num_buckets, NA_REAL);
 
     if (err == CE_None) {
-        for (int i=0; i < num_buckets; ++i)
+        for (int i = 0; i < num_buckets; ++i)
             hist[i] = static_cast<double>(panHistogram[i]);
         VSIFree(panHistogram);
     }
@@ -1443,26 +1465,22 @@ Rcpp::CharacterVector GDALRaster::getMetadata(int band,
 
     checkAccess_(GA_ReadOnly);
 
-    char **papszMD;
+    char **papszMD = nullptr;
 
     if (band == 0) {
-        if (domain == "")
-            papszMD = GDALGetMetadata(m_hDataset, nullptr);
-        else
-            papszMD = GDALGetMetadata(m_hDataset, domain.c_str());
+        papszMD = GDALGetMetadata(m_hDataset,
+                                  domain == "" ? nullptr : domain.c_str());
     }
     else {
         GDALRasterBandH hBand = getBand_(band);
-        if (domain == "")
-            papszMD = GDALGetMetadata(hBand, nullptr);
-        else
-            papszMD = GDALGetMetadata(hBand, domain.c_str());
+        papszMD = GDALGetMetadata(hBand,
+                                  domain == "" ? nullptr : domain.c_str());
     }
 
-    int items = CSLCount(papszMD);
-    if (items > 0) {
-        Rcpp::CharacterVector md(items);
-        for (int i=0; i < items; ++i) {
+    int nItems = CSLCount(papszMD);
+    if (nItems > 0) {
+        Rcpp::CharacterVector md(nItems);
+        for (int i = 0; i < nItems; ++i) {
             md(i) = papszMD[i];
         }
         return md;
@@ -1518,15 +1536,17 @@ std::string GDALRaster::getMetadataItem(int band, const std::string &mdi_name,
     std::string mdi = "";
 
     if (band == 0) {
-        if (GDALGetMetadataItem(m_hDataset, mdi_name.c_str(), domain_in) != nullptr)
-            mdi += std::string(
-                    GDALGetMetadataItem(m_hDataset, mdi_name.c_str(), domain_in) );
+        if (GDALGetMetadataItem(m_hDataset, mdi_name.c_str(), domain_in)
+                != nullptr) {
+            mdi += std::string(GDALGetMetadataItem(m_hDataset, mdi_name.c_str(),
+                                                   domain_in));
+        }
     }
     else {
         GDALRasterBandH hBand = getBand_(band);
         if (GDALGetMetadataItem(hBand, mdi_name.c_str(), domain_in) != nullptr)
-            mdi += std::string(
-                    GDALGetMetadataItem(hBand, mdi_name.c_str(), domain_in) );
+            mdi += std::string(GDALGetMetadataItem(hBand, mdi_name.c_str(),
+                                                   domain_in));
     }
 
     return mdi;
@@ -1544,8 +1564,8 @@ bool GDALRaster::setMetadataItem(int band, const std::string &mdi_name,
 
     CPLErr err = CE_None;
     if (band == 0) {
-        err = GDALSetMetadataItem(m_hDataset, mdi_name.c_str(), mdi_value.c_str(),
-                                  domain_in);
+        err = GDALSetMetadataItem(m_hDataset, mdi_name.c_str(),
+                                  mdi_value.c_str(), domain_in);
     }
     else {
         GDALRasterBandH hBand = getBand_(band);
@@ -1564,7 +1584,7 @@ bool GDALRaster::setMetadataItem(int band, const std::string &mdi_name,
 Rcpp::CharacterVector GDALRaster::getMetadataDomainList(int band) const {
     checkAccess_(GA_ReadOnly);
 
-    char **papszMD;
+    char **papszMD = nullptr;
 
     if (band == 0) {
         papszMD = GDALGetMetadataDomainList(m_hDataset);
@@ -1574,10 +1594,10 @@ Rcpp::CharacterVector GDALRaster::getMetadataDomainList(int band) const {
         papszMD = GDALGetMetadataDomainList(hBand);
     }
 
-    int items = CSLCount(papszMD);
-    if (items > 0) {
-        Rcpp::CharacterVector md(items);
-        for (int i=0; i < items; ++i) {
+    int nItems = CSLCount(papszMD);
+    if (nItems > 0) {
+        Rcpp::CharacterVector md(nItems);
+        for (int i = 0; i < nItems; ++i) {
             md(i) = papszMD[i];
         }
         CSLDestroy(papszMD);
@@ -1592,89 +1612,59 @@ Rcpp::CharacterVector GDALRaster::getMetadataDomainList(int band) const {
 SEXP GDALRaster::read(int band, int xoff, int yoff, int xsize, int ysize,
                       int out_xsize, int out_ysize) const {
 
-    checkAccess_(GA_ReadOnly);
+    if (!isOpen())
+        Rcpp::stop("dataset is not open");
+
+    if (out_xsize < 1 || out_ysize < 1)
+        Rcpp::stop("'out_xsize' and 'out_ysize' must be > 0");
 
     GDALRasterBandH hBand = GDALGetRasterBand(m_hDataset, band);
     if (hBand == nullptr)
         Rcpp::stop("failed to access the requested band");
-    GDALDataType eDT = GDALGetRasterDataType(hBand);
 
+    const GDALDataType eDT = GDALGetRasterDataType(hBand);
     CPLErr err = CE_None;
 
-    if (GDALDataTypeIsComplex(eDT)) {
-        // complex data types
-
-        std::vector<std::complex<double>> buf{};
-        try {
-            buf.resize(static_cast<size_t>(out_xsize) * out_ysize);
-        }
-        catch (const std::exception &) {
-            Rcpp::stop("failed to allocate memory for read");
-        }
-
-        err = GDALRasterIO(hBand, GF_Read, xoff, yoff, xsize, ysize,
-                           buf.data(), out_xsize, out_ysize,
-                           GDT_CFloat64, 0, 0);
-
-        if (err == CE_Failure)
-            Rcpp::stop("read raster failed");
-
-        Rcpp::ComplexVector v = Rcpp::wrap(buf);
-        return v;
-    }
-    else {
-        // real data types
+    if (!GDALDataTypeIsComplex(eDT)) {
+        // real data types read as either GDT_Byte, GDT_Int32 or GDT_Float64
         if (GDALDataTypeIsInteger(eDT) &&
                 (GDALGetDataTypeSizeBits(eDT) <= 16 ||
-                (GDALGetDataTypeSizeBits(eDT) <= 32 &&
-                GDALDataTypeIsSigned(eDT)))) {
+                 (GDALGetDataTypeSizeBits(eDT) <= 32 &&
+                  GDALDataTypeIsSigned(eDT)))) {
 
             // if signed integer <= 32 bits or any integer <= 16 bits:
-            // use int32 buffer unless we are reading Byte as R raw type
-
-            if (eDT == GDT_Byte && readByteAsRaw) {
-                std::vector<uint8_t> buf{};
-                try {
-                    buf.resize(static_cast<size_t>(out_xsize) * out_ysize);
-                }
-                catch (const std::exception &) {
-                    Rcpp::stop("failed to allocate memory for read");
-                }
+            // use int32 buffer, unless we are reading Byte as R raw type
+            if (this->readByteAsRaw && eDT == GDT_Byte) {
+                Rcpp::RawVector v = Rcpp::no_init(
+                    static_cast<R_xlen_t>(out_xsize) * out_ysize);
 
                 err = GDALRasterIO(hBand, GF_Read, xoff, yoff, xsize, ysize,
-                                   buf.data(), out_xsize, out_ysize,
-                                   GDT_Byte, 0, 0);
+                                   v.begin(), out_xsize, out_ysize, GDT_Byte,
+                                   0, 0);
 
                 if (err == CE_Failure)
                     Rcpp::stop("read raster failed");
 
-                Rcpp::RawVector v = Rcpp::wrap(buf);
                 return v;
             }
             else {
-                std::vector<int32_t> buf{};
-                try {
-                    buf.resize(static_cast<size_t>(out_xsize) * out_ysize);
-                }
-                catch (const std::exception &) {
-                    Rcpp::stop("failed to allocate memory for read");
-                }
+                Rcpp::IntegerVector v = Rcpp::no_init(
+                    static_cast<R_xlen_t>(out_xsize) * out_ysize);
 
                 err = GDALRasterIO(hBand, GF_Read, xoff, yoff, xsize, ysize,
-                                buf.data(), out_xsize, out_ysize,
-                                GDT_Int32, 0, 0);
+                                   v.begin(), out_xsize, out_ysize, GDT_Int32,
+                                   0, 0);
 
                 if (err == CE_Failure)
                     Rcpp::stop("read raster failed");
 
                 if (hasNoDataValue(band)) {
-                    int32_t nodata_value = static_cast<int32_t>(
-                            getNoDataValue(band));
-                    std::replace(buf.begin(), buf.end(), nodata_value,
-                                 NA_INTEGER);
+                    const int nodata_value =
+                        static_cast<int>(getNoDataValue(band));
+
+                    std::replace(v.begin(), v.end(), nodata_value, NA_INTEGER);
                 }
 
-                Rcpp::IntegerVector v = Rcpp::wrap(buf);
                 return v;
             }
         }
@@ -1684,26 +1674,20 @@ SEXP GDALRaster::read(int band, int xoff, int yoff, int xsize, int ysize,
             // (Int64, UInt64 would currently be handled here but would lose
             //  precision when > 9,007,199,254,740,992 (2^53). Support for
             //  Int64/UInt64 raster could potentially be added using {bit64}.)
-
-            std::vector<double> buf{};
-            try {
-                buf.resize(static_cast<size_t>(out_xsize) * out_ysize);
-            }
-            catch (const std::exception &) {
-                Rcpp::stop("failed to allocate memory for read");
-            }
+            Rcpp::NumericVector v = Rcpp::no_init(
+                static_cast<R_xlen_t>(out_xsize) * out_ysize);
 
             err = GDALRasterIO(hBand, GF_Read, xoff, yoff, xsize, ysize,
-                               buf.data(), out_xsize, out_ysize,
-                               GDT_Float64, 0, 0);
+                               v.begin(), out_xsize, out_ysize, GDT_Float64,
+                               0, 0);
 
             if (err == CE_Failure)
                 Rcpp::stop("read raster failed");
 
-            if (hasNoDataValue(band)) {
-                double nodata_value = getNoDataValue(band);
+            const double nodata_value = getNoDataValue(band);
+            if (hasNoDataValue(band) && !std::isnan(nodata_value)) {
                 if (GDALDataTypeIsFloating(eDT)) {
-                    for (double& val : buf) {
+                    for (double &val : v) {
                         if (std::isnan(val))
                             val = NA_REAL;
                         else if (ARE_REAL_EQUAL(val, nodata_value))
@@ -1711,19 +1695,31 @@ SEXP GDALRaster::read(int band, int xoff, int yoff, int xsize, int ysize,
                     }
                 }
                 else {
-                    std::replace(buf.begin(), buf.end(), nodata_value, NA_REAL);
+                    std::replace(v.begin(), v.end(), nodata_value, NA_REAL);
                 }
             }
             else if (GDALDataTypeIsFloating(eDT)) {
-                for (double& val : buf) {
+                for (double &val : v) {
                     if (std::isnan(val))
                         val = NA_REAL;
                 }
             }
 
-            Rcpp::NumericVector v = Rcpp::wrap(buf);
             return v;
         }
+    }
+    else {
+        // complex data types read as GDT_CFloat64
+        Rcpp::ComplexVector v = Rcpp::no_init(
+            static_cast<R_xlen_t>(out_xsize) * out_ysize);
+
+        err = GDALRasterIO(hBand, GF_Read, xoff, yoff, xsize, ysize, v.begin(),
+                           out_xsize, out_ysize, GDT_CFloat64, 0, 0);
+
+        if (err == CE_Failure)
+            Rcpp::stop("read raster failed");
+
+        return v;
     }
 }
 
@@ -1732,44 +1728,59 @@ void GDALRaster::write(int band, int xoff, int yoff, int xsize, int ysize,
 
     checkAccess_(GA_Update);
 
-    GDALDataType eBufType;
+    if (xsize < 1 || ysize < 1)
+        Rcpp::stop("'xsize' and 'ysize' must be > 0");
+
+    if (rasterData.isNULL())
+        Rcpp::stop("'rasterData' is NULL");
+
     CPLErr err = CE_None;
 
     GDALRasterBandH hBand = GDALGetRasterBand(m_hDataset, band);
     if (hBand == nullptr)
         Rcpp::stop("failed to access the requested band");
 
-    if (Rcpp::is<Rcpp::IntegerVector>(rasterData) ||
-            Rcpp::is<Rcpp::NumericVector>(rasterData)) {
-        // real data types
-        eBufType = GDT_Float64;
-        std::vector<double> buf_ = Rcpp::as<std::vector<double>>(rasterData);
-        if (buf_.size() != static_cast<size_t>(xsize) * ysize)
+    if (Rcpp::is<Rcpp::NumericVector>(rasterData)) {
+        GDALDataType eBufType = GDT_Float64;
+        Rcpp::NumericVector buf(rasterData);
+        if (buf.size() != static_cast<R_xlen_t>(xsize) * ysize)
             Rcpp::stop("size of input data is not the same as region size");
+
         err = GDALRasterIO(hBand, GF_Write, xoff, yoff, xsize, ysize,
-                           buf_.data(), xsize, ysize, eBufType, 0, 0);
+                           buf.begin(), xsize, ysize, eBufType, 0, 0);
     }
-    else if (Rcpp::is<Rcpp::ComplexVector>(rasterData)) {
-        // complex data types
-        eBufType = GDT_CFloat64;
-        std::vector<std::complex<double>> buf_ =
-            Rcpp::as<std::vector<std::complex<double>>>(rasterData);
-        if (buf_.size() != static_cast<size_t>(xsize) * ysize)
+    else if (Rcpp::is<Rcpp::IntegerVector>(rasterData) ||
+             Rcpp::is<Rcpp::LogicalVector>(rasterData)) {
+
+        GDALDataType eBufType = GDT_Int32;
+        Rcpp::IntegerVector buf(rasterData);
+        if (buf.size() != static_cast<R_xlen_t>(xsize) * ysize)
             Rcpp::stop("size of input data is not the same as region size");
+
         err = GDALRasterIO(hBand, GF_Write, xoff, yoff, xsize, ysize,
-                           buf_.data(), xsize, ysize, eBufType, 0, 0);
+                           buf.begin(), xsize, ysize, eBufType, 0, 0);
     }
     else if (Rcpp::is<Rcpp::RawVector>(rasterData)) {
-        // Byte data type
-        eBufType = GDT_Byte;
-        std::vector<uint8_t> buf_ = Rcpp::as<std::vector<uint8_t>>(rasterData);
-        if (buf_.size() != static_cast<size_t>(xsize) * ysize)
-        Rcpp::stop("size of input data is not the same as region size");
+        GDALDataType eBufType = GDT_Byte;
+        Rcpp::RawVector buf(rasterData);
+        if (buf.size() != static_cast<R_xlen_t>(xsize) * ysize)
+            Rcpp::stop("size of input data is not the same as region size");
+
         err = GDALRasterIO(hBand, GF_Write, xoff, yoff, xsize, ysize,
-                            buf_.data(), xsize, ysize, eBufType, 0, 0);
+                           buf.begin(), xsize, ysize, eBufType, 0, 0);
+    }
+    else if (Rcpp::is<Rcpp::ComplexVector>(rasterData)) {
+        GDALDataType eBufType = GDT_CFloat64;
+        Rcpp::ComplexVector buf(rasterData);
+        if (buf.size() != static_cast<R_xlen_t>(xsize) * ysize)
+            Rcpp::stop("size of input data is not the same as region size");
+
+        err = GDALRasterIO(hBand, GF_Write, xoff, yoff, xsize, ysize,
+                           buf.begin(), xsize, ysize, eBufType, 0, 0);
     }
     else {
-        Rcpp::stop("data must be a vector of 'numeric' or 'complex' or 'raw'");
+        Rcpp::stop("'rasterData' must be a vector of type numeric, integer, "
+                   "raw or complex");
     }
 
     if (err == CE_Failure) {
@@ -1794,7 +1805,7 @@ SEXP GDALRaster::getColorTable(int band) const {
     if (hColTbl == nullptr)
         return R_NilValue;
 
-    int nEntries = GDALGetColorEntryCount(hColTbl);
+    const int nEntries = GDALGetColorEntryCount(hColTbl);
     GDALPaletteInterp gpi = GDALGetPaletteInterpretation(hColTbl);
     Rcpp::IntegerMatrix col_tbl(nEntries, 5);
     Rcpp::CharacterVector col_tbl_names;
@@ -1820,8 +1831,8 @@ SEXP GDALRaster::getColorTable(int band) const {
         Rcpp::colnames(col_tbl) = col_tbl_names;
     }
 
-    for (int i=0; i < nEntries; ++i) {
-        const GDALColorEntry* colEntry = GDALGetColorEntry(hColTbl, i);
+    for (int i = 0; i < nEntries; ++i) {
+        const GDALColorEntry *colEntry = GDALGetColorEntry(hColTbl, i);
         col_tbl(i, 0) = i;
         col_tbl(i, 1) = colEntry->c1;
         col_tbl(i, 2) = colEntry->c2;
@@ -1866,11 +1877,13 @@ bool GDALRaster::setColorTable(int band, const Rcpp::RObject &col_tbl,
 
     GDALRasterBandH hBand = getBand_(band);
 
-    Rcpp::IntegerMatrix m_col_tbl;
+    Rcpp::IntegerMatrix m_col_tbl = {};
     if (Rcpp::is<Rcpp::DataFrame>(col_tbl)) {
         m_col_tbl = df_to_int_matrix_(col_tbl);
     }
-    else if (Rcpp::is<Rcpp::IntegerVector>(col_tbl)) {
+    else if (Rcpp::is<Rcpp::NumericVector>(col_tbl) ||
+             Rcpp::is<Rcpp::IntegerVector>(col_tbl)) {
+
         if (Rf_isMatrix(col_tbl))
             m_col_tbl = Rcpp::as<Rcpp::IntegerMatrix>(col_tbl);
     }
@@ -1898,21 +1911,25 @@ bool GDALRaster::setColorTable(int band, const Rcpp::RObject &col_tbl,
         Rcpp::stop("invalid 'palette_interp'");
 
     int max_value = Rcpp::max(m_col_tbl.column(0));
-    GDALColorTableH hColTbl = GDALCreateColorTable(gpi);
+    GDALColorTableH hColTbl = nullptr;
+    hColTbl = GDALCreateColorTable(gpi);
+    if (!hColTbl)
+        Rcpp::stop("failed to create color table object");
+
     // initialize all entries
-    for (int i=0; i <= max_value; ++i) {
-        const GDALColorEntry col = {0, 0, 0, 0};
+    const GDALColorEntry col = {0, 0, 0, 0};
+    for (int i = 0; i <= max_value; ++i) {
         GDALSetColorEntry(hColTbl, i, &col);
     }
 
     // set entries from input table
-    for (int i=0; i < m_col_tbl.nrow(); ++i) {
+    for (int i = 0; i < m_col_tbl.nrow(); ++i) {
         if (m_col_tbl(i, 0) >= 0) {
             const GDALColorEntry col = {
-                    static_cast<short>(m_col_tbl(i, 1)),
-                    static_cast<short>(m_col_tbl(i, 2)),
-                    static_cast<short>(m_col_tbl(i, 3)),
-                    static_cast<short>(m_col_tbl(i, 4)) };
+                static_cast<short>(m_col_tbl(i, 1)),
+                static_cast<short>(m_col_tbl(i, 2)),
+                static_cast<short>(m_col_tbl(i, 3)),
+                static_cast<short>(m_col_tbl(i, 4)) };
             GDALSetColorEntry(hColTbl, m_col_tbl(i, 0), &col);
         }
         else {
@@ -1924,7 +1941,7 @@ bool GDALRaster::setColorTable(int band, const Rcpp::RObject &col_tbl,
     GDALDestroyColorTable(hColTbl);
     if (err == CE_Failure) {
         if (!quiet)
-            Rcpp::Rcerr << "failed to set color table\n";
+            Rcpp::Rcout << "failed to set color table\n";
         return false;
     }
     else {
@@ -1950,13 +1967,14 @@ SEXP GDALRaster::getDefaultRAT(int band) const {
     checkAccess_(GA_ReadOnly);
 
     GDALRasterBandH hBand = getBand_(band);
-    GDALRasterAttributeTableH hRAT = GDALGetDefaultRAT(hBand);
-    if (hRAT == nullptr)
+    GDALRasterAttributeTableH hRAT = nullptr;
+    hRAT = GDALGetDefaultRAT(hBand);
+    if (!hRAT)
         return R_NilValue;
 
     CPLErr err = CE_None;
-    int nCol = GDALRATGetColumnCount(hRAT);
-    int nRow = GDALRATGetRowCount(hRAT);
+    const int nCol = GDALRATGetColumnCount(hRAT);
+    const int nRow = GDALRATGetRowCount(hRAT);
     Rcpp::List df(nCol);
     Rcpp::CharacterVector col_names(nCol);
 
@@ -1965,7 +1983,7 @@ SEXP GDALRaster::getDefaultRAT(int band) const {
         pfnProgress = GDALTermProgressR;
     void *pProgressData = nullptr;
 
-    for (int i=0; i < nCol; ++i) {
+    for (int i = 0; i < nCol; ++i) {
         std::string colName(GDALRATGetNameOfCol(hRAT, i));
         GDALRATFieldType gft = GDALRATGetTypeOfCol(hRAT, i);
         GDALRATFieldUsage gfu = GDALRATGetUsageOfCol(hRAT, i);
@@ -1993,9 +2011,11 @@ SEXP GDALRaster::getDefaultRAT(int band) const {
         }
         else if (gft == GFT_String) {
             char **papszStringList = reinterpret_cast<char**>(
-                    CPLCalloc(sizeof(char*), nRow));
+                CPLCalloc(sizeof(char*), nRow));
+
             err = GDALRATValuesIOAsString(hRAT, GF_Read, i, 0, nRow,
                                           papszStringList);
+
             if (err == CE_Failure) {
                 CPLFree(papszStringList);
                 Rcpp::stop("read column failed");
@@ -2034,8 +2054,10 @@ SEXP GDALRaster::getDefaultRAT(int band) const {
         df.attr("GDALRATTableType") = "thematic";
 
     // check for linear binning information
-    double dfRow0Min;  // lower bound (pixel value) of the first category
-    double dfBinSize;  // width of each category (in pixel value units)
+    // lower bound (pixel value) of the first category:
+    double dfRow0Min = NA_REAL;
+    // width of each category (in pixel value units):
+    double dfBinSize = NA_REAL;
     if (GDALRATGetLinearBinning(hRAT, &dfRow0Min, &dfBinSize)) {
         df.attr("Row0Min") = dfRow0Min;
         df.attr("BinSize") = dfBinSize;
@@ -2049,15 +2071,17 @@ bool GDALRaster::setDefaultRAT(int band, const Rcpp::DataFrame &df) {
 
     GDALRasterBandH hBand = getBand_(band);
 
-    int nRow = df.nrows();
-    int nCol = df.size();
+    const int nRow = static_cast<int>(df.nrows());
+    const int nCol = static_cast<int>(df.size());
     int nCol_added = 0;
     Rcpp::CharacterVector colNames = df.names();
     CPLErr err = CE_None;
 
-    GDALRasterAttributeTableH hRAT = GDALCreateRasterAttributeTable();
-    if (hRAT == nullptr)
+    GDALRasterAttributeTableH hRAT = nullptr;
+    hRAT = GDALCreateRasterAttributeTable();
+    if (!hRAT)
         Rcpp::stop("GDALCreateRasterAttributeTable() returned null pointer");
+
     GDALRATSetRowCount(hRAT, nRow);
     if (df.hasAttribute("GDALRATTableType")) {
         std::string s = Rcpp::as<std::string>(df.attr("GDALRATTableType"));
@@ -2082,7 +2106,7 @@ bool GDALRaster::setDefaultRAT(int band, const Rcpp::DataFrame &df) {
             Rcpp::warning("failed to set linear binning information");
     }
 
-    for (int col=0; col < nCol; ++col) {
+    for (int col = 0; col < nCol; ++col) {
         if (Rf_isMatrix(df[col])) {
             Rcpp::warning("matrix column is not supported (skipping)");
             continue;
@@ -2092,7 +2116,8 @@ bool GDALRaster::setDefaultRAT(int band, const Rcpp::DataFrame &df) {
             continue;
         }
         if (Rcpp::is<Rcpp::IntegerVector>(df[col]) ||
-                Rcpp::is<Rcpp::LogicalVector>(df[col])) {
+            Rcpp::is<Rcpp::LogicalVector>(df[col])) {
+
             // add GFT_Integer column
             Rcpp::IntegerVector v = df[col];
             GDALRATFieldUsage gfu = GFU_Generic;
@@ -2105,7 +2130,7 @@ bool GDALRaster::setDefaultRAT(int band, const Rcpp::DataFrame &df) {
                 Rcpp::warning("create 'integer' column failed (skipping)");
                 continue;
             }
-            for (int row=0; row < nRow; ++row) {
+            for (int row = 0; row < nRow; ++row) {
                 GDALRATSetValueAsInt(hRAT, row, col, v(row));
             }
             nCol_added += 1;
@@ -2123,7 +2148,7 @@ bool GDALRaster::setDefaultRAT(int band, const Rcpp::DataFrame &df) {
                 Rcpp::warning("create 'real' column failed (skipping)");
                 continue;
             }
-            for (int row=0; row < nRow; ++row) {
+            for (int row = 0; row < nRow; ++row) {
                 GDALRATSetValueAsDouble(hRAT, row, col, v(row));
             }
             nCol_added += 1;
@@ -2141,7 +2166,7 @@ bool GDALRaster::setDefaultRAT(int band, const Rcpp::DataFrame &df) {
                 Rcpp::warning("create 'string' column failed (skipping)");
                 continue;
             }
-            for (int row=0; row < nRow; ++row) {
+            for (int row = 0; row < nRow; ++row) {
                 Rcpp::String s(v(row));
                 GDALRATSetValueAsString(hRAT, row, col, s.get_cstring());
             }
@@ -2159,7 +2184,7 @@ bool GDALRaster::setDefaultRAT(int band, const Rcpp::DataFrame &df) {
 
     if (nCol_added == 0 || err == CE_Failure) {
         if (!quiet)
-            Rcpp::Rcerr << "could not set raster attribute table\n";
+            Rcpp::Rcout << "could not set raster attribute table\n";
         return false;
     }
     else {
@@ -2177,8 +2202,8 @@ void GDALRaster::flushCache() {
 #endif
 }
 
-int GDALRaster::getChecksum(int band, int xoff, int yoff,
-        int xsize, int ysize) const {
+int GDALRaster::getChecksum(int band, int xoff, int yoff, int xsize,
+                            int ysize) const {
 
     checkAccess_(GA_ReadOnly);
 
@@ -2211,8 +2236,8 @@ void GDALRaster::close() {
 }
 
 void GDALRaster::show() const {
-    int xsize = static_cast<int>(getRasterXSize());
-    int ysize = static_cast<int>(getRasterYSize());
+    const int xsize = static_cast<int>(getRasterXSize());
+    const int ysize = static_cast<int>(getRasterYSize());
 
     Rcpp::Environment pkg = Rcpp::Environment::namespace_env("gdalraster");
     Rcpp::Function fn = pkg[".get_crs_name"];
@@ -2270,8 +2295,8 @@ bool GDALRaster::readableAsInt_(int band) const {
     // signed integer <= 32 bits or any integer <= 16 bits
     if (GDALDataTypeIsInteger(eDT) &&
             (GDALGetDataTypeSizeBits(eDT) <= 16 ||
-            (GDALGetDataTypeSizeBits(eDT) <= 32 &&
-            GDALDataTypeIsSigned(eDT)))) {
+             (GDALGetDataTypeSizeBits(eDT) <= 32 &&
+              GDALDataTypeIsSigned(eDT)))) {
 
         return true;
     }
@@ -2298,27 +2323,27 @@ void GDALRaster::warnInt64_() const {
     Rcpp::Rcout << "Int64/UInt64 raster data types are not fully supported.\n";
     Rcpp::Rcout << "Loss of precision will occur for values > 2^53.\n";
     std::string msg =
-            "Int64/UInt64 raster data are currently handled as 'double'";
+        "Int64/UInt64 raster data are currently handled as 'double'";
     Rcpp::warning(msg);
 }
 
 GDALDatasetH GDALRaster::getGDALDatasetH_() const {
-    checkAccess_(GA_ReadOnly);
-
     return m_hDataset;
 }
 
-void GDALRaster::setGDALDatasetH_(const GDALDatasetH &hDs, bool with_update) {
+void GDALRaster::setGDALDatasetH_(GDALDatasetH hDs) {
     m_hDataset = hDs;
-    if (with_update)
-        m_eAccess = GA_Update;
-    else
-        m_eAccess = GA_ReadOnly;
+    if (m_hDataset) {
+        if (GDALGetAccess(m_hDataset) == GA_ReadOnly)
+            m_eAccess = GA_ReadOnly;
+        else
+            m_eAccess = GA_Update;
 
-    if (GDALDataset::FromHandle(m_hDataset)->GetShared() == TRUE)
-        m_shared = true;
-    else
-        m_shared = false;
+        if (GDALDataset::FromHandle(m_hDataset)->GetShared() == TRUE)
+            m_shared = true;
+        else
+            m_shared = false;
+    }
 }
 
 // ****************************************************************************
@@ -2339,7 +2364,8 @@ RCPP_MODULE(mod_GDALRaster) {
         ("Usage: new(GDALRaster, filename, read_only, open_options, shared)")
     .constructor<Rcpp::CharacterVector, bool,
         Rcpp::Nullable<Rcpp::CharacterVector>, bool, Rcpp::CharacterVector>
-        ("Usage: new(GDALRaster, filename, read_only, open_options, shared, allowed_drivers)")
+        ("Usage: new(GDALRaster, filename, read_only, open_options, shared, "
+         "allowed_drivers)")
 
     // createCopy() object factory with 6 parameters
     .factory<const std::string&, const Rcpp::CharacterVector&,

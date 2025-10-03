@@ -9,6 +9,9 @@
 #include <cpl_port.h>
 #include <cpl_conv.h>
 
+#include <Rcpp.h>
+#include <RcppInt64>
+
 #include <cstdlib>
 #include <limits>
 #include <string>
@@ -17,28 +20,28 @@
 #include "gdalraster.h"
 #include "rcpp_util.h"
 
-constexpr uint64_t VSI_L_OFFSET_MAX_R = 9223372036854775807;
+constexpr uint64_t VSI_L_OFFSET_MAX_R_ = MAX_INTEGER64;
 
-VSIFile::VSIFile() :
-            m_filename(""),
-            m_access("r"),
-            m_options(Rcpp::CharacterVector::create()),
-            m_fp(nullptr) {}
+VSIFile::VSIFile()
+        : m_filename(""), m_access("r"),
+          m_options(Rcpp::CharacterVector::create()), m_fp(nullptr) {}
 
-VSIFile::VSIFile(Rcpp::CharacterVector filename) :
-            VSIFile(filename, "r", Rcpp::CharacterVector::create()) {}
+VSIFile::VSIFile(Rcpp::CharacterVector filename)
+        : VSIFile(filename, "r", Rcpp::CharacterVector::create()) {}
 
-VSIFile::VSIFile(Rcpp::CharacterVector filename, std::string access) :
-            VSIFile(filename, access, Rcpp::CharacterVector::create()) {}
+VSIFile::VSIFile(Rcpp::CharacterVector filename, std::string access)
+        : VSIFile(filename, access, Rcpp::CharacterVector::create()) {}
 
 VSIFile::VSIFile(Rcpp::CharacterVector filename, std::string access,
-                 Rcpp::CharacterVector options) : m_fp(nullptr) {
+                 Rcpp::CharacterVector options)
+        : m_fp(nullptr) {
 
     m_filename = Rcpp::as<std::string>(check_gdal_filename(filename));
     if (access.length() > 0 && access.length() < 4)
         m_access = access;
     else
         Rcpp::stop("'access' should be 'r', 'r+', 'w' or 'w+'");
+
     m_options = options;
     open();
 }
@@ -118,7 +121,7 @@ Rcpp::NumericVector VSIFile::tell() const {
         Rcpp::stop("the file is not open");
 
     vsi_l_offset offset = VSIFTellL(m_fp);
-    if (offset > VSI_L_OFFSET_MAX_R)
+    if (offset > VSI_L_OFFSET_MAX_R_)
         Rcpp::stop("the current file offset exceeds R integer64 upper limit");
 
     std::vector<int64_t> ret(1);
@@ -149,7 +152,7 @@ SEXP VSIFile::read(Rcpp::NumericVector nbytes) {
         nbytes_in = static_cast<size_t>(Rcpp::fromInteger64(nbytes[0]));
     }
     else {
-        if (nbytes[0] > static_cast<double>(MAX_INT_AS_R_NUMERIC_))
+        if (nbytes[0] > MAX_INT_AS_R_NUMERIC_)
             Rcpp::stop("'nbytes' given as type double is out of range");
         else
             nbytes_in = static_cast<size_t>(nbytes[0]);
@@ -166,7 +169,7 @@ SEXP VSIFile::read(Rcpp::NumericVector nbytes) {
         return R_NilValue;
     }
 
-    Rcpp::RawVector raw(nRead);
+    Rcpp::RawVector raw = Rcpp::no_init(nRead);
     std::memcpy(&raw[0], buf, nRead);
     VSIFree(buf);
     return raw;
@@ -251,11 +254,11 @@ SEXP VSIFile::ingest(Rcpp::NumericVector max_size) {
     int result = VSIIngestFile(m_fp, nullptr, &paby, &nSize, max_size_in);
 
     if (!result) {
-        Rcpp::Rcerr << "failed to ingest file\n";
+        Rcpp::Rcout << "failed to ingest file\n";
         return R_NilValue;
     }
 
-    Rcpp::RawVector raw(nSize);
+    Rcpp::RawVector raw = Rcpp::no_init(nSize);
     std::memcpy(&raw[0], paby, nSize);
     VSIFree(paby);
     return raw;
@@ -281,7 +284,7 @@ std::string VSIFile::get_access() const {
 
 int VSIFile::set_access(std::string access) {
     if (m_fp != nullptr) {
-        Rcpp::Rcerr << "cannot set access while the file is open\n";
+        Rcpp::Rcout << "cannot set access while the file is open\n";
         return -1;
     }
 
@@ -290,7 +293,7 @@ int VSIFile::set_access(std::string access) {
         return 0;
     }
     else {
-        Rcpp::Rcerr << "'access' should be 'r', 'r+', 'w' or 'w+'\n";
+        Rcpp::Rcout << "'access' should be 'r', 'r+', 'w' or 'w+'\n";
         return -1;
     }
 }

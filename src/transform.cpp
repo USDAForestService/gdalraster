@@ -9,6 +9,9 @@
 #include <ogr_srs_api.h>
 #include <ogr_spatialref.h>
 
+#include <Rcpp.h>
+
+#include <memory>
 #include <string>
 #include <vector>
 
@@ -30,13 +33,12 @@ std::vector<int> getPROJVersion() {
 //' @noRd
 // [[Rcpp::export(name = ".getPROJSearchPaths")]]
 Rcpp::CharacterVector getPROJSearchPaths() {
-    char **papszPaths;
-    papszPaths = OSRGetPROJSearchPaths();
+    char **papszPaths = OSRGetPROJSearchPaths();
 
-    int items = CSLCount(papszPaths);
-    if (items > 0) {
-        Rcpp::CharacterVector paths(items);
-        for (int i=0; i < items; ++i) {
+    int nItems = CSLCount(papszPaths);
+    if (nItems > 0) {
+        Rcpp::CharacterVector paths(nItems);
+        for (int i = 0; i < nItems; ++i) {
             paths(i) = papszPaths[i];
         }
         CSLDestroy(papszPaths);
@@ -52,8 +54,7 @@ Rcpp::CharacterVector getPROJSearchPaths() {
 //' @noRd
 // [[Rcpp::export(name = ".setPROJSearchPaths")]]
 void setPROJSearchPaths(Rcpp::CharacterVector paths) {
-    std::vector<char *> path_list = {nullptr};
-    path_list.resize(paths.size() + 1);
+    std::vector<char *> path_list(paths.size() + 1);
     for (R_xlen_t i = 0; i < paths.size(); ++i) {
         path_list[i] = (char *) (paths[i]);
     }
@@ -89,9 +90,9 @@ void setPROJEnableNetwork(int enabled) {
     if (getPROJVersion()[0] >= 7)
         OSRSetPROJEnableNetwork(enabled);
     else
-        Rcpp::Rcerr << "OSRSetPROJEnableNetwork() requires PROJ 7 or later\n";
+        Rcpp::Rcout << "OSRSetPROJEnableNetwork() requires PROJ 7 or later\n";
 #else
-    Rcpp::Rcerr << "OSRSetPROJEnableNetwork() requires GDAL 3.4 or later\n";
+    Rcpp::Rcout << "OSRSetPROJEnableNetwork() requires GDAL 3.4 or later\n";
 #endif
     return;
 }
@@ -106,7 +107,6 @@ Rcpp::NumericMatrix inv_project(const Rcpp::RObject &pts,
                                 const std::string &well_known_gcs = "") {
 
     Rcpp::NumericMatrix pts_in = xy_robject_to_matrix_(pts);
-
     if (pts_in.nrow() == 0)
         Rcpp::stop("input matrix is empty");
 
@@ -124,44 +124,38 @@ Rcpp::NumericMatrix inv_project(const Rcpp::RObject &pts,
     }
 
     std::string srs_in = srs_to_wkt(srs, false);
-
     OGRSpatialReference oSourceSRS{};
-    OGRSpatialReference *poLongLat = nullptr;
-    OGRCoordinateTransformation *poCT = nullptr;
+    std::unique_ptr<OGRSpatialReference> poLongLat;
     OGRErr err = OGRERR_NONE;
 
     err = oSourceSRS.importFromWkt(srs_in.c_str());
     if (err != OGRERR_NONE)
         Rcpp::stop("failed to import SRS from WKT string");
-
     oSourceSRS.SetAxisMappingStrategy(OAMS_TRADITIONAL_GIS_ORDER);
 
     if (well_known_gcs == "") {
-        poLongLat = oSourceSRS.CloneGeogCS();
-        if (poLongLat == nullptr)
-            Rcpp::stop("failed to clone GCS");
+        poLongLat = std::unique_ptr<OGRSpatialReference>(
+            oSourceSRS.CloneGeogCS());
     }
     else {
-        poLongLat = new OGRSpatialReference();
+        poLongLat = std::make_unique<OGRSpatialReference>();
         err = poLongLat->SetWellKnownGeogCS(well_known_gcs.c_str());
         if (err == OGRERR_FAILURE) {
-            poLongLat->Release();
             Rcpp::stop("failed to set well known GCS");
         }
     }
     poLongLat->SetAxisMappingStrategy(OAMS_TRADITIONAL_GIS_ORDER);
 
-    poCT = OGRCreateCoordinateTransformation(&oSourceSRS, poLongLat);
-    if (poCT == nullptr) {
-        poLongLat->Release();
-        Rcpp::stop("failed to create coordinate transformer");
-    }
+    auto poCT = std::unique_ptr<OGRCoordinateTransformation>(
+        OGRCreateCoordinateTransformation(&oSourceSRS, poLongLat.get()));
 
     Rcpp::NumericVector x = pts_in(Rcpp::_ , 0);
     Rcpp::NumericVector y = pts_in(Rcpp::_ , 1);
+
     Rcpp::NumericVector z{};
     if (has_z)
         z = pts_in(Rcpp::_ , 2);
+
     Rcpp::NumericVector t{};
     if (has_t)
         t = pts_in(Rcpp::_ , 3);
@@ -169,6 +163,7 @@ Rcpp::NumericMatrix inv_project(const Rcpp::RObject &pts,
     Rcpp::LogicalVector na_in = Rcpp::is_na(x) | Rcpp::is_na(y);
     if (has_z)
         na_in = na_in | Rcpp::is_na(z);
+
     if (has_t)
         na_in = na_in | Rcpp::is_na(t);
 
@@ -178,9 +173,11 @@ Rcpp::NumericMatrix inv_project(const Rcpp::RObject &pts,
 
     std::vector<double> xbuf = Rcpp::as<std::vector<double>>(x);
     std::vector<double> ybuf = Rcpp::as<std::vector<double>>(y);
+
     std::vector<double> zbuf{};
     if (has_z)
         zbuf = Rcpp::as<std::vector<double>>(z);
+
     std::vector<double> tbuf{};
     if (has_t)
         tbuf = Rcpp::as<std::vector<double>>(t);
@@ -191,9 +188,6 @@ Rcpp::NumericMatrix inv_project(const Rcpp::RObject &pts,
                               has_z ? zbuf.data() : nullptr,
                               has_t ? tbuf.data() : nullptr,
                               success.data());
-
-    OGRCoordinateTransformation::DestroyCT(poCT);
-    poLongLat->Release();
 
     // behavior change at GDAL 3.11 (https://github.com/OSGeo/gdal/pull/11819)
     // if FALSE returned, we know at least one or more points failed so it's
@@ -208,12 +202,15 @@ Rcpp::NumericMatrix inv_project(const Rcpp::RObject &pts,
 
     Rcpp::NumericVector ret_x = Rcpp::wrap(xbuf);
     Rcpp::NumericVector ret_y = Rcpp::wrap(ybuf);
+
     Rcpp::NumericVector ret_z{};
     if (has_z)
         ret_z = Rcpp::wrap(zbuf);
+
     Rcpp::NumericVector ret_t{};
     if (has_t)
         ret_t = Rcpp::wrap(tbuf);
+
     size_t num_err = 0;
     size_t num_na = 0;
     for (R_xlen_t i = 0; i < na_in.size(); ++i) {
@@ -235,8 +232,10 @@ Rcpp::NumericMatrix inv_project(const Rcpp::RObject &pts,
     Rcpp::NumericMatrix ret = Rcpp::no_init(pts_in.nrow(), pts_in.ncol());
     ret.column(0) = ret_x;
     ret.column(1) = ret_y;
+
     if (has_z)
         ret.column(2) = ret_z;
+
     if (has_t)
         ret.column(3) = ret_t;
 
@@ -284,7 +283,6 @@ Rcpp::NumericMatrix transform_xy(const Rcpp::RObject &pts,
     std::string srs_to_in = srs_to_wkt(srs_to, false);
 
     OGRSpatialReference oSourceSRS{}, oDestSRS{};
-    OGRCoordinateTransformation *poCT = nullptr;
     OGRErr err = OGRERR_NONE;
 
     err = oSourceSRS.importFromWkt(srs_from_in.c_str());
@@ -299,22 +297,25 @@ Rcpp::NumericMatrix transform_xy(const Rcpp::RObject &pts,
 
     oDestSRS.SetAxisMappingStrategy(OAMS_TRADITIONAL_GIS_ORDER);
 
-    poCT = OGRCreateCoordinateTransformation(&oSourceSRS, &oDestSRS);
-    if (poCT == nullptr)
-        Rcpp::stop("failed to create coordinate transformer");
+    auto poCT = std::unique_ptr<OGRCoordinateTransformation>(
+        OGRCreateCoordinateTransformation(&oSourceSRS, &oDestSRS));
 
     Rcpp::NumericVector x = pts_in(Rcpp::_ , 0);
     Rcpp::NumericVector y = pts_in(Rcpp::_ , 1);
+
     Rcpp::NumericVector z{};
     if (has_z)
         z = pts_in(Rcpp::_ , 2);
+
     Rcpp::NumericVector t{};
     if (has_t)
         t = pts_in(Rcpp::_ , 3);
 
     Rcpp::LogicalVector na_in = Rcpp::is_na(x) | Rcpp::is_na(y);
+
     if (has_z)
         na_in = na_in | Rcpp::is_na(z);
+
     if (has_t)
         na_in = na_in | Rcpp::is_na(t);
 
@@ -324,9 +325,11 @@ Rcpp::NumericMatrix transform_xy(const Rcpp::RObject &pts,
 
     std::vector<double> xbuf = Rcpp::as<std::vector<double>>(x);
     std::vector<double> ybuf = Rcpp::as<std::vector<double>>(y);
+
     std::vector<double> zbuf{};
     if (has_z)
         zbuf = Rcpp::as<std::vector<double>>(z);
+
     std::vector<double> tbuf{};
     if (has_t)
         tbuf = Rcpp::as<std::vector<double>>(t);
@@ -337,8 +340,6 @@ Rcpp::NumericMatrix transform_xy(const Rcpp::RObject &pts,
                               has_z ? zbuf.data() : nullptr,
                               has_t ? tbuf.data() : nullptr,
                               success.data());
-
-    OGRCoordinateTransformation::DestroyCT(poCT);
 
     // behavior change at GDAL 3.11 (https://github.com/OSGeo/gdal/pull/11819)
     // if FALSE returned, we know at least one or more points failed so it's
@@ -353,12 +354,15 @@ Rcpp::NumericMatrix transform_xy(const Rcpp::RObject &pts,
 
     Rcpp::NumericVector ret_x = Rcpp::wrap(xbuf);
     Rcpp::NumericVector ret_y = Rcpp::wrap(ybuf);
+
     Rcpp::NumericVector ret_z{};
     if (has_z)
         ret_z = Rcpp::wrap(zbuf);
+
     Rcpp::NumericVector ret_t{};
     if (has_t)
         ret_t = Rcpp::wrap(tbuf);
+
     size_t num_err = 0;
     size_t num_na = 0;
     for (R_xlen_t i = 0; i < na_in.size(); ++i) {
@@ -380,8 +384,10 @@ Rcpp::NumericMatrix transform_xy(const Rcpp::RObject &pts,
     Rcpp::NumericMatrix ret = Rcpp::no_init(pts_in.nrow(), pts_in.ncol());
     ret.column(0) = ret_x;
     ret.column(1) = ret_y;
+
     if (has_z)
         ret.column(2) = ret_z;
+
     if (has_t)
         ret.column(3) = ret_t;
 
@@ -521,7 +527,7 @@ SEXP transform_bounds(const Rcpp::RObject &bbox,
     OGRSpatialReferenceH hSRS_from = OSRNewSpatialReference(nullptr);
     OGRSpatialReferenceH hSRS_to = OSRNewSpatialReference(nullptr);
 
-    char *pszWKT1 = (char*) srs_from_in.c_str();
+    char *pszWKT1 = const_cast<char*>(srs_from_in.c_str());
     if (OSRImportFromWkt(hSRS_from, &pszWKT1) != OGRERR_NONE) {
         if (hSRS_from != nullptr)
             OSRDestroySpatialReference(hSRS_from);
@@ -530,7 +536,7 @@ SEXP transform_bounds(const Rcpp::RObject &bbox,
         Rcpp::stop("error importing 'srs_from' from user input");
     }
 
-    char *pszWKT2 = (char*) srs_to_in.c_str();
+    char *pszWKT2 = const_cast<char*>(srs_to_in.c_str());
     if (OSRImportFromWkt(hSRS_to, &pszWKT2) != OGRERR_NONE) {
         if (hSRS_from != nullptr)
             OSRDestroySpatialReference(hSRS_from);
@@ -540,7 +546,7 @@ SEXP transform_bounds(const Rcpp::RObject &bbox,
     }
 
     const std::string save_opt =
-            get_config_option("OGR_CT_FORCE_TRADITIONAL_GIS_ORDER");
+        get_config_option("OGR_CT_FORCE_TRADITIONAL_GIS_ORDER");
 
     if (traditional_gis_order) {
         OSRSetAxisMappingStrategy(hSRS_from, OAMS_TRADITIONAL_GIS_ORDER);
@@ -569,10 +575,10 @@ SEXP transform_bounds(const Rcpp::RObject &bbox,
         const Rcpp::NumericVector this_bbox = bbox_matrix_in.row(i);
         out_xmin = out_ymin = out_xmax = out_ymax = NA_REAL;
 
-        if (Rcpp::any(Rcpp::is_na(this_bbox))) {
+        if (Rcpp::is_true(Rcpp::any(Rcpp::is_na(this_bbox)))) {
             Rcpp::warning("an input bbox has one or more 'NA' values");
-            out.row(i) = Rcpp::NumericVector::create(
-                                NA_REAL, NA_REAL, NA_REAL, NA_REAL);
+            out.row(i) =
+                Rcpp::NumericVector::create(NA_REAL, NA_REAL, NA_REAL, NA_REAL);
         }
         else {
             int res = OCTTransformBounds(hCT,
@@ -584,12 +590,14 @@ SEXP transform_bounds(const Rcpp::RObject &bbox,
 
             if (!res) {
                 Rcpp::warning("error returned by OCTTransformBounds()");
-                out.row(i) = Rcpp::NumericVector::create(
-                                    NA_REAL, NA_REAL, NA_REAL, NA_REAL);
+                out.row(i) =
+                    Rcpp::NumericVector::create(NA_REAL, NA_REAL, NA_REAL,
+                                                NA_REAL);
             }
             else {
-                out.row(i) = Rcpp::NumericVector::create(
-                                    out_xmin, out_ymin, out_xmax, out_ymax);
+                out.row(i) =
+                    Rcpp::NumericVector::create(out_xmin, out_ymin, out_xmax,
+                                                out_ymax);
             }
         }
     }
