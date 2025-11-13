@@ -524,7 +524,7 @@ required output filename can be given as empty string
 <span><span class="va">alg</span><span class="op">$</span><span class="fu">release</span><span class="op">(</span><span class="op">)</span></span>
 <span></span>
 <span><span class="fu"><a href="../reference/plot_raster.html">plot_raster</a></span><span class="op">(</span><span class="va">ds_hillshade</span>, main <span class="op">=</span> <span class="st">"Storm Lake AOI shaded relief"</span><span class="op">)</span></span></code></pre></div>
-<p><img src="img/storml_hillshade.png" alt="A plot of the hillshade raster, a shaded relief map, for the Storm Lake area of interest." width="75%"></p>
+<p><img src="img/storml_hillshade.png" class="r-plt" alt="A plot of the hillshade raster, a shaded relief map, for the Storm Lake area of interest." width="75%"></p>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># clean up</span></span>
 <span><span class="va">ds</span><span class="op">$</span><span class="fu">close</span><span class="op">(</span><span class="op">)</span></span>
@@ -815,7 +815,7 @@ object.</p>
 <span><span class="va">ramp</span> <span class="op">&lt;-</span> <span class="fu">scales</span><span class="fu">::</span><span class="fu"><a href="https://scales.r-lib.org/reference/colour_ramp.html" class="external-link">colour_ramp</a></span><span class="op">(</span><span class="va">pal</span><span class="op">)</span></span>
 <span><span class="fu"><a href="../reference/plot_raster.html">plot_raster</a></span><span class="op">(</span><span class="va">ds</span>, legend <span class="op">=</span> <span class="cn">TRUE</span>, col_map_fn <span class="op">=</span> <span class="va">ramp</span>, na_col <span class="op">=</span> <span class="st">"#d9d9d9"</span>,</span>
 <span>            main <span class="op">=</span> <span class="st">"YNP Fires 1984-2022 - Most Recent Burn Year"</span><span class="op">)</span></span></code></pre></div>
-<p><img src="img/ynp_fire_year.png" alt="A plot of fire perimeters in Yellowstone National Park during 1984 through 2022. A color ramp is used to indicate the burn year as depicted in a legend on the right-hand side of the plot. The most recent burn year is shown in cases where fire perimeters overlap." width="75%"></p>
+<p><img src="img/ynp_fire_year.png" class="r-plt" alt="A plot of fire perimeters in Yellowstone National Park during 1984 through 2022. A color ramp is used to indicate the burn year as depicted in a legend on the right-hand side of the plot. The most recent burn year is shown in cases where fire perimeters overlap." width="75%"></p>
 <div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">lyr</span><span class="op">$</span><span class="fu">close</span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="va">ds</span><span class="op">$</span><span class="fu">close</span><span class="op">(</span><span class="op">)</span></span>
@@ -845,7 +845,7 @@ object.</p>
 </div>
 
 <div class="pkgdown-footer-right">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.3.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.2.0.</p>
 </div>
 
     </footer>

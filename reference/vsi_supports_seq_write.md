@@ -1,0 +1,44 @@
+# Return whether the filesystem supports sequential write
+
+`vsi_supports_seq_write()` returns whether the filesystem supports
+sequential write. Wrapper for `VSISupportsSequentialWrite()` in the GDAL
+API.
+
+## Usage
+
+``` r
+vsi_supports_seq_write(filename, allow_local_tmpfile)
+```
+
+## Arguments
+
+- filename:
+
+  Character string. The path of the filesystem object to be tested.
+
+- allow_local_tmpfile:
+
+  Logical scalar. `TRUE` if the filesystem is allowed to use a local
+  temporary file before uploading to the target location.
+
+## Value
+
+Logical scalar. `TRUE` if sequential write is supported.
+
+## Note
+
+The location GDAL uses for temporary files can be forced via the
+`CPL_TMPDIR` configuration option.
+
+## See also
+
+[`vsi_supports_rnd_write()`](https://usdaforestservice.github.io/gdalraster/reference/vsi_supports_rnd_write.md)
+
+## Examples
+
+``` r
+# Requires GDAL >= 3.6
+if (gdal_version_num() >= gdal_compute_version(3, 6, 0))
+  vsi_supports_seq_write("/vsimem/test-mem-file.gpkg", TRUE)
+#> [1] TRUE
+```

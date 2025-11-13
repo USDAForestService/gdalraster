@@ -794,7 +794,7 @@ for data retrieval. For now, note that the function
 <span>       main <span class="op">=</span> <span class="st">"YNP Geothermal Features"</span><span class="op">)</span></span>
 <span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">feat_set</span>, pch <span class="op">=</span> <span class="fl">19</span>, col <span class="op">=</span> <span class="st">"steelblue1"</span>, add <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
-<p><img src="vector-api-overview_files/figure-html/unnamed-chunk-9-1.png" alt="A plot of the Yellowstone National Park (YNP) boundary in geographic coordinate system showing point locations of geothermal features. The YNP boundary polygon has background R color 'wheat'. The locations of geothermal features are solid circles with R color 'steelblue1. The x-axis label is 'longitude' and the y-axis label is 'latitude'. The plot title is 'YNP Geothermal Features." width="700"></p>
+<p><img src="vector-api-overview_files/figure-html/unnamed-chunk-9-1.png" class="r-plt" alt="A plot of the Yellowstone National Park (YNP) boundary in geographic coordinate system showing point locations of geothermal features. The YNP boundary polygon has background R color 'wheat'. The locations of geothermal features are solid circles with R color 'steelblue1. The x-axis label is 'longitude' and the y-axis label is 'latitude'. The plot title is 'YNP Geothermal Features." width="700"></p>
 <p>For clean up, the <code>$close()</code> method should be called on
 the layer object opened with <code><a href="../reference/ogr_manage.html">ogr_execute_sql()</a></code>. We also
 delete the temporary in-memory file.</p>
@@ -1003,7 +1003,7 @@ returned by <code>$fetch()</code> carries the
 <span>     main <span class="op">=</span> <span class="st">"YNP Public Roads"</span><span class="op">)</span></span>
 <span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">roads_featset</span>, col <span class="op">=</span> <span class="st">"slategray"</span>, lwd <span class="op">=</span> <span class="fl">2</span>, add <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
-<p><img src="vector-api-overview_files/figure-html/unnamed-chunk-13-1.png" alt="A plot of the Yellowstone National Park (YNP) boundary in geographic coordinate system showing public roads as LineString features. The YNP boundary polygon has background R color 'wheat', and the road features are shown as double-width lines with R color 'slategray'. The x-axis label is 'longitude' and the y-axis label is 'latitude'. The plot title is 'YNP Public Roads'." width="700"></p>
+<p><img src="vector-api-overview_files/figure-html/unnamed-chunk-13-1.png" class="r-plt" alt="A plot of the Yellowstone National Park (YNP) boundary in geographic coordinate system showing public roads as LineString features. The YNP boundary polygon has background R color 'wheat', and the road features are shown as double-width lines with R color 'slategray'. The x-axis label is 'longitude' and the y-axis label is 'latitude'. The plot title is 'YNP Public Roads'." width="700"></p>
 <div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span></span>
 <span><span class="va">roads</span><span class="op">$</span><span class="fu">close</span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
@@ -1242,7 +1242,7 @@ the coordinate system of the MTBS layer.</p>
 <span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">bnd_feat</span>, col <span class="op">=</span> <span class="st">"wheat"</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">maple_fire</span>, col <span class="op">=</span> <span class="st">"orangered"</span>, border <span class="op">=</span> <span class="cn">NA</span>, add <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">maple_pois</span>, pch <span class="op">=</span> <span class="fl">15</span>, col <span class="op">=</span> <span class="st">"royalblue"</span>, add <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
-<p><img src="vector-api-overview_files/figure-html/unnamed-chunk-16-1.png" alt="A plot of the Yellowstone National Park (YNP) boundary in a projected coordinate system showing the perimeter of the 2016 Maple Fire, along with three points of interest located within the fire polygon. The YNP boundary polygon has background R color 'wheat'. The Maple Fire perimeter is shown as a filled polygon in R color 'orangered'. The three points of interest are shown as filled square symbols in R color 'royalblue'. The x-axis label is 'x' and the y-axis label is 'y'. The plot is untitled." width="700"></p>
+<p><img src="vector-api-overview_files/figure-html/unnamed-chunk-16-1.png" class="r-plt" alt="A plot of the Yellowstone National Park (YNP) boundary in a projected coordinate system showing the perimeter of the 2016 Maple Fire, along with three points of interest located within the fire polygon. The YNP boundary polygon has background R color 'wheat'. The Maple Fire perimeter is shown as a filled polygon in R color 'orangered'. The three points of interest are shown as filled square symbols in R color 'royalblue'. The x-axis label is 'x' and the y-axis label is 'y'. The plot is untitled." width="700"></p>
 <div class="sourceCode" id="cb18"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span></span>
 <span><span class="va">fires</span><span class="op">$</span><span class="fu">close</span><span class="op">(</span><span class="op">)</span></span>
@@ -1300,17 +1300,17 @@ interest.</p>
 <span><span class="co">#&gt; [1] Information</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; $createdate</span></span>
-<span><span class="co">#&gt; [1] 2025-10-01</span></span>
+<span><span class="co">#&gt; [1] 2025-11-13</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; $editdate</span></span>
-<span><span class="co">#&gt; [1] 2025-10-01</span></span>
+<span><span class="co">#&gt; [1] 2025-11-13</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; $geom</span></span>
 <span><span class="co">#&gt; [1] WKB POINT: raw 01 01 00 00 ...</span></span>
 <span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">bnd_feat</span>, col <span class="op">=</span> <span class="st">"wheat"</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">ynp_centroid</span>, pch <span class="op">=</span> <span class="fl">10</span>, cex <span class="op">=</span> <span class="fl">1.5</span>, add <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
-<p><img src="vector-api-overview_files/figure-html/unnamed-chunk-17-1.png" alt="A plot of the Yellowstone National Park (YNP) boundary in a projected coordinate system showing the centroid of the park boundary polygon as a single point. The YNP boundary polygon has background R color 'wheat'. The centroid point is shown as an R 'circle plus' symbol, a circle with a plus sign inside resembling crosshairs. The x-axis label is 'x' and the y-axis label is 'y'. The plot is untitled." width="700"></p>
+<p><img src="vector-api-overview_files/figure-html/unnamed-chunk-17-1.png" class="r-plt" alt="A plot of the Yellowstone National Park (YNP) boundary in a projected coordinate system showing the centroid of the park boundary polygon as a single point. The YNP boundary polygon has background R color 'wheat'. The centroid point is shown as an R 'circle plus' symbol, a circle with a plus sign inside resembling crosshairs. The x-axis label is 'x' and the y-axis label is 'y'. The plot is untitled." width="700"></p>
 </div>
 <div class="section level3">
 <h3 id="rewritereplace-an-existing-feature">Rewrite/replace an existing feature<a class="anchor" aria-label="anchor" href="#rewritereplace-an-existing-feature"></a>
@@ -1384,7 +1384,7 @@ corresponding JSON member.</li>
 <span><span class="co">#&gt; [1] 2016-02-03</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; $editdate</span></span>
-<span><span class="co">#&gt; [1] 2025-10-01</span></span>
+<span><span class="co">#&gt; [1] 2025-11-13</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; $geom</span></span>
 <span><span class="co">#&gt; [1] WKB POINT: raw 01 01 00 00 ...</span></span></code></pre></div>
@@ -1417,10 +1417,10 @@ class attribute.</p>
 <span><span class="co">#&gt; [1] Information</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; $createdate</span></span>
-<span><span class="co">#&gt; [1] 2025-10-01</span></span>
+<span><span class="co">#&gt; [1] 2025-11-13</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; $editdate</span></span>
-<span><span class="co">#&gt; [1] 2025-10-01</span></span>
+<span><span class="co">#&gt; [1] 2025-11-13</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; $geom</span></span>
 <span><span class="co">#&gt; [1] WKB POINT: raw 01 01 00 00 ...</span></span>
@@ -1493,7 +1493,7 @@ grouping in a transaction, measuring time elapsed.</p>
 <span><span class="fu"><a href="https://rdrr.io/r/base/system.time.html" class="external-link">system.time</a></span><span class="op">(</span><span class="va">res</span> <span class="op">&lt;-</span> <span class="va">lyr</span><span class="op">$</span><span class="fu">batchCreateFeature</span><span class="op">(</span><span class="va">d</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="co">#&gt; 0...10...20...30...40...50...60...70...80...90...100 - done.</span></span>
 <span><span class="co">#&gt;    user  system elapsed </span></span>
-<span><span class="co">#&gt;   2.140   0.005   2.145</span></span>
+<span><span class="co">#&gt;   2.136   0.007   2.142</span></span>
 <span></span>
 <span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/all.html" class="external-link">all</a></span><span class="op">(</span><span class="va">res</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="co">#&gt; [1] TRUE</span></span>
@@ -1522,7 +1522,7 @@ and the layer is checked for the expected output.</p>
 <span><span class="op">}</span><span class="op">)</span></span>
 <span><span class="co">#&gt; 0...10...20...30...40...50...60...70...80...90...100 - done.</span></span>
 <span><span class="co">#&gt;    user  system elapsed </span></span>
-<span><span class="co">#&gt;   1.033   0.009   1.041</span></span>
+<span><span class="co">#&gt;   1.021   0.006   1.027</span></span>
 <span></span>
 <span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/all.html" class="external-link">all</a></span><span class="op">(</span><span class="va">res2</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="co">#&gt; [1] TRUE</span></span>
@@ -1535,22 +1535,22 @@ and the layer is checked for the expected output.</p>
 <span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">d_out</span><span class="op">)</span></span>
 <span><span class="co">#&gt; OGR feature set</span></span>
 <span><span class="co">#&gt;   FID               pt_desc         create_time                           geom</span></span>
-<span><span class="co">#&gt; 1   1 random points batch 1 2025-10-01 15:31:18 WKB POINT: raw 01 01 00 00 ...</span></span>
-<span><span class="co">#&gt; 2   2 random points batch 1 2025-10-01 15:31:18 WKB POINT: raw 01 01 00 00 ...</span></span>
-<span><span class="co">#&gt; 3   3 random points batch 1 2025-10-01 15:31:18 WKB POINT: raw 01 01 00 00 ...</span></span>
-<span><span class="co">#&gt; 4   4 random points batch 1 2025-10-01 15:31:18 WKB POINT: raw 01 01 00 00 ...</span></span>
-<span><span class="co">#&gt; 5   5 random points batch 1 2025-10-01 15:31:18 WKB POINT: raw 01 01 00 00 ...</span></span>
-<span><span class="co">#&gt; 6   6 random points batch 1 2025-10-01 15:31:18 WKB POINT: raw 01 01 00 00 ...</span></span>
+<span><span class="co">#&gt; 1   1 random points batch 1 2025-11-13 05:14:36 WKB POINT: raw 01 01 00 00 ...</span></span>
+<span><span class="co">#&gt; 2   2 random points batch 1 2025-11-13 05:14:36 WKB POINT: raw 01 01 00 00 ...</span></span>
+<span><span class="co">#&gt; 3   3 random points batch 1 2025-11-13 05:14:36 WKB POINT: raw 01 01 00 00 ...</span></span>
+<span><span class="co">#&gt; 4   4 random points batch 1 2025-11-13 05:14:36 WKB POINT: raw 01 01 00 00 ...</span></span>
+<span><span class="co">#&gt; 5   5 random points batch 1 2025-11-13 05:14:36 WKB POINT: raw 01 01 00 00 ...</span></span>
+<span><span class="co">#&gt; 6   6 random points batch 1 2025-11-13 05:14:36 WKB POINT: raw 01 01 00 00 ...</span></span>
 <span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">tail</a></span><span class="op">(</span><span class="va">d_out</span><span class="op">)</span></span>
 <span><span class="co">#&gt; OGR feature set</span></span>
 <span><span class="co">#&gt;           FID               pt_desc         create_time</span></span>
-<span><span class="co">#&gt; 199995 199995 random points batch 2 2025-10-01 15:31:20</span></span>
-<span><span class="co">#&gt; 199996 199996 random points batch 2 2025-10-01 15:31:20</span></span>
-<span><span class="co">#&gt; 199997 199997 random points batch 2 2025-10-01 15:31:20</span></span>
-<span><span class="co">#&gt; 199998 199998 random points batch 2 2025-10-01 15:31:20</span></span>
-<span><span class="co">#&gt; 199999 199999 random points batch 2 2025-10-01 15:31:20</span></span>
-<span><span class="co">#&gt; 200000 200000 random points batch 2 2025-10-01 15:31:20</span></span>
+<span><span class="co">#&gt; 199995 199995 random points batch 2 2025-11-13 05:14:39</span></span>
+<span><span class="co">#&gt; 199996 199996 random points batch 2 2025-11-13 05:14:39</span></span>
+<span><span class="co">#&gt; 199997 199997 random points batch 2 2025-11-13 05:14:39</span></span>
+<span><span class="co">#&gt; 199998 199998 random points batch 2 2025-11-13 05:14:39</span></span>
+<span><span class="co">#&gt; 199999 199999 random points batch 2 2025-11-13 05:14:39</span></span>
+<span><span class="co">#&gt; 200000 200000 random points batch 2 2025-11-13 05:14:39</span></span>
 <span><span class="co">#&gt;                                  geom</span></span>
 <span><span class="co">#&gt; 199995 WKB POINT: raw 01 01 00 00 ...</span></span>
 <span><span class="co">#&gt; 199996 WKB POINT: raw 01 01 00 00 ...</span></span>
@@ -1709,7 +1709,7 @@ method layers.</p>
 <span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">north_fork_feat</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">reburn_feat_set</span>, col <span class="op">=</span> <span class="st">"orangered"</span>, border <span class="op">=</span> <span class="cn">NA</span>, add <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>     main <span class="op">=</span> <span class="st">"1988 North Fork fire perimeter showing re-burned areas in red"</span><span class="op">)</span></span></code></pre></div>
-<p><img src="vector-api-overview_files/figure-html/unnamed-chunk-24-1.png" alt="A plot of the 1988 North Fork fire perimeter showing areas within the North Fork burn scar that have subsequently re-burned as of 2022. The North Fork fire is shown as an unfilled polygon with black outline. Areas within the North Fork polygon that have re-burned are shown as filled polygons in R color 'orangered'. The x-axis label is 'x' and the y-axis label is 'y'. The plot title is '1988 North Fork fire perimeter showing re-burned areas in red'." width="700"></p>
+<p><img src="vector-api-overview_files/figure-html/unnamed-chunk-24-1.png" class="r-plt" alt="A plot of the 1988 North Fork fire perimeter showing areas within the North Fork burn scar that have subsequently re-burned as of 2022. The North Fork fire is shown as an unfilled polygon with black outline. Areas within the North Fork polygon that have re-burned are shown as filled polygons in R color 'orangered'. The x-axis label is 'x' and the y-axis label is 'y'. The plot title is '1988 North Fork fire perimeter showing re-burned areas in red'." width="700"></p>
 <div class="sourceCode" id="cb27"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span></span>
 <span><span class="co"># clean up</span></span>
@@ -1729,7 +1729,7 @@ method layers.</p>
 </div>
 
 <div class="pkgdown-footer-right">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.3.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.2.0.</p>
 </div>
 
     </footer>
