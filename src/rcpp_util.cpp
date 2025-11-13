@@ -5,6 +5,8 @@
 
 #include "rcpp_util.h"
 
+#include <Rcpp.h>
+
 #include <algorithm>
 #include <string>
 

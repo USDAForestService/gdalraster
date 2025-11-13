@@ -6,10 +6,20 @@ Chris Toney <chris.toney at usda.gov> */
 
 #include <Rcpp.h>
 
+#include <string>
 #include <unordered_map>
+#include <vector>
 
 struct cmbKey {
     Rcpp::IntegerVector cmb;
+
+    cmbKey() {
+        cmb = Rcpp::IntegerVector::create();
+    }
+
+    explicit cmbKey(const Rcpp::IntegerVector &int_cmb) {
+        cmb = int_cmb;
+    }
 
     bool operator==(const cmbKey &other) const {
         for (R_xlen_t i = 0; i < cmb.size(); ++i) {
@@ -27,7 +37,7 @@ struct cmbData {
 
 struct cmbHasher {
     std::size_t operator()(const cmbKey &key) const {
-        // Boost hash_combine method
+        // Boost (v1.33 - v1.55) hash_combine method
         // Copyright 2005-2014 Daniel James.
         // Copyright 2021, 2022 Peter Dimov.
         // Distributed under the Boost Software License, Version 1.0.
@@ -43,8 +53,8 @@ struct cmbHasher {
 class CmbTable {
  public:
     CmbTable();
-    explicit CmbTable(unsigned int keyLen);
-    CmbTable(unsigned int keyLen, const Rcpp::CharacterVector &varNames);
+    explicit CmbTable(int keyLen);
+    CmbTable(int keyLen, const Rcpp::CharacterVector &varNames);
 
     double update(const Rcpp::IntegerVector &int_cmb, double incr);
     Rcpp::NumericVector updateFromMatrix(const Rcpp::IntegerMatrix &int_cmbs,
@@ -58,8 +68,8 @@ class CmbTable {
     void show() const;
 
  private:
-    unsigned int m_key_len {1};
-    Rcpp::CharacterVector m_var_names {"V1"};
+    R_xlen_t m_key_len;
+    std::vector<std::string> m_var_names;
     double m_last_ID {0};
     std::unordered_map<cmbKey, cmbData, cmbHasher> m_cmb_map {};
 };

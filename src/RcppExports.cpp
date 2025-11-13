@@ -327,12 +327,12 @@ BEGIN_RCPP
 END_RCPP
 }
 // apply_geotransform_
-Rcpp::NumericVector apply_geotransform_(const std::vector<double>& gt, double pixel, double line);
+Rcpp::NumericVector apply_geotransform_(const Rcpp::NumericVector& gt, double pixel, double line);
 RcppExport SEXP _gdalraster_apply_geotransform_(SEXP gtSEXP, SEXP pixelSEXP, SEXP lineSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< const std::vector<double>& >::type gt(gtSEXP);
+    Rcpp::traits::input_parameter< const Rcpp::NumericVector& >::type gt(gtSEXP);
     Rcpp::traits::input_parameter< double >::type pixel(pixelSEXP);
     Rcpp::traits::input_parameter< double >::type line(lineSEXP);
     rcpp_result_gen = Rcpp::wrap(apply_geotransform_(gt, pixel, line));
@@ -340,13 +340,13 @@ BEGIN_RCPP
 END_RCPP
 }
 // apply_geotransform_gt
-Rcpp::NumericMatrix apply_geotransform_gt(const Rcpp::RObject& col_row, const std::vector<double>& gt);
+Rcpp::NumericMatrix apply_geotransform_gt(const Rcpp::RObject& col_row, Rcpp::NumericVector& gt);
 RcppExport SEXP _gdalraster_apply_geotransform_gt(SEXP col_rowSEXP, SEXP gtSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< const Rcpp::RObject& >::type col_row(col_rowSEXP);
-    Rcpp::traits::input_parameter< const std::vector<double>& >::type gt(gtSEXP);
+    Rcpp::traits::input_parameter< Rcpp::NumericVector& >::type gt(gtSEXP);
     rcpp_result_gen = Rcpp::wrap(apply_geotransform_gt(col_row, gt));
     return rcpp_result_gen;
 END_RCPP
@@ -364,24 +364,24 @@ BEGIN_RCPP
 END_RCPP
 }
 // inv_geotransform
-Rcpp::NumericVector inv_geotransform(const std::vector<double>& gt);
+Rcpp::NumericVector inv_geotransform(const Rcpp::NumericVector& gt);
 RcppExport SEXP _gdalraster_inv_geotransform(SEXP gtSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< const std::vector<double>& >::type gt(gtSEXP);
+    Rcpp::traits::input_parameter< const Rcpp::NumericVector& >::type gt(gtSEXP);
     rcpp_result_gen = Rcpp::wrap(inv_geotransform(gt));
     return rcpp_result_gen;
 END_RCPP
 }
 // get_pixel_line_gt
-Rcpp::IntegerMatrix get_pixel_line_gt(const Rcpp::RObject& xy, const std::vector<double>& gt);
+Rcpp::IntegerMatrix get_pixel_line_gt(const Rcpp::RObject& xy, const Rcpp::NumericVector& gt);
 RcppExport SEXP _gdalraster_get_pixel_line_gt(SEXP xySEXP, SEXP gtSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< const Rcpp::RObject& >::type xy(xySEXP);
-    Rcpp::traits::input_parameter< const std::vector<double>& >::type gt(gtSEXP);
+    Rcpp::traits::input_parameter< const Rcpp::NumericVector& >::type gt(gtSEXP);
     rcpp_result_gen = Rcpp::wrap(get_pixel_line_gt(xy, gt));
     return rcpp_result_gen;
 END_RCPP
@@ -399,12 +399,12 @@ BEGIN_RCPP
 END_RCPP
 }
 // bbox_grid_to_geo_
-std::vector<double> bbox_grid_to_geo_(const std::vector<double>& gt, double grid_xmin, double grid_xmax, double grid_ymin, double grid_ymax);
+Rcpp::NumericVector bbox_grid_to_geo_(const Rcpp::NumericVector& gt, double grid_xmin, double grid_xmax, double grid_ymin, double grid_ymax);
 RcppExport SEXP _gdalraster_bbox_grid_to_geo_(SEXP gtSEXP, SEXP grid_xminSEXP, SEXP grid_xmaxSEXP, SEXP grid_yminSEXP, SEXP grid_ymaxSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< const std::vector<double>& >::type gt(gtSEXP);
+    Rcpp::traits::input_parameter< const Rcpp::NumericVector& >::type gt(gtSEXP);
     Rcpp::traits::input_parameter< double >::type grid_xmin(grid_xminSEXP);
     Rcpp::traits::input_parameter< double >::type grid_xmax(grid_xmaxSEXP);
     Rcpp::traits::input_parameter< double >::type grid_ymin(grid_yminSEXP);

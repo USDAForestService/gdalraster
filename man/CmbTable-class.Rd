@@ -63,12 +63,13 @@ Returns an object of class \code{CmbTable}.
 
 \code{$update(int_cmb, incr)}\cr
 Updates the hash table for the integer combination in the numeric vector
-\code{int_cmb} (coerced to integer by truncation).
+\code{int_cmb} (will be coerced to integer by truncation).
 If this combination exists in the table, its count will be
 incremented by \code{incr}. If the combination is not found in the table,
-it will be inserted with count set to \code{incr}.
-Returns the unique ID assigned to this combination.
-Combination IDs are sequential integers starting at \code{1}.
+it will be inserted with count set to \code{incr}. The caller should ensure that
+the length of the input vector is equal to the key length (\code{keyLen}) when
+using this method. Returns the unique ID assigned to this combination.
+Combination IDs are sequential whole numbers starting at \code{1}.
 
 \code{$updateFromMatrix(int_cmbs, incr)}\cr
 This method is the same as \code{$update()} but for a numeric matrix of

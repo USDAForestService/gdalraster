@@ -53,7 +53,8 @@ DEALINGS IN THE SOFTWARE.
 ===============================================================================
 
 =====file: src/cmb_table.h ====================================================
-The struct cmbHasher{} uses the Boost method for combining hashes:
+The struct cmbHasher{} uses the Boost (v1.33 - v1.55) method for combining
+hashes:
 Copyright 2005-2014 Daniel James.
 Copyright 2021, 2022 Peter Dimov.
 Distributed under the Boost Software License, Version 1.0.

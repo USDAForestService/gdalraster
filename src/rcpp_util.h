@@ -10,11 +10,12 @@
 #include <RcppInt64>
 
 #include <algorithm>
+#include <cmath>
 #include <cstdint>
 #include <limits>
 #include <string>
 
-constexpr int64_t MAX_INT_AS_R_NUMERIC_ = 9007199254740991;
+const int64_t MAX_INT_AS_R_NUMERIC_ = static_cast<int64_t>(std::pow(2, 53)) - 1;
 
 // as defined in the bit64 package src/integer64.h:
 // #define NA_INTEGER64 LLONG_MIN

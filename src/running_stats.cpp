@@ -1,36 +1,39 @@
 /* Implementation of class RunningStats
    One-pass algorithm for mean and variance.
-   Chris Toney <chris.toney at usda.gov> */
+   Chris Toney <chris.toney at usda.gov>
+*/
 
 #include "running_stats.h"
 
-RunningStats::RunningStats():
-    m_na_rm(true), m_count(0) {}
+#include <Rcpp.h>
 
-RunningStats::RunningStats(bool na_rm):
-    m_na_rm(na_rm), m_count(0) {}
+RunningStats::RunningStats()
+        : m_na_rm(true), m_count(0) {}
+
+RunningStats::RunningStats(bool na_rm)
+        : m_na_rm(na_rm), m_count(0) {}
 
 void RunningStats::update(const Rcpp::NumericVector& newvalues) {
-    for (auto const& i : newvalues) {
+    for (auto const& n : newvalues) {
         if (m_na_rm) {
-            if (Rcpp::NumericVector::is_na(i))
+            if (Rcpp::NumericVector::is_na(n))
                 continue;
         }
         m_count += 1;
         if (m_count == 1) {
-            m_mean = m_min = m_max = m_sum = i;
+            m_mean = m_min = m_max = m_sum = n;
             m_M2 = 0.0;
         }
         else {
-            const double delta = i - m_mean;
+            const double delta = n - m_mean;
             m_mean += (delta / m_count);
-            const double delta2 = i - m_mean;
+            const double delta2 = n - m_mean;
             m_M2 += (delta * delta2);
-            if (i < m_min)
-                m_min = i;
-            else if (i > m_max)
-                m_max = i;
-            m_sum += i;
+            if (n < m_min)
+                m_min = n;
+            else if (n > m_max)
+                m_max = n;
+            m_sum += n;
         }
     }
 }
