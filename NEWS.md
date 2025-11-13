@@ -1,4 +1,6 @@
-# gdalraster 2.2.1.9037 (dev)
+# gdalraster 2.2.1.9040 (dev)
+
+* various C++ code linting, small refactorings and performance improvements (#818) (2025-11-13)
 
 * `g_delaunay_triangulation()`: add argument `constrained`, wrapper for `OGR_G_ConstrainedDelaunayTriangulation()` (2025-09-30)
 
