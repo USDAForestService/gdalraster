@@ -1,6 +1,11 @@
 # Changelog
 
-## gdalraster 2.2.1.9037 (dev)
+## gdalraster 2.2.1.9040 (dev)
+
+- various C++ code linting, small refactorings and performance
+  improvements
+  ([\#818](https://github.com/USDAForestService/gdalraster/issues/818))
+  (2025-11-13)
 
 - [`g_delaunay_triangulation()`](https://usdaforestservice.github.io/gdalraster/reference/g_unary_op.md):
   add argument `constrained`, wrapper for
