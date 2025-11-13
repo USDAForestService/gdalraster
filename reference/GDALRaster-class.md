@@ -411,7 +411,7 @@ that was used to open the dataset. It usually should not be changed by
 calling this method on an existing dataset.)
 
 `$getBlockSize(band)`  
-Returns an integer vector of length two (xsize, ysize) containing the
+Returns a numeric vector of length two (xsize, ysize) containing the
 "natural" block size of `band`. GDAL has a concept of the natural block
 size of rasters so that applications can organize data access
 efficiently for some file formats. The natural block size is the block
@@ -423,7 +423,7 @@ sizes don't have to divide the image size evenly, meaning that right and
 bottom edge blocks may be incomplete.
 
 `$getActualBlockSize(band, xblockoff, yblockoff)`  
-Returns an integer vector of length two (xvalid, yvalid) containing the
+Returns a numeric vector of length two (xvalid, yvalid) containing the
 actual block size for a given block offset in `band`. Handles partial
 blocks at the edges of the raster and returns the true number of pixels.
 `xblockoff` is an integer value, the horizontal block offset for which

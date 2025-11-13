@@ -74,7 +74,7 @@ nonexistent <- file.path(data_dir, "nonexistent.tif")
 vsi_stat(nonexistent)
 #> [1] FALSE
 vsi_stat(nonexistent, "type")
-#> [1] ""
+#> [1] "unknown"
 vsi_stat(nonexistent, "size")
 #> integer64
 #> [1] -1
