@@ -77,7 +77,8 @@ kernel filter. (See <code><a href="buildVRT.html">buildVRT()</a></code> for virt
 <span>  src_align <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>  resampling <span class="op">=</span> <span class="st">"nearest"</span>,</span>
 <span>  krnl <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  normalized <span class="op">=</span> <span class="cn">TRUE</span></span>
+<span>  normalized <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  krnl_fn <span class="op">=</span> <span class="cn">NULL</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
 
@@ -146,15 +147,26 @@ lanczos, average and mode (as character).</p></dd>
 <code>krnl</code> is a array with dimensions (size, size), where
 size must be an odd number. <code>krnl</code> can also be given as a vector with
 length size x size. For example, a 3x3 average filter is given by:</p><div class="sourceCode"><pre><code><span></span>
-<span><span class="va">krnl</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span></span>
-<span><span class="fl">0.11111</span>, <span class="fl">0.11111</span>, <span class="fl">0.11111</span>,</span>
-<span><span class="fl">0.11111</span>, <span class="fl">0.11111</span>, <span class="fl">0.11111</span>,</span>
-<span><span class="fl">0.11111</span>, <span class="fl">0.11111</span>, <span class="fl">0.11111</span><span class="op">)</span></span></code></pre></div><p>A kernel cannot be applied to sub-sampled or over-sampled data.</p></dd>
+<span><span class="va">krnl</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0.11111</span>, <span class="fl">0.11111</span>, <span class="fl">0.11111</span>,</span>
+<span>          <span class="fl">0.11111</span>, <span class="fl">0.11111</span>, <span class="fl">0.11111</span>,</span>
+<span>          <span class="fl">0.11111</span>, <span class="fl">0.11111</span>, <span class="fl">0.11111</span><span class="op">)</span></span></code></pre></div><p>A kernel cannot be applied to sub-sampled or over-sampled data.</p></dd>
 
 
 <dt id="arg-normalized">normalized<a class="anchor" aria-label="anchor" href="#arg-normalized"></a></dt>
 <dd><p>Logical. Indicates whether the kernel is normalized.
 Defaults to <code>TRUE</code>.</p></dd>
+
+
+<dt id="arg-krnl-fn">krnl_fn<a class="anchor" aria-label="anchor" href="#arg-krnl-fn"></a></dt>
+<dd><p>Character string specifying a function to compute on the
+given <code>krnl</code>. Must be one of <code>"min"</code>, <code>"max"</code>, <code>"stddev"</code>, <code>"median"</code> or
+<code>"mode"</code>. <em>Requires GDAL &gt;= 3.12</em>. E.g., to compute the median value in a
+3x3 neighborhood around each pixel:</p><div class="sourceCode"><pre><code><span></span>
+<span><span class="va">krnl</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">1</span>, <span class="fl">1</span>,</span>
+<span>          <span class="fl">1</span>, <span class="fl">1</span>, <span class="fl">1</span>,</span>
+<span>          <span class="fl">1</span>, <span class="fl">1</span>, <span class="fl">1</span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">krnl_fn</span> <span class="op">&lt;-</span> <span class="st">"median"</span></span></code></pre></div></dd>
 
 </dl></div>
     <div class="section level2">

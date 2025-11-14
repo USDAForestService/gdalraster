@@ -19,7 +19,8 @@ rasterToVRT(
   src_align = TRUE,
   resampling = "nearest",
   krnl = NULL,
-  normalized = TRUE
+  normalized = TRUE,
+  krnl_fn = NULL
 )
 ```
 
@@ -89,10 +90,9 @@ rasterToVRT(
   can also be given as a vector with length size x size. For example, a
   3x3 average filter is given by:
 
-      krnl <- c(
-      0.11111, 0.11111, 0.11111,
-      0.11111, 0.11111, 0.11111,
-      0.11111, 0.11111, 0.11111)
+      krnl <- c(0.11111, 0.11111, 0.11111,
+                0.11111, 0.11111, 0.11111,
+                0.11111, 0.11111, 0.11111)
 
   A kernel cannot be applied to sub-sampled or over-sampled data.
 
@@ -100,6 +100,19 @@ rasterToVRT(
 
   Logical. Indicates whether the kernel is normalized. Defaults to
   `TRUE`.
+
+- krnl_fn:
+
+  Character string specifying a function to compute on the given `krnl`.
+  Must be one of `"min"`, `"max"`, `"stddev"`, `"median"` or `"mode"`.
+  *Requires GDAL \>= 3.12*. E.g., to compute the median value in a 3x3
+  neighborhood around each pixel:
+
+      krnl <- c(1, 1, 1,
+                1, 1, 1,
+                1, 1, 1)
+
+      krnl_fn <- "median"
 
 ## Value
 
