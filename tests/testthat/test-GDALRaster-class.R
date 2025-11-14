@@ -1143,3 +1143,26 @@ test_that("make_chunk_index/readChunk/writeChunk work", {
 
     ds2$close()
 })
+
+test_that("getMinMaxLocation works", {
+    skip_if(gdal_version_num() < gdal_compute_version(3, 11, 0))
+
+    f <- system.file("extdata/byte.tif", package="gdalraster")
+    ds <- new(GDALRaster, f)
+
+    ret <- ds$getMinMaxLocation(band = 1)
+    expected <- c(74, 9, 17, 441290.0, 3750270.0, -117.63581, 33.89293,
+                  255, 2, 18, 440870.0, 3750210.0, -117.64035, 33.89237)
+    expect_equal(unname(ret), expected, tolerance = 0.01)
+
+    ds$close()
+
+    ds <- create(format = "MEM", dst_filename = "", xsize = 2, ysize = 2,
+                 nbands = 1, dataType = "Float32", return_obj = TRUE)
+    ds$fillRaster(1, NaN, 0)
+
+    ret <- ds$getMinMaxLocation(band = 1)
+    expect_true(all(is.na(ret)))
+
+    ds$close()
+})

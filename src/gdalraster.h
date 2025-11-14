@@ -119,7 +119,8 @@ class GDALRaster {
     std::string getRasterColorInterp(int band) const;
     void setRasterColorInterp(int band, const std::string &col_interp);
 
-    std::vector<double> getMinMax(int band, bool approx_ok) const;
+    Rcpp::NumericVector getMinMax(int band, bool approx_ok) const;
+    Rcpp::NumericVector getMinMaxLocation(int band) const;
     Rcpp::NumericVector getStatistics(int band, bool approx_ok,
                                       bool force) const;
     void clearStatistics();
