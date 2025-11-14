@@ -2,6 +2,7 @@
 # Chris Toney <chris.toney at usda.gov>
 
 #' @noRd
+#' @export
 .get_crs_name <- function(wkt) {
     # name of form "<srs name> [(EPSG:####[, confidence ##])]"
     # include EPSG code if confidence > 50
@@ -431,6 +432,7 @@ vsi_get_fs_options <- function(filename, as_list = TRUE) {
         return(opts)
 }
 
+
 #' Apply geotransform (raster column/row to geospatial x/y)
 #'
 #' `apply_geotransform()` applies geotransform coefficients to raster
@@ -474,6 +476,7 @@ vsi_get_fs_options <- function(filename, as_list = TRUE) {
 #' ds$apply_geotransform(col_row)
 #'
 #' ds$close()
+#' @export
 apply_geotransform <- function(col_row, gt) {
     if (!(is.vector(col_row) || is.matrix(col_row) || is.data.frame(col_row)))
         stop("'col_row' must be a data frame or numeric matrix", call. = FALSE)
@@ -496,6 +499,7 @@ apply_geotransform <- function(col_row, gt) {
              call. = FALSE)
     }
 }
+
 
 #' Raster pixel/line from geospatial x,y coordinates
 #'
@@ -547,6 +551,7 @@ apply_geotransform <- function(col_row, gt) {
 #' ds$get_pixel_line(pts[, -1])
 #'
 #' ds$close()
+#' @export
 get_pixel_line <- function(xy, gt) {
     if (!(is.vector(xy) || is.matrix(xy) || is.data.frame(xy)))
         stop("'xy' must be a data frame or numeric matrix", call. = FALSE)
@@ -569,6 +574,7 @@ get_pixel_line <- function(xy, gt) {
              call. = FALSE)
     }
 }
+
 
 #' Report open datasets
 #'
@@ -597,6 +603,7 @@ get_pixel_line <- function(xy, gt) {
 #' dump_open_datasets()
 #' ds3$close()
 #' dump_open_datasets()
+#' @export
 dump_open_datasets <- function() {
     f <- tempfile(fileext = ".txt")
     nopen <- .dump_open_datasets(f)
@@ -608,6 +615,7 @@ dump_open_datasets <- function() {
     writeLines(out)
     return(nopen)
 }
+
 
 #' Obtain information about a GDAL raster or vector dataset
 #'
@@ -656,6 +664,7 @@ dump_open_datasets <- function() {
 #' ynp_dsn <- file.path("/vsizip", f, "ynp_features.gpkg")
 #'
 #' inspectDataset(ynp_dsn)
+#' @export
 inspectDataset <- function(filename, ...) {
     if (!is.character(filename))
         stop("'filename' must be a character string", call. = FALSE)
@@ -735,4 +744,79 @@ inspectDataset <- function(filename, ...) {
     }
 
     return(out)
+}
+
+
+#' Generate an index of chunk offsets and sizes for iterating a raster
+#'
+#' `make_chunk_index()` returns a matrix of `xchunkoff`, `ychunkoff`, `xoff`,
+#' `yoff`, `xsize`, `ysize`, `xmin`, `xmax`, `ymin` and `ymax`, i.e., indexing
+#' of potentially multi-block chunks defined on block boundaries for iterating
+#' I/O operations over a raster. The last four columns are geospatial
+#' coordinates of the bounding box. Note that class `GDALRaster` provides a
+#' method of the same name that is more convenient to use with a dataset object.
+#'
+#' @details
+#' The stand-alone function here supports the general case of chunking/tiling a
+#' raster layout without using a dataset object. If the `max_pixels` argument
+#' is set to zero, the chunks are raster blocks (the internal tiles in the case
+#' of a tiled format). Otherwise, chunks are defined as the maximum number of
+#' consecutive whole blocks containing `<= max_pixels`, that may span one or
+#' multiple whole rows of blocks.
+#'
+#' @param raster_xsize Integer value giving the number of raster columns.
+#' @param raster_ysize Integer value giving the number of raster rows.
+#' @param block_xsize Integer value giving the horizontal size of a raster block
+#' in number of pixels.
+#' @param block_ysize Integer value giving the vertical size of a raster block
+#' in number of pixels.
+#' @param gt A numeric vector of length six containing the affine geotransform
+#' for the raster (defaults to `c(0, 1, 0, 0, 0, 1)`). Required only if
+#' geospatial bounding boxes of the chunks are needed in the output.
+#' @param max_pixels Numeric value (a whole number), optionally carrying the
+#' `bit64::integer64` class attribute. Specifies the maximum number of pixels
+#' per chunk. Can be set to zero to define chunks as the blocks.
+#' @return A numeric matrix with number of rows equal to the number of chunks,
+#' and named columns: `xchunkoff`, `ychunkoff`, `xoff`, `yoff`, `xsize`,
+#' `ysize`, `xmin`, `xmax`, `ymin`, `ymax`. Offsets are 0-based.
+#'
+#' @seealso
+#' Methods \code{make_chunk_index()}, \code{readChunk()} and
+#' \code{writeChunk()} in class [GDALRaster].
+#'
+#' Usage example in the web article
+#' [GDAL Block Cache](https://usdaforestservice.github.io/gdalraster/articles/gdal-block-cache.html).
+#'
+#' @examples
+#' ## chunk as one block
+#' blocks <- make_chunk_index(raster_xsize = 156335, raster_ysize = 101538,
+#'                            block_xsize = 256, block_ysize = 256,
+#'                            gt = c(-2362395, 30, 0, 3267405, 0, -30),
+#'                            max_pixels = 0)
+#'
+#' nrow(blocks)
+#'
+#' head(blocks)
+#'
+#' tail(blocks)
+#'
+#' ## chunk as 16 consectutive blocks
+#' chunks <- make_chunk_index(raster_xsize = 156335, raster_ysize = 101538,
+#'                            block_xsize = 256, block_ysize = 256,
+#'                            gt = c(-2362395, 30, 0, 3267405, 0, -30),
+#'                            max_pixels = 256 * 256 * 16)
+#'
+#' nrow(chunks)
+#'
+#' head(chunks)
+#'
+#' tail(chunks)
+#' @export
+make_chunk_index <- function(raster_xsize, raster_ysize,
+                             block_xsize, block_ysize,
+                             gt = c(0, 1, 0, 0, 0, 1),
+                             max_pixels = 0) {
+
+    return(.make_chunk_index(raster_xsize, raster_ysize, block_xsize,
+                             block_ysize, gt, max_pixels))
 }

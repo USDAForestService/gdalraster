@@ -413,6 +413,22 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// make_chunk_index_
+Rcpp::NumericMatrix make_chunk_index_(int raster_xsize, int raster_ysize, int block_xsize, int block_ysize, const Rcpp::NumericVector& gt, const Rcpp::NumericVector& max_pixels);
+RcppExport SEXP _gdalraster_make_chunk_index_(SEXP raster_xsizeSEXP, SEXP raster_ysizeSEXP, SEXP block_xsizeSEXP, SEXP block_ysizeSEXP, SEXP gtSEXP, SEXP max_pixelsSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< int >::type raster_xsize(raster_xsizeSEXP);
+    Rcpp::traits::input_parameter< int >::type raster_ysize(raster_ysizeSEXP);
+    Rcpp::traits::input_parameter< int >::type block_xsize(block_xsizeSEXP);
+    Rcpp::traits::input_parameter< int >::type block_ysize(block_ysizeSEXP);
+    Rcpp::traits::input_parameter< const Rcpp::NumericVector& >::type gt(gtSEXP);
+    Rcpp::traits::input_parameter< const Rcpp::NumericVector& >::type max_pixels(max_pixelsSEXP);
+    rcpp_result_gen = Rcpp::wrap(make_chunk_index_(raster_xsize, raster_ysize, block_xsize, block_ysize, gt, max_pixels));
+    return rcpp_result_gen;
+END_RCPP
+}
 // flip_vertical
 Rcpp::NumericVector flip_vertical(const Rcpp::NumericVector& v, int xsize, int ysize, int nbands);
 RcppExport SEXP _gdalraster_flip_vertical(SEXP vSEXP, SEXP xsizeSEXP, SEXP ysizeSEXP, SEXP nbandsSEXP) {
@@ -2383,6 +2399,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_gdalraster_get_pixel_line_gt", (DL_FUNC) &_gdalraster_get_pixel_line_gt, 2},
     {"_gdalraster_get_pixel_line_ds", (DL_FUNC) &_gdalraster_get_pixel_line_ds, 2},
     {"_gdalraster_bbox_grid_to_geo_", (DL_FUNC) &_gdalraster_bbox_grid_to_geo_, 5},
+    {"_gdalraster_make_chunk_index_", (DL_FUNC) &_gdalraster_make_chunk_index_, 6},
     {"_gdalraster_flip_vertical", (DL_FUNC) &_gdalraster_flip_vertical, 4},
     {"_gdalraster_buildVRT", (DL_FUNC) &_gdalraster_buildVRT, 4},
     {"_gdalraster_combine", (DL_FUNC) &_gdalraster_combine, 8},

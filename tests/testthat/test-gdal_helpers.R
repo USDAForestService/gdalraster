@@ -132,3 +132,15 @@ test_that("inspectDataset works", {
     expect_false(dsinfo$contains_vector)
     expect_vector(dsinfo$layer_names, ptype = character(), size = 0)
 })
+
+test_that("make_chunk_index works", {
+    # the internal C++ function being called is tested in
+    # tests/testthat/test-GDALRaster-class.R
+
+    chunks <- make_chunk_index(raster_xsize = 156335, raster_ysize = 101538,
+                               block_xsize = 256, block_ysize = 256,
+                               gt = c(-2362395, 30, 0, 3267405, 0, -30),
+                               max_pixels = 256 * 256 * 16)
+
+    expect_equal(nrow(chunks), 15483)
+})

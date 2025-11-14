@@ -38,14 +38,14 @@ assigned to the class fields as needed during the lifetime of the object
 \description{
 \code{GDALRaster} provides an interface for accessing a raster dataset via GDAL
 and calling methods on the underlying \code{GDALDataset}, \code{GDALDriver} and
-\code{GDALRasterBand} objects. See \url{https://gdal.org/en/stable/api/index.html} for
-details of the GDAL Raster API.
+\code{GDALRasterBand} objects. See \url{https://gdal.org/en/stable/api/index.html}
+for details of the GDAL Raster API.
 
-\code{GDALRaster} is a C++ class exposed directly to \R (via \code{RCPP_EXPOSED_CLASS}).
-Fields and methods of the class are accessed using the \code{$} operator. \strong{Note
-that all arguments to class methods are required and must be given in the
-order documented.} Naming the arguments is optional but may be preferred
-for readability.
+\code{GDALRaster} is a C++ class exposed directly to \R (via
+\code{RCPP_EXPOSED_CLASS}). Fields and methods of the class are accessed using
+the \code{$} operator. \strong{Note that all arguments to class methods are required
+and must be given in the order documented.} Naming the arguments is
+optional but may be preferred for readability.
 }
 \note{
 If a dataset object is opened with update access (\code{read_only = FALSE}), it
@@ -118,9 +118,12 @@ ds$setProjection(projection)
 ds$bbox()
 ds$res()
 ds$dim()
+
 ds$apply_geotransform(col_row)
 ds$get_pixel_line(xy)
+
 ds$get_block_indexing(band)
+ds$make_chunk_index(band, max_pixels)
 
 ds$getDescription(band)
 ds$setDescription(band, desc)
@@ -156,7 +159,12 @@ ds$setMetadataItem(band, mdi_name, mdi_value, domain)
 ds$getMetadataDomainList(band)
 
 ds$read(band, xoff, yoff, xsize, ysize, out_xsize, out_ysize)
+ds$readBlock(band, xblockoff, yblockoff)
+ds$readChunk(band, chunk_def)
+
 ds$write(band, xoff, yoff, xsize, ysize, rasterData)
+ds$writeBlock(band, xblockoff, yblockoff, rasterData)
+ds$writeChunk(band, chunk_def, rasterData)
 ds$fillRaster(band, value, ivalue)
 
 ds$getColorTable(band)
@@ -381,17 +389,37 @@ info and examples.
 \code{$get_block_indexing(band)}\cr
 Helper method returning a numeric matrix with named columns: \code{xblockoff},
 \code{yblockoff}, \code{xoff}, \code{yoff}, \code{xsize}, \code{ysize}, \code{xmin}, \code{xmax}, \code{ymin},
-\code{ymax}. For the meanings of these names, refer to the following class
-methods below: \code{$getBlockSize()}, \code{$getActualBlockSize()} and
-\code{$read()}.
-All offsets are zero-based. The columns \code{xmin}, \code{xmax}, \code{ymin} and
-\code{ymax} give the extent of each block in geospatial coordinates.
-This method provides indexing values for the block layout of the given
-\code{band} number. The returned matrix has number of rows equal to the number
-of blocks comprising the band, with blocks ordered left to right, top
-to bottom. The \code{xoff}/\code{yoff} values are pixel offsets to the start of a
-block. The \code{xsize}/\code{ysize} values give the actual block sizes accounting
-for potentially incomplete blocks along the right and bottom edges.
+\code{ymax}. This method provides indexing values for the block layout of the
+given \code{band} number. See also the class methods:
+\code{$getBlockSize()}, \code{$getActualBlockSize()} and \code{$read()}.
+The returned matrix has number of rows equal to the number of blocks for the
+given \code{band} number, with blocks ordered left to right, top to bottom. All
+offsets are zero-based. The \code{xoff}/\code{yoff} values are pixel offsets to the
+start of a block. The \code{xsize}/\code{ysize} values give the actual block sizes
+accounting for potentially incomplete blocks along the right and bottom
+edges. The columns \code{xmin}, \code{xmax}, \code{ymin} and \code{ymax} give the extent of each
+block in geospatial coordinates.
+
+\code{$make_chunk_index(band, max_pixels)}\cr
+Helper method returning a numeric matrix with named columns: \code{xchunkoff},
+\code{ychunkoff}, \code{xoff}, \code{yoff}, \code{xsize}, \code{ysize}, \code{xmin}, \code{xmax}, \code{ymin},
+\code{ymax}. This method generates indexing information (offsets, sizes and
+geospatial bounding boxes) for potentially multi-block chunks, defined on
+block boundaries for efficient I/O. The output of this method can be used
+with the \code{$readChunk()}/\code{$writeChunk()} methods to iterate I/O
+operations conveniently on user-defined chunk sizes. The chunks will contain
+at most \code{max_pixels} given as a numeric value optionally carrying the
+\code{bit64::integer64} class attribute (numeric values will be coerced to 64-bit
+integer internally by truncation). A value of \code{max_pixels = 0} (or any value
+less than raster block xsize * block ysize, see \code{$getBlockSize()}
+below), will return output equivalent to \code{$get_block_indexing()}.
+The returned matrix has number of rows equal to the number of chunks for the
+given \code{band} number, with chunks ordered left to right, top to bottom. All
+offsets are zero-based. The \code{xoff}/\code{yoff} values are pixel offsets to the
+start of a chunk. The \code{xsize}/\code{ysize} values give the actual chunk sizes
+accounting for potentially incomplete chunks along the right and bottom
+edges. The columns \code{xmin}, \code{xmax}, \code{ymin} and \code{ymax} give the extent of each
+chunk in geospatial coordinates.
 
 \code{$getDescription(band)}\cr
 Returns a string containing the description for \code{band}. An empty
@@ -449,8 +477,8 @@ External overviews created in GTiff format may be compressed using the
 by the GTiff driver are available
 (e.g., \code{set_config_option("COMPRESS_OVERVIEW", "LZW")}).
 Since GDAL 3.6, \code{COMPRESS_OVERVIEW} is honored when creating internal
-overviews of GTiff files. The \href{https://gdal.org/en/stable/programs/gdaladdo.html}{GDAL documentation for \code{gdaladdo}} command-line utility
-describes additional configuration for overview building.
+overviews of GTiff files. The \href{https://gdal.org/en/stable/programs/gdaladdo.html}{GDAL documentation for \code{gdaladdo}} command-line
+utility describes additional configuration for overview building.
 See also \code{\link[=set_config_option]{set_config_option()}}. No return value, called for side effects.
 
 \code{$getDataTypeName(band)}\cr
@@ -676,7 +704,8 @@ bound), \code{max} (upper bound), \code{num_buckets} (number of buckets), and
 Returns a character vector of all metadata \code{NAME=VALUE} pairs that exist in
 the specified \code{domain}, or empty string (\code{""}) if there are no
 metadata items in \code{domain} (metadata in the context of the GDAL
-Raster Data Model: \url{https://gdal.org/en/stable/user/raster_data_model.html}).
+Raster Data Model
+\url{https://gdal.org/en/stable/user/raster_data_model.html}).
 Set \code{band = 0} to retrieve dataset-level metadata, or to an integer
 band number to retrieve band-level metadata.
 Set \code{domain = ""} (empty string) to retrieve metadata in the
@@ -723,7 +752,7 @@ being accessed (\code{xsize * ysize}).
 region of the band to be accessed (zero to start from the left side).
 \code{yoff} is the line (row) offset to the top left corner of the region of
 the band to be accessed (zero to start from the top).
-\emph{Note that raster row/column offsets use 0-based indexing.}
+\emph{Note that raster column/row offsets use 0-based indexing.}
 \code{xsize} is the width in pixels of the region to be accessed.
 \code{ysize} is the height in pixels of the region to be accessed.
 \code{out_xsize} is the width of the output array into which the desired
@@ -742,13 +771,32 @@ No rescaling of the data is performed (see \code{$getScale()} and
 An error is raised if the read operation fails. See also the setting
 \code{$readByteAsRaw} above.
 
+\code{$readBlock(band, xblockoff, yblockoff)}\cr
+Reads a block of raster data, without resampling. See the class methods
+\code{$getBlockSize()} and \code{$getActualBlockSize()} above for a
+description of raster blocks. This is a convenience method to read by block
+offsets. Returns a vector of pixel values with length equal to the actual
+block \code{xsize * ysize}, otherwise as described above for \code{$read()}.
+
+\code{$readChunk(band, chunk_def)}\cr
+Reads a potentially multi-block chunk of raster data, without resampling.
+This is a convenience method that can be used with the output of
+\code{$make_chunk_index()} (see above). The matrix of chunk offsets and sizes
+returned by \code{$make_chunk_index()} (or \code{$get_block_indexing()} to
+operate on blocks) can be used to iterate I/O over the raster in user-defined
+chunk sizes, i.e., a row of that matrix can be passed for the \code{chunk_def}
+argument. \code{chunk_def} can also be given as an numeric vector of length 4
+containing the 0-based pixel offsets and pixel sizes for a chunk (xoff, yoff,
+xsize, ysize). Returns a vector of pixel values with length equal to the
+chunk \code{xsize * ysize}, otherwise as described above for \code{$read()}.
+
 \code{$write(band, xoff, yoff, xsize, ysize, rasterData)}\cr
 Writes a region of raster data to \code{band}.
 \code{xoff} is the pixel (column) offset to the top left corner of the
 region of the band to be accessed (zero to start from the left side).
 \code{yoff} is the line (row) offset to the top left corner of the region of
 the band to be accessed (zero to start from the top).
-\emph{Note that raster row/column offsets use 0-based indexing.}
+\emph{Note that raster column/row offsets use 0-based indexing.}
 \code{xsize} is the width in pixels of the region to write.
 \code{ysize} is the height in pixels of the region to write.
 \code{rasterData} is a numeric or complex vector containing values to write.
@@ -756,6 +804,20 @@ It is organized in left to right, top to bottom pixel order. \code{NA} in
 \code{rasterData} should be replaced with a suitable nodata value prior to
 writing (see \code{$getNoDataValue()} and \code{$setNoDataValue()} above).
 An error is raised if the operation fails (no return value).
+
+\code{$writeBlock(band, xblockoff, yblockoff, rasterData)}\cr
+Writes a block of raster data. See the class methods \code{$getBlockSize()}
+and \code{$getActualBlockSize()} above for a description of raster blocks.
+This is a convenience method to write by block offsets.. Otherwise, this
+method operates like \code{$write()}. The length of \code{rasterData} must be the
+same as the actual \code{xsize * ysize} of the destination block.
+
+\code{$writeChunk(band, chunk_def, rasterData)}\cr
+Writes a potentially multi-block chunk of raster data. This is a convenience
+method that can be used to iterate I/O over the raster in user-defined chunk
+sizes, see method \code{$readChunk()} above. Otherwise, this method operates
+like \code{$write()}. The length of \code{rasterData} must be the same as
+\code{xsize * ysize} of the destination chunk.
 
 \code{$fillRaster(band, value, ivalue)}\cr
 Fills \code{band} with a constant value. GDAL makes no guarantees about what
@@ -773,8 +835,8 @@ there is no associated color table. The color table is returned as an
 integer matrix with five columns. To associate a color with a raster pixel,
 the pixel value is used as a subscript into the color table. This means that
 the colors are always applied starting at zero and ascending
-(see \href{https://gdal.org/en/stable/user/raster_data_model.html#color-table}{GDAL
-Color Table}).
+(see
+\href{https://gdal.org/en/stable/user/raster_data_model.html#color-table}{GDAL Color Table}).
 Column 1 contains the pixel values. Interpretation of columns 2:5 depends
 on the value of \code{$getPaletteInterp()} (see below).
 For "RGB", columns 2:5 contain red, green, blue, alpha as 0-255 integer
@@ -794,9 +856,7 @@ meanings are:
 }
 
 \code{$setColorTable(band, col_tbl, palette_interp)}\cr
-Sets the raster color table for \code{band}
-(see \href{https://gdal.org/en/stable/user/raster_data_model.html#color-table}{GDAL
-Color Table}).
+Sets the raster color table for \code{band}.
 \code{col_tbl} is an integer matrix or data frame with either four or five
 columns (see \code{$getColorTable()} above). Column 1 contains the pixel
 values. Valid values are integers 0 and larger (note that GTiff format
@@ -854,7 +914,7 @@ such raster data will not affect the checksum. Real and imaginary
 components of complex bands influence the result.
 \code{xoff} is the pixel (column) offset of the window to read.
 \code{yoff} is the line (row) offset of the window to read.
-\emph{Raster row/column offsets use 0-based indexing.}
+\emph{Raster column/row offsets use 0-based indexing.}
 \code{xsize} is the width in pixels of the window to read.
 \code{ysize} is the height in pixels of the window to read.
 
@@ -903,7 +963,7 @@ ds$getDataTypeName(band = 1)
 ds$getNoDataValue(band = 1)
 
 ## LCP driver reports several dataset- and band-level metadata
-## see the format description at https://gdal.org/en/stable/drivers/raster/lcp.html
+## (format description at https://gdal.org/en/stable/drivers/raster/lcp.html)
 ## set band = 0 to retrieve dataset-level metadata
 ## set domain = "" (empty string) for the default metadata domain
 ds$getMetadata(band = 0, domain = "")
@@ -915,7 +975,7 @@ ds$getMetadata(band = 4, domain = "")
 ds$getMetadataItem(band = 2, mdi_name = "SLOPE_UNIT_NAME", domain = "")
 
 ## read one row of pixel values from band 1 (elevation)
-## raster row/column index are 0-based
+## raster column/row index are 0-based
 ## the upper left corner is the origin
 ## read the tenth row:
 ncols <- ds$getRasterXSize()

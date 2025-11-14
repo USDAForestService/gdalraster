@@ -40,14 +40,14 @@
   \code{\link[=buildVRT]{buildVRT()}},
   \code{\link[=rasterToVRT]{rasterToVRT()}}
 
-  \item reproject/resample/crop/mosaic: \code{\link[=warp]{warp()}}
-
-  \item algorithms: \code{\link[=dem_proc]{dem_proc()}},
+  \item algorithms/utilities: \code{\link[=dem_proc]{dem_proc()}},
   \code{\link[=fillNodata]{fillNodata()}},
   \code{\link[=footprint]{footprint()}},
+  \code{\link[=make_chunk_index]{make_chunk_index()}},
   \code{\link[=polygonize]{polygonize()}},
   \code{\link[=rasterize]{rasterize()}},
   \code{\link[=sieveFilter]{sieveFilter()}},
+  \code{\link[=warp]{warp()}},
   \code{\link[=GDALRaster]{GDALRaster$getChecksum()}}
 
   \item raster attribute tables: \code{\link[=buildRAT]{buildRAT()}},
