@@ -1,4 +1,6 @@
-# gdalraster 2.2.1.9051 (dev)
+# gdalraster 2.2.1.9052 (dev)
+
+* `rasterToVRT()`: add argument `krnl_fn` supporting a Function element in KernelFilteredSource with GDAL >= 3.12, one of `"min"`, `"max"`, `"stddev"`, `"median"` or `"mode"` (#821) (2025-11-13)
 
 * add `GDALRaster::getMinMaxLocation()`: compute the min/max values for a raster band and their locations, using `GDALComputeRasterMinMaxLocation()` in GDAL >= 3.11 (#820) (2025-11-13)
 
