@@ -13,7 +13,8 @@ rasterToVRT(
   src_align = TRUE,
   resampling = "nearest",
   krnl = NULL,
-  normalized = TRUE
+  normalized = TRUE,
+  krnl_fn = NULL
 )
 }
 \arguments{
@@ -66,15 +67,26 @@ lanczos, average and mode (as character).}
 size must be an odd number. \code{krnl} can also be given as a vector with
 length size x size. For example, a 3x3 average filter is given by:
 \preformatted{
-krnl <- c(
-0.11111, 0.11111, 0.11111,
-0.11111, 0.11111, 0.11111,
-0.11111, 0.11111, 0.11111)
+krnl <- c(0.11111, 0.11111, 0.11111,
+          0.11111, 0.11111, 0.11111,
+          0.11111, 0.11111, 0.11111)
 }
 A kernel cannot be applied to sub-sampled or over-sampled data.}
 
 \item{normalized}{Logical. Indicates whether the kernel is normalized.
 Defaults to \code{TRUE}.}
+
+\item{krnl_fn}{Character string specifying a function to compute on the
+given \code{krnl}. Must be one of \code{"min"}, \code{"max"}, \code{"stddev"}, \code{"median"} or
+\code{"mode"}. \emph{Requires GDAL >= 3.12}. E.g., to compute the median value in a
+3x3 neighborhood around each pixel:
+\preformatted{
+krnl <- c(1, 1, 1,
+          1, 1, 1,
+          1, 1, 1)
+
+krnl_fn <- "median"
+}}
 }
 \value{
 Returns the VRT filename invisibly.
