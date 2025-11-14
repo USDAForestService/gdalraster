@@ -1,4 +1,6 @@
-# gdalraster 2.2.1.9050 (dev)
+# gdalraster 2.2.1.9051 (dev)
+
+* add `GDALRaster::getMinMaxLocation()`: compute the min/max values for a raster band and their locations, using `GDALComputeRasterMinMaxLocation()` in GDAL >= 3.11 (#820) (2025-11-13)
 
 * class `GDALRaster`: add helper methods for iterating I/O on raster blocks, or on multi-block chunks of user-defined size (#819) (2025-11-13)
 
