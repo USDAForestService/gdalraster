@@ -1,6 +1,13 @@
 # Changelog
 
-## gdalraster 2.2.1.9051 (dev)
+## gdalraster 2.2.1.9052 (dev)
+
+- [`rasterToVRT()`](https://usdaforestservice.github.io/gdalraster/reference/rasterToVRT.md):
+  add argument `krnl_fn` supporting a Function element in
+  KernelFilteredSource with GDAL \>= 3.12, one of `"min"`, `"max"`,
+  `"stddev"`, `"median"` or `"mode"`
+  ([\#821](https://github.com/USDAForestService/gdalraster/issues/821))
+  (2025-11-13)
 
 - add `GDALRaster::getMinMaxLocation()`: compute the min/max values for
   a raster band and their locations, using
