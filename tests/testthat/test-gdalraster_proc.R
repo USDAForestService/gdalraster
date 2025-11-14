@@ -251,10 +251,10 @@ test_that("rasterToVRT works", {
     ## resample
     evt_file <- system.file("extdata/storml_evt.tif", package="gdalraster")
     vrt_file <- rasterToVRT(evt_file,
-                            resolution=c(90,90),
-                            resampling="mode")
-    on.exit(deleteDataset(vrt_file), add=TRUE)
-    ds <- new(GDALRaster, vrt_file, read_only=TRUE)
+                            resolution = c(90,90),
+                            resampling = "mode")
+    on.exit(deleteDataset(vrt_file), add = TRUE)
+    ds <- new(GDALRaster, vrt_file)
     dm <- ds$dim()
     chk <- ds$getChecksum(1, 0, 0, dm[1], dm[2])
     ds$close()
@@ -268,9 +268,9 @@ test_that("rasterToVRT works", {
     # src_align = TRUE
     vrt_file <- rasterToVRT(evt_file,
                             subwindow = bbox_from_wkt(bnd),
-                            src_align=TRUE)
-    on.exit(deleteDataset(vrt_file), add=TRUE)
-    ds <- new(GDALRaster, vrt_file, read_only=TRUE)
+                            src_align = TRUE)
+    on.exit(deleteDataset(vrt_file), add = TRUE)
+    ds <- new(GDALRaster, vrt_file)
     dm <- ds$dim()
     chk <- ds$getChecksum(1, 0, 0, dm[1], dm[2])
     ds$close()
@@ -279,9 +279,9 @@ test_that("rasterToVRT works", {
     # src_align = FALSE
     vrt_file <- rasterToVRT(evt_file,
                             subwindow = bbox_from_wkt(bnd),
-                            src_align=FALSE)
-    on.exit(deleteDataset(vrt_file), add=TRUE)
-    ds <- new(GDALRaster, vrt_file, read_only=TRUE)
+                            src_align = FALSE)
+    on.exit(deleteDataset(vrt_file), add = TRUE)
+    ds <- new(GDALRaster, vrt_file)
     dm <- ds$dim()
     chk <- ds$getChecksum(1, 0, 0, dm[1], dm[2])
     ds$close()
@@ -290,19 +290,19 @@ test_that("rasterToVRT works", {
     # subwindow outside raster extent
     expect_error(rasterToVRT(evt_file,
                              subwindow = bbox_from_wkt(g_buffer(bnd, 10000)),
-                             src_align=TRUE))
+                             src_align = TRUE))
 
     ## subset and pixel align two rasters
     lcp_file <- system.file("extdata/storm_lake.lcp", package="gdalraster")
-    ds_lcp <- new(GDALRaster, lcp_file, read_only=TRUE)
+    ds_lcp <- new(GDALRaster, lcp_file)
     b5_file <- system.file("extdata/sr_b5_20200829.tif", package="gdalraster")
     vrt_file <- rasterToVRT(b5_file,
                             resolution = ds_lcp$res(),
                             subwindow = ds_lcp$bbox(),
                             src_align = FALSE)
-    on.exit(deleteDataset(vrt_file), add=TRUE)
+    on.exit(deleteDataset(vrt_file), add = TRUE)
     ds_lcp$close()
-    ds <- new(GDALRaster, vrt_file, read_only=TRUE)
+    ds <- new(GDALRaster, vrt_file)
     dm <- ds$dim()
     chk <- ds$getChecksum(1, 0, 0, dm[1], dm[2])
     ds$close()
@@ -313,15 +313,71 @@ test_that("rasterToVRT works", {
     krnl <- c(0.11111, 0.11111, 0.11111,
               0.11111, 0.11111, 0.11111,
               0.11111, 0.11111, 0.11111)
-    vrt_file <- rasterToVRT(elev_file, krnl=krnl)
-    on.exit(deleteDataset(vrt_file), add=TRUE)
-    ds <- new(GDALRaster, vrt_file, read_only=TRUE)
+    vrt_file <- rasterToVRT(elev_file, krnl = krnl)
+    on.exit(deleteDataset(vrt_file), add = TRUE)
+    ds <- new(GDALRaster, vrt_file)
     dm <- ds$dim()
     chk <- ds$getChecksum(1, 0, 0, dm[1], dm[2])
     ds$close()
     expect_equal(chk, 46590)
 
-    expect_error(rasterToVRT(elev_file, resolution=c(90,90), krnl=krnl))
+    expect_error(rasterToVRT(elev_file, resolution = c(90,90), krnl = krnl))
+
+    ## VRT kernel function GDAL >= 3.12
+    skip_if(gdal_version_num() < gdal_compute_version(3, 12, 0))
+
+    f <- tempfile(fileext = ".tif")
+    on.exit(deleteDataset(f), add = TRUE)
+    ds <- create(format = "GTiff", dst_filename = f, xsize = 3, ysize = 3,
+                 nbands = 1, dataType = "Byte", return_obj = TRUE)
+    ds$setGeoTransform(c(0.0, 5.0, 0.0, 5.0, 0.0, -5.0))
+    v <- c(1, 2, 3, 4, 5, 6, 7, 8, 9)
+    ds$write(1, 0, 0, 3, 3, v)
+    ds$close()
+
+    krnl <- c(1, 1, 1,
+              1, 1, 1,
+              1, 1, 1)
+
+    vrt_min <- rasterToVRT(f, krnl = krnl, krnl_fn = "min")
+    on.exit(deleteDataset(vrt_min), add = TRUE)
+    ds <- new(GDALRaster, vrt_min)
+    x <- ds$read(1, 1, 1, 1, 1, 1, 1)
+    expect_equal(x, 1)
+    ds$close()
+
+    vrt_max <- rasterToVRT(f, krnl = krnl, krnl_fn = "max")
+    on.exit(deleteDataset(vrt_max), add = TRUE)
+    ds <- new(GDALRaster, vrt_max)
+    x <- ds$read(1, 1, 1, 1, 1, 1, 1)
+    expect_equal(x, 9)
+    ds$close()
+
+    vrt_median <- rasterToVRT(f, krnl = krnl, krnl_fn = "median")
+    on.exit(deleteDataset(vrt_median), add = TRUE)
+    ds <- new(GDALRaster, vrt_median)
+    x <- ds$read(1, 1, 1, 1, 1, 1, 1)
+    expect_equal(x, 5)
+    ds$close()
+
+    vrt_sd <- rasterToVRT(f, krnl = krnl, krnl_fn = "stddev")
+    on.exit(deleteDataset(vrt_sd), add = TRUE)
+    ds <- new(GDALRaster, vrt_sd)
+    x <- ds$read(1, 1, 1, 1, 1, 1, 1)
+    expect_equal(x, sd(v), tolerance = 0.1)
+    ds$close()
+
+    ds <- new(GDALRaster, f, read_only = FALSE)
+    v <- c(1, 2, 3, 4, 5, 6, 7, 8, 8)
+    ds$write(1, 0, 0, 3, 3, v)
+    ds$close()
+
+    vrt_mode <- rasterToVRT(f, krnl = krnl, krnl_fn = "mode")
+    on.exit(deleteDataset(vrt_mode), add = TRUE)
+    ds <- new(GDALRaster, vrt_mode)
+    x <- ds$read(1, 1, 1, 1, 1, 1, 1)
+    expect_equal(x, 8)
+    ds$close()
 })
 
 test_that("dem_proc runs without error", {

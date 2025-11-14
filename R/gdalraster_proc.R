@@ -53,18 +53,6 @@ DEFAULT_DEM_PROC <- list(
     "roughness" = c("-compute_edges"))
 
 
-.VRT_KERNEL_TEMPLATE <-
-"<KernelFilteredSource>
-  <SourceFilename relativeToVRT=\"%d\">%s</SourceFilename><SourceBand>%d</SourceBand>
-  <SrcRect xOff=\"%d\" yOff=\"%d\" xSize=\"%d\" ySize=\"%d\"/>
-  <DstRect xOff=\"0\" yOff=\"0\" xSize=\"%d\" ySize=\"%d\"/>
-  <Kernel normalized=\"%d\">
-    <Size>%d</Size>
-    <Coefs>%s</Coefs>
-  </Kernel>
-</KernelFilteredSource>"
-
-
 #' @noRd
 .getGDALformat <- function(file) {
     # Only for guessing common output formats
@@ -80,6 +68,7 @@ DEFAULT_DEM_PROC <- list(
     }
     return(NULL)
 }
+
 
 #' @noRd
 .getOGRformat <- function(file) {
@@ -555,14 +544,24 @@ rasterFromRaster <- function(srcfile, dstfile, fmt=NULL, nbands=NULL,
 #' size must be an odd number. `krnl` can also be given as a vector with
 #' length size x size. For example, a 3x3 average filter is given by:
 #' \preformatted{
-#' krnl <- c(
-#' 0.11111, 0.11111, 0.11111,
-#' 0.11111, 0.11111, 0.11111,
-#' 0.11111, 0.11111, 0.11111)
+#' krnl <- c(0.11111, 0.11111, 0.11111,
+#'           0.11111, 0.11111, 0.11111,
+#'           0.11111, 0.11111, 0.11111)
 #' }
 #' A kernel cannot be applied to sub-sampled or over-sampled data.
 #' @param normalized Logical. Indicates whether the kernel is normalized.
 #' Defaults to `TRUE`.
+#' @param krnl_fn Character string specifying a function to compute on the
+#' given `krnl`. Must be one of `"min"`, `"max"`, `"stddev"`, `"median"` or
+#' `"mode"`. _Requires GDAL >= 3.12_. E.g., to compute the median value in a
+#' 3x3 neighborhood around each pixel:
+#' \preformatted{
+#' krnl <- c(1, 1, 1,
+#'           1, 1, 1,
+#'           1, 1, 1)
+#'
+#' krnl_fn <- "median"
+#' }
 #' @returns Returns the VRT filename invisibly.
 #'
 #' @seealso
@@ -710,12 +709,13 @@ rasterToVRT <- function(srcfile,
                         src_align = TRUE,
                         resampling = "nearest",
                         krnl = NULL,
-                        normalized = TRUE) {
+                        normalized = TRUE,
+                        krnl_fn = NULL) {
 
     if (relativeToVRT) relativeToVRT <- 1 else relativeToVRT <- 0
     if (normalized) normalized <- 1 else normalized <- 0
 
-    src_ds <- new(GDALRaster, srcfile, read.only=TRUE)
+    src_ds <- new(GDALRaster, srcfile)
     src_gt <- src_ds$getGeoTransform()
     src_bbox <- src_ds$bbox()
     src_xmin <- src_bbox[1]
@@ -738,7 +738,20 @@ rasterToVRT <- function(srcfile,
             stop("kernel size must be an odd number", call. = FALSE)
     }
 
-    tmp_vrtfile <- tempfile("src", fileext=".vrt")
+    if (!is.null(krnl_fn)) {
+        if (gdal_version_num() < gdal_compute_version(3, 12, 0)) {
+            stop("'krnl_fn' requires GDAL >= 3.12", call. = FALSE)
+        }
+        if (!(is.character(krnl_fn) && length(krnl_fn) == 1)) {
+            stop("'krnl_fn' must be a character string", call. = FALSE)
+        }
+        if (!(tolower(krnl_fn) %in%
+                c("min", "max", "stddev", "median", "mode"))) {
+            stop("'krnl_fn' not recognized", call. = FALSE)
+        }
+    }
+
+    tmp_vrtfile <- tempfile("src", fileext = ".vrt")
     createCopy("VRT", tmp_vrtfile, srcfile)
 
     if (is.null(resolution)) {
@@ -829,13 +842,35 @@ rasterToVRT <- function(srcfile,
         xml2::xml_text(xsrcstats) <- rep("", length(xsrcstats))
     }
 
-    xml2::write_xml(x, vrtfile, options=c("format", "no_declaration"))
+    xml2::write_xml(x, vrtfile, options = c("format", "no_declaration"))
 
     if (!is.null(krnl)) {
-        vrt_ds <- new(GDALRaster, vrtfile, read_only=FALSE)
+        vrt_kernel_template <- paste0(
+            "<KernelFilteredSource>\n",
+            "  <SourceFilename relativeToVRT=\"%d\">%s</SourceFilename>\n",
+            "  <SourceBand>%d</SourceBand>\n",
+            "  <SrcRect xOff=\"%d\" yOff=\"%d\" xSize=\"%d\" ySize=\"%d\"/>\n",
+            "  <DstRect xOff=\"0\" yOff=\"0\" xSize=\"%d\" ySize=\"%d\"/>\n",
+            "  <Kernel normalized=\"%d\">\n",
+            "    <Size>%d</Size>\n",
+            "    <Coefs>%s</Coefs>\n",
+            "  </Kernel>\n")
+
+        if (!is.null(krnl_fn)) {
+            # Function element as child of KernelFilteredSource in GDAL >= 3.12
+            vrt_kernel_template <- paste0(
+                vrt_kernel_template,
+                "  <Function>_fn_</Function>\n")
+        }
+
+        vrt_kernel_template <- paste0(
+            vrt_kernel_template,
+            "</KernelFilteredSource>\n")
+
+        vrt_ds <- new(GDALRaster, vrtfile, read_only = FALSE)
         if (relativeToVRT) srcfile <- basename(srcfile)
-        for (band in 1:src_bands) {
-            krnl_xml <- enc2utf8(sprintf(.VRT_KERNEL_TEMPLATE,
+        for (band in seq_len(src_bands)) {
+            krnl_xml <- enc2utf8(sprintf(vrt_kernel_template,
                                          relativeToVRT,
                                          srcfile,
                                          band,
@@ -847,8 +882,11 @@ rasterToVRT <- function(srcfile,
                                          vrt_nrows,
                                          normalized,
                                          sqrt(length(krnl)),
-                                         paste(krnl, collapse=" ")))
+                                         paste(krnl, collapse = " ")))
 
+            if (!is.null(krnl_fn)) {
+                krnl_xml <- gsub("_fn_", krnl_fn, krnl_xml, fixed = TRUE)
+            }
             vrt_ds$setMetadataItem(band, "source_0", krnl_xml, "vrt_sources")
         }
         vrt_ds$close()
