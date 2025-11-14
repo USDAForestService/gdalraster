@@ -54,6 +54,7 @@ reference:
   - dem_proc
   - fillNodata
   - footprint
+  - make_chunk_index
   - polygonize
   - rasterize
   - sieveFilter

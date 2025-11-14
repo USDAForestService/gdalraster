@@ -89,8 +89,11 @@ class GDALRaster {
 
     Rcpp::NumericMatrix get_block_indexing(int band) const;
     Rcpp::NumericVector getBlockSize(int band) const;
-    Rcpp::NumericVector getActualBlockSize(
-        int band, int xblockoff, int yblockoff) const;
+    Rcpp::NumericVector getActualBlockSize(int band, int xblockoff,
+                                           int yblockoff) const;
+
+    Rcpp::NumericMatrix make_chunk_index(
+        int band, const Rcpp::NumericVector &max_pixels) const;
 
     int getOverviewCount(int band) const;
     void buildOverviews(const std::string &resampling, std::vector<int> levels,
@@ -139,8 +142,18 @@ class GDALRaster {
     SEXP read(int band, int xoff, int yoff, int xsize, int ysize,
               int out_xsize, int out_ysize) const;
 
+    SEXP readBlock(int band, int xblockoff, int yblockoff) const;
+
+    SEXP readChunk(int band, const Rcpp::IntegerVector &chunk_def) const;
+
     void write(int band, int xoff, int yoff, int xsize, int ysize,
                const Rcpp::RObject &rasterData);
+
+    void writeBlock(int band, int xblockoff, int yblockoff,
+                    const Rcpp::RObject &rasterData);
+
+    void writeChunk(int band, const Rcpp::IntegerVector &chunk_def,
+                    const Rcpp::RObject &rasterData);
 
     void fillRaster(int band, double value, double ivalue);
 
@@ -273,6 +286,11 @@ Rcpp::IntegerMatrix get_pixel_line_ds(const Rcpp::RObject &xy,
 Rcpp::NumericVector bbox_grid_to_geo_(const Rcpp::NumericVector &gt,
                                       double grid_xmin, double grid_xmax,
                                       double grid_ymin, double grid_ymax);
+
+Rcpp::NumericMatrix make_chunk_index_(int raster_xsize, int raster_ysize,
+                                      int block_xsize, int block_ysize,
+                                      const Rcpp::NumericVector &gt,
+                                      const Rcpp::NumericVector &max_pixels);
 
 Rcpp::NumericVector flip_vertical(const Rcpp::NumericVector &v,
                                   int xsize, int ysize, int nbands);

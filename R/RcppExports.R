@@ -618,6 +618,18 @@ inv_geotransform <- function(gt) {
     .Call(`_gdalraster_bbox_grid_to_geo_`, gt, grid_xmin, grid_xmax, grid_ymin, grid_ymax)
 }
 
+#' Returns a matrix of xchunkoff, ychunkoff, xoff, yoff, xsize, ysize, xmin,
+#' xmax, ymin, ymax (i.e., indexing of potentially multi-block chunks defined
+#' on block boundaries for iterating I/O operations over a raster).
+#' If max_pixels == 0, or any value less than block_xsize * block_ysize, then
+#' the chunks are the same as raster blocks.
+#' 'max_pixels' is a scalar value, but NumericVector is used so it can
+#' optionally carry the bit64::integer64 class attribute.
+#' @noRd
+.make_chunk_index <- function(raster_xsize, raster_ysize, block_xsize, block_ysize, gt, max_pixels) {
+    .Call(`_gdalraster_make_chunk_index_`, raster_xsize, raster_ysize, block_xsize, block_ysize, gt, max_pixels)
+}
+
 #' Flip raster data vertically
 #' @noRd
 .flip_vertical <- function(v, xsize, ysize, nbands) {

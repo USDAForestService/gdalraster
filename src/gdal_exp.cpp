@@ -17,6 +17,7 @@
 #include <Rcpp.h>
 #include <RcppInt64>
 
+#include <algorithm>
 #include <cmath>
 #include <cstdint>
 #include <cstdio>
@@ -1060,6 +1061,119 @@ Rcpp::NumericVector bbox_grid_to_geo_(const Rcpp::NumericVector &gt,
     return ret;
 }
 
+
+//' Returns a matrix of xchunkoff, ychunkoff, xoff, yoff, xsize, ysize, xmin,
+//' xmax, ymin, ymax (i.e., indexing of potentially multi-block chunks defined
+//' on block boundaries for iterating I/O operations over a raster).
+//' If max_pixels == 0, or any value less than block_xsize * block_ysize, then
+//' the chunks are the same as raster blocks.
+//' 'max_pixels' is a scalar value, but NumericVector is used so it can
+//' optionally carry the bit64::integer64 class attribute.
+//' @noRd
+// [[Rcpp::export(name = ".make_chunk_index")]]
+Rcpp::NumericMatrix make_chunk_index_(int raster_xsize, int raster_ysize,
+                                      int block_xsize, int block_ysize,
+                                      const Rcpp::NumericVector &gt,
+                                      const Rcpp::NumericVector &max_pixels) {
+
+    if (raster_xsize < 1 || raster_ysize < 1)
+        Rcpp::stop("'raster_xsize' and 'raster_ysize' must be > 0");
+
+    if (block_xsize < 1 || block_ysize < 1)
+        Rcpp::stop("'block_xsize' and 'block_ysize' must be > 0");
+
+    if (max_pixels.size() != 1)
+        Rcpp::stop("'max_pixels' must be a single numeric value "
+                   "(optionally bit64::integer64)");
+
+    int64_t max_pixels_in = 0;
+    if (Rcpp::isInteger64(max_pixels)) {
+        max_pixels_in = Rcpp::fromInteger64(max_pixels[0]);
+    }
+    else {
+        max_pixels_in = static_cast<int64_t>(max_pixels[0]);
+    }
+
+    if (max_pixels_in < 0)
+        max_pixels_in = 0;
+
+    int chunk_xsize = -1;
+    int chunk_ysize = -1;
+
+    if (max_pixels_in == 0) {
+        chunk_xsize = block_xsize;
+        chunk_ysize = block_ysize;
+    }
+    else {
+        const double blocks_per_chunk =
+            static_cast<double>(max_pixels_in) /
+            (static_cast<double>(block_xsize) * block_ysize);
+
+        const double blocks_per_row =
+            static_cast<double>(raster_xsize) / block_xsize;
+
+        if (blocks_per_chunk < blocks_per_row) {
+            if (blocks_per_chunk < 1)
+                chunk_xsize = block_xsize;
+            else
+                chunk_xsize = block_xsize * static_cast<int>(blocks_per_chunk);
+
+            chunk_ysize = block_ysize;
+        }
+        else {
+            chunk_xsize = raster_xsize;
+
+            chunk_ysize = block_ysize *
+                static_cast<int>(blocks_per_chunk / blocks_per_row);
+        }
+    }
+
+    chunk_xsize = std::max<int>(chunk_xsize, 1);
+    chunk_xsize = std::min<int>(chunk_xsize, raster_xsize);
+    chunk_ysize = std::max<int>(chunk_ysize, 1);
+    chunk_ysize = std::min<int>(chunk_ysize, raster_ysize);
+
+    const int num_chunks_x = static_cast<int>(
+        std::ceil(static_cast<double>(raster_xsize) / chunk_xsize));
+
+    const int num_chunks_y = static_cast<int>(
+        std::ceil(static_cast<double>(raster_ysize) / chunk_ysize));
+
+    const R_xlen_t num_chunks =
+        static_cast<R_xlen_t>(num_chunks_x) * num_chunks_y;
+
+    Rcpp::NumericMatrix chunks = Rcpp::no_init(num_chunks, 10);
+    Rcpp::colnames(chunks) =
+        Rcpp::CharacterVector::create("xchunkoff", "ychunkoff", "xoff", "yoff",
+                                      "xsize", "ysize", "xmin", "xmax", "ymin",
+                                      "ymax");
+
+    R_xlen_t out_row_i = 0;
+    for (int y = 0; y < num_chunks_y; ++y) {
+        for (int x = 0; x < num_chunks_x; ++x) {
+            const int this_xoff = x * chunk_xsize;
+            const int this_yoff = y * chunk_ysize;
+            const int this_xsize =
+                std::min(chunk_xsize, raster_xsize - this_xoff);
+            const int this_ysize =
+                std::min(chunk_ysize, raster_ysize - this_yoff);
+
+            const Rcpp::NumericVector &this_bbox =
+                bbox_grid_to_geo_(gt, this_xoff, this_xoff + this_xsize,
+                                  this_yoff, this_yoff + this_ysize);
+
+            chunks.row(out_row_i) =
+                Rcpp::NumericVector::create(x, y, this_xoff, this_yoff,
+                                            this_xsize, this_ysize,
+                                            this_bbox[0], this_bbox[2],
+                                            this_bbox[1], this_bbox[3]);
+
+            ++out_row_i;
+        }
+    }
+
+    return chunks;
+}
 
 //' Flip raster data vertically
 //' @noRd

@@ -900,6 +900,7 @@ test_that("get block indexing works", {
     ds$close()
 
     f <- tempfile(fileext = ".tif")
+    on.exit(deleteDataset(f), add = TRUE)
     opt <- c("TILED=YES", "BLOCKXSIZE=128", "BLOCKYSIZE=128", "COMPRESS=LZW")
     ds2 <- create(format = "GTiff", dst_filename = f, xsize = 671, ysize = 528,
                   nbands = 1, dataType = "Byte", options = opt,
@@ -912,5 +913,233 @@ test_that("get block indexing works", {
     expect_equal(blocks[30, ], c(5, 4, 640, 512, 31, 16, 3200, 3355, -2635, -2555))
 
     ds2$close()
-    deleteDataset(f)
+})
+
+test_that("readBlock/writeBlock work", {
+    f <- tempfile(fileext = ".tif")
+    on.exit(deleteDataset(f), add = TRUE)
+    opt <- c("TILED=YES", "BLOCKXSIZE=32", "BLOCKYSIZE=32", "COMPRESS=LZW")
+    ds <- create(format = "GTiff", dst_filename = f, xsize = 90, ysize = 80,
+                 nbands = 1, dataType = "Byte", options = opt,
+                 return_obj = TRUE)
+    ds$setGeoTransform(c(0.0, 5.0, 0.0, 5.0, 0.0, -5.0))
+
+    # fill with 1
+    ds$fillRaster(band = 1, 1, 0)
+    ds$flushCache()
+
+    ## read back
+    # first block of first row
+    values <- ds$readBlock(band = 1, xblockoff = 0, yblockoff = 0)
+    expect_equal(length(values), 32 * 32)
+    expect_true(all(values == 1))
+
+    # right edge of first row
+    values <- ds$readBlock(band = 1, xblockoff = 2, yblockoff = 0)
+    expect_equal(length(values), 26 * 32)
+    expect_true(all(values == 1))
+
+    # bottom right corner
+    values <- ds$readBlock(band = 1, xblockoff = 2, yblockoff = 2)
+    expect_equal(length(values), 26 * 16)
+    expect_true(all(values == 1))
+
+    ## write blocks
+    # second block of first row
+    values <- rep(10, 32 * 32)
+    expect_no_error(ds$writeBlock(band = 1, xblockoff = 1, yblockoff = 0,
+                                  values))
+    # right edge of second row
+    values <- rep(20, 26 * 32)
+    expect_no_error(ds$writeBlock(band = 1, xblockoff = 2, yblockoff = 1,
+                                  values))
+    # bottom right corner
+    values <- rep(30, 26 * 16)
+    expect_no_error(ds$writeBlock(band = 1, xblockoff = 2, yblockoff = 2,
+                                  values))
+
+    ds$close()
+
+    ## expect errors on closed dataset
+    expect_error(ds$writeBlock(band = 1, xblockoff = 2, yblockoff = 2,
+                               values))
+    expect_error(ds$readBlock(band = 1, xblockoff = 0, yblockoff = 0))
+
+    ## open a new dataset on the file and read back
+    ds2 <- new(GDALRaster, f)
+
+    # first block of first row, unchanged
+    values <- ds2$readBlock(band = 1, xblockoff = 0, yblockoff = 0)
+    expect_equal(length(values), 32 * 32)
+    expect_true(all(values == 1))
+
+    # second block of first row
+    values <- ds2$readBlock(band = 1, xblockoff = 1, yblockoff = 0)
+    expect_equal(length(values), 32 * 32)
+    expect_true(all(values == 10))
+
+    # right edge of first row, unchanged
+    values <- ds2$readBlock(band = 1, xblockoff = 2, yblockoff = 0)
+    expect_equal(length(values), 26 * 32)
+    expect_true(all(values == 1))
+
+    # right edge of second row
+    values <- ds2$readBlock(band = 1, xblockoff = 2, yblockoff = 1)
+    expect_equal(length(values), 26 * 32)
+    expect_true(all(values == 20))
+
+    # bottom right corner
+    values <- ds2$readBlock(band = 1, xblockoff = 2, yblockoff = 2)
+    expect_equal(length(values), 26 * 16)
+    expect_true(all(values == 30))
+
+    ## test input validation
+    expect_error(ds2$readBlock(band = 5, xblockoff = 0, yblockoff = 0))
+    expect_error(ds2$readBlock(band = 1, xblockoff = -1, yblockoff = 0))
+    expect_error(ds2$readBlock(band = 1, xblockoff = 0, yblockoff = -1))
+
+    ds2$open(read_only = FALSE)
+
+    values <- rep(10, 32 * 32)
+    expect_error(ds2$writeBlock(band = 5, xblockoff = 0, yblockoff = 0,
+                                values))
+    expect_error(ds2$writeBlock(band = 1, xblockoff = -1, yblockoff = 0,
+                                values))
+    expect_error(ds2$writeBlock(band = 1, xblockoff = 0, yblockoff = -1,
+                                values))
+
+    # size of input pixel data
+    expect_no_error(ds2$writeBlock(band = 1, xblockoff = 0, yblockoff = 0,
+                                   values))
+    values <- rep(10, 26 * 32)
+    expect_error(ds2$writeBlock(band = 1, xblockoff = 0, yblockoff = 0,
+                                values))
+
+    ds2$close()
+})
+
+test_that("make_chunk_index/readChunk/writeChunk work", {
+    f <- tempfile(fileext = ".tif")
+    on.exit(deleteDataset(f), add = TRUE)
+    opt <- c("TILED=YES", "BLOCKXSIZE=32", "BLOCKYSIZE=32", "COMPRESS=LZW")
+    ds <- create(format = "GTiff", dst_filename = f, xsize = 90, ysize = 80,
+                 nbands = 1, dataType = "Byte", options = opt,
+                 return_obj = TRUE)
+    ds$setGeoTransform(c(0.0, 5.0, 0.0, 5.0, 0.0, -5.0))
+
+    # fill with 1
+    ds$fillRaster(band = 1, 1, 0)
+    ds$flushCache()
+
+    bb <- ds$bbox()
+
+    ## index for a chunk size of two consecutive blocks (< blocks_per_row)
+    chunks <- ds$make_chunk_index(band = 1, max_pixels = 2 * 32 * 32)
+    expect_true(is.matrix(chunks))
+    expect_equal(ncol(chunks), 10)
+    expect_equal(nrow(chunks), 6)
+    # upper left corner chunk
+    expect_equal(unname(chunks[1, 1:4]), c(0 ,0, 0, 0))
+    expect_equal(unname(chunks[1, "xsize"]), 64)
+    expect_equal(unname(chunks[1, "ysize"]), 32)
+    expect_equal(unname(chunks[1, "xmin"]), bb[1])
+    expect_equal(unname(chunks[1, "ymax"]), bb[4])
+    # lower right corner chunk
+    expect_equal(unname(chunks[6, 1:4]), c(1, 2, 64, 64))
+    expect_equal(unname(chunks[6, "xsize"]), 26)
+    expect_equal(unname(chunks[6, "ysize"]), 16)
+    expect_equal(unname(chunks[6, "xmax"]), bb[3])
+    expect_equal(unname(chunks[6, "ymin"]), bb[2])
+
+    ## index for a chunk size of three consecutive blocks (> blocks_per_row)
+    chunks <- ds$make_chunk_index(band = 1, max_pixels = 3 * 32 * 32)
+    expect_true(is.matrix(chunks))
+    expect_equal(ncol(chunks), 10)
+    expect_equal(nrow(chunks), 3)
+    # upper left corner chunk
+    expect_equal(unname(chunks[1, "xmin"]), bb[1])
+    expect_equal(unname(chunks[1, "ymax"]), bb[4])
+    # lower right corner chunk
+    expect_equal(unname(chunks[3, "xmax"]), bb[3])
+    expect_equal(unname(chunks[3, "ymin"]), bb[2])
+
+    expected_names <- c("xchunkoff", "ychunkoff", "xoff", "yoff", "xsize",
+                        "ysize", "xmin", "xmax", "ymin", "ymax")
+    expect_equal(colnames(chunks), expected_names)
+
+    expected_values <- c(0, 0, 0,  0, 90, 32, 0, 450, -155,    5,
+                         0, 1, 0, 32, 90, 32, 0, 450, -315, -155,
+                         0, 2, 0, 64, 90, 16, 0, 450, -395, -315)
+    expected_values <- matrix(expected_values, nrow = 3, ncol = 10,
+                              byrow = TRUE)
+    expect_equal(unname(chunks), unname(expected_values))
+
+    ## read back
+    values <- ds$readChunk(band = 1, chunks[1, ])
+    expect_equal(length(values), 90 * 32)
+    expect_true(all(values == 1))
+    values <- ds$readChunk(band = 1, chunks[2, ])
+    expect_equal(length(values), 90 * 32)
+    expect_true(all(values == 1))
+    values <- ds$readChunk(band = 1, chunks[3, ])
+    expect_equal(length(values), 90 * 16)
+    expect_true(all(values == 1))
+
+    ## write chunks
+    values <- rep(10, 90 * 32)
+    expect_no_error(ds$writeChunk(band = 1, chunks[1, ], values))
+    values <- rep(20, 90 * 32)
+    expect_no_error(ds$writeChunk(band = 1, chunks[2, ], values))
+    values <- rep(30, 90 * 16)
+    expect_no_error(ds$writeChunk(band = 1, chunks[3, ], values))
+
+    ds$close()
+
+    ## expect errors on closed dataset
+    expect_error(ds$writeChunk(band = 1, chunks[3, ], values))
+    expect_error(ds$readChunk(band = 1, chunks[1, ]))
+
+    ## open a new dataset on the file and read back
+    ds2 <- new(GDALRaster, f)
+
+    values <- ds2$readChunk(band = 1, chunks[1, ])
+    expect_equal(length(values), 90 * 32)
+    expect_true(all(values == 10))
+    values <- ds2$readChunk(band = 1, chunks[2, ])
+    expect_equal(length(values), 90 * 32)
+    expect_true(all(values == 20))
+    values <- ds2$readChunk(band = 1, chunks[3, ])
+    expect_equal(length(values), 90 * 16)
+    expect_true(all(values == 30))
+
+    # chunk_def as length-4 vector of xoff, yoff, xsize, ysize
+    values <- 0
+    expect_no_error(values <- ds2$readChunk(band = 1, chunks[1, 3:6]))
+    expect_equal(length(values), 90 * 32)
+    expect_true(all(values == 10))
+    values <- 0
+    expect_no_error(values <- ds2$readChunk(band = 1, c(0, 32, 90, 32)))
+    expect_equal(length(values), 90 * 32)
+    expect_true(all(values == 20))
+
+    ## test input validation
+    expect_error(ds2$readChunk(band = 5, chunks[1, ]))
+    expect_error(ds2$readChunk(band = 1, matrix(numeric(0))))
+    expect_error(ds2$readChunk(band = 1, chunks[1, 1:2]))
+    expect_error(ds2$readChunk(band = 1, chunks[1, 1:5]))
+
+    ds2$open(read_only = FALSE)
+
+    values <- rep(10, 90 * 32)
+    expect_error(ds2$writeChunk(band = 5, chunks[1, ], values))
+    expect_error(ds2$writeChunk(band = 1, matrix(numeric(0)), values))
+    expect_error(ds2$writeChunk(band = 1, chunks[1, 1:2], values))
+    expect_error(ds2$writeChunk(band = 1, chunks[1, 1:5], values))
+
+    # size of input pixel data
+    expect_no_error(ds2$writeChunk(band = 1, chunks[1, ], values))
+    values <- rep(10, 90 * 16)
+    expect_error(ds2$writeChunk(band = 1, chunks[1, ], values))
+
+    ds2$close()
 })
