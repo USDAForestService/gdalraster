@@ -24,14 +24,14 @@ elev_file <- system.file("extdata/storml_elev.tif", package="gdalraster")
 ds <- new(GDALRaster, elev_file)
 dump_open_datasets()
 #> Open GDAL Datasets:
-#>   1 S LCP    -276277248 143x107x8 /home/runner/work/_temp/Library/gdalraster/extdata/storm_lake.lcp
-#>   1 S GTiff  -276277248 143x107x1 /home/runner/work/_temp/Library/gdalraster/extdata/storml_elev.tif
+#>   1 S GTiff  -336111616 143x107x1 /home/runner/work/_temp/Library/gdalraster/extdata/storml_elev.tif
+#>   1 S LCP    -336111616 143x107x8 /home/runner/work/_temp/Library/gdalraster/extdata/storm_lake.lcp
 #> [1] 2
 ds2 <- new(GDALRaster, elev_file)
 dump_open_datasets()
 #> Open GDAL Datasets:
-#>   1 S LCP    -276277248 143x107x8 /home/runner/work/_temp/Library/gdalraster/extdata/storm_lake.lcp
-#>   2 S GTiff  -276277248 143x107x1 /home/runner/work/_temp/Library/gdalraster/extdata/storml_elev.tif
+#>   2 S GTiff  -336111616 143x107x1 /home/runner/work/_temp/Library/gdalraster/extdata/storml_elev.tif
+#>   1 S LCP    -336111616 143x107x8 /home/runner/work/_temp/Library/gdalraster/extdata/storm_lake.lcp
 #> [1] 2
 # open without using shared mode
 ds3 <- new(GDALRaster, elev_file, read_only = TRUE,
@@ -39,25 +39,25 @@ ds3 <- new(GDALRaster, elev_file, read_only = TRUE,
 dump_open_datasets()
 #> Open GDAL Datasets:
 #>   1 N GTiff       -1 143x107x1 /home/runner/work/_temp/Library/gdalraster/extdata/storml_elev.tif
-#>   1 S LCP    -276277248 143x107x8 /home/runner/work/_temp/Library/gdalraster/extdata/storm_lake.lcp
-#>   2 S GTiff  -276277248 143x107x1 /home/runner/work/_temp/Library/gdalraster/extdata/storml_elev.tif
+#>   2 S GTiff  -336111616 143x107x1 /home/runner/work/_temp/Library/gdalraster/extdata/storml_elev.tif
+#>   1 S LCP    -336111616 143x107x8 /home/runner/work/_temp/Library/gdalraster/extdata/storm_lake.lcp
 #> [1] 3
 ds$close()
 dump_open_datasets()
 #> Open GDAL Datasets:
 #>   1 N GTiff       -1 143x107x1 /home/runner/work/_temp/Library/gdalraster/extdata/storml_elev.tif
-#>   1 S LCP    -276277248 143x107x8 /home/runner/work/_temp/Library/gdalraster/extdata/storm_lake.lcp
-#>   1 S GTiff  -276277248 143x107x1 /home/runner/work/_temp/Library/gdalraster/extdata/storml_elev.tif
+#>   1 S GTiff  -336111616 143x107x1 /home/runner/work/_temp/Library/gdalraster/extdata/storml_elev.tif
+#>   1 S LCP    -336111616 143x107x8 /home/runner/work/_temp/Library/gdalraster/extdata/storm_lake.lcp
 #> [1] 3
 ds2$close()
 dump_open_datasets()
 #> Open GDAL Datasets:
 #>   1 N GTiff       -1 143x107x1 /home/runner/work/_temp/Library/gdalraster/extdata/storml_elev.tif
-#>   1 S LCP    -276277248 143x107x8 /home/runner/work/_temp/Library/gdalraster/extdata/storm_lake.lcp
+#>   1 S LCP    -336111616 143x107x8 /home/runner/work/_temp/Library/gdalraster/extdata/storm_lake.lcp
 #> [1] 2
 ds3$close()
 dump_open_datasets()
 #> Open GDAL Datasets:
-#>   1 S LCP    -276277248 143x107x8 /home/runner/work/_temp/Library/gdalraster/extdata/storm_lake.lcp
+#>   1 S LCP    -336111616 143x107x8 /home/runner/work/_temp/Library/gdalraster/extdata/storm_lake.lcp
 #> [1] 1
 ```

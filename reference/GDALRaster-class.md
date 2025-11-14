@@ -155,8 +155,10 @@ override the default resampling to one of `BILINEAR`, `CUBIC`,
     ds$setRasterColorInterp(band, col_interp)
 
     ds$getMinMax(band, approx_ok)
+    ds$getMinMaxLocation(band)
     ds$getStatistics(band, approx_ok, force)
     ds$clearStatistics()
+
     ds$getHistogram(band, min, max, num_buckets, incl_out_of_range, approx_ok)
     ds$getDefaultHistogram(band, force)
 
@@ -656,6 +658,19 @@ If the band has a nodata value it will be excluded from the minimum and
 maximum. If `approx_ok` is `FALSE`, then all pixels will be read and
 used to compute an exact range.
 
+`$getMinMaxLocation(band)`  
+Computes the min/max values for a band, and their locations. Pixels with
+value matching the nodata value or masked by the mask band are ignored.
+If the minimum or maximum value is hit in several locations, it is not
+specified which location will be returned. The locations are returned as
+column/row number (0-based), geospatial x/y in the coordinate system of
+the raster, and WGS84 longitude/latitude. Returns a numeric vector with
+the following named values: `min`, `min_col`, `min_row`, `min_geo_x`,
+`min_geo_y`, `min_wgs84_lon`, `min_wgs84_lat`, `max`, `max_col`,
+`max_row`, `max_geo_x`, `max_geo_y`, `max_wgs84_lon`, `max_wgs84_lat`.
+This method wraps `GDALComputeRasterMinMaxLocation()` in the GDAL C API
+requiring GDAL \>= 3.11.
+
 `$getStatistics(band, approx_ok, force)`  
 Returns a numeric vector of length four containing the minimum, maximum,
 mean and standard deviation of pixel values in `band` (excluding nodata
@@ -757,7 +772,7 @@ accessed (`xsize * ysize`). `xoff` is the pixel (column) offset to the
 top left corner of the region of the band to be accessed (zero to start
 from the left side). `yoff` is the line (row) offset to the top left
 corner of the region of the band to be accessed (zero to start from the
-top). *Note that raster column/row offsets use 0-based indexing.*
+top). *Note that raster row/column offsets use 0-based indexing.*
 `xsize` is the width in pixels of the region to be accessed. `ysize` is
 the height in pixels of the region to be accessed. `out_xsize` is the
 width of the output array into which the desired region will be read
@@ -798,7 +813,7 @@ Writes a region of raster data to `band`. `xoff` is the pixel (column)
 offset to the top left corner of the region of the band to be accessed
 (zero to start from the left side). `yoff` is the line (row) offset to
 the top left corner of the region of the band to be accessed (zero to
-start from the top). *Note that raster column/row offsets use 0-based
+start from the top). *Note that raster row/column offsets use 0-based
 indexing.* `xsize` is the width in pixels of the region to write.
 `ysize` is the height in pixels of the region to write. `rasterData` is
 a numeric or complex vector containing values to write. It is organized
@@ -916,7 +931,7 @@ on `band`. Floating point data are converted to 32-bit integer so
 decimal portions of such raster data will not affect the checksum. Real
 and imaginary components of complex bands influence the result. `xoff`
 is the pixel (column) offset of the window to read. `yoff` is the line
-(row) offset of the window to read. *Raster column/row offsets use
+(row) offset of the window to read. *Raster row/column offsets use
 0-based indexing.* `xsize` is the width in pixels of the window to read.
 `ysize` is the height in pixels of the window to read.
 
@@ -1149,7 +1164,7 @@ ds$getMetadataItem(band = 2, mdi_name = "SLOPE_UNIT_NAME", domain = "")
 #> [1] "Degrees"
 
 ## read one row of pixel values from band 1 (elevation)
-## raster column/row index are 0-based
+## raster row/column index are 0-based
 ## the upper left corner is the origin
 ## read the tenth row:
 ncols <- ds$getRasterXSize()
