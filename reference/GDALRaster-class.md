@@ -126,9 +126,12 @@ override the default resampling to one of `BILINEAR`, `CUBIC`,
     ds$bbox()
     ds$res()
     ds$dim()
+
     ds$apply_geotransform(col_row)
     ds$get_pixel_line(xy)
+
     ds$get_block_indexing(band)
+    ds$make_chunk_index(band, max_pixels)
 
     ds$getDescription(band)
     ds$setDescription(band, desc)
@@ -164,7 +167,12 @@ override the default resampling to one of `BILINEAR`, `CUBIC`,
     ds$getMetadataDomainList(band)
 
     ds$read(band, xoff, yoff, xsize, ysize, out_xsize, out_ysize)
+    ds$readBlock(band, xblockoff, yblockoff)
+    ds$readChunk(band, chunk_def)
+
     ds$write(band, xoff, yoff, xsize, ysize, rasterData)
+    ds$writeBlock(band, xblockoff, yblockoff, rasterData)
+    ds$writeChunk(band, chunk_def, rasterData)
     ds$fillRaster(band, value, ivalue)
 
     ds$getColorTable(band)
@@ -386,17 +394,39 @@ for more info and examples.
 `$get_block_indexing(band)`  
 Helper method returning a numeric matrix with named columns:
 `xblockoff`, `yblockoff`, `xoff`, `yoff`, `xsize`, `ysize`, `xmin`,
-`xmax`, `ymin`, `ymax`. For the meanings of these names, refer to the
-following class methods below: `$getBlockSize()`,
-`$getActualBlockSize()` and `$read()`. All offsets are zero-based. The
-columns `xmin`, `xmax`, `ymin` and `ymax` give the extent of each block
-in geospatial coordinates. This method provides indexing values for the
-block layout of the given `band` number. The returned matrix has number
-of rows equal to the number of blocks comprising the band, with blocks
-ordered left to right, top to bottom. The `xoff`/`yoff` values are pixel
-offsets to the start of a block. The `xsize`/`ysize` values give the
-actual block sizes accounting for potentially incomplete blocks along
-the right and bottom edges.
+`xmax`, `ymin`, `ymax`. This method provides indexing values for the
+block layout of the given `band` number. See also the class methods:
+`$getBlockSize()`, `$getActualBlockSize()` and `$read()`. The returned
+matrix has number of rows equal to the number of blocks for the given
+`band` number, with blocks ordered left to right, top to bottom. All
+offsets are zero-based. The `xoff`/`yoff` values are pixel offsets to
+the start of a block. The `xsize`/`ysize` values give the actual block
+sizes accounting for potentially incomplete blocks along the right and
+bottom edges. The columns `xmin`, `xmax`, `ymin` and `ymax` give the
+extent of each block in geospatial coordinates.
+
+`$make_chunk_index(band, max_pixels)`  
+Helper method returning a numeric matrix with named columns:
+`xchunkoff`, `ychunkoff`, `xoff`, `yoff`, `xsize`, `ysize`, `xmin`,
+`xmax`, `ymin`, `ymax`. This method generates indexing information
+(offsets, sizes and geospatial bounding boxes) for potentially
+multi-block chunks, defined on block boundaries for efficient I/O. The
+output of this method can be used with the
+`$readChunk()`/`$writeChunk()` methods to iterate I/O operations
+conveniently on user-defined chunk sizes. The chunks will contain at
+most `max_pixels` given as a numeric value optionally carrying the
+[`bit64::integer64`](https://rdrr.io/pkg/bit64/man/bit64-package.html)
+class attribute (numeric values will be coerced to 64-bit integer
+internally by truncation). A value of `max_pixels = 0` (or any value
+less than raster block xsize \* block ysize, see `$getBlockSize()`
+below), will return output equivalent to `$get_block_indexing()`. The
+returned matrix has number of rows equal to the number of chunks for the
+given `band` number, with chunks ordered left to right, top to bottom.
+All offsets are zero-based. The `xoff`/`yoff` values are pixel offsets
+to the start of a chunk. The `xsize`/`ysize` values give the actual
+chunk sizes accounting for potentially incomplete chunks along the right
+and bottom edges. The columns `xmin`, `xmax`, `ymin` and `ymax` give the
+extent of each chunk in geospatial coordinates.
 
 `$getDescription(band)`  
 Returns a string containing the description for `band`. An empty string
@@ -686,7 +716,7 @@ named elements `min` (lower bound), `max` (upper bound), `num_buckets`
 Returns a character vector of all metadata `NAME=VALUE` pairs that exist
 in the specified `domain`, or empty string (`""`) if there are no
 metadata items in `domain` (metadata in the context of the GDAL Raster
-Data Model: <https://gdal.org/en/stable/user/raster_data_model.html>).
+Data Model <https://gdal.org/en/stable/user/raster_data_model.html>).
 Set `band = 0` to retrieve dataset-level metadata, or to an integer band
 number to retrieve band-level metadata. Set `domain = ""` (empty string)
 to retrieve metadata in the default domain.
@@ -727,7 +757,7 @@ accessed (`xsize * ysize`). `xoff` is the pixel (column) offset to the
 top left corner of the region of the band to be accessed (zero to start
 from the left side). `yoff` is the line (row) offset to the top left
 corner of the region of the band to be accessed (zero to start from the
-top). *Note that raster row/column offsets use 0-based indexing.*
+top). *Note that raster column/row offsets use 0-based indexing.*
 `xsize` is the width in pixels of the region to be accessed. `ysize` is
 the height in pixels of the region to be accessed. `out_xsize` is the
 width of the output array into which the desired region will be read
@@ -743,12 +773,32 @@ as R integer type when possible for the raster data type (`Byte`,
 `$getScale()` and `$getOffset()` above). An error is raised if the read
 operation fails. See also the setting `$readByteAsRaw` above.
 
+`$readBlock(band, xblockoff, yblockoff)`  
+Reads a block of raster data, without resampling. See the class methods
+`$getBlockSize()` and `$getActualBlockSize()` above for a description of
+raster blocks. This is a convenience method to read by block offsets.
+Returns a vector of pixel values with length equal to the actual block
+`xsize * ysize`, otherwise as described above for `$read()`.
+
+`$readChunk(band, chunk_def)`  
+Reads a potentially multi-block chunk of raster data, without
+resampling. This is a convenience method that can be used with the
+output of `$make_chunk_index()` (see above). The matrix of chunk offsets
+and sizes returned by `$make_chunk_index()` (or `$get_block_indexing()`
+to operate on blocks) can be used to iterate I/O over the raster in
+user-defined chunk sizes, i.e., a row of that matrix can be passed for
+the `chunk_def` argument. `chunk_def` can also be given as an numeric
+vector of length 4 containing the 0-based pixel offsets and pixel sizes
+for a chunk (xoff, yoff, xsize, ysize). Returns a vector of pixel values
+with length equal to the chunk `xsize * ysize`, otherwise as described
+above for `$read()`.
+
 `$write(band, xoff, yoff, xsize, ysize, rasterData)`  
 Writes a region of raster data to `band`. `xoff` is the pixel (column)
 offset to the top left corner of the region of the band to be accessed
 (zero to start from the left side). `yoff` is the line (row) offset to
 the top left corner of the region of the band to be accessed (zero to
-start from the top). *Note that raster row/column offsets use 0-based
+start from the top). *Note that raster column/row offsets use 0-based
 indexing.* `xsize` is the width in pixels of the region to write.
 `ysize` is the height in pixels of the region to write. `rasterData` is
 a numeric or complex vector containing values to write. It is organized
@@ -756,6 +806,20 @@ in left to right, top to bottom pixel order. `NA` in `rasterData` should
 be replaced with a suitable nodata value prior to writing (see
 `$getNoDataValue()` and `$setNoDataValue()` above). An error is raised
 if the operation fails (no return value).
+
+`$writeBlock(band, xblockoff, yblockoff, rasterData)`  
+Writes a block of raster data. See the class methods `$getBlockSize()`
+and `$getActualBlockSize()` above for a description of raster blocks.
+This is a convenience method to write by block offsets.. Otherwise, this
+method operates like `$write()`. The length of `rasterData` must be the
+same as the actual `xsize * ysize` of the destination block.
+
+`$writeChunk(band, chunk_def, rasterData)`  
+Writes a potentially multi-block chunk of raster data. This is a
+convenience method that can be used to iterate I/O over the raster in
+user-defined chunk sizes, see method `$readChunk()` above. Otherwise,
+this method operates like `$write()`. The length of `rasterData` must be
+the same as `xsize * ysize` of the destination chunk.
 
 `$fillRaster(band, value, ivalue)`  
 Fills `band` with a constant value. GDAL makes no guarantees about what
@@ -794,19 +858,18 @@ color table. The palette interpretation values and their meanings are:
 - HLS: columns 2:4 contain hue, lightness, saturation (column 5 unused)
 
 `$setColorTable(band, col_tbl, palette_interp)`  
-Sets the raster color table for `band` (see [GDAL Color
-Table](https://gdal.org/en/stable/user/raster_data_model.html#color-table)).
-`col_tbl` is an integer matrix or data frame with either four or five
-columns (see `$getColorTable()` above). Column 1 contains the pixel
-values. Valid values are integers 0 and larger (note that GTiff format
-supports color tables only for Byte and UInt16 bands). Negative values
-will be skipped with a warning emitted. Interpretation of columns 2:5
-depends on the value of `$getPaletteInterp()` (see above). For RGB,
-columns 2:4 contain red, green, blue as 0-255 integer values, and an
-optional column 5 contains alpha transparency values (defaults to 255
-opaque). `palette_interp` is a string, one of `Gray`, `RGB`, `CMYK` or
-`HLS` (see `$getPaletteInterp()` above). Returns logical `TRUE` on
-success or `FALSE` if the color table could not be set.
+Sets the raster color table for `band`. `col_tbl` is an integer matrix
+or data frame with either four or five columns (see `$getColorTable()`
+above). Column 1 contains the pixel values. Valid values are integers 0
+and larger (note that GTiff format supports color tables only for Byte
+and UInt16 bands). Negative values will be skipped with a warning
+emitted. Interpretation of columns 2:5 depends on the value of
+`$getPaletteInterp()` (see above). For RGB, columns 2:4 contain red,
+green, blue as 0-255 integer values, and an optional column 5 contains
+alpha transparency values (defaults to 255 opaque). `palette_interp` is
+a string, one of `Gray`, `RGB`, `CMYK` or `HLS` (see
+`$getPaletteInterp()` above). Returns logical `TRUE` on success or
+`FALSE` if the color table could not be set.
 
 `$clearColorTable(band)`  
 Clears the raster color table for `band`. Returns logical `TRUE` on
@@ -853,7 +916,7 @@ on `band`. Floating point data are converted to 32-bit integer so
 decimal portions of such raster data will not affect the checksum. Real
 and imaginary components of complex bands influence the result. `xoff`
 is the pixel (column) offset of the window to read. `yoff` is the line
-(row) offset of the window to read. *Raster row/column offsets use
+(row) offset of the window to read. *Raster column/row offsets use
 0-based indexing.* `xsize` is the width in pixels of the window to read.
 `ysize` is the height in pixels of the window to read.
 
@@ -1063,7 +1126,7 @@ ds$getNoDataValue(band = 1)
 #> [1] NA
 
 ## LCP driver reports several dataset- and band-level metadata
-## see the format description at https://gdal.org/en/stable/drivers/raster/lcp.html
+## (format description at https://gdal.org/en/stable/drivers/raster/lcp.html)
 ## set band = 0 to retrieve dataset-level metadata
 ## set domain = "" (empty string) for the default metadata domain
 ds$getMetadata(band = 0, domain = "")
@@ -1086,7 +1149,7 @@ ds$getMetadataItem(band = 2, mdi_name = "SLOPE_UNIT_NAME", domain = "")
 #> [1] "Degrees"
 
 ## read one row of pixel values from band 1 (elevation)
-## raster row/column index are 0-based
+## raster column/row index are 0-based
 ## the upper left corner is the origin
 ## read the tenth row:
 ncols <- ds$getRasterXSize()

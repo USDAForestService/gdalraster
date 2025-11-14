@@ -54,7 +54,7 @@ str(ds)
 #>  $ infoOptions  : chr(0) 
 #>  $ quiet        : logi FALSE
 #>  $ readByteAsRaw: logi FALSE
-#>  and 84 methods, of which 70 are  possibly relevant:
+#>  and 89 methods, of which 75 are  possibly relevant:
 #>    addBand, apply_geotransform, bbox, buildOverviews, clearColorTable,
 #>    clearStatistics, close, deleteNoDataValue, dim, fillRaster, finalize,
 #>    flushCache, get_block_indexing, get_pixel_line, getActualBlockSize,
@@ -65,11 +65,12 @@ str(ds)
 #>    getMetadataItem, getMinMax, getNoDataValue, getOffset, getOverviewCount,
 #>    getPaletteInterp, getProjection, getProjectionRef, getRasterColorInterp,
 #>    getRasterCount, getRasterXSize, getRasterYSize, getScale, getStatistics,
-#>    getUnitType, info, infoAsJSON, initialize, isOpen, open, pixel_extract,
-#>    read, res, setColorTable, setDefaultRAT, setDescription, setFilename,
-#>    setGeoTransform, setMetadata, setMetadataItem, setNoDataValue, setOffset,
-#>    setProjection, setRasterColorInterp, setScale, setUnitType,
-#>    show#envRefClass, write
+#>    getUnitType, info, infoAsJSON, initialize, isOpen, make_chunk_index, open,
+#>    pixel_extract, read, readBlock, readChunk, res, setColorTable,
+#>    setDefaultRAT, setDescription, setFilename, setGeoTransform, setMetadata,
+#>    setMetadataItem, setNoDataValue, setOffset, setProjection,
+#>    setRasterColorInterp, setScale, setUnitType, show#envRefClass, write,
+#>    writeBlock, writeChunk
 ```
 
 ## Getting dataset information

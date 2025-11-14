@@ -43,16 +43,15 @@ related stand-alone functions:
   [`buildVRT()`](https://usdaforestservice.github.io/gdalraster/reference/buildVRT.md),
   [`rasterToVRT()`](https://usdaforestservice.github.io/gdalraster/reference/rasterToVRT.md)
 
-- reproject/resample/crop/mosaic:
-  [`warp()`](https://usdaforestservice.github.io/gdalraster/reference/warp.md)
-
-- algorithms:
+- algorithms/utilities:
   [`dem_proc()`](https://usdaforestservice.github.io/gdalraster/reference/dem_proc.md),
   [`fillNodata()`](https://usdaforestservice.github.io/gdalraster/reference/fillNodata.md),
   [`footprint()`](https://usdaforestservice.github.io/gdalraster/reference/footprint.md),
+  [`make_chunk_index()`](https://usdaforestservice.github.io/gdalraster/reference/make_chunk_index.md),
   [`polygonize()`](https://usdaforestservice.github.io/gdalraster/reference/polygonize.md),
   [`rasterize()`](https://usdaforestservice.github.io/gdalraster/reference/rasterize.md),
   [`sieveFilter()`](https://usdaforestservice.github.io/gdalraster/reference/sieveFilter.md),
+  [`warp()`](https://usdaforestservice.github.io/gdalraster/reference/warp.md),
   [`GDALRaster$getChecksum()`](https://usdaforestservice.github.io/gdalraster/reference/GDALRaster-class.md)
 
 - raster attribute tables:

@@ -83,7 +83,7 @@
 
     
     
-<p>[DRAFT 2023-10-01]</p>
+<p>[last updated 2025-10-13]</p>
 <div class="section level2">
 <h2 id="overview">Overview<a class="anchor" aria-label="anchor" href="#overview"></a>
 </h2>
@@ -112,155 +112,249 @@ includes raster overviews (as .ovr), but the elevation raster itself is
 a 6.8 GB GeoTIFF file using LZW compression on 128 x 128 tiles. The
 direct download link for LF 2020 elevation is:<br><a href="https://landfire.gov/bulk/downloadfile.php?FNAME=US_Topo_2020-LF2020_Elev_220_CONUS.zip&amp;TYPE=landfire" class="external-link uri">https://landfire.gov/bulk/downloadfile.php?FNAME=US_Topo_2020-LF2020_Elev_220_CONUS.zip&amp;TYPE=landfire</a></p>
 <p>Tests were run on a laptop with Intel(R) Core(TM) i5-8250U CPU @
-1.60GHz, 8 GB RAM and SSD, Ubuntu 22.04.2, R 4.3.0, gdalraster 1.2.1
-(dev), GDAL 3.6.2.</p>
+1.60GHz, 8 GB RAM, Ubuntu 24.04.3, R 4.3.0, gdalraster 2.2.1.9040 (dev),
+GDAL 3.11.3.</p>
 <p>Open the elevation dataset and get parameters:</p>
-<pre><code><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://usdaforestservice.github.io/gdalraster/">gdalraster</a></span><span class="op">)</span></span>
+<div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://usdaforestservice.github.io/gdalraster/">gdalraster</a></span><span class="op">)</span></span>
 <span></span>
-<span><span class="va">f</span> <span class="op">=</span> <span class="st">"LC20_Elev_220.tif"</span> </span>
+<span><span class="va">f</span> <span class="op">&lt;-</span> <span class="st">"LC20_Elev_220.tif"</span> </span>
 <span></span>
-<span><span class="va">ds</span> <span class="op">=</span> <span class="fu">new</span><span class="op">(</span><span class="va">GDALRaster</span>, <span class="va">f</span>, read_only <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
-<span><span class="va">ncols</span> <span class="op">=</span> <span class="va">ds</span><span class="op">$</span><span class="fu">getRasterXSize</span><span class="op">(</span><span class="op">)</span></span>
-<span><span class="va">nrows</span> <span class="op">=</span> <span class="va">ds</span><span class="op">$</span><span class="fu">getRasterYSize</span><span class="op">(</span><span class="op">)</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste</a></span><span class="op">(</span><span class="st">"Size is"</span>, <span class="va">ncols</span>, <span class="st">"x"</span>,  <span class="va">nrows</span><span class="op">)</span><span class="op">)</span>  <span class="co"># 1.587394e+10 pixels</span></span>
+<span><span class="va">ds</span> <span class="op">&lt;-</span> <span class="fu">new</span><span class="op">(</span><span class="va">GDALRaster</span>, <span class="va">f</span><span class="op">)</span></span>
+<span><span class="va">ncols</span> <span class="op">&lt;-</span> <span class="va">ds</span><span class="op">$</span><span class="fu">getRasterXSize</span><span class="op">(</span><span class="op">)</span></span>
+<span><span class="va">nrows</span> <span class="op">&lt;-</span> <span class="va">ds</span><span class="op">$</span><span class="fu">getRasterYSize</span><span class="op">(</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste</a></span><span class="op">(</span><span class="st">"Size is"</span>, <span class="va">ncols</span>, <span class="st">"x"</span>,  <span class="va">nrows</span><span class="op">)</span>  <span class="co"># 1.587394e+10 pixels</span></span>
 <span><span class="co">#&gt; [1] "Size is 156335 x 101538"</span></span>
 <span></span>
-<span><span class="va">ds</span><span class="op">$</span><span class="fu">getMetadata</span><span class="op">(</span>band<span class="op">=</span><span class="fl">0</span>, domain<span class="op">=</span><span class="st">"IMAGE_STRUCTURE"</span><span class="op">)</span></span>
+<span><span class="va">ds</span><span class="op">$</span><span class="fu">getMetadata</span><span class="op">(</span>band <span class="op">=</span> <span class="fl">0</span>, domain <span class="op">=</span> <span class="st">"IMAGE_STRUCTURE"</span><span class="op">)</span></span>
 <span><span class="co">#&gt; [1] "COMPRESSION=LZW" "INTERLEAVE=BAND"</span></span>
 <span></span>
-<span><span class="va">ds</span><span class="op">$</span><span class="fu">getBlockSize</span><span class="op">(</span>band<span class="op">=</span><span class="fl">1</span><span class="op">)</span></span>
+<span><span class="va">ds</span><span class="op">$</span><span class="fu">getBlockSize</span><span class="op">(</span>band <span class="op">=</span> <span class="fl">1</span><span class="op">)</span></span>
 <span><span class="co">#&gt; [1] 128 128</span></span>
 <span></span>
-<span><span class="va">ds</span><span class="op">$</span><span class="fu">getDataTypeName</span><span class="op">(</span>band<span class="op">=</span><span class="fl">1</span><span class="op">)</span></span>
-<span><span class="co">#&gt; [1] "Int16"</span></span></code></pre>
-<p>The first test reads all pixels in the raster by row. For a tile size
-of 128 x 128 pixels, each row intersects 1222 raster blocks (156335 /
-128 = 1221.4, the last block is incomplete). This test reflects
-performance implications of GDAL read-ahead caching:</p>
-<pre><code><span><span class="va">process_row</span> <span class="op">=</span> <span class="kw">function</span><span class="op">(</span><span class="va">row</span><span class="op">)</span> <span class="op">{</span></span>
-<span>  <span class="va">r</span> <span class="op">=</span> <span class="va">ds</span><span class="op">$</span><span class="fu">read</span><span class="op">(</span>band<span class="op">=</span><span class="fl">1</span>, xoff<span class="op">=</span><span class="fl">0</span>, yoff<span class="op">=</span><span class="va">row</span>, </span>
-<span>              xsize<span class="op">=</span><span class="va">ncols</span>, ysize<span class="op">=</span><span class="fl">1</span>, </span>
-<span>              out_xsize<span class="op">=</span><span class="va">ncols</span>, out_ysize<span class="op">=</span><span class="fl">1</span><span class="op">)</span></span>
-<span>  <span class="co">## process pixels, possibly write output...</span></span>
-<span>  <span class="kw"><a href="https://rdrr.io/r/base/function.html" class="external-link">return</a></span><span class="op">(</span><span class="op">)</span></span>
-<span><span class="op">}</span></span>
-<span></span>
-<span><span class="co">## Test 1</span></span>
+<span><span class="va">ds</span><span class="op">$</span><span class="fu">getDataTypeName</span><span class="op">(</span>band <span class="op">=</span> <span class="fl">1</span><span class="op">)</span></span>
+<span><span class="co">#&gt; [1] "Int16"</span></span></code></pre></div>
+<p>The first test reads all pixels in the raster by row (using
+<code>GDALRasterIO()</code> internally). For a tile size of 128 x 128
+pixels, each row intersects 1222 raster blocks (156335 / 128 = 1221.4,
+the last block is incomplete). This test reflects performance
+implications of GDAL read-ahead caching:</p>
+<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co">## Test 1</span></span>
 <span><span class="co">## original tiled raster, reading by row (across block boundaries)</span></span>
 <span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/base/system.time.html" class="external-link">system.time</a></span><span class="op">(</span> <span class="fu"><a href="https://rdrr.io/r/base/lapply.html" class="external-link">lapply</a></span><span class="op">(</span><span class="fl">0</span><span class="op">:</span><span class="op">(</span><span class="va">nrows</span><span class="op">-</span><span class="fl">1</span><span class="op">)</span>, <span class="va">process_row</span><span class="op">)</span> <span class="op">)</span></span>
-<span><span class="co">#&gt;    user  system elapsed </span></span>
-<span><span class="co">#&gt; 228.269  11.319 242.195</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/system.time.html" class="external-link">system.time</a></span><span class="op">(</span></span>
+<span>  <span class="kw">for</span> <span class="op">(</span><span class="va">row</span> <span class="kw">in</span> <span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq_len</a></span><span class="op">(</span><span class="va">nrows</span> <span class="op">-</span> <span class="fl">1</span><span class="op">)</span><span class="op">)</span> <span class="op">{</span></span>
+<span>    <span class="va">r</span> <span class="op">&lt;-</span> <span class="va">ds</span><span class="op">$</span><span class="fu">read</span><span class="op">(</span>band <span class="op">=</span> <span class="fl">1</span>, xoff <span class="op">=</span> <span class="fl">0</span>, yoff <span class="op">=</span> <span class="va">row</span>, xsize <span class="op">=</span> <span class="va">ncols</span>, ysize <span class="op">=</span> <span class="fl">1</span>, </span>
+<span>                 out_xsize <span class="op">=</span> <span class="va">ncols</span>, out_ysize <span class="op">=</span> <span class="fl">1</span><span class="op">)</span></span>
 <span></span>
-<span><span class="va">ds</span><span class="op">$</span><span class="fu">close</span><span class="op">(</span><span class="op">)</span></span></code></pre>
+<span>    <span class="co"># process pixels, possibly write output...</span></span>
+<span>  <span class="op">}</span></span>
+<span><span class="op">)</span></span>
+<span><span class="co">#&gt;    user  system elapsed </span></span>
+<span><span class="co">#&gt; 120.641   3.515 127.562</span></span></code></pre></div>
 <p>For comparison, we will read the same data from a raster arranged
 with blocks as whole rows (efficient for row-level access).
 <code><a href="../reference/createCopy.html">gdalraster::createCopy()</a></code> copies a raster dataset with
 optional changes to the format. The extent, number of bands, data type,
 projection, and geotransform are all copied from the source raster:</p>
-<pre><code><span><span class="va">f2</span> <span class="op">=</span> <span class="st">"LC20_Elev_220_striped.tif"</span></span>
-<span><span class="va">opt</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"COMPRESS=LZW"</span>, <span class="st">"TILED=NO"</span>, <span class="st">"BLOCKYSIZE=1"</span>, <span class="st">"BIGTIFF=YES"</span><span class="op">)</span></span>
-<span><span class="fu">gdalraster</span><span class="fu">::</span><span class="fu"><a href="../reference/createCopy.html">createCopy</a></span><span class="op">(</span>format<span class="op">=</span><span class="st">"GTiff"</span>, dst_filename<span class="op">=</span><span class="va">f2</span>, src_filename<span class="op">=</span><span class="va">f</span>,</span>
-<span>                       options<span class="op">=</span><span class="va">opt</span><span class="op">)</span></span>
+<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">f2</span> <span class="op">&lt;-</span> <span class="st">"LC20_Elev_220_striped.tif"</span></span>
+<span><span class="va">opt</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"COMPRESS=LZW"</span>, <span class="st">"TILED=NO"</span>, <span class="st">"BLOCKYSIZE=1"</span>, <span class="st">"BIGTIFF=YES"</span><span class="op">)</span></span>
+<span><span class="fu"><a href="../reference/createCopy.html">createCopy</a></span><span class="op">(</span>format <span class="op">=</span> <span class="st">"GTiff"</span>, dst_filename <span class="op">=</span> <span class="va">f2</span>, src_filename <span class="op">=</span> <span class="va">f</span>, options <span class="op">=</span> <span class="va">opt</span><span class="op">)</span></span>
 <span><span class="co">#&gt; 0...10...20...30...40...50...60...70...80...90...100 - done.</span></span>
 <span></span>
-<span><span class="va">ds2</span> <span class="op">=</span> <span class="fu">new</span><span class="op">(</span><span class="va">GDALRaster</span>, <span class="va">f2</span>, read_only <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
-<span><span class="va">ds2</span><span class="op">$</span><span class="fu">getBlockSize</span><span class="op">(</span>band<span class="op">=</span><span class="fl">1</span><span class="op">)</span></span>
+<span><span class="va">ds2</span> <span class="op">&lt;-</span> <span class="fu">new</span><span class="op">(</span><span class="va">GDALRaster</span>, <span class="va">f2</span><span class="op">)</span></span>
+<span><span class="va">ds2</span><span class="op">$</span><span class="fu">getBlockSize</span><span class="op">(</span>band <span class="op">=</span> <span class="fl">1</span><span class="op">)</span></span>
 <span><span class="co">#&gt; [1] 156335      1</span></span>
 <span></span>
-<span><span class="va">ds2</span><span class="op">$</span><span class="fu">close</span><span class="op">(</span><span class="op">)</span></span></code></pre>
+<span><span class="op">(</span><span class="va">ncols</span> <span class="op">&lt;-</span> <span class="va">ds2</span><span class="op">$</span><span class="fu">getRasterXSize</span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="co">#&gt; [1] 156335</span></span>
+<span><span class="op">(</span><span class="va">nrows</span> <span class="op">&lt;-</span> <span class="va">ds2</span><span class="op">$</span><span class="fu">getRasterYSize</span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="co">#&gt; [1] 101538</span></span></code></pre></div>
 <p>This creates a “striped” tif with raster blocks arranged for
 row-level access (<code>TILED=NO</code> is the default creation option
 for the <a href="https://gdal.org/en/stable/drivers/raster/gtiff.html#creation-issues" class="external-link">GTiff
 format driver</a>). The resulting file is larger at 10.6 GB vs. 6.8 GB,
-since compression is not efficient for strips vs. tiles. Substituting
-the new file (<code>f2</code>) in the test above gives the following
-time to read all pixels by row:</p>
-<pre><code><span><span class="co">## Test 2</span></span>
+since compression is less efficient for strips vs. tiles.</p>
+<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co">## Test 2</span></span>
 <span><span class="co">## striped tif, reading on block boundaries (rows)</span></span>
 <span><span class="co">## cache retrieval not involved</span></span>
 <span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/base/system.time.html" class="external-link">system.time</a></span><span class="op">(</span> <span class="fu"><a href="https://rdrr.io/r/base/lapply.html" class="external-link">lapply</a></span><span class="op">(</span><span class="fl">0</span><span class="op">:</span><span class="op">(</span><span class="va">nrows</span><span class="op">-</span><span class="fl">1</span><span class="op">)</span>, <span class="va">process_row</span><span class="op">)</span> <span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/system.time.html" class="external-link">system.time</a></span><span class="op">(</span></span>
+<span>  <span class="kw">for</span> <span class="op">(</span><span class="va">row</span> <span class="kw">in</span> <span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq_len</a></span><span class="op">(</span><span class="va">nrows</span> <span class="op">-</span> <span class="fl">1</span><span class="op">)</span><span class="op">)</span> <span class="op">{</span></span>
+<span>    <span class="va">r</span> <span class="op">&lt;-</span> <span class="va">ds2</span><span class="op">$</span><span class="fu">read</span><span class="op">(</span>band <span class="op">=</span> <span class="fl">1</span>, xoff <span class="op">=</span> <span class="fl">0</span>, yoff <span class="op">=</span> <span class="va">row</span>, xsize <span class="op">=</span> <span class="va">ncols</span>, ysize <span class="op">=</span> <span class="fl">1</span>, </span>
+<span>                  out_xsize <span class="op">=</span> <span class="va">ncols</span>, out_ysize <span class="op">=</span> <span class="fl">1</span><span class="op">)</span></span>
+<span>    <span class="co"># ...</span></span>
+<span>  <span class="op">}</span></span>
+<span><span class="op">)</span></span>
 <span><span class="co">#&gt;    user  system elapsed</span></span>
-<span><span class="co">#&gt; 230.650   5.112 236.370</span></span></code></pre>
-<p>A final test reads by block on the original tiled raster as
-distributed by LANDFIRE. To read by square blocks we need to calculate
-the row/column offsets and x/y sizes for each tile, including the
-incomplete tiles along the right and bottom edges. Package
-<a href="https://r-spatial.github.io/stars/" class="external-link">stars</a> provides a helper function that we will use for
-this. <a href="https://r-spatial.github.io/stars/" class="external-link">stars</a> represents raster data using R’s 1-based
-indexing and column-major array order (raster rows as array columns in
-R). Accounting for those differences from native GDAL indexing, we get a
-matrix of block boundaries using:</p>
-<pre><code><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://r-spatial.github.io/stars/" class="external-link">stars</a></span><span class="op">)</span></span>
-<span></span>
-<span><span class="va">r</span> <span class="op">=</span> <span class="fu">read_stars</span><span class="op">(</span><span class="va">f</span>, proxy <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
-<span><span class="va">nrows</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">nrow</a></span><span class="op">(</span><span class="va">r</span><span class="op">)</span></span>
-<span><span class="va">ncols</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">ncol</a></span><span class="op">(</span><span class="va">r</span><span class="op">)</span></span>
-<span><span class="va">blocks</span> <span class="op">=</span> <span class="fu">st_tile</span><span class="op">(</span><span class="va">nrows</span>, <span class="va">ncols</span>, <span class="fl">128</span>, <span class="fl">128</span><span class="op">)</span></span>
-<span><span class="va">blocks</span><span class="op">[</span>, <span class="fl">1</span><span class="op">:</span><span class="fl">2</span><span class="op">]</span> <span class="op">=</span> <span class="va">blocks</span><span class="op">[</span>, <span class="fl">1</span><span class="op">:</span><span class="fl">2</span><span class="op">]</span> <span class="op">-</span> <span class="fl">1L</span></span>
-<span></span>
+<span><span class="co">#&gt; 118.075   4.642 123.441</span></span></code></pre></div>
+<p>The next test reads by block on the original raster as distributed by
+LANDFIRE. To read by block on the tiled format we need to calculate the
+row/column offsets and x/y sizes for each tile, including the incomplete
+tiles along the right and bottom edges.</p>
+<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">blocks</span> <span class="op">&lt;-</span> <span class="va">ds</span><span class="op">$</span><span class="fu">get_block_indexing</span><span class="op">(</span>band <span class="op">=</span> <span class="fl">1</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">nrow</a></span><span class="op">(</span><span class="va">blocks</span><span class="op">)</span></span>
-<span><span class="co">#&gt; [1] 970268</span></span></code></pre>
+<span><span class="co">#&gt; [1] 970268</span></span>
+<span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">blocks</span><span class="op">)</span></span>
+<span><span class="co">#&gt;      xblockoff yblockoff xoff yoff xsize ysize     xmin     xmax    ymin</span></span>
+<span><span class="co">#&gt; [1,]         0         0    0    0   128   128 -2362395 -2358555 3263565</span></span>
+<span><span class="co">#&gt; [2,]         1         0  128    0   128   128 -2358555 -2354715 3263565</span></span>
+<span><span class="co">#&gt; [3,]         2         0  256    0   128   128 -2354715 -2350875 3263565</span></span>
+<span><span class="co">#&gt; [4,]         3         0  384    0   128   128 -2350875 -2347035 3263565</span></span>
+<span><span class="co">#&gt; [5,]         4         0  512    0   128   128 -2347035 -2343195 3263565</span></span>
+<span><span class="co">#&gt; [6,]         5         0  640    0   128   128 -2343195 -2339355 3263565</span></span>
+<span><span class="co">#&gt;         ymax</span></span>
+<span><span class="co">#&gt; [1,] 3267405</span></span>
+<span><span class="co">#&gt; [2,] 3267405</span></span>
+<span><span class="co">#&gt; [3,] 3267405</span></span>
+<span><span class="co">#&gt; [4,] 3267405</span></span>
+<span><span class="co">#&gt; [5,] 3267405</span></span>
+<span><span class="co">#&gt; [6,] 3267405</span></span>
+<span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">tail</a></span><span class="op">(</span><span class="va">blocks</span><span class="op">)</span></span>
+<span><span class="co">#&gt;           xblockoff yblockoff   xoff   yoff xsize ysize    xmin    xmax   ymin</span></span>
+<span><span class="co">#&gt; [970263,]      1216       793 155648 101504   128    34 2307045 2310885 221265</span></span>
+<span><span class="co">#&gt; [970264,]      1217       793 155776 101504   128    34 2310885 2314725 221265</span></span>
+<span><span class="co">#&gt; [970265,]      1218       793 155904 101504   128    34 2314725 2318565 221265</span></span>
+<span><span class="co">#&gt; [970266,]      1219       793 156032 101504   128    34 2318565 2322405 221265</span></span>
+<span><span class="co">#&gt; [970267,]      1220       793 156160 101504   128    34 2322405 2326245 221265</span></span>
+<span><span class="co">#&gt; [970268,]      1221       793 156288 101504    47    34 2326245 2327655 221265</span></span>
+<span><span class="co">#&gt;             ymax</span></span>
+<span><span class="co">#&gt; [970263,] 222285</span></span>
+<span><span class="co">#&gt; [970264,] 222285</span></span>
+<span><span class="co">#&gt; [970265,] 222285</span></span>
+<span><span class="co">#&gt; [970266,] 222285</span></span>
+<span><span class="co">#&gt; [970267,] 222285</span></span>
+<span><span class="co">#&gt; [970268,] 222285</span></span></code></pre></div>
 <p>In terms of expected efficiency, reading the tiled raster by block is
 similar to reading the striped raster by row (reading on block
 boundaries, no retrieval from cache). The difference is that the striped
 tif contains fewer but larger blocks (101538 blocks, 156335 pixels per
 block), while the tiled tif contains order of magnitude more blocks that
-are each smaller (970268 blocks, 16384 pixels per block). This test
-reads all pixels by tile from the original LANDFIRE elevation file
-(<code>f</code>):</p>
-<pre><code><span><span class="co">## Test 3</span></span>
-<span><span class="co">## original tiled raster, reading on block boundaries (tiles)</span></span>
+are each smaller (970268 blocks, 16384 pixels per block). The following
+test reads all pixels by tile from the original LANDFIRE elevation file
+(<code>LC20_Elev_220.tif</code>):</p>
+<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co">## Test 3</span></span>
+<span><span class="co">## original tiled raster, reading on block boundaries (i.e., internal tiles)</span></span>
 <span><span class="co">## cache retrieval not involved</span></span>
 <span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/base/system.time.html" class="external-link">system.time</a></span><span class="op">(</span><span class="op">{</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/system.time.html" class="external-link">system.time</a></span><span class="op">(</span></span>
 <span>  <span class="kw">for</span> <span class="op">(</span><span class="va">i</span> <span class="kw">in</span> <span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq_len</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">nrow</a></span><span class="op">(</span><span class="va">blocks</span><span class="op">)</span><span class="op">)</span><span class="op">)</span> <span class="op">{</span></span>
-<span>    <span class="va">ds</span><span class="op">$</span><span class="fu">read</span><span class="op">(</span><span class="fl">1</span>, <span class="va">blocks</span><span class="op">[</span><span class="va">i</span>, <span class="fl">1</span><span class="op">]</span>, <span class="va">blocks</span><span class="op">[</span><span class="va">i</span>, <span class="fl">2</span><span class="op">]</span>, <span class="va">blocks</span><span class="op">[</span><span class="va">i</span>, <span class="fl">3</span><span class="op">]</span>, <span class="va">blocks</span><span class="op">[</span><span class="va">i</span>, <span class="fl">4</span><span class="op">]</span>,</span>
-<span>        <span class="va">blocks</span><span class="op">[</span><span class="va">i</span>, <span class="fl">3</span><span class="op">]</span>, <span class="va">blocks</span><span class="op">[</span><span class="va">i</span>, <span class="fl">4</span><span class="op">]</span><span class="op">)</span></span>
-<span>    <span class="op">}</span></span>
-<span>  <span class="op">}</span><span class="op">)</span></span>
+<span>    <span class="va">r</span> <span class="op">&lt;-</span> <span class="va">ds</span><span class="op">$</span><span class="fu">readChunk</span><span class="op">(</span>band <span class="op">=</span> <span class="fl">1</span>, <span class="va">blocks</span><span class="op">[</span><span class="va">i</span>, <span class="op">]</span><span class="op">)</span></span>
+<span>    <span class="co"># ...</span></span>
+<span>  <span class="op">}</span></span>
+<span><span class="op">)</span></span>
 <span><span class="co">#&gt;    user  system elapsed </span></span>
-<span><span class="co">#&gt; 237.920   7.165 251.200</span></span></code></pre>
+<span><span class="co">#&gt; 118.328   3.519 124.706</span></span></code></pre></div>
+<p>To read on block boundaries but reduce the number of I/O operations
+required to iterate the whole raster, larger chunks comprised of
+multiple consecutive blocks could be defined. This may be more efficient
+in some cases. Class <code>GDALRaster</code> provides a helper method
+<code><a href="../reference/make_chunk_index.html">make_chunk_index()</a></code> to compute the row/column offsets and
+pixels sizes for multi-block chunks containing &lt;=
+<code>max_pixels</code>:</p>
+<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">block_size</span> <span class="op">&lt;-</span> <span class="va">ds</span><span class="op">$</span><span class="fu">getBlockSize</span><span class="op">(</span>band <span class="op">=</span> <span class="fl">1</span><span class="op">)</span>  <span class="co"># block xsize, ysize</span></span>
+<span><span class="op">(</span><span class="va">max_pixels</span> <span class="op">&lt;-</span> <span class="va">block_size</span><span class="op">[</span><span class="fl">1</span><span class="op">]</span> <span class="op">*</span> <span class="va">block_size</span><span class="op">[</span><span class="fl">2</span><span class="op">]</span> <span class="op">*</span> <span class="fl">32</span><span class="op">)</span></span>
+<span><span class="co">#&gt; [1] 524288</span></span>
+<span></span>
+<span><span class="va">chunks</span> <span class="op">&lt;-</span> <span class="va">ds</span><span class="op">$</span><span class="fu">make_chunk_index</span><span class="op">(</span>band <span class="op">=</span> <span class="fl">1</span>, <span class="va">max_pixels</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">nrow</a></span><span class="op">(</span><span class="va">chunks</span><span class="op">)</span></span>
+<span><span class="co">#&gt; [1] 30966</span></span>
+<span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">chunks</span><span class="op">)</span></span>
+<span><span class="co">#&gt;      xchunkoff ychunkoff  xoff yoff xsize ysize     xmin     xmax    ymin</span></span>
+<span><span class="co">#&gt; [1,]         0         0     0    0  4096   128 -2362395 -2239515 3263565</span></span>
+<span><span class="co">#&gt; [2,]         1         0  4096    0  4096   128 -2239515 -2116635 3263565</span></span>
+<span><span class="co">#&gt; [3,]         2         0  8192    0  4096   128 -2116635 -1993755 3263565</span></span>
+<span><span class="co">#&gt; [4,]         3         0 12288    0  4096   128 -1993755 -1870875 3263565</span></span>
+<span><span class="co">#&gt; [5,]         4         0 16384    0  4096   128 -1870875 -1747995 3263565</span></span>
+<span><span class="co">#&gt; [6,]         5         0 20480    0  4096   128 -1747995 -1625115 3263565</span></span>
+<span><span class="co">#&gt;         ymax</span></span>
+<span><span class="co">#&gt; [1,] 3267405</span></span>
+<span><span class="co">#&gt; [2,] 3267405</span></span>
+<span><span class="co">#&gt; [3,] 3267405</span></span>
+<span><span class="co">#&gt; [4,] 3267405</span></span>
+<span><span class="co">#&gt; [5,] 3267405</span></span>
+<span><span class="co">#&gt; [6,] 3267405</span></span>
+<span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">tail</a></span><span class="op">(</span><span class="va">chunks</span><span class="op">)</span></span>
+<span><span class="co">#&gt;          xchunkoff ychunkoff   xoff   yoff xsize ysize    xmin    xmax   ymin</span></span>
+<span><span class="co">#&gt; [30961,]        33       793 135168 101504  4096    34 1692645 1815525 221265</span></span>
+<span><span class="co">#&gt; [30962,]        34       793 139264 101504  4096    34 1815525 1938405 221265</span></span>
+<span><span class="co">#&gt; [30963,]        35       793 143360 101504  4096    34 1938405 2061285 221265</span></span>
+<span><span class="co">#&gt; [30964,]        36       793 147456 101504  4096    34 2061285 2184165 221265</span></span>
+<span><span class="co">#&gt; [30965,]        37       793 151552 101504  4096    34 2184165 2307045 221265</span></span>
+<span><span class="co">#&gt; [30966,]        38       793 155648 101504   687    34 2307045 2327655 221265</span></span>
+<span><span class="co">#&gt;            ymax</span></span>
+<span><span class="co">#&gt; [30961,] 222285</span></span>
+<span><span class="co">#&gt; [30962,] 222285</span></span>
+<span><span class="co">#&gt; [30963,] 222285</span></span>
+<span><span class="co">#&gt; [30964,] 222285</span></span>
+<span><span class="co">#&gt; [30965,] 222285</span></span>
+<span><span class="co">#&gt; [30966,] 222285</span></span>
+<span></span>
+<span><span class="co">## Test 4</span></span>
+<span><span class="co">## original tiled raster, read in chunks defined as 32 consecutive blocks</span></span>
+<span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/system.time.html" class="external-link">system.time</a></span><span class="op">(</span></span>
+<span>  <span class="kw">for</span> <span class="op">(</span><span class="va">i</span> <span class="kw">in</span> <span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq_len</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">nrow</a></span><span class="op">(</span><span class="va">chunks</span><span class="op">)</span><span class="op">)</span><span class="op">)</span> <span class="op">{</span></span>
+<span>    <span class="va">r</span> <span class="op">&lt;-</span> <span class="va">ds</span><span class="op">$</span><span class="fu">readChunk</span><span class="op">(</span>band <span class="op">=</span> <span class="fl">1</span>, <span class="va">chunks</span><span class="op">[</span><span class="va">i</span>, <span class="op">]</span><span class="op">)</span></span>
+<span>    <span class="co"># ...</span></span>
+<span>  <span class="op">}</span></span>
+<span><span class="op">)</span></span>
+<span><span class="co">#&gt;    user  system elapsed </span></span>
+<span><span class="co">#&gt; 104.987   4.319 112.861</span></span>
+<span></span>
+<span></span>
+<span><span class="va">ds</span><span class="op">$</span><span class="fu">close</span><span class="op">(</span><span class="op">)</span></span>
+<span><span class="va">ds2</span><span class="op">$</span><span class="fu">close</span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
 </div>
 <div class="section level2">
 <h2 id="description-of-cache-operation">Description of cache operation<a class="anchor" aria-label="anchor" href="#description-of-cache-operation"></a>
 </h2>
-<p>GDAL block caching enables reading a large tiled raster efficiently
-by row (1.6e+10 total pixels in the test dataset). The default size
+<p>GDAL block caching enables reading a large tiled raster by row
+efficiently (1.6e+10 total pixels in the test dataset). The default size
 limit of the memory cache is 5% of usable physical RAM. Each row of the
 LANDFIRE tiled raster intersects 1222 blocks of size 128 x 128. Each
 intersected block is read from file, decoded from LZW compression, and
-placed in cache memory. The data for each successive <code>read()</code>
-that intersects the same block are retrieved from cache. Caching all of
-the intersected blocks requires 128 x 128 x 2 bytes = 32768 bytes per
-block, 32768 x 1222 = 40042496 bytes, approximately 40 MB. All of the
-decoded block data for a row can be held in cache in this case, meaning
-that only 1 out of every 128 row-level <code>read()</code> involves
-retrieval from file and decoding of compressed blocks. The other 127/128
-are provided from cache. Memory is recovered when a request for a new
-cache block would put cache memory use over the established limit (least
-recently used blocks are flushed from cache to accommodate adding new
+placed in cache memory. The data for each successive read request that
+intersects the same block are retrieved from cache. Caching all of the
+intersected blocks requires 128 x 128 x 2 bytes = 32768 bytes per block,
+32768 x 1222 = 40042496 bytes, approximately 40 MB. All of the decoded
+block data for a row can be held in cache in this case, meaning that
+only 1 out of every 128 row-level read request involves retrieval from
+disk and decoding of compressed blocks. The other 127/128 are provided
+from cache. Memory is recovered when a request for a new cache block
+would put cache memory use over the established limit (least recently
+used blocks are flushed from cache to accommodate adding new
 blocks).</p>
 <p>The code below uses the function
 <code><a href="../reference/get_cache_used.html">gdalraster::get_cache_used()</a></code> to demonstrate the
 behavior:</p>
-<pre><code><span><span class="co">## run in a new R session</span></span>
+<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co">## run in a new R session</span></span>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://usdaforestservice.github.io/gdalraster/">gdalraster</a></span><span class="op">)</span></span>
 <span></span>
-<span><span class="va">f</span> <span class="op">=</span> <span class="st">"LC20_Elev_220.tif"</span></span>
-<span><span class="va">ds</span> <span class="op">=</span> <span class="fu">new</span><span class="op">(</span><span class="va">GDALRaster</span>, <span class="va">f</span>, read_only <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
-<span><span class="va">ncols</span> <span class="op">=</span> <span class="va">ds</span><span class="op">$</span><span class="fu">getRasterXSize</span><span class="op">(</span><span class="op">)</span></span>
-<span><span class="va">nrows</span> <span class="op">=</span> <span class="va">ds</span><span class="op">$</span><span class="fu">getRasterYSize</span><span class="op">(</span><span class="op">)</span></span>
+<span><span class="va">f</span> <span class="op">&lt;-</span> <span class="st">"LC20_Elev_220.tif"</span></span>
+<span><span class="va">ds</span> <span class="op">&lt;-</span> <span class="fu">new</span><span class="op">(</span><span class="va">GDALRaster</span>, <span class="va">f</span><span class="op">)</span></span>
+<span><span class="va">ncols</span> <span class="op">&lt;-</span> <span class="va">ds</span><span class="op">$</span><span class="fu">getRasterXSize</span><span class="op">(</span><span class="op">)</span></span>
+<span><span class="va">nrows</span> <span class="op">&lt;-</span> <span class="va">ds</span><span class="op">$</span><span class="fu">getRasterYSize</span><span class="op">(</span><span class="op">)</span></span>
 <span></span>
-<span><span class="co">## Default cache size is approximately 400 MB in this case (5% of 8 GB RAM)</span></span>
-<span><span class="co">## Read enough data to reach cache max</span></span>
-<span><span class="va">rows_read</span> <span class="op">=</span> <span class="fl">0</span></span>
-<span><span class="va">cache_use</span> <span class="op">=</span> <span class="fu"><a href="../reference/get_cache_used.html">get_cache_used</a></span><span class="op">(</span><span class="op">)</span></span>
+<span><span class="co">## default cache size is approximately 400 MB in this case (5% of 8 GB RAM)</span></span>
+<span><span class="co">## read enough data to reach GDAL_CACHEMAX</span></span>
+<span><span class="va">rows_read</span> <span class="op">&lt;-</span> <span class="fl">0</span></span>
+<span><span class="va">cache_use</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/get_cache_used.html">get_cache_used</a></span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="kw">for</span> <span class="op">(</span><span class="va">row</span> <span class="kw">in</span> <span class="fl">0</span><span class="op">:</span><span class="fl">1536</span><span class="op">)</span> <span class="op">{</span></span>
-<span>  <span class="va">rowdata</span> <span class="op">=</span> <span class="va">ds</span><span class="op">$</span><span class="fu">read</span><span class="op">(</span><span class="fl">1</span>, <span class="fl">0</span>, <span class="va">row</span>, <span class="va">ncols</span>, <span class="fl">1</span>, <span class="va">ncols</span>, <span class="fl">1</span><span class="op">)</span></span>
-<span>  <span class="va">rows_read</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="va">rows_read</span>, <span class="va">row</span><span class="op">+</span><span class="fl">1</span><span class="op">)</span></span>
-<span>  <span class="va">cache_use</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="va">cache_use</span>, <span class="fu"><a href="../reference/get_cache_used.html">get_cache_used</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span>
+<span>  <span class="va">rowdata</span> <span class="op">&lt;-</span> <span class="va">ds</span><span class="op">$</span><span class="fu">read</span><span class="op">(</span><span class="fl">1</span>, <span class="fl">0</span>, <span class="va">row</span>, <span class="va">ncols</span>, <span class="fl">1</span>, <span class="va">ncols</span>, <span class="fl">1</span><span class="op">)</span></span>
+<span>  <span class="va">rows_read</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="va">rows_read</span>, <span class="va">row</span> <span class="op">+</span> <span class="fl">1</span><span class="op">)</span></span>
+<span>  <span class="va">cache_use</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="va">cache_use</span>, <span class="fu"><a href="../reference/get_cache_used.html">get_cache_used</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="op">}</span></span>
 <span></span>
 <span><span class="fu"><a href="../reference/get_cache_used.html">get_cache_used</a></span><span class="op">(</span><span class="op">)</span></span>
@@ -269,31 +363,30 @@ behavior:</p>
 <span><span class="fu"><a href="../reference/get_cache_used.html">get_cache_used</a></span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="co">#&gt; [1] 0</span></span>
 <span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">rows_read</span>, <span class="va">cache_use</span>, type<span class="op">=</span><span class="st">"S"</span>, </span>
-<span>     xlab<span class="op">=</span><span class="st">"rows read"</span>, ylab<span class="op">=</span><span class="st">"cache in use (MB)"</span>, </span>
-<span>     col<span class="op">=</span><span class="st">"blue"</span>, lwd<span class="op">=</span><span class="fl">2</span>, xaxt<span class="op">=</span><span class="st">"n"</span><span class="op">)</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/graphics/axis.html" class="external-link">axis</a></span><span class="op">(</span><span class="fl">1</span>, at <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">1536</span>, by <span class="op">=</span> <span class="fl">128</span><span class="op">)</span>, las<span class="op">=</span><span class="fl">2</span><span class="op">)</span></span></code></pre>
+<span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">rows_read</span>, <span class="va">cache_use</span>, type <span class="op">=</span> <span class="st">"S"</span>, </span>
+<span>     xlab <span class="op">=</span> <span class="st">"rows read"</span>, ylab <span class="op">=</span> <span class="st">"cache in use (MB)"</span>, </span>
+<span>     col <span class="op">=</span> <span class="st">"blue"</span>, lwd <span class="op">=</span> <span class="fl">2</span>, xaxt <span class="op">=</span> <span class="st">"n"</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/graphics/axis.html" class="external-link">axis</a></span><span class="op">(</span><span class="fl">1</span>, at <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">1536</span>, by <span class="op">=</span> <span class="fl">128</span><span class="op">)</span>, las <span class="op">=</span> <span class="fl">2</span><span class="op">)</span></span></code></pre></div>
 <p><img src="img/cache_use.png" class="r-plt" alt="A plot showing the relationship between memory used for the GDAL block cache and the number of rows read from a large test dataset that was read by row in top to bottom order. The test dataset is a tiled GeoTiff format with a block size of 128 x 128 pixels. The number of rows read is on the X axis, and MB of memory in use for the cache is on the Y axis. The plot shows a stair-step pattern of increasing memory used for the block cache as more rows are read until leveling off at 400 MB which is the configured maximum size of the cache in this case." width="75%"></p>
-<p>While the examples above focus on reading a tiled raster by row,
-similar considerations would apply to processing large row-oriented
-rasters in 2-D chunks.</p>
 </div>
 <div class="section level2">
 <h2 id="configuring-cache-size">Configuring cache size<a class="anchor" aria-label="anchor" href="#configuring-cache-size"></a>
 </h2>
 <p>The cache size limit can be set with the <code>GDAL_CACHEMAX</code>
 configuration option, e.g.,</p>
-<pre><code><span><span class="co">## set to a specific size in MB</span></span>
+<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co">## set to a specific size in MB</span></span>
 <span><span class="fu">gdalraster</span><span class="fu">::</span><span class="fu"><a href="../reference/set_config_option.html">set_config_option</a></span><span class="op">(</span><span class="st">"GDAL_CACHEMAX"</span>, <span class="st">"1000"</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co">## or percent of physical RAM</span></span>
-<span><span class="fu">gdalraster</span><span class="fu">::</span><span class="fu"><a href="../reference/set_config_option.html">set_config_option</a></span><span class="op">(</span><span class="st">"GDAL_CACHEMAX"</span>, <span class="st">"20%"</span><span class="op">)</span></span></code></pre>
+<span><span class="fu">gdalraster</span><span class="fu">::</span><span class="fu"><a href="../reference/set_config_option.html">set_config_option</a></span><span class="op">(</span><span class="st">"GDAL_CACHEMAX"</span>, <span class="st">"20%"</span><span class="op">)</span></span></code></pre></div>
 <p>Note that the size limit of the block cache is set upon first use
-(first I/O). Setting <code>GDAL_CACHEMAX</code> after that point will
-not resize the cache. It is a per-session setting. If
-<code>GDAL_CACHEMAX</code> has not been configured upon first use of the
-cache, then the default cache size will be in effect for the current
-session.</p>
+(first I/O). Setting the <code>GDAL_CACHEMAX</code> configuration option
+after that point will not resize the cache. It is a per-session setting.
+If <code>GDAL_CACHEMAX</code> has not been configured upon first use of
+the cache, then the default cache size will be in effect for the current
+session. The value can be changed programmatically during a session
+using the function <code><a href="../reference/set_cache_max.html">gdalraster::set_cache_max()</a></code>.</p>
 <p>I/O that involves block caching with large datasets may require
 setting <code>GDAL_CACHEMAX</code> larger than the default. If the
 LANDFIRE elevation raster were tiled at 256 x 256, then each block would
@@ -301,7 +394,7 @@ require 65536 x 2 = 131072 bytes for 16-bit data. The cache size needed
 to hold all intersected blocks for a row would be approximately 160 MB
 (and likewise, 640 MB for 512 x 512 tiles). Similarly, the cache size
 could be configured for the case of multiple large rasters that need to
-be read (or written) simultaneously for processing.</p>
+be read or written simultaneously for processing.</p>
 <p>The cache is flushed upon dataset closing to recover memory. The
 behavior described above assumes that the GDAL dataset is opened once,
 and required I/O completed before closing the dataset. This would
@@ -313,8 +406,8 @@ underlying API).</p>
 is not possible to read the tiled elevation raster by row in reasonable
 time. This can be checked by repeating Test 1 above with the cache
 disabled:</p>
-<pre><code><span><span class="co">## Test 4</span></span>
-<span><span class="co">## original tiled raster, reading by row (across block boundaries)</span></span>
+<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co">## original tiled raster, reading by row (across block boundaries)</span></span>
 <span><span class="co">## cache disabled for testing</span></span>
 <span><span class="co">## run in a new R session</span></span>
 <span></span>
@@ -323,24 +416,25 @@ disabled:</p>
 <span><span class="co">## for testing only</span></span>
 <span><span class="fu"><a href="../reference/set_config_option.html">set_config_option</a></span><span class="op">(</span><span class="st">"GDAL_CACHEMAX"</span>, <span class="st">"0"</span><span class="op">)</span></span>
 <span></span>
-<span><span class="va">f</span> <span class="op">=</span> <span class="st">"LC20_Elev_220.tif"</span> </span>
+<span><span class="va">f</span> <span class="op">&lt;-</span> <span class="st">"LC20_Elev_220.tif"</span> </span>
 <span></span>
-<span><span class="va">ds</span> <span class="op">=</span> <span class="fu">new</span><span class="op">(</span><span class="va">GDALRaster</span>, <span class="va">f</span>, read_only <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
-<span><span class="va">ncols</span> <span class="op">=</span> <span class="va">ds</span><span class="op">$</span><span class="fu">getRasterXSize</span><span class="op">(</span><span class="op">)</span></span>
-<span><span class="va">nrows</span> <span class="op">=</span> <span class="va">ds</span><span class="op">$</span><span class="fu">getRasterYSize</span><span class="op">(</span><span class="op">)</span></span>
+<span><span class="va">ds</span> <span class="op">&lt;-</span> <span class="fu">new</span><span class="op">(</span><span class="va">GDALRaster</span>, <span class="va">f</span><span class="op">)</span></span>
+<span><span class="va">ncols</span> <span class="op">&lt;-</span> <span class="va">ds</span><span class="op">$</span><span class="fu">getRasterXSize</span><span class="op">(</span><span class="op">)</span></span>
+<span><span class="va">nrows</span> <span class="op">&lt;-</span> <span class="va">ds</span><span class="op">$</span><span class="fu">getRasterYSize</span><span class="op">(</span><span class="op">)</span></span>
 <span></span>
-<span><span class="va">process_row</span> <span class="op">=</span> <span class="kw">function</span><span class="op">(</span><span class="va">row</span><span class="op">)</span> <span class="op">{</span></span>
-<span>  <span class="va">r</span> <span class="op">=</span> <span class="va">ds</span><span class="op">$</span><span class="fu">read</span><span class="op">(</span>band<span class="op">=</span><span class="fl">1</span>, xoff<span class="op">=</span><span class="fl">0</span>, yoff<span class="op">=</span><span class="va">row</span>, </span>
-<span>              xsize<span class="op">=</span><span class="va">ncols</span>, ysize<span class="op">=</span><span class="fl">1</span>, </span>
-<span>              out_xsize<span class="op">=</span><span class="va">ncols</span>, out_ysize<span class="op">=</span><span class="fl">1</span><span class="op">)</span></span>
-<span>  <span class="kw"><a href="https://rdrr.io/r/base/function.html" class="external-link">return</a></span><span class="op">(</span><span class="op">)</span></span>
-<span><span class="op">}</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/system.time.html" class="external-link">system.time</a></span><span class="op">(</span></span>
+<span>  <span class="kw">for</span> <span class="op">(</span><span class="va">row</span> <span class="kw">in</span> <span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq_len</a></span><span class="op">(</span><span class="va">nrows</span> <span class="op">-</span> <span class="fl">1</span><span class="op">)</span><span class="op">)</span> <span class="op">{</span></span>
+<span>    <span class="va">r</span> <span class="op">&lt;-</span> <span class="va">ds</span><span class="op">$</span><span class="fu">read</span><span class="op">(</span>band <span class="op">=</span> <span class="fl">1</span>, xoff <span class="op">=</span> <span class="fl">0</span>, yoff <span class="op">=</span> <span class="va">row</span>, xsize <span class="op">=</span> <span class="va">ncols</span>, ysize <span class="op">=</span> <span class="fl">1</span>, </span>
+<span>                 out_xsize <span class="op">=</span> <span class="va">ncols</span>, out_ysize <span class="op">=</span> <span class="fl">1</span><span class="op">)</span></span>
+<span>    <span class="co"># ...</span></span>
+<span>  <span class="op">}</span></span>
+<span><span class="op">)</span></span>
 <span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/base/system.time.html" class="external-link">system.time</a></span><span class="op">(</span> <span class="fu"><a href="https://rdrr.io/r/base/lapply.html" class="external-link">lapply</a></span><span class="op">(</span><span class="fl">0</span><span class="op">:</span><span class="op">(</span><span class="va">nrows</span><span class="op">-</span><span class="fl">1</span><span class="op">)</span>, <span class="va">process_row</span><span class="op">)</span> <span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/system.time.html" class="external-link">system.time</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/lapply.html" class="external-link">lapply</a></span><span class="op">(</span><span class="fl">0</span><span class="op">:</span><span class="op">(</span><span class="va">nrows</span><span class="op">-</span><span class="fl">1</span><span class="op">)</span>, <span class="va">process_row</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="co">#&gt; ^C</span></span>
 <span><span class="co">#&gt; Timing stopped at: 3650 42.97 3694  # killed with ctrl-c</span></span>
 <span></span>
-<span><span class="va">ds</span><span class="op">$</span><span class="fu">close</span><span class="op">(</span><span class="op">)</span></span></code></pre>
+<span><span class="va">ds</span><span class="op">$</span><span class="fu">close</span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
 </div>
 <div class="section level2">
 <h2 id="see-also">See also<a class="anchor" aria-label="anchor" href="#see-also"></a>

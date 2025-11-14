@@ -86,6 +86,8 @@
   : Fill selected pixels by interpolation from surrounding areas
 - [`footprint()`](https://usdaforestservice.github.io/gdalraster/reference/footprint.md)
   : Compute footprint of a raster
+- [`make_chunk_index()`](https://usdaforestservice.github.io/gdalraster/reference/make_chunk_index.md)
+  : Generate an index of chunk offsets and sizes for iterating a raster
 - [`polygonize()`](https://usdaforestservice.github.io/gdalraster/reference/polygonize.md)
   : Create a polygon feature layer from raster data
 - [`rasterize()`](https://usdaforestservice.github.io/gdalraster/reference/rasterize.md)
