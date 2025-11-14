@@ -147,8 +147,10 @@ ds$getRasterColorInterp(band)
 ds$setRasterColorInterp(band, col_interp)
 
 ds$getMinMax(band, approx_ok)
+ds$getMinMaxLocation(band)
 ds$getStatistics(band, approx_ok, force)
 ds$clearStatistics()
+
 ds$getHistogram(band, min, max, num_buckets, incl_out_of_range, approx_ok)
 ds$getDefaultHistogram(band, force)
 
@@ -644,6 +646,18 @@ the band has a nodata value it will be excluded from the minimum and
 maximum. If \code{approx_ok} is \code{FALSE}, then all pixels will be read and
 used to compute an exact range.
 
+\code{$getMinMaxLocation(band)}\cr
+Computes the min/max values for a band, and their locations. Pixels with
+value matching the nodata value or masked by the mask band are ignored. If
+the minimum or maximum value is hit in several locations, it is not
+specified which location will be returned. The locations are returned as
+column/row number (0-based), geospatial x/y in the coordinate system of the
+raster, and WGS84 longitude/latitude. Returns a numeric vector with the
+following named values: \code{min}, \code{min_col}, \code{min_row}, \code{min_geo_x},
+\code{min_geo_y}, \code{min_wgs84_lon}, \code{min_wgs84_lat}, \code{max}, \code{max_col}, \code{max_row},
+\code{max_geo_x}, \code{max_geo_y}, \code{max_wgs84_lon}, \code{max_wgs84_lat}. This method wraps
+\code{GDALComputeRasterMinMaxLocation()} in the GDAL C API requiring GDAL >= 3.11.
+
 \code{$getStatistics(band, approx_ok, force)}\cr
 Returns a numeric vector of length four containing the minimum, maximum,
 mean and standard deviation of pixel values in \code{band} (excluding
@@ -752,7 +766,7 @@ being accessed (\code{xsize * ysize}).
 region of the band to be accessed (zero to start from the left side).
 \code{yoff} is the line (row) offset to the top left corner of the region of
 the band to be accessed (zero to start from the top).
-\emph{Note that raster column/row offsets use 0-based indexing.}
+\emph{Note that raster row/column offsets use 0-based indexing.}
 \code{xsize} is the width in pixels of the region to be accessed.
 \code{ysize} is the height in pixels of the region to be accessed.
 \code{out_xsize} is the width of the output array into which the desired
@@ -796,7 +810,7 @@ Writes a region of raster data to \code{band}.
 region of the band to be accessed (zero to start from the left side).
 \code{yoff} is the line (row) offset to the top left corner of the region of
 the band to be accessed (zero to start from the top).
-\emph{Note that raster column/row offsets use 0-based indexing.}
+\emph{Note that raster row/column offsets use 0-based indexing.}
 \code{xsize} is the width in pixels of the region to write.
 \code{ysize} is the height in pixels of the region to write.
 \code{rasterData} is a numeric or complex vector containing values to write.
@@ -914,7 +928,7 @@ such raster data will not affect the checksum. Real and imaginary
 components of complex bands influence the result.
 \code{xoff} is the pixel (column) offset of the window to read.
 \code{yoff} is the line (row) offset of the window to read.
-\emph{Raster column/row offsets use 0-based indexing.}
+\emph{Raster row/column offsets use 0-based indexing.}
 \code{xsize} is the width in pixels of the window to read.
 \code{ysize} is the height in pixels of the window to read.
 
@@ -975,7 +989,7 @@ ds$getMetadata(band = 4, domain = "")
 ds$getMetadataItem(band = 2, mdi_name = "SLOPE_UNIT_NAME", domain = "")
 
 ## read one row of pixel values from band 1 (elevation)
-## raster column/row index are 0-based
+## raster row/column index are 0-based
 ## the upper left corner is the origin
 ## read the tenth row:
 ncols <- ds$getRasterXSize()

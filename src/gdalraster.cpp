@@ -1378,21 +1378,73 @@ void GDALRaster::setRasterColorInterp(int band, const std::string &col_interp) {
     GDALSetRasterColorInterpretation(hBand, gci);
 }
 
-std::vector<double> GDALRaster::getMinMax(int band, bool approx_ok) const {
+Rcpp::NumericVector GDALRaster::getMinMax(int band, bool approx_ok) const {
     checkAccess_(GA_ReadOnly);
 
     GDALRasterBandH hBand = getBand_(band);
-    std::vector<double> min_max(2, NA_REAL);
+    Rcpp::NumericVector min_max = Rcpp::NumericVector::create(NA_REAL, NA_REAL);
     CPLErr err = CE_None;
 #if GDAL_VERSION_NUM >= 3060000
-    err = GDALComputeRasterMinMax(hBand, approx_ok, min_max.data());
+    err = GDALComputeRasterMinMax(hBand, approx_ok, min_max.begin());
 #else
-    GDALComputeRasterMinMax(hBand, approx_ok, min_max.data());
+    GDALComputeRasterMinMax(hBand, approx_ok, min_max.begin());
 #endif
     if (err != CE_None)
-        Rcpp::stop("failed to get min/max");
-    else
-        return min_max;
+        Rcpp::Rcout << "error from GDALComputeRasterMinMax()\n";
+
+    return min_max;
+}
+
+Rcpp::NumericVector GDALRaster::getMinMaxLocation(int band) const {
+#if GDAL_VERSION_NUM < GDAL_COMPUTE_VERSION(3, 11, 0)
+    Rcpp::stop("GDALComputeRasterMinMaxLocation() requires GDAL >= 3.11");
+#else
+    checkAccess_(GA_ReadOnly);
+
+    GDALRasterBandH hBand = getBand_(band);
+    CPLErr err = CE_None;
+    double dfMin = NA_REAL, dfMax = NA_REAL;
+    int nMinX = NA_INTEGER, nMinY = NA_INTEGER;
+    int nMaxX = NA_INTEGER, nMaxY = NA_INTEGER;
+
+    Rcpp::CharacterVector ret_names =
+        Rcpp::CharacterVector::create("min", "min_col", "min_row", "min_geo_x",
+                                      "min_geo_y", "min_wgs84_lon",
+                                      "min_wgs84_lat", "max", "max_col",
+                                      "max_row", "max_geo_x", "max_geo_y",
+                                      "max_wgs84_lon", "max_wgs84_lat");
+
+    err = GDALComputeRasterMinMaxLocation(hBand, &dfMin, &dfMax, &nMinX, &nMinY,
+                                          &nMaxX, &nMaxY);
+
+    if (err != CE_None) {
+        Rcpp::Rcout << "error in GDALComputeRasterMinMaxLocation() or no valid "
+                       "values returned\n";
+        Rcpp::NumericVector ret(ret_names.size(), NA_REAL);
+        ret.names() = ret_names;
+        return ret;
+    }
+
+    Rcpp::NumericVector min_geo_xy =
+        apply_geotransform(Rcpp::NumericVector{nMinX + 0.5, nMinY + 0.5});
+    Rcpp::NumericVector max_geo_xy =
+        apply_geotransform(Rcpp::NumericVector{nMaxX + 0.5, nMaxY + 0.5});
+
+    Rcpp::NumericVector min_wgs84 = {NA_REAL, NA_REAL};
+    Rcpp::NumericVector max_wgs84 = {NA_REAL, NA_REAL};
+    if (getProjection() != "") {
+        min_wgs84 = transform_xy(min_geo_xy, getProjection(), "WGS84").row(0);
+        max_wgs84 = transform_xy(max_geo_xy, getProjection(), "WGS84").row(0);
+    }
+
+    Rcpp::NumericVector ret =
+        Rcpp::NumericVector::create(dfMin, nMinX, nMinY, min_geo_xy(0),
+                                    min_geo_xy(1), min_wgs84(0), min_wgs84(1),
+                                    dfMax, nMaxX, nMaxY, max_geo_xy(0),
+                                    max_geo_xy(1), max_wgs84(0), max_wgs84(1));
+    ret.names() = ret_names;
+    return ret;
+#endif
 }
 
 Rcpp::NumericVector GDALRaster::getStatistics(int band, bool approx_ok,
@@ -2666,6 +2718,8 @@ RCPP_MODULE(mod_GDALRaster) {
         "Set color interpretation of a band")
     .const_method("getMinMax", &GDALRaster::getMinMax,
         "Compute the min/max values for this band")
+    .const_method("getMinMaxLocation", &GDALRaster::getMinMaxLocation,
+        "Compute the min/max values for this band, and their location")
     .const_method("getStatistics", &GDALRaster::getStatistics,
         "Get min, max, mean and stdev for this band")
     .method("clearStatistics", &GDALRaster::clearStatistics,
