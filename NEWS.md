@@ -1,4 +1,6 @@
-# gdalraster 2.2.1.9040 (dev)
+# gdalraster 2.2.1.9050 (dev)
+
+* class `GDALRaster`: add helper methods for iterating I/O on raster blocks, or on multi-block chunks of user-defined size (#819) (2025-11-13)
 
 * various C++ code linting, small refactorings and performance improvements (#818) (2025-11-13)
 
