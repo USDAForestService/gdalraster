@@ -15,7 +15,6 @@
 #include <Rcpp.h>
 
 #include <algorithm>
-#include <cctype>
 #include <cstring>
 #include <memory>
 #include <sstream>
@@ -258,15 +257,7 @@ GDALAlg::GDALAlg(const Rcpp::CharacterVector &cmd, const Rcpp::RObject &args) {
         }
     }
 
-    bool has_tokens = false;
-    for (char c : m_cmd_str) {
-        if (std::isspace(static_cast<unsigned char>(c))) {
-            has_tokens = true;
-            break;
-        }
-    }
-
-    if (has_tokens) {
+    if (has_space_char_(m_cmd_str)) {
         m_cmd = Rcpp::CharacterVector::create();
         std::stringstream ss(m_cmd_str);
         std::string token;
@@ -324,6 +315,7 @@ Rcpp::List GDALAlg::info() const {
     const GDALAlgorithmH &alg = m_hActualAlg ? m_hActualAlg : m_hAlg;
 
     alg_info.push_back(GDALAlgorithmGetName(alg), "name");
+    alg_info.push_back(m_cmd_str, "full_path");
     alg_info.push_back(GDALAlgorithmGetDescription(alg), "description");
     alg_info.push_back(GDALAlgorithmGetLongDescription(alg),
                        "long_description");
@@ -397,7 +389,7 @@ Rcpp::List GDALAlg::argInfo(const Rcpp::String &arg_name) const {
     if (!m_hAlg)
         Rcpp::stop("algorithm not instantiated");
 
-    if (arg_name == "" || arg_name == NA_STRING)
+    if (!arg_name.get_cstring() ||  arg_name == "" || arg_name == NA_STRING)
         Rcpp::stop("'arg_name' is required");
 
     Rcpp::List arg_info = Rcpp::List::create();
@@ -421,8 +413,8 @@ Rcpp::List GDALAlg::argInfo(const Rcpp::String &arg_name) const {
     char **papszAliases = GDALAlgorithmArgGetAliases(hArg);
     int nCount = CSLCount(papszAliases);
     if (papszAliases && nCount > 0) {
-        std::vector<std::string> v(papszAliases, papszAliases + nCount);
-        arg_info.push_back(Rcpp::wrap(v), "aliases");
+        Rcpp::CharacterVector v(papszAliases, papszAliases + nCount);
+        arg_info.push_back(v, "aliases");
     }
     else {
         Rcpp::CharacterVector v = Rcpp::CharacterVector::create();
@@ -445,8 +437,8 @@ Rcpp::List GDALAlg::argInfo(const Rcpp::String &arg_name) const {
         char **papszChoices = GDALAlgorithmArgGetChoices(hArg);
         int nCount = CSLCount(papszChoices);
         if (papszChoices && nCount > 0) {
-            std::vector<std::string> v(papszChoices, papszChoices + nCount);
-            arg_info.push_back(Rcpp::wrap(v), "choices");
+            Rcpp::CharacterVector v(papszChoices, papszChoices + nCount);
+            arg_info.push_back(v, "choices");
         }
         else {
             arg_info.push_back(Rcpp::CharacterVector::create(), "choices");
@@ -512,11 +504,11 @@ Rcpp::List GDALAlg::argInfo(const Rcpp::String &arg_name) const {
             char **papszValue = nullptr;
             papszValue = GDALAlgorithmArgGetDefaultAsStringList(hArg);
             int nCount = CSLCount(papszValue);
-            Rcpp::CharacterVector val = Rcpp::CharacterVector::create();
-            if (papszValue && nCount > 0) {
-                std::vector<std::string> v(papszValue, papszValue + nCount);
-                val = Rcpp::wrap(v);
-            }
+            Rcpp::CharacterVector val;
+            if (papszValue && nCount > 0)
+                val = Rcpp::CharacterVector(papszValue, papszValue + nCount);
+            else
+                val = Rcpp::CharacterVector::create();
             CSLDestroy(papszValue);
             arg_info.push_back(val, "default_value");
     #endif
@@ -532,11 +524,11 @@ Rcpp::List GDALAlg::argInfo(const Rcpp::String &arg_name) const {
             size_t nCount = 0;
             const int *panValue =
                 GDALAlgorithmArgGetDefaultAsIntegerList(hArg, &nCount);
-            Rcpp::IntegerVector val = Rcpp::IntegerVector::create();
-            if (panValue && nCount > 0) {
-                std::vector<int> v(panValue, panValue + nCount);
-                val = Rcpp::wrap(v);
-            }
+            Rcpp::IntegerVector val;
+            if (panValue && nCount > 0)
+                val = Rcpp::IntegerVector(panValue, panValue + nCount);
+            else
+                val = Rcpp::IntegerVector::create();
             arg_info.push_back(val, "default_value");
     #endif
         }
@@ -551,11 +543,11 @@ Rcpp::List GDALAlg::argInfo(const Rcpp::String &arg_name) const {
             size_t nCount = 0;
             const double *padfValue =
                 GDALAlgorithmArgGetDefaultAsDoubleList(hArg, &nCount);
-            Rcpp::NumericVector val = Rcpp::NumericVector::create();
-            if (padfValue && nCount > 0) {
-                std::vector<double> v(padfValue, padfValue + nCount);
-                val = Rcpp::wrap(v);
-            }
+            Rcpp::NumericVector val;
+            if (padfValue && nCount > 0)
+                val = Rcpp::NumericVector(padfValue, padfValue + nCount);
+            else
+                val = Rcpp::NumericVector::create();
             arg_info.push_back(val, "default_value");
     #endif
         }
@@ -675,6 +667,392 @@ Rcpp::String GDALAlg::usageAsJSON() const {
 #endif  // GDALALG_MIN_GDAL_
 }
 
+bool GDALAlg::setArg(const Rcpp::String &arg_name,
+                     const Rcpp::RObject &arg_value) {
+#if GDAL_VERSION_NUM < GDALALG_MIN_GDAL_
+    Rcpp::stop(GDALALG_MIN_GDAL_MSG_);
+#else
+
+    if (!m_hAlg) {
+        if (!quiet)
+            Rcpp::Rcout << "algorithm not instantiated\n";
+        return false;
+    }
+
+    if (m_hasRun) {
+        if (!quiet)
+            Rcpp::Rcout << "algorithm has already run\n";
+        return false;
+    }
+
+    if (!arg_name.get_cstring() || arg_name == NA_STRING || arg_name == "") {
+        if (!quiet)
+            Rcpp::Rcout << "invalid value for 'arg_name'\n";
+        return false;
+    }
+
+    if (arg_value.isNULL()) {
+        if (!quiet)
+            Rcpp::Rcout << "'arg_value' is NULL\n";
+        return false;
+    }
+
+    Rcpp::String arg_name_in(arg_name);
+    arg_name_in.replace_all("--", "");
+    arg_name_in.replace_all("_", "-");
+    if (STARTS_WITH(arg_name_in.get_cstring(), "-") &&
+        std::strlen(arg_name_in.get_cstring()) < 3) {
+
+        if (!quiet)
+            Rcpp::Rcout << "'arg_name' must be an argument \"long\" name\n";
+        return false;
+    }
+
+    GDALAlgorithmArgH hArg = nullptr;
+    hArg = GDALAlgorithmGetArg(m_hActualAlg ? m_hActualAlg : m_hAlg,
+                               arg_name_in.get_cstring());
+    if (!hArg) {
+        if (!quiet)
+            Rcpp::Rcout << "failed to instantiate algorithm argument from "
+                           "'arg_name = " << arg_name.get_cstring() << "'\n";
+        return false;
+    }
+    if (!GDALAlgorithmArgIsInput(hArg)) {
+        if (!quiet)
+            Rcpp::Rcout << "'" << arg_name.get_cstring() << "' is not an input "
+                           "argument of the algorithm\n";
+        return false;
+    }
+
+    bool ret = false;
+
+    switch (GDALAlgorithmArgGetType(hArg)) {
+        case GAAT_BOOLEAN:
+        {
+            if (!Rcpp::is<Rcpp::LogicalVector>(arg_value)) {
+                Rcpp::Rcout << "logical type required for a BOOLEAN type "
+                               "algorithm argument\n";
+                break;
+            }
+
+            Rcpp::LogicalVector v(arg_value);
+            if (v.size() != 1 || Rcpp::LogicalVector::is_na(v[0])) {
+                Rcpp::Rcout << "'arg_value' must be a single logical value for "
+                               "BOOLEAN type algorithm argument (TRUE|FALSE)\n";
+                break;
+            }
+
+            ret = GDALAlgorithmArgSetAsBoolean(hArg,
+                                               v[0] == TRUE ? true : false);
+        }
+        break;
+
+        case GAAT_STRING:
+        {
+            if (!Rcpp::is<Rcpp::CharacterVector>(arg_value)) {
+                Rcpp::Rcout << "character type required for a STRING type "
+                               "algorithm argument\n";
+                break;
+            }
+
+            Rcpp::CharacterVector v(arg_value);
+            if (v.size() != 1 || Rcpp::CharacterVector::is_na(v[0])) {
+                Rcpp::Rcout << "'arg_value' must be a character string for a "
+                               "STRING algorithm argument (i.e., a length-1 "
+                               "vector)\n";
+                break;
+            }
+
+            Rcpp::String val(v[0]);
+            ret = GDALAlgorithmArgSetAsString(hArg, val.get_cstring());
+        }
+        break;
+
+        case GAAT_INTEGER:
+        {
+            if (!Rcpp::is<Rcpp::LogicalVector>(arg_value) &&
+                !Rcpp::is<Rcpp::IntegerVector>(arg_value) &&
+                !Rcpp::is<Rcpp::NumericVector>(arg_value)) {
+
+                Rcpp::Rcout << "integer or numeric type required for an "
+                               "INTEGER type algorithm argument\n";
+                break;
+            }
+
+            Rcpp::IntegerVector v(arg_value);
+            if (v.size() != 1) {
+                Rcpp::Rcout << "'arg_value' must be a single numeric value for "
+                               "an INTEGER type algorithm argument\n";
+                break;
+            }
+            if (Rcpp::IntegerVector::is_na(v[0])) {
+                Rcpp::Rcout << "'arg_value' cannot be NA\n";
+                break;
+            }
+
+            ret = GDALAlgorithmArgSetAsInteger(hArg, v[0]);
+        }
+        break;
+
+        case GAAT_REAL:
+        {
+            if (!Rcpp::is<Rcpp::LogicalVector>(arg_value) &&
+                !Rcpp::is<Rcpp::IntegerVector>(arg_value) &&
+                !Rcpp::is<Rcpp::NumericVector>(arg_value)) {
+
+                Rcpp::Rcout << "numeric type required for a REAL type "
+                               "algorithm argument\n";
+                break;
+            }
+
+            Rcpp::NumericVector v(arg_value);
+            if (v.size() != 1) {
+                Rcpp::Rcout << "'arg_value' must be a single numeric value for "
+                               "a REAL type algorithm argument\n";
+                break;
+            }
+            if (Rcpp::NumericVector::is_na(v[0])) {
+                Rcpp::Rcout << "'arg_value' cannot be NA\n";
+                break;
+            }
+
+            ret = GDALAlgorithmArgSetAsDouble(hArg, v[0]);
+        }
+        break;
+
+        case GAAT_STRING_LIST:
+        {
+            if (!Rcpp::is<Rcpp::CharacterVector>(arg_value)) {
+                Rcpp::Rcout << "character type required for a STRING_LIST type "
+                               "algorithm argument\n";
+                break;
+            }
+
+            Rcpp::CharacterVector v(arg_value);
+            if (v.size() < 1) {
+                Rcpp::Rcout << "'arg_value' is empty\n";
+                break;
+            }
+            if (Rcpp::is_true(Rcpp::any(Rcpp::is_na(v)))) {
+                Rcpp::Rcout << "'arg_value' cannot contain missing values for "
+                               "a STRING_LIST algorithm argument\n";
+                break;
+            }
+
+            std::vector<const char *> str_list;
+            for (R_xlen_t i = 0; i < v.size(); ++i) {
+                Rcpp::String s(v[i]);
+                str_list.push_back(s.get_cstring());
+            }
+            str_list.push_back(nullptr);
+
+            ret = GDALAlgorithmArgSetAsStringList(hArg, str_list.data());
+        }
+        break;
+
+        case GAAT_INTEGER_LIST:
+        {
+            if (!Rcpp::is<Rcpp::LogicalVector>(arg_value) &&
+                !Rcpp::is<Rcpp::IntegerVector>(arg_value) &&
+                !Rcpp::is<Rcpp::NumericVector>(arg_value)) {
+
+                Rcpp::Rcout << "integer or numeric type required for an "
+                               "INTEGER_LIST type algorithm argument\n";
+                break;
+            }
+
+            Rcpp::IntegerVector v(arg_value);
+            if (v.size() < 1) {
+                Rcpp::Rcout << "'arg_value' is empty\n";
+                break;
+            }
+            if (Rcpp::is_true(Rcpp::any(Rcpp::is_na(v)))) {
+                Rcpp::Rcout << "'arg_value' cannot contain missing values for "
+                               "an INTEGER_LIST algorithm argument\n";
+                break;
+            }
+
+            ret = GDALAlgorithmArgSetAsIntegerList(hArg, v.size(), v.begin());
+        }
+        break;
+
+        case GAAT_REAL_LIST:
+        {
+            if (!Rcpp::is<Rcpp::LogicalVector>(arg_value) &&
+                !Rcpp::is<Rcpp::IntegerVector>(arg_value) &&
+                !Rcpp::is<Rcpp::NumericVector>(arg_value)) {
+
+                Rcpp::Rcout << "numeric vector required for a REAL_LIST type "
+                               "algorithm argument\n";
+                break;
+            }
+
+            Rcpp::NumericVector v(arg_value);
+            if (v.size() < 1) {
+                Rcpp::Rcout << "'arg_value' is empty\n";
+                break;
+            }
+            if (Rcpp::is_true(Rcpp::any(Rcpp::is_na(v)))) {
+                Rcpp::Rcout << "'arg_value' cannot contain missing values for "
+                               "a REAL_LIST algorithm argument\n";
+                break;
+            }
+
+            ret = GDALAlgorithmArgSetAsDoubleList(hArg, v.size(), v.begin());
+        }
+        break;
+
+        case GAAT_DATASET:
+        {
+            int ds_input_flags = GDALAlgorithmArgGetDatasetInputFlags(hArg);
+
+            if (Rcpp::is<Rcpp::CharacterVector>(arg_value)) {
+                if (!(ds_input_flags & GADV_NAME)) {
+                    Rcpp::Rcout << "this argument does not accept a dataset "
+                                   "name as input (object input required).\n";
+                    break;
+                }
+                Rcpp::CharacterVector v(arg_value);
+                if (v.size() != 1 || Rcpp::CharacterVector::is_na(v[0])) {
+                    Rcpp::Rcout << "string input must be a length-1 character "
+                                   "vector for a DATASET algorithm argument\n";
+                    break;
+                }
+                Rcpp::String val(enc_to_utf8_(v));
+                ret = GDALAlgorithmArgSetAsString(hArg, val.get_cstring());
+                break;
+            }
+            else if (is_gdalraster_obj_(arg_value)) {
+                if (!(ds_input_flags & GADV_OBJECT)) {
+                    Rcpp::Rcout << "this argument does not accept a dataset "
+                                   "object as input (DSN required, may be "
+                                   "created by algorithm)\n";
+                    break;
+                }
+                const Rcpp::String cls = arg_value.attr("class");
+                if (cls == "Rcpp_GDALRaster") {
+                    const GDALRaster &ds = Rcpp::as<GDALRaster &>(arg_value);
+                    ret = GDALAlgorithmArgSetDataset(hArg,
+                                                     ds.getGDALDatasetH_());
+                    break;
+                }
+                else if (cls == "Rcpp_GDALVector") {
+                    const GDALVector &ds = Rcpp::as<GDALVector &>(arg_value);
+                    ret = GDALAlgorithmArgSetDataset(hArg,
+                                                     ds.getGDALDatasetH_());
+                    break;
+                }
+                else {
+                    Rcpp::Rcout << "unhandled object of class " <<
+                                cls.get_cstring() << "\n";
+                    break;
+                }
+            }
+            else {
+                Rcpp::Rcout << "unsupported input type for a DATASET algorithm "
+                               "argument\n";
+            }
+        }
+        break;
+
+        case GAAT_DATASET_LIST:
+        {
+            int ds_input_flags = GDALAlgorithmArgGetDatasetInputFlags(hArg);
+
+            if (Rcpp::is<Rcpp::CharacterVector>(arg_value)) {
+                if (!(ds_input_flags & GADV_NAME)) {
+                    Rcpp::Rcout << "this argument does not accept dataset "
+                                   "names as input\n";
+                    break;
+                }
+                Rcpp::CharacterVector v(arg_value);
+                if (v.size() < 1) {
+                    Rcpp::Rcout << "'arg_value' is empty\n";
+                    break;
+                }
+                if (Rcpp::is_true(Rcpp::any(Rcpp::is_na(v)))) {
+                    Rcpp::Rcout << "'arg_value' cannot contain missing values "
+                                   "for a DATASET_LIST algorithm argument\n";
+                    break;
+                }
+                v = (enc_to_utf8_(v));
+                std::vector<const char *> str_list;
+                for (R_xlen_t i = 0; i < v.size(); ++i) {
+                    Rcpp::String s(v[i]);
+                    str_list.push_back(s.get_cstring());
+                }
+                str_list.push_back(nullptr);
+                ret = GDALAlgorithmArgSetDatasetNames(hArg, str_list.data());
+                break;
+            }
+            else if (Rcpp::is<Rcpp::List>(arg_value) ||
+                     is_gdalraster_obj_(arg_value)) {
+
+                if (!(ds_input_flags & GADV_OBJECT)) {
+                    Rcpp::Rcout << "this argument does not accept dataset "
+                                   "objects as input\n";
+                    break;
+                }
+
+                Rcpp::List ds_list;
+                if (is_gdalraster_obj_(arg_value))
+                    ds_list = Rcpp::List::create(arg_value);
+                else
+                    ds_list = Rcpp::List(arg_value);
+
+                std::vector<GDALDatasetH> pahDS;
+                for (R_xlen_t i = 0; i < ds_list.size(); ++i) {
+                    if (is_gdalraster_obj_(ds_list[i])) {
+                        const Rcpp::RObject &x(ds_list[i]);
+                        const Rcpp::String cls = x.attr("class");
+                        if (cls == "Rcpp_GDALRaster") {
+                            const GDALRaster &ds = Rcpp::as<GDALRaster &>(x);
+                            pahDS.push_back(ds.getGDALDatasetH_());
+                        }
+                        else if (cls == "Rcpp_GDALVector") {
+                            const GDALVector &ds = Rcpp::as<GDALVector &>(x);
+                            pahDS.push_back(ds.getGDALDatasetH_());
+                        }
+                        else {
+                            Rcpp::Rcout << "unhandled object of class " <<
+                                           cls.get_cstring() << "\n";
+                            break;
+                        }
+                    }
+                    else {
+                        Rcpp::Rcout << "list element contains invalid input "
+                                       "type\n";
+                        break;
+                    }
+                }
+                if (!pahDS.empty()) {
+                    ret = GDALAlgorithmArgSetDatasets(hArg, pahDS.size(),
+                                                      pahDS.data());
+                    break;
+                }
+            }
+            else {
+                Rcpp::Rcout << "DATASET_LIST algorithm argument requires a "
+                               "character vector of names, or list of "
+                               "objects\n";
+            }
+        }
+        break;
+
+        default:
+        {
+            Rcpp::Rcout << "GDALAlgorithmArgType: " <<
+                           GDALAlgorithmArgGetType(hArg) << "\n";
+            Rcpp::Rcout << "unhandled argument type\n";
+        }
+        break;
+    }
+
+    GDALAlgorithmArgRelease(hArg);
+    return ret;
+#endif  // GDALALG_MIN_GDAL_
+}
+
 bool GDALAlg::parseCommandLineArgs() {
 #if GDAL_VERSION_NUM < GDALALG_MIN_GDAL_
     Rcpp::stop(GDALALG_MIN_GDAL_MSG_);
@@ -682,12 +1060,17 @@ bool GDALAlg::parseCommandLineArgs() {
 
     // parses cl args which sets the values, and also instantiates m_hActualAlg
 
-    if (!m_hAlg)
-        Rcpp::stop("algorithm not instantiated");
+    if (!m_hAlg) {
+        if (!quiet)
+            Rcpp::Rcout << "algorithm not instantiated\n";
+        return false;
+    }
 
     if (m_haveParsedCmdLineArgs) {
-        Rcpp::stop(
-            "parseCommandLineArgs() can only be called once per instance");
+        if (!quiet)
+            Rcpp::Rcout << "parseCommandLineArgs() can only be called once "
+                           "per instance\n";
+        return false;
     }
 
     bool res = true;
@@ -701,6 +1084,7 @@ bool GDALAlg::parseCommandLineArgs() {
 
             GDALAlgorithmArgH hArg = GDALAlgorithmGetArg(m_hAlg,
                                                          it->first.c_str());
+
             if (hArg) {
                 if (GDALAlgorithmArgGetType(hArg) == GAAT_DATASET) {
                     if (it->second.size() > 1) {
@@ -729,30 +1113,30 @@ bool GDALAlg::parseCommandLineArgs() {
     }
 
     if (res && this->setVectorArgsFromObject &&
-        (m_input_GDALVector || m_like_GDALVector)) {
+        (m_in_vector_props.is_set || m_like_vector_props.is_set)) {
 
         // directly set certain arguments from input GDALVector object(s)
 
-        if (m_input_GDALVector) {
+        if (m_in_vector_props.is_set) {
             GDALAlgorithmArgH hArg = GDALAlgorithmGetArg(m_hAlg, "input");
             if (GDALAlgorithmArgGetType(hArg) == GAAT_DATASET_LIST) {
                 if (m_num_input_datasets > 1) {
                     GDALAlgorithmArgRelease(hArg);
-                    Rcpp::stop("set args from GDALVector currently unsupported "
-                               "for multiple input objects");
+                    Rcpp::stop("setting args from GDALVector currently "
+                               "unsupported for multiple input objects");
                 }
             }
             else if (GDALAlgorithmArgGetType(hArg) != GAAT_DATASET) {
                 GDALAlgorithmArgRelease(hArg);
-                Rcpp::stop("set args from GDALVector incompatible with "
-                           "\"input\" arg type");
+                Rcpp::stop("setting args from GDALVector incompatible with "
+                           "the algorithm argument type of \"input\"");
             }
             GDALAlgorithmArgRelease(hArg);
         }
 
-        const Rcpp::List &alginfo = info();
-        const Rcpp::CharacterVector &arg_names = alginfo["arg_names"];
-        const std::string warning_msg =
+        const Rcpp::List &alg_info = info();
+        const Rcpp::CharacterVector &arg_names = alg_info["arg_names"];
+        constexpr char override_warning_msg[] =
             "value given in 'args' overrides setting from input object";
 
         for (Rcpp::String arg_name : arg_names) {
@@ -760,29 +1144,25 @@ bool GDALAlg::parseCommandLineArgs() {
 
             // FIXME: arg aliases are currently hard coded, look up instead
 
-            if (m_input_GDALVector && EQUAL(pszArgName, "input-format")) {
+            if (m_in_vector_props.is_set && EQUAL(pszArgName, "input-format")) {
                 if (contains_str_(m_args, "--input-format") ||
                     contains_str_(m_args, "--if")) {
 
                     if (!quiet) {
                         Rcpp::Rcout << "argument: " << pszArgName << "\n";
-                        Rcpp::warning(warning_msg);
+                        Rcpp::warning(override_warning_msg);
                     }
                 }
                 else {
-                    auto hArg = GDALAlgorithmGetArg(m_hAlg, pszArgName);
                     // this one can fail silently since it is optional anyway
-                    if (hArg) {
-                        res = GDALAlgorithmArgSetAsString(hArg,
-                            m_input_GDALVector->getDriverShortName().c_str());
-
-                        GDALAlgorithmArgRelease(hArg);
-                    }
+                    res = setArg(
+                        arg_name,
+                        Rcpp::wrap(m_in_vector_props.driver_short_name));
                 }
                 continue;
             }
-            else if (m_input_GDALVector && EQUAL(pszArgName, "input-layer") &&
-                     !m_input_GDALVector->m_is_sql) {
+            else if (m_in_vector_props.is_set && !m_in_vector_props.is_sql &&
+                     EQUAL(pszArgName, "input-layer")) {
 
                 if (contains_str_(m_args, "--input-layer") ||
                     contains_str_(m_args, "--layer") ||
@@ -790,146 +1170,103 @@ bool GDALAlg::parseCommandLineArgs() {
 
                     if (!quiet) {
                         Rcpp::Rcout << "argument: " << pszArgName << "\n";
-                        Rcpp::warning(warning_msg);
+                        Rcpp::warning(override_warning_msg);
                     }
                 }
                 else {
-                    auto hArg = GDALAlgorithmGetArg(m_hAlg, pszArgName);
-                    if (hArg) {
-                        res = GDALAlgorithmArgSetAsString(hArg,
-                            m_input_GDALVector->getName().c_str());
+                    res = setArg(
+                        arg_name, Rcpp::wrap(m_in_vector_props.layer_name));
 
-                        GDALAlgorithmArgRelease(hArg);
-                    }
-                    else {
-                        res = false;
-                    }
                     if (!res) {
                         Rcpp::Rcout << "argument: " << pszArgName << "\n";
-                        Rcpp::Rcout << "  failed to set from object\n";
+                        Rcpp::warning("failed to set from object");
                         break;
                     }
                 }
                 continue;
             }
-            else if (m_input_GDALVector && EQUAL(pszArgName, "sql") &&
-                     m_input_GDALVector->m_is_sql) {
+            else if (m_in_vector_props.is_set && m_in_vector_props.is_sql &&
+                     EQUAL(pszArgName, "sql")) {
 
                 if (contains_str_(m_args, "--sql")) {
                     if (!quiet) {
                         Rcpp::Rcout << "argument: " << pszArgName << "\n";
-                        Rcpp::warning(warning_msg);
+                        Rcpp::warning(override_warning_msg);
                     }
                 }
                 else {
-                    auto hArg = GDALAlgorithmGetArg(m_hAlg, pszArgName);
-                    if (hArg) {
-                        const std::string &sql =
-                            m_input_GDALVector->m_layer_name;
+                    res = setArg(
+                        arg_name, Rcpp::wrap(m_in_vector_props.layer_sql));
 
-                        res = GDALAlgorithmArgSetAsString(hArg, sql.c_str());
-                        GDALAlgorithmArgRelease(hArg);
+                    if (!res) {
+                        Rcpp::Rcout << "argument: " << pszArgName << "\n";
+                        Rcpp::warning("failed to set from object");
+                        break;
                     }
-                    else {
-                        res = false;
-                    }
-                }
-                if (!res) {
-                    Rcpp::Rcout << "argument: " << pszArgName << "\n";
-                    Rcpp::Rcout << "  failed to set from object\n";
-
-                    break;
                 }
                 continue;
             }
-            else if (m_input_GDALVector && EQUAL(pszArgName, "dialect") &&
-                     m_input_GDALVector->m_is_sql) {
+            else if (m_in_vector_props.is_set && m_in_vector_props.is_sql &&
+                     EQUAL(pszArgName, "dialect")) {
 
                 if (contains_str_(m_args, "--dialect")) {
                     if (!quiet) {
                         Rcpp::Rcout << "argument: " << pszArgName << "\n";
-                        Rcpp::warning(warning_msg);
+                        Rcpp::warning(override_warning_msg);
                     }
                 }
                 else {
-                    auto hArg = GDALAlgorithmGetArg(m_hAlg, pszArgName);
-                    if (hArg) {
-                        const std::string &dialect =
-                            m_input_GDALVector->m_dialect;
-
-                        if (dialect != "") {
-                            res = GDALAlgorithmArgSetAsString(hArg,
-                                                              dialect.c_str());
-                        }
-                        GDALAlgorithmArgRelease(hArg);
+                    if (!m_in_vector_props.sql_dialect.empty()) {
+                        res = setArg(
+                            arg_name,
+                            Rcpp::wrap(m_in_vector_props.sql_dialect));
                     }
-                    else {
-                        res = false;
-                    }
-                }
-                if (!res) {
-                    Rcpp::Rcout << "argument: " << pszArgName << "\n";
-                    Rcpp::Rcout << "  failed to set from object\n";
 
-                    break;
+                    if (!res) {
+                        Rcpp::Rcout << "argument: " << pszArgName << "\n";
+                        Rcpp::warning("failed to set from object");
+                        break;
+                    }
                 }
                 continue;
             }
-            else if (m_like_GDALVector && EQUAL(pszArgName, "like-sql") &&
-                     m_like_GDALVector->m_is_sql) {
+            else if (m_like_vector_props.is_set && m_like_vector_props.is_sql &&
+                     EQUAL(pszArgName, "like-sql")) {
 
                 if (contains_str_(m_args, "--like-sql")) {
                     if (!quiet) {
                         Rcpp::Rcout << "argument: " << pszArgName << "\n";
-                        Rcpp::warning(warning_msg);
+                        Rcpp::warning(override_warning_msg);
                     }
                 }
                 else {
-                    auto hArg = GDALAlgorithmGetArg(m_hAlg, pszArgName);
-                    if (hArg) {
-                        const std::string &sql =
-                            m_like_GDALVector->m_layer_name;
+                    res = setArg(
+                        arg_name, Rcpp::wrap(m_like_vector_props.layer_sql));
 
-                        res = GDALAlgorithmArgSetAsString(hArg,
-                                                          sql.c_str());
-
-                        GDALAlgorithmArgRelease(hArg);
+                    if (!res) {
+                        Rcpp::Rcout << "argument: " << pszArgName << "\n";
+                        Rcpp::warning("failed to set from object");
+                        break;
                     }
-                    else {
-                        res = false;
-                    }
-                }
-                if (!res) {
-                    Rcpp::Rcout << "argument: " << pszArgName << "\n";
-                    Rcpp::Rcout << "  failed to set from object\n";
-
-                    break;
                 }
                 continue;
             }
-            else if (m_like_GDALVector && EQUAL(pszArgName, "like-layer") &&
-                     !m_like_GDALVector->m_is_sql) {
+            else if (m_like_vector_props.is_set && !m_like_vector_props.is_sql
+                     && EQUAL(pszArgName, "like-layer")) {
 
                 if (contains_str_(m_args, "--like-layer")) {
                     if (!quiet) {
                         Rcpp::Rcout << "argument: " << pszArgName << "\n";
-                        Rcpp::warning(warning_msg);
+                        Rcpp::warning(override_warning_msg);
                     }
                 }
                 else {
-                    auto hArg = GDALAlgorithmGetArg(m_hAlg, pszArgName);
-                    if (hArg) {
-                        res = GDALAlgorithmArgSetAsString(hArg,
-                            m_like_GDALVector->getName().c_str());
+                    res = setArg(
+                        arg_name, Rcpp::wrap(m_like_vector_props.layer_name));
 
-                        GDALAlgorithmArgRelease(hArg);
-                    }
-                    else {
-                        res = false;
-                    }
                     if (!res) {
                         Rcpp::Rcout << "argument: " << pszArgName << "\n";
-                        Rcpp::Rcout << "  failed to set from object\n";
+                        Rcpp::warning("failed to set from object");
                         break;
                     }
                 }
@@ -970,26 +1307,26 @@ Rcpp::List GDALAlg::getExplicitlySetArgs() const {
         Rcpp::stop("algorithm not instantiated");
 
     char **papszArgNames = nullptr;
-    papszArgNames = GDALAlgorithmGetArgNames(
-        m_hActualAlg ? m_hActualAlg : m_hAlg);
+    papszArgNames =
+        GDALAlgorithmGetArgNames(m_hActualAlg ? m_hActualAlg : m_hAlg);
 
     Rcpp::List out = Rcpp::List::create();
 
-    int nCount = CSLCount(papszArgNames);
+    const int nCount = CSLCount(papszArgNames);
     if (nCount > 0) {
-        std::vector<std::string> names(papszArgNames, papszArgNames + nCount);
-        for (std::string arg_name : names) {
+        for (int i = 0; i < nCount; ++i) {
             GDALAlgorithmArgH hArg = nullptr;
             hArg = GDALAlgorithmGetArg(m_hActualAlg ? m_hActualAlg : m_hAlg,
-                                       arg_name.c_str());
+                                       papszArgNames[i]);
             if (!hArg) {
-                if (!quiet) {
-                    Rcpp::Rcout << "got nullptr for arg: " << arg_name.c_str()
-                        << "\n";
-                }
+                if (!quiet)
+                    Rcpp::Rcout << "got NULL for: " << papszArgNames[i] << "\n";
                 continue;
             }
             if (GDALAlgorithmArgIsExplicitlySet(hArg)) {
+                Rcpp::String arg_name_out(papszArgNames[i]);
+                arg_name_out.replace_all("-", "_");
+
                 // dataset object
                 if (GDALAlgorithmArgGetType(hArg) == GAAT_DATASET) {
                     GDALArgDatasetValueH hArgDSValue = nullptr;
@@ -997,7 +1334,8 @@ Rcpp::List GDALAlg::getExplicitlySetArgs() const {
                     if (!hArgDSValue) {
                         if (!quiet)
                             Rcpp::Rcout << "output dataset value is NULL\n";
-                        return R_NilValue;
+                        GDALAlgorithmArgRelease(hArg);
+                        continue;
                     }
 
                     GDALArgDatasetType ds_type =
@@ -1016,23 +1354,23 @@ Rcpp::List GDALAlg::getExplicitlySetArgs() const {
                         ds_name = ("<mutlidim raster dataset object: " +
                                    ds_name + ">");
                     }
-                    // unrecognized dataset type - should not occur
                     else {
-                        out = Rcpp::wrap("<unrecognized dataset object>");
+                        // should not occur
+                        ds_name = "<unrecognized dataset object>";
                     }
 
                     GDALArgDatasetValueRelease(hArgDSValue);
-                    out.push_back(ds_name, arg_name);
+                    out.push_back(ds_name, arg_name_out);
                 }
                 // list of GDAL datasets
                 else if ((GDALAlgorithmArgGetType(hArg) ==
                           GAAT_DATASET_LIST)) {
 
-                    out.push_back("<list of dataset objects>", arg_name);
+                    out.push_back("<list of dataset objects>", arg_name_out);
                 }
                 // boolean, string, integer, real, and lists of
                 else {
-                    out.push_back(getArgValue_(hArg), arg_name);
+                    out.push_back(getArgValue_(hArg), arg_name_out);
                 }
             }
             GDALAlgorithmArgRelease(hArg);
@@ -1049,11 +1387,17 @@ bool GDALAlg::run() {
     Rcpp::stop(GDALALG_MIN_GDAL_MSG_);
 #else
 
-    if (!m_hAlg)
-        Rcpp::stop("algorithm not instantiated");
+    if (!m_hAlg) {
+        if (!quiet)
+            Rcpp::Rcout << "algorithm not instantiated\n";
+        return false;
+    }
 
-    if (m_hasRun)
-        Rcpp::stop("algorithm has already run");
+    if (m_hasRun) {
+        if (!quiet)
+            Rcpp::Rcout << "algorithm has already run\n";
+        return false;
+    }
 
     if (!m_haveParsedCmdLineArgs) {
         if (!parseCommandLineArgs()) {
@@ -1093,7 +1437,7 @@ SEXP GDALAlg::output() const {
 
     std::vector<std::string> out_arg_names = getOutputArgNames_();
     if (out_arg_names.size() == 0) {
-        Rcpp::stop("no output arg names found");
+        Rcpp::stop("no output argument names found");
     }
     if (out_arg_names.size() > 1) {
         Rcpp::stop(
@@ -1121,7 +1465,7 @@ Rcpp::List GDALAlg::outputs() const {
 
     std::vector<std::string> out_arg_names = getOutputArgNames_();
     if (out_arg_names.size() == 0)
-        Rcpp::stop("no output arg names found");
+        Rcpp::stop("no output argument names found");
 
     Rcpp::List out = Rcpp::List::create();
 
@@ -1137,9 +1481,9 @@ Rcpp::List GDALAlg::outputs() const {
         }
 
         if (GDALAlgorithmArgIsOutput(hArg)) {
-            Rcpp::String s(arg_name);
-            s.replace_all("-", "_");
-            out.push_back(getArgValue_(hArg), s);
+            Rcpp::String arg_name_out(arg_name);
+            arg_name_out.replace_all("-", "_");
+            out.push_back(getArgValue_(hArg), arg_name_out);
         }
 
         GDALAlgorithmArgRelease(hArg);
@@ -1154,8 +1498,11 @@ bool GDALAlg::close() {
     Rcpp::stop(GDALALG_MIN_GDAL_MSG_);
 #else
 
-    if (!m_hAlg)
-        Rcpp::stop("algorithm not instantiated");
+    if (!m_hAlg) {
+        if (!quiet)
+            Rcpp::Rcout << "algorithm not instantiated\n";
+        return false;
+    }
 
     if (!m_hasRun) {
         if (!quiet)
@@ -1174,7 +1521,7 @@ bool GDALAlg::close() {
     }
     else {
         if (!quiet)
-            Rcpp::Rcout << "actual algorithm is nullptr\n";
+            Rcpp::Rcout << "actual algorithm is NULL\n";
         return false;
     }
 #endif  // GDALALG_MIN_GDAL_
@@ -1182,7 +1529,7 @@ bool GDALAlg::close() {
 
 void GDALAlg::release() {
 #if GDAL_VERSION_NUM < GDALALG_MIN_GDAL_
-    Rcpp::stop(GDALALG_MIN_GDAL_MSG_);
+    return;
 #else
 
     if (m_hActualAlg) {
@@ -1243,11 +1590,11 @@ Rcpp::CharacterVector GDALAlg::parseListArgs_(
 
     Rcpp::CharacterVector arg_names = list_args.names();
     if (arg_names.size() == 0 || arg_names.size() != num_args)
-        Rcpp::stop("arg list must have named elements");
+        Rcpp::stop("argument list must have named elements");
 
     for (R_xlen_t i = 0; i < num_args; ++i) {
         Rcpp::String nm(arg_names[i]);
-        if (nm == NA_STRING || nm == "")
+        if (!nm.get_cstring() || nm == NA_STRING || nm == "")
             continue;
 
         if (list_args[i] == R_NilValue) {
@@ -1301,22 +1648,34 @@ Rcpp::CharacterVector GDALAlg::parseListArgs_(
             std::vector<GDALDatasetH> ds_list = {};
 
             for (R_xlen_t j = 0; j < list_tmp.size(); ++j) {
-                const Rcpp::RObject &val = list_tmp[j];
-                if (!val.isNULL() && val.isObject()) {
+                if (is_gdalraster_obj_(list_tmp[j])) {
+                    const Rcpp::RObject &val = list_tmp[j];
                     const Rcpp::String cls = val.attr("class");
                     if (cls == "Rcpp_GDALRaster") {
-                        const GDALRaster* const &ds = list_tmp[j];
-                        ds_list.push_back(ds->getGDALDatasetH_());
+                        const GDALRaster &ds =
+                            Rcpp::as<GDALRaster &>(list_tmp[j]);
+                        ds_list.push_back(ds.getGDALDatasetH_());
                     }
                     else if (cls == "Rcpp_GDALVector") {
-                        GDALVector* const &ds = list_tmp[j];
-                        ds_list.push_back(ds->getGDALDatasetH_());
-                        if (EQUAL(nm.get_cstring(), "--input") &&
-                            !m_input_GDALVector) {
+                        const GDALVector &ds =
+                            Rcpp::as<GDALVector &>(list_tmp[j]);
 
-                            m_input_GDALVector = ds;
+                        ds_list.push_back(ds.getGDALDatasetH_());
+                        if (EQUAL(nm.get_cstring(), "--input") &&
+                            !m_in_vector_props.is_set) {
+
+                            m_in_vector_props.driver_short_name =
+                                ds.getDriverShortName();
+                            m_in_vector_props.layer_name = ds.getName();
+                            m_in_vector_props.is_sql = ds.m_is_sql;
+                            m_in_vector_props.layer_sql = ds.m_layer_name;
+                            m_in_vector_props.sql_dialect = ds.m_dialect;
+                            m_in_vector_props.is_set = true;
                         }
                     }
+                }
+                else {
+                    Rcpp::Rcout << "a list element is not a dataset object\n";
                 }
             }
 
@@ -1325,31 +1684,45 @@ Rcpp::CharacterVector GDALAlg::parseListArgs_(
             }
             else {
                 Rcpp::Rcout << "unhandled list input: " <<
-                    nm_no_lead_dashes.c_str() << "\n";
+                               nm_no_lead_dashes.c_str() << "\n";
             }
             continue;
         }
 
         // potentially a single dataset
-        const Rcpp::RObject &val = list_args[i];
-        if (val.isObject()) {
+        if (is_gdalraster_obj_(list_args[i])) {
+            const Rcpp::RObject &val = list_args[i];
             const Rcpp::String cls = val.attr("class");
             if (cls == "Rcpp_GDALRaster") {
-                const GDALRaster* const &ds = list_args[i];
+                const GDALRaster &ds = Rcpp::as<GDALRaster &>(list_args[i]);
                 std::vector<GDALDatasetH> ds_list = {};
-                ds_list.push_back(ds->getGDALDatasetH_());
+                ds_list.push_back(ds.getGDALDatasetH_());
                 m_map_input_hDS[nm_no_lead_dashes] = ds_list;
                 continue;
             }
             if (cls == "Rcpp_GDALVector") {
-                GDALVector* const &ds = list_args[i];
+                const GDALVector &ds = Rcpp::as<GDALVector &>(list_args[i]);
                 std::vector<GDALDatasetH> ds_list = {};
-                ds_list.push_back(ds->getGDALDatasetH_());
+                ds_list.push_back(ds.getGDALDatasetH_());
                 m_map_input_hDS[nm_no_lead_dashes] = ds_list;
-                if (EQUAL(nm.get_cstring(), "--input"))
-                    m_input_GDALVector = ds;
-                else if (EQUAL(nm.get_cstring(), "--like"))
-                    m_like_GDALVector = ds;
+                if (EQUAL(nm.get_cstring(), "--input")) {
+                    m_in_vector_props.driver_short_name =
+                        ds.getDriverShortName();
+                    m_in_vector_props.layer_name = ds.getName();
+                    m_in_vector_props.is_sql = ds.m_is_sql;
+                    m_in_vector_props.layer_sql = ds.m_layer_name;
+                    m_in_vector_props.sql_dialect = ds.m_dialect;
+                    m_in_vector_props.is_set = true;
+                }
+                else if (EQUAL(nm.get_cstring(), "--like")) {
+                    m_like_vector_props.driver_short_name =
+                        ds.getDriverShortName();
+                    m_like_vector_props.layer_name = ds.getName();
+                    m_like_vector_props.is_sql = ds.m_is_sql;
+                    m_like_vector_props.layer_sql = ds.m_layer_name;
+                    m_like_vector_props.sql_dialect = ds.m_dialect;
+                    m_like_vector_props.is_set = true;
+                }
                 continue;
             }
         }
@@ -1362,10 +1735,10 @@ Rcpp::CharacterVector GDALAlg::parseListArgs_(
         m_input_is_object = true;
         std::vector<GDALDatasetH> ds_list = m_map_input_hDS["input"];
         m_num_input_datasets = ds_list.size();
-        if (m_num_input_datasets > 1 && m_input_GDALVector) {
+        if (m_num_input_datasets > 1 && m_in_vector_props.is_set) {
             // since currently, auto setting args from GDALVector input is
             // not supported for multiple input datasets
-            m_input_GDALVector = nullptr;
+            m_in_vector_props = {};
         }
     }
 
@@ -1378,9 +1751,9 @@ void GDALAlg::instantiateAlg_() {
 #else
     // instantiate m_hAlg
     // TODO: GDAL 3.12 adds GDALAlgorithmRegistryInstantiateAlgFromPath().
+
     // For GDAL < 3.12, step through the path if there are subcommands, and
     // use GDALAlgorithmRegistryInstantiateAlg().
-
     if (m_hAlg || m_hActualAlg) {
         Rcpp::stop(
             "instantiateAlg_(): algorithm object already instantiated");
@@ -1487,7 +1860,7 @@ std::vector<std::string> GDALAlg::getOutputArgNames_() const {
             hArg = GDALAlgorithmGetArg(m_hActualAlg, arg_name.c_str());
             if (!hArg) {
                 if (!quiet) {
-                    Rcpp::Rcout << "got nullptr for arg: " << arg_name.c_str()
+                    Rcpp::Rcout << "got NULL for arg: " << arg_name.c_str()
                         << "\n";
                 }
                 continue;
@@ -1507,16 +1880,15 @@ std::vector<std::string> GDALAlg::getOutputArgNames_() const {
 #if GDAL_VERSION_NUM >= GDALALG_MIN_GDAL_
 SEXP GDALAlg::getArgValue_(const GDALAlgorithmArgH &hArg) const {
     if (!hArg)
-        Rcpp::stop("got nullptr for GDALAlgorithmArgH hArg");
+        Rcpp::stop("getArgValue_(): got NULL for the GDALAlgorithmArgH");
 
     SEXP out = R_NilValue;
 
     switch (GDALAlgorithmArgGetType(hArg)) {
         case GAAT_BOOLEAN:
         {
-            Rcpp::LogicalVector v =
+            out =
                 Rcpp::LogicalVector::create(GDALAlgorithmArgGetAsBoolean(hArg));
-            out = v;
         }
         break;
 
@@ -1528,17 +1900,15 @@ SEXP GDALAlg::getArgValue_(const GDALAlgorithmArgH &hArg) const {
 
         case GAAT_INTEGER:
         {
-            Rcpp::IntegerVector v =
+            out =
                 Rcpp::IntegerVector::create(GDALAlgorithmArgGetAsInteger(hArg));
-            out = v;
         }
         break;
 
         case GAAT_REAL:
         {
-            Rcpp::NumericVector v =
+            out =
                 Rcpp::NumericVector::create(GDALAlgorithmArgGetAsDouble(hArg));
-            out = v;
         }
         break;
 
@@ -1548,13 +1918,10 @@ SEXP GDALAlg::getArgValue_(const GDALAlgorithmArgH &hArg) const {
             papszValue = GDALAlgorithmArgGetAsStringList(hArg);
             int nCount = CSLCount(papszValue);
             if (papszValue && nCount > 0) {
-                std::vector<std::string> v(papszValue, papszValue + nCount);
-                out = Rcpp::wrap(v);
+                out = Rcpp::CharacterVector(papszValue, papszValue + nCount);
             }
             else {
-                Rcpp::CharacterVector v =
-                    Rcpp::CharacterVector::create(NA_STRING);
-                out = v;
+                out = Rcpp::CharacterVector::create(NA_STRING);
             }
             CSLDestroy(papszValue);
         }
@@ -1567,13 +1934,10 @@ SEXP GDALAlg::getArgValue_(const GDALAlgorithmArgH &hArg) const {
                 GDALAlgorithmArgGetAsIntegerList(hArg, &nCount);
 
             if (panValue && nCount > 0) {
-                std::vector<int> v(panValue, panValue + nCount);
-                out = Rcpp::wrap(v);
+                out = Rcpp::IntegerVector(panValue, panValue + nCount);
             }
             else {
-                Rcpp::IntegerVector v =
-                    Rcpp::IntegerVector::create(NA_INTEGER);
-                out = v;
+                out = Rcpp::IntegerVector::create(NA_INTEGER);
             }
         }
         break;
@@ -1585,13 +1949,10 @@ SEXP GDALAlg::getArgValue_(const GDALAlgorithmArgH &hArg) const {
                 GDALAlgorithmArgGetAsDoubleList(hArg, &nCount);
 
             if (padfValue && nCount > 0) {
-                std::vector<double> v(padfValue, padfValue + nCount);
-                out = Rcpp::wrap(v);
+                out = Rcpp::NumericVector(padfValue, padfValue + nCount);
             }
             else {
-                Rcpp::NumericVector v =
-                    Rcpp::NumericVector::create(NA_REAL);
-                out = v;
+                out = Rcpp::NumericVector::create(NA_REAL);
             }
         }
         break;
@@ -1664,10 +2025,9 @@ SEXP GDALAlg::getArgValue_(const GDALAlgorithmArgH &hArg) const {
 
         case GAAT_DATASET_LIST:
         {
-            // TODO: confirm
-            // This seems to apply to input only, at least currently.
+            // seems to apply to input only, at least currently
             Rcpp::warning(
-                "unhandled output of type DATASET_LIST (returned NULL)");
+                "unhandled output of type DATASET_LIST (NULL returned)");
             out = R_NilValue;
         }
         break;
@@ -1677,7 +2037,7 @@ SEXP GDALAlg::getArgValue_(const GDALAlgorithmArgH &hArg) const {
             Rcpp::Rcout << "GDALAlgorithmArgType: " <<
                 GDALAlgorithmArgGetType(hArg) << "\n";
 
-            out = Rcpp::wrap("unhandled arg type");
+            out = Rcpp::wrap("unhandled argument type");
         }
         break;
     }
@@ -1718,6 +2078,8 @@ RCPP_MODULE(mod_GDALAlg) {
         "Print usage information to the console")
     .const_method("usageAsJSON", &GDALAlg::usageAsJSON,
         "Return a list of algorithm information")
+    .method("setArg", &GDALAlg::setArg,
+        "Set the value of an algorithm argument")
     .method("parseCommandLineArgs", &GDALAlg::parseCommandLineArgs,
         "Parse command line arguments")
     .const_method("getExplicitlySetArgs", &GDALAlg::getExplicitlySetArgs,

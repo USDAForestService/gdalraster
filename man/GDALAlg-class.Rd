@@ -53,6 +53,7 @@ alg$argInfo(arg_name)
 alg$usage()
 alg$usageAsJSON()
 
+alg$setArg(arg_name, arg_value)
 alg$parseCommandLineArgs()
 alg$getExplicitlySetArgs()
 alg$run()
@@ -121,6 +122,7 @@ reporting along with various messages and warnings.
 Returns a named list of algorithm properties with the following elements:
 \itemize{
 \item \code{name}: character string, the algorithm name
+\item \code{full_path}: character string, the algorithm name as full path
 \item \code{description}: character string, the algorithm (short) description
 \item \code{long_description}: character string, the algorithm longer description
 \item \code{URL}: character string, the algorithm help URL
@@ -195,6 +197,17 @@ Print a help message for the algorithm to the console. No return value.
 
 \code{$usageAsJSON()}\cr
 Returns the usage of the algorithm as a JSON-serialized string.
+
+\code{$setArg(arg_name, arg_value)}\cr
+Set the value of input algorithm argument \code{arg_name}, a character string
+containing the argument's \dQuote{long} name or an alias.
+The type of the \code{arg_value} parameter must be compatible with the algorithm
+argument type. Objects of class \code{GDALRaster} or \code{GDALVector} may be passed
+for algorithm arguments that accept dataset object input. A list of
+\code{GDALRaster} or \code{GDALVector} objects may be given for algorithm arguments of
+type \code{DATASET_LIST} that accept object input. Generally, an input dataset can
+also be specified by name as a character string (DSN), or character vector of
+DSNs for a \code{DATASET_LIST}.
 
 \code{$parseCommandLineArgs()}\cr
 Sets the value of arguments previously specified in the class constructor,

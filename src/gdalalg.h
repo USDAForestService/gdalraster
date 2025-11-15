@@ -25,6 +25,15 @@ Rcpp::DataFrame gdal_commands(const std::string &contains, bool recurse,
 
 Rcpp::CharacterVector gdal_global_reg_names();
 
+struct VectorObjectProperties {
+    bool is_set {false};
+    std::string driver_short_name {};
+    std::string layer_name {};
+    bool is_sql {false};
+    std::string layer_sql {};
+    std::string sql_dialect {};
+};
+
 class GDALAlg {
  public:
     GDALAlg();
@@ -49,9 +58,7 @@ class GDALAlg {
     void usage() const;
     Rcpp::String usageAsJSON() const;
 
-    // TODO:
-    // bool setArg(const Rcpp::String &arg_name, const SEXP &arg_value);
-
+    bool setArg(const Rcpp::String &arg_name, const Rcpp::RObject &arg_value);
     bool parseCommandLineArgs();
     Rcpp::List getExplicitlySetArgs() const;
     bool run();
@@ -81,8 +88,8 @@ class GDALAlg {
     bool m_input_is_object {false};
     std::map<std::string, std::vector<GDALDatasetH>> m_map_input_hDS {};
     size_t m_num_input_datasets {0};
-    GDALVector *m_input_GDALVector {nullptr};
-    GDALVector *m_like_GDALVector {nullptr};
+    VectorObjectProperties m_in_vector_props;
+    VectorObjectProperties m_like_vector_props;
 };
 
 // cppcheck-suppress unknownMacro
