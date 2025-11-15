@@ -1540,7 +1540,9 @@ bool ogr_ds_delete_field_domain(const std::string &dsn,
     const std::string dsn_in = Rcpp::as<std::string>(check_gdal_filename(dsn));
     GDALDatasetH hDS = nullptr;
 
-    hDS = GDALOpenEx(dsn_in.c_str(), GDAL_OF_VECTOR, nullptr, nullptr, nullptr);
+    hDS = GDALOpenEx(dsn_in.c_str(), GDAL_OF_VECTOR | GDAL_OF_UPDATE, nullptr,
+                     nullptr, nullptr);
+
     if (hDS == nullptr) {
         Rcpp::warning("failed to open dataset");
         return false;

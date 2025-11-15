@@ -552,7 +552,7 @@ ogr_ds_delete_field_domain <- function(dsn, domain_name) {
         stop("'domain_name' must be a length-1 character vector", call. = FALSE)
 
     if (ogr_ds_test_cap(dsn)$DeleteFieldDomain) {
-        return(ogr_ds_delete_field_domain(dsn, domain_name))
+        return(.ogr_ds_delete_field_domain(dsn, domain_name))
     } else {
         message("the dataset does not support DeleteFieldDomain")
         return(FALSE)
