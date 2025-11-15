@@ -1,6 +1,12 @@
 # Changelog
 
-## gdalraster 2.2.1.9053 (dev)
+## gdalraster 2.2.1.9054 (dev)
+
+- fixes for
+  [`ogr_ds_delete_field_domain()`](https://usdaforestservice.github.io/gdalraster/reference/ogr_manage.md),
+  and condition tests on GDAL 3.12
+  ([\#823](https://github.com/USDAForestService/gdalraster/issues/823))
+  (2025-11-15)
 
 - add `GDALAlg::setArg()`: exposed method to set algorithm argument
   values individually by API
