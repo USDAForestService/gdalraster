@@ -51,6 +51,7 @@ writable fields for per-object settings.
     alg$usage()
     alg$usageAsJSON()
 
+    alg$setArg(arg_name, arg_value)
     alg$parseCommandLineArgs()
     alg$getExplicitlySetArgs()
     alg$run()
@@ -122,6 +123,8 @@ Returns a named list of algorithm properties with the following
 elements:
 
 - `name`: character string, the algorithm name
+
+- `full_path`: character string, the algorithm name as full path
 
 - `description`: character string, the algorithm (short) description
 
@@ -230,6 +233,17 @@ Print a help message for the algorithm to the console. No return value.
 
 `$usageAsJSON()`  
 Returns the usage of the algorithm as a JSON-serialized string.
+
+`$setArg(arg_name, arg_value)`  
+Set the value of input algorithm argument `arg_name`, a character string
+containing the argument's “long” name or an alias. The type of the
+`arg_value` parameter must be compatible with the algorithm argument
+type. Objects of class `GDALRaster` or `GDALVector` may be passed for
+algorithm arguments that accept dataset object input. A list of
+`GDALRaster` or `GDALVector` objects may be given for algorithm
+arguments of type `DATASET_LIST` that accept object input. Generally, an
+input dataset can also be specified by name as a character string (DSN),
+or character vector of DSNs for a `DATASET_LIST`.
 
 `$parseCommandLineArgs()`  
 Sets the value of arguments previously specified in the class

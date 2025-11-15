@@ -129,14 +129,15 @@ of writable fields for per-object settings.</p>
 <span id="cb1-14"><a href="#cb1-14" tabindex="-1"></a>alg<span class="sc">$</span><span class="fu">usage</span>()</span>
 <span id="cb1-15"><a href="#cb1-15" tabindex="-1"></a>alg<span class="sc">$</span><span class="fu">usageAsJSON</span>()</span>
 <span id="cb1-16"><a href="#cb1-16" tabindex="-1"></a></span>
-<span id="cb1-17"><a href="#cb1-17" tabindex="-1"></a>alg<span class="sc">$</span><span class="fu">parseCommandLineArgs</span>()</span>
-<span id="cb1-18"><a href="#cb1-18" tabindex="-1"></a>alg<span class="sc">$</span><span class="fu">getExplicitlySetArgs</span>()</span>
-<span id="cb1-19"><a href="#cb1-19" tabindex="-1"></a>alg<span class="sc">$</span><span class="fu">run</span>()</span>
-<span id="cb1-20"><a href="#cb1-20" tabindex="-1"></a>alg<span class="sc">$</span><span class="fu">output</span>()</span>
-<span id="cb1-21"><a href="#cb1-21" tabindex="-1"></a>alg<span class="sc">$</span><span class="fu">outputs</span>()</span>
-<span id="cb1-22"><a href="#cb1-22" tabindex="-1"></a></span>
-<span id="cb1-23"><a href="#cb1-23" tabindex="-1"></a>alg<span class="sc">$</span><span class="fu">close</span>()</span>
-<span id="cb1-24"><a href="#cb1-24" tabindex="-1"></a>alg<span class="sc">$</span><span class="fu">release</span>()</span></code></pre><p></p></div>
+<span id="cb1-17"><a href="#cb1-17" tabindex="-1"></a>alg<span class="sc">$</span><span class="fu">setArg</span>(arg_name, arg_value)</span>
+<span id="cb1-18"><a href="#cb1-18" tabindex="-1"></a>alg<span class="sc">$</span><span class="fu">parseCommandLineArgs</span>()</span>
+<span id="cb1-19"><a href="#cb1-19" tabindex="-1"></a>alg<span class="sc">$</span><span class="fu">getExplicitlySetArgs</span>()</span>
+<span id="cb1-20"><a href="#cb1-20" tabindex="-1"></a>alg<span class="sc">$</span><span class="fu">run</span>()</span>
+<span id="cb1-21"><a href="#cb1-21" tabindex="-1"></a>alg<span class="sc">$</span><span class="fu">output</span>()</span>
+<span id="cb1-22"><a href="#cb1-22" tabindex="-1"></a>alg<span class="sc">$</span><span class="fu">outputs</span>()</span>
+<span id="cb1-23"><a href="#cb1-23" tabindex="-1"></a></span>
+<span id="cb1-24"><a href="#cb1-24" tabindex="-1"></a>alg<span class="sc">$</span><span class="fu">close</span>()</span>
+<span id="cb1-25"><a href="#cb1-25" tabindex="-1"></a>alg<span class="sc">$</span><span class="fu">release</span>()</span></code></pre><p></p></div>
     </div>
     <div class="section level2">
     <h2 id="details">Details<a class="anchor" aria-label="anchor" href="#details"></a></h2>
@@ -195,6 +196,7 @@ reporting along with various messages and warnings.</p>
 
 <p><code>$info()</code><br>
 Returns a named list of algorithm properties with the following elements:</p><ul><li><p><code>name</code>: character string, the algorithm name</p></li>
+<li><p><code>full_path</code>: character string, the algorithm name as full path</p></li>
 <li><p><code>description</code>: character string, the algorithm (short) description</p></li>
 <li><p><code>long_description</code>: character string, the algorithm longer description</p></li>
 <li><p><code>URL</code>: character string, the algorithm help URL</p></li>
@@ -262,6 +264,16 @@ exclusion group to which this argument belongs</p></li>
 Print a help message for the algorithm to the console. No return value.</p>
 <p><code>$usageAsJSON()</code><br>
 Returns the usage of the algorithm as a JSON-serialized string.</p>
+<p><code>$setArg(arg_name, arg_value)</code><br>
+Set the value of input algorithm argument <code>arg_name</code>, a character string
+containing the argument's “long” name or an alias.
+The type of the <code>arg_value</code> parameter must be compatible with the algorithm
+argument type. Objects of class <code>GDALRaster</code> or <code>GDALVector</code> may be passed
+for algorithm arguments that accept dataset object input. A list of
+<code>GDALRaster</code> or <code>GDALVector</code> objects may be given for algorithm arguments of
+type <code>DATASET_LIST</code> that accept object input. Generally, an input dataset can
+also be specified by name as a character string (DSN), or character vector of
+DSNs for a <code>DATASET_LIST</code>.</p>
 <p><code>$parseCommandLineArgs()</code><br>
 Sets the value of arguments previously specified in the class constructor,
 and instantiates the actual algorithm that will be run (but without running
