@@ -1839,10 +1839,16 @@ test_that("delete field domain works", {
     f <- system.file("extdata/domains.gpkg", package="gdalraster")
     dsn <- file.path(tempdir(), basename(f))
     file.copy(f, dsn, overwrite = TRUE)
+    on.exit(unlink(dsn), add = TRUE)
 
-    # delete field domains not supported for GPKG
-    expect_false(ogr_ds_test_cap(dsn)$DeleteFieldDomain)
-    expect_false(ogr_ds_delete_field_domain(dsn, "glob_domain"))
+    # delete field domains supported for GPKG as of GDAL 3.12
+    if (gdal_version_num() < gdal_compute_version(3, 12, 0)) {
+        expect_false(ogr_ds_test_cap(dsn)$DeleteFieldDomain)
+        expect_false(ogr_ds_delete_field_domain(dsn, "glob_domain"))
+    } else {
+        expect_true(ogr_ds_test_cap(dsn)$DeleteFieldDomain)
+        expect_true(ogr_ds_delete_field_domain(dsn, "glob_domain"))
+    }
 
     # TODO: test on OpenFileGDB
 })
