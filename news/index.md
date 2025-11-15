@@ -1,6 +1,11 @@
 # Changelog
 
-## gdalraster 2.2.1.9052 (dev)
+## gdalraster 2.2.1.9053 (dev)
+
+- add `GDALAlg::setArg()`: exposed method to set algorithm argument
+  values individually by API
+  ([\#822](https://github.com/USDAForestService/gdalraster/issues/822))
+  (2025-11-14)
 
 - [`rasterToVRT()`](https://usdaforestservice.github.io/gdalraster/reference/rasterToVRT.md):
   add argument `krnl_fn` supporting a Function element in

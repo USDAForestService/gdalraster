@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">gdalraster</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">2.2.1.9052</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">2.2.1.9053</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -53,8 +53,9 @@
     </div>
 
     <div class="section level2">
-<h2 class="pkg-version" data-toc-text="2.2.1.9052" id="gdalraster-2219052-dev">gdalraster 2.2.1.9052 (dev)<a class="anchor" aria-label="anchor" href="#gdalraster-2219052-dev"></a></h2>
-<ul><li><p><code><a href="../reference/rasterToVRT.html">rasterToVRT()</a></code>: add argument <code>krnl_fn</code> supporting a Function element in KernelFilteredSource with GDAL &gt;= 3.12, one of <code>"min"</code>, <code>"max"</code>, <code>"stddev"</code>, <code>"median"</code> or <code>"mode"</code> (<a href="https://github.com/USDAForestService/gdalraster/issues/821" class="external-link">#821</a>) (2025-11-13)</p></li>
+<h2 class="pkg-version" data-toc-text="2.2.1.9053" id="gdalraster-2219053-dev">gdalraster 2.2.1.9053 (dev)<a class="anchor" aria-label="anchor" href="#gdalraster-2219053-dev"></a></h2>
+<ul><li><p>add <code>GDALAlg::setArg()</code>: exposed method to set algorithm argument values individually by API (<a href="https://github.com/USDAForestService/gdalraster/issues/822" class="external-link">#822</a>) (2025-11-14)</p></li>
+<li><p><code><a href="../reference/rasterToVRT.html">rasterToVRT()</a></code>: add argument <code>krnl_fn</code> supporting a Function element in KernelFilteredSource with GDAL &gt;= 3.12, one of <code>"min"</code>, <code>"max"</code>, <code>"stddev"</code>, <code>"median"</code> or <code>"mode"</code> (<a href="https://github.com/USDAForestService/gdalraster/issues/821" class="external-link">#821</a>) (2025-11-13)</p></li>
 <li><p>add <code>GDALRaster::getMinMaxLocation()</code>: compute the min/max values for a raster band and their locations, using <code>GDALComputeRasterMinMaxLocation()</code> in GDAL &gt;= 3.11 (<a href="https://github.com/USDAForestService/gdalraster/issues/820" class="external-link">#820</a>) (2025-11-13)</p></li>
 <li><p>class <code>GDALRaster</code>: add helper methods for iterating I/O on raster blocks, or on multi-block chunks of user-defined size (<a href="https://github.com/USDAForestService/gdalraster/issues/819" class="external-link">#819</a>) (2025-11-13)</p></li>
 <li><p>various C++ code linting, small refactorings and performance improvements (<a href="https://github.com/USDAForestService/gdalraster/issues/818" class="external-link">#818</a>) (2025-11-13)</p></li>
