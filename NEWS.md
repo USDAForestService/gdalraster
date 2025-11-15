@@ -1,4 +1,6 @@
-# gdalraster 2.2.1.9052 (dev)
+# gdalraster 2.2.1.9053 (dev)
+
+* add `GDALAlg::setArg()`: exposed method to set algorithm argument values individually by API (#822) (2025-11-14)
 
 * `rasterToVRT()`: add argument `krnl_fn` supporting a Function element in KernelFilteredSource with GDAL >= 3.12, one of `"min"`, `"max"`, `"stddev"`, `"median"` or `"mode"` (#821) (2025-11-13)
 
