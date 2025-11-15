@@ -10,12 +10,12 @@
 #include <RcppInt64>
 
 #include <algorithm>
-#include <cmath>
+#include <cctype>
 #include <cstdint>
 #include <limits>
 #include <string>
 
-const int64_t MAX_INT_AS_R_NUMERIC_ = static_cast<int64_t>(std::pow(2, 53)) - 1;
+constexpr int64_t MAX_INT_AS_R_NUMERIC_ = 9007199254740991;
 
 // as defined in the bit64 package src/integer64.h:
 // #define NA_INTEGER64 LLONG_MIN
@@ -53,8 +53,11 @@ std::string str_toupper_(const std::string &s);
 std::string str_tolower_(const std::string &s);
 
 bool contains_str_(const Rcpp::CharacterVector &v, const Rcpp::String &s);
+bool has_space_char_(const std::string &s);
 
 bool is_namespace_loaded_(const Rcpp::String &pkg);
+
+bool is_gdalraster_obj_(const Rcpp::RObject &x);
 
 // case-insensitive comparator for std::map
 // https://stackoverflow.com/questions/1801892/how-can-i-make-the-mapfind-operation-case-insensitive
