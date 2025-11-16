@@ -34,6 +34,9 @@ int vsi_rmdir(const Rcpp::CharacterVector &path, bool recursive);
 int vsi_unlink(const Rcpp::CharacterVector &filename);
 SEXP vsi_unlink_batch(const Rcpp::CharacterVector &filenames);
 SEXP vsi_stat(const Rcpp::CharacterVector &filename, const std::string &info);
+Rcpp::LogicalVector vsi_stat_exists(const Rcpp::CharacterVector &filenames);
+Rcpp::CharacterVector vsi_stat_type(const Rcpp::CharacterVector &filenames);
+Rcpp::NumericVector vsi_stat_size(const Rcpp::CharacterVector &filenames);
 int vsi_rename(const Rcpp::CharacterVector &oldpath,
                const Rcpp::CharacterVector &newpath);
 

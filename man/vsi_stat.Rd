@@ -2,9 +2,18 @@
 % Please edit documentation in R/RcppExports.R
 \name{vsi_stat}
 \alias{vsi_stat}
+\alias{vsi_stat_exists}
+\alias{vsi_stat_type}
+\alias{vsi_stat_size}
 \title{Get filesystem object info}
 \usage{
 vsi_stat(filename, info = "exists")
+
+vsi_stat_exists(filenames)
+
+vsi_stat_type(filenames)
+
+vsi_stat_size(filenames)
 }
 \arguments{
 \item{filename}{Character string. The path of the filesystem object to be
@@ -12,30 +21,44 @@ queried.}
 
 \item{info}{Character string. The type of information to fetch, one of
 \code{"exists"} (the default), \code{"type"} or \code{"size"}.}
+
+\item{filenames}{Character vector of filesystem objects to query.}
 }
 \value{
-If \code{info = "exists"}, returns logical \code{TRUE} if the file system
+If \code{info = "exists"}, \code{vsi_stat()} returns logical \code{TRUE} if the file system
 object exists, otherwise \code{FALSE}. If \code{info = "type"}, returns a character
 string with one of \code{"file"} (regular file), \code{"dir"} (directory),
 \code{"symlink"} (symbolic link), or empty string (\code{""}). If \code{info = "size"},
 returns the file size in bytes (as \code{bit64::integer64} type), or \code{-1} if an
 error occurs.
+\code{vsi_stat_exists()} returns a logical vector. \code{vsi_stat_type()} returns a
+character vector. \code{vsi_stat_size()} returns a numeric vector carrying the
+\code{bit64::integer64} class attribute.
 }
 \description{
-\code{vsi_stat()} fetches status information about a filesystem object (file,
-directory, etc).
-This function goes through the GDAL \code{VSIFileHandler} virtualization and may
-work on unusual filesystems such as in memory.
-It is a wrapper for \code{VSIStatExL()} in the GDAL Common Portability Library.
-Analog of the POSIX \code{stat()} function.
+These functions work on GDAL virtual file systems such as in-memory
+(/vsimem/), URLs (/vsicurl/), cloud storage services (e.g., /vsis3/,
+/vsigs/, /vsiaz/, etc.), compressed archives (e.g., /vsizip, /vsitar/,
+/vsi7z/, /vsigzip/, etc.), and others including "standard" file systems.
+See \url{https://gdal.org/en/stable/user/virtual_file_systems.html}.
+}
+\details{
+\code{vsi_stat()} fetches status information about a single filesystem object
+(file, directory, etc). It is a wrapper for \code{VSIStatExL()} in the GDAL
+Common Portability Library. Analog of the POSIX \code{stat()} function.
+
+\code{vsi_stat_exists()}, \code{vsi_stat_type()} and \code{vsi_stat_size()} are
+specializations operating on a vector of potentially multiple file system
+object names, returning, respectfully, a logical vector, a character vector,
+and a numeric vector carrying the \code{bit64::integer64} class attribute.
 }
 \note{
 For portability, \code{vsi_stat()} supports a subset of \code{stat()}-type
 information for filesystem objects. This function is primarily intended
 for use with GDAL virtual file systems (e.g., URLs, cloud storage systems,
-ZIP/GZip/7z/RAR archives, in-memory files).
-The base R function \code{utils::file_test()} could be used instead for file
-tests on regular local filesystems.
+ZIP/GZip/7z/RAR archives, in-memory files), but can also be used on
+"standard" file systems (e.g., in the / hierarchy on Unix-like systems or
+in C:, D:, etc. drives on Windows).
 }
 \examples{
 data_dir <- system.file("extdata", package="gdalraster")
@@ -54,6 +77,11 @@ nonexistent <- file.path(data_dir, "nonexistent.tif")
 vsi_stat(nonexistent)
 vsi_stat(nonexistent, "type")
 vsi_stat(nonexistent, "size")
+
+fs_objects <- c(data_dir, elev_file, nonexistent)
+vsi_stat_exists(fs_objects)
+vsi_stat_type(fs_objects)
+vsi_stat_size(fs_objects)
 
 # /vsicurl/ file system handler
 base_url <- "https://raw.githubusercontent.com/usdaforestservice/"
