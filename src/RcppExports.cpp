@@ -937,6 +937,39 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// vsi_stat_exists
+Rcpp::LogicalVector vsi_stat_exists(const Rcpp::CharacterVector& filenames);
+RcppExport SEXP _gdalraster_vsi_stat_exists(SEXP filenamesSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< const Rcpp::CharacterVector& >::type filenames(filenamesSEXP);
+    rcpp_result_gen = Rcpp::wrap(vsi_stat_exists(filenames));
+    return rcpp_result_gen;
+END_RCPP
+}
+// vsi_stat_type
+Rcpp::CharacterVector vsi_stat_type(const Rcpp::CharacterVector& filenames);
+RcppExport SEXP _gdalraster_vsi_stat_type(SEXP filenamesSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< const Rcpp::CharacterVector& >::type filenames(filenamesSEXP);
+    rcpp_result_gen = Rcpp::wrap(vsi_stat_type(filenames));
+    return rcpp_result_gen;
+END_RCPP
+}
+// vsi_stat_size
+Rcpp::NumericVector vsi_stat_size(const Rcpp::CharacterVector& filenames);
+RcppExport SEXP _gdalraster_vsi_stat_size(SEXP filenamesSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< const Rcpp::CharacterVector& >::type filenames(filenamesSEXP);
+    rcpp_result_gen = Rcpp::wrap(vsi_stat_size(filenames));
+    return rcpp_result_gen;
+END_RCPP
+}
 // vsi_rename
 int vsi_rename(const Rcpp::CharacterVector& oldpath, const Rcpp::CharacterVector& newpath);
 RcppExport SEXP _gdalraster_vsi_rename(SEXP oldpathSEXP, SEXP newpathSEXP) {
@@ -2435,6 +2468,9 @@ static const R_CallMethodDef CallEntries[] = {
     {"_gdalraster_vsi_unlink", (DL_FUNC) &_gdalraster_vsi_unlink, 1},
     {"_gdalraster_vsi_unlink_batch", (DL_FUNC) &_gdalraster_vsi_unlink_batch, 1},
     {"_gdalraster_vsi_stat", (DL_FUNC) &_gdalraster_vsi_stat, 2},
+    {"_gdalraster_vsi_stat_exists", (DL_FUNC) &_gdalraster_vsi_stat_exists, 1},
+    {"_gdalraster_vsi_stat_type", (DL_FUNC) &_gdalraster_vsi_stat_type, 1},
+    {"_gdalraster_vsi_stat_size", (DL_FUNC) &_gdalraster_vsi_stat_size, 1},
     {"_gdalraster_vsi_rename", (DL_FUNC) &_gdalraster_vsi_rename, 2},
     {"_gdalraster_vsi_get_fs_prefixes", (DL_FUNC) &_gdalraster_vsi_get_fs_prefixes, 0},
     {"_gdalraster_vsi_get_fs_options_", (DL_FUNC) &_gdalraster_vsi_get_fs_options_, 1},

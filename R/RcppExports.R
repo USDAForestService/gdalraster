@@ -2092,31 +2092,47 @@ vsi_unlink_batch <- function(filenames) {
 
 #' Get filesystem object info
 #'
-#' `vsi_stat()` fetches status information about a filesystem object (file,
-#' directory, etc).
-#' This function goes through the GDAL `VSIFileHandler` virtualization and may
-#' work on unusual filesystems such as in memory.
-#' It is a wrapper for `VSIStatExL()` in the GDAL Common Portability Library.
-#' Analog of the POSIX `stat()` function.
+#' These functions work on GDAL virtual file systems such as in-memory
+#' (/vsimem/), URLs (/vsicurl/), cloud storage services (e.g., /vsis3/,
+#' /vsigs/, /vsiaz/, etc.), compressed archives (e.g., /vsizip, /vsitar/,
+#' /vsi7z/, /vsigzip/, etc.), and others including "standard" file systems.
+#' See \url{https://gdal.org/en/stable/user/virtual_file_systems.html}.
+#'
+#' @name vsi_stat
+#'
+#' @details
+#' `vsi_stat()` fetches status information about a single filesystem object
+#' (file, directory, etc). It is a wrapper for `VSIStatExL()` in the GDAL
+#' Common Portability Library. Analog of the POSIX `stat()` function.
+#'
+#' `vsi_stat_exists()`, `vsi_stat_type()` and `vsi_stat_size()` are
+#' specializations operating on a vector of potentially multiple file system
+#' object names, returning, respectfully, a logical vector, a character vector,
+#' and a numeric vector carrying the `bit64::integer64` class attribute.
 #'
 #' @param filename Character string. The path of the filesystem object to be
 #' queried.
 #' @param info Character string. The type of information to fetch, one of
 #' `"exists"` (the default), `"type"` or `"size"`.
-#' @returns If `info = "exists"`, returns logical `TRUE` if the file system
+#' @param filenames Character vector of filesystem objects to query.
+#' @returns
+#' If `info = "exists"`, `vsi_stat()` returns logical `TRUE` if the file system
 #' object exists, otherwise `FALSE`. If `info = "type"`, returns a character
 #' string with one of `"file"` (regular file), `"dir"` (directory),
 #' `"symlink"` (symbolic link), or empty string (`""`). If `info = "size"`,
 #' returns the file size in bytes (as `bit64::integer64` type), or `-1` if an
 #' error occurs.
+#' `vsi_stat_exists()` returns a logical vector. `vsi_stat_type()` returns a
+#' character vector. `vsi_stat_size()` returns a numeric vector carrying the
+#' `bit64::integer64` class attribute.
 #'
 #' @note
 #' For portability, `vsi_stat()` supports a subset of `stat()`-type
 #' information for filesystem objects. This function is primarily intended
 #' for use with GDAL virtual file systems (e.g., URLs, cloud storage systems,
-#' ZIP/GZip/7z/RAR archives, in-memory files).
-#' The base R function `utils::file_test()` could be used instead for file
-#' tests on regular local filesystems.
+#' ZIP/GZip/7z/RAR archives, in-memory files), but can also be used on
+#' "standard" file systems (e.g., in the / hierarchy on Unix-like systems or
+#' in C:, D:, etc. drives on Windows).
 #'
 #' @seealso
 #' GDAL Virtual File Systems:\cr
@@ -2140,6 +2156,11 @@ vsi_unlink_batch <- function(filenames) {
 #' vsi_stat(nonexistent, "type")
 #' vsi_stat(nonexistent, "size")
 #'
+#' fs_objects <- c(data_dir, elev_file, nonexistent)
+#' vsi_stat_exists(fs_objects)
+#' vsi_stat_type(fs_objects)
+#' vsi_stat_size(fs_objects)
+#'
 #' # /vsicurl/ file system handler
 #' base_url <- "https://raw.githubusercontent.com/usdaforestservice/"
 #' f <- "gdalraster/main/sample-data/landsat_c2ard_sr_mt_hood_jul2022_utm.tif"
@@ -2154,6 +2175,21 @@ vsi_unlink_batch <- function(filenames) {
 #' vsi_stat(url_file, "size")
 vsi_stat <- function(filename, info = "exists") {
     .Call(`_gdalraster_vsi_stat`, filename, info)
+}
+
+#' @rdname vsi_stat
+vsi_stat_exists <- function(filenames) {
+    .Call(`_gdalraster_vsi_stat_exists`, filenames)
+}
+
+#' @rdname vsi_stat
+vsi_stat_type <- function(filenames) {
+    .Call(`_gdalraster_vsi_stat_type`, filenames)
+}
+
+#' @rdname vsi_stat
+vsi_stat_size <- function(filenames) {
+    .Call(`_gdalraster_vsi_stat_size`, filenames)
 }
 
 #' Rename a file

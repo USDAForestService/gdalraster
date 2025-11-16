@@ -13,6 +13,12 @@ test_that("vsi_stat works", {
     expect_equal(vsi_stat(nonexistent, "type"), "unknown")
     expect_equal(vsi_stat(nonexistent, "size"), bit64::as.integer64(-1))
     expect_true(is.null(vsi_stat(elev_file, "invalid")))
+
+    fs_objects <- c(data_dir, elev_file, nonexistent)
+    expect_equal(vsi_stat_exists(fs_objects), c(TRUE, TRUE, FALSE))
+    expect_equal(vsi_stat_type(fs_objects), c("dir", "file", "unknown"))
+    expect_vector(vsi_stat_size(fs_objects), ptype = bit64::integer64(),
+                  size = 3)
 })
 
 test_that("vsi_read_dir works", {
