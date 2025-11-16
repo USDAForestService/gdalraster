@@ -1,4 +1,6 @@
-# gdalraster 2.2.1.9054 (dev)
+# gdalraster 2.2.1.9055 (dev)
+
+* add `vsi_stat_exists()`, `vsi_stat_type()` and `vsi_stat_size()`: specializations of `vsi_stat()` operating on a vector of potentially multiple file system object names (#825) (2025-11-15)
 
 * fixes for `ogr_ds_delete_field_domain()`, and condition tests on GDAL 3.12 (#823) (2025-11-15)
 
