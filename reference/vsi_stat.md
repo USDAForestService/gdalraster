@@ -1,15 +1,21 @@
 # Get filesystem object info
 
-`vsi_stat()` fetches status information about a filesystem object (file,
-directory, etc). This function goes through the GDAL `VSIFileHandler`
-virtualization and may work on unusual filesystems such as in memory. It
-is a wrapper for `VSIStatExL()` in the GDAL Common Portability Library.
-Analog of the POSIX `stat()` function.
+These functions work on GDAL virtual file systems such as in-memory
+(/vsimem/), URLs (/vsicurl/), cloud storage services (e.g., /vsis3/,
+/vsigs/, /vsiaz/, etc.), compressed archives (e.g., /vsizip, /vsitar/,
+/vsi7z/, /vsigzip/, etc.), and others including "standard" file systems.
+See <https://gdal.org/en/stable/user/virtual_file_systems.html>.
 
 ## Usage
 
 ``` r
 vsi_stat(filename, info = "exists")
+
+vsi_stat_exists(filenames)
+
+vsi_stat_type(filenames)
+
+vsi_stat_size(filenames)
 ```
 
 ## Arguments
@@ -23,24 +29,45 @@ vsi_stat(filename, info = "exists")
   Character string. The type of information to fetch, one of `"exists"`
   (the default), `"type"` or `"size"`.
 
+- filenames:
+
+  Character vector of filesystem objects to query.
+
 ## Value
 
-If `info = "exists"`, returns logical `TRUE` if the file system object
-exists, otherwise `FALSE`. If `info = "type"`, returns a character
-string with one of `"file"` (regular file), `"dir"` (directory),
-`"symlink"` (symbolic link), or empty string (`""`). If `info = "size"`,
-returns the file size in bytes (as
+If `info = "exists"`, `vsi_stat()` returns logical `TRUE` if the file
+system object exists, otherwise `FALSE`. If `info = "type"`, returns a
+character string with one of `"file"` (regular file), `"dir"`
+(directory), `"symlink"` (symbolic link), or empty string (`""`). If
+`info = "size"`, returns the file size in bytes (as
 [`bit64::integer64`](https://rdrr.io/pkg/bit64/man/bit64-package.html)
-type), or `-1` if an error occurs.
+type), or `-1` if an error occurs. `vsi_stat_exists()` returns a logical
+vector. `vsi_stat_type()` returns a character vector. `vsi_stat_size()`
+returns a numeric vector carrying the
+[`bit64::integer64`](https://rdrr.io/pkg/bit64/man/bit64-package.html)
+class attribute.
+
+## Details
+
+`vsi_stat()` fetches status information about a single filesystem object
+(file, directory, etc). It is a wrapper for `VSIStatExL()` in the GDAL
+Common Portability Library. Analog of the POSIX `stat()` function.
+
+`vsi_stat_exists()`, `vsi_stat_type()` and `vsi_stat_size()` are
+specializations operating on a vector of potentially multiple file
+system object names, returning, respectfully, a logical vector, a
+character vector, and a numeric vector carrying the
+[`bit64::integer64`](https://rdrr.io/pkg/bit64/man/bit64-package.html)
+class attribute.
 
 ## Note
 
 For portability, `vsi_stat()` supports a subset of `stat()`-type
 information for filesystem objects. This function is primarily intended
 for use with GDAL virtual file systems (e.g., URLs, cloud storage
-systems, ZIP/GZip/7z/RAR archives, in-memory files). The base R function
-[`utils::file_test()`](https://rdrr.io/r/utils/filetest.html) could be
-used instead for file tests on regular local filesystems.
+systems, ZIP/GZip/7z/RAR archives, in-memory files), but can also be
+used on "standard" file systems (e.g., in the / hierarchy on Unix-like
+systems or in C:, D:, etc. drives on Windows).
 
 ## See also
 
@@ -78,6 +105,15 @@ vsi_stat(nonexistent, "type")
 vsi_stat(nonexistent, "size")
 #> integer64
 #> [1] -1
+
+fs_objects <- c(data_dir, elev_file, nonexistent)
+vsi_stat_exists(fs_objects)
+#> [1]  TRUE  TRUE FALSE
+vsi_stat_type(fs_objects)
+#> [1] "dir"     "file"    "unknown"
+vsi_stat_size(fs_objects)
+#> integer64
+#> [1] 4096  20043 -1   
 
 # /vsicurl/ file system handler
 base_url <- "https://raw.githubusercontent.com/usdaforestservice/"

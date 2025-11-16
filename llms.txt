@@ -600,6 +600,9 @@ from R-universe instead.
 - [`vsi_set_path_option()`](https://usdaforestservice.github.io/gdalraster/reference/vsi_set_path_option.md)
   : Set a path specific option for a given path prefix
 - [`vsi_stat()`](https://usdaforestservice.github.io/gdalraster/reference/vsi_stat.md)
+  [`vsi_stat_exists()`](https://usdaforestservice.github.io/gdalraster/reference/vsi_stat.md)
+  [`vsi_stat_type()`](https://usdaforestservice.github.io/gdalraster/reference/vsi_stat.md)
+  [`vsi_stat_size()`](https://usdaforestservice.github.io/gdalraster/reference/vsi_stat.md)
   : Get filesystem object info
 - [`vsi_supports_rnd_write()`](https://usdaforestservice.github.io/gdalraster/reference/vsi_supports_rnd_write.md)
   : Return whether the filesystem supports random write
