@@ -185,6 +185,12 @@
 <p>It is not recommended to mix source installations and installation of macOS binaries from CRAN. Consider installing the development version from R-universe instead.</p>
 </div>
 </div>
+<div class="section level3">
+<h3 id="docker">Docker<a class="anchor" aria-label="anchor" href="#docker"></a>
+</h3>
+<p>The <code>r-gdalraster</code> build at <a href="https://github.com/mdsumner/gdal-builds/pkgs/container/gdal-builds" class="external-link uri">https://github.com/mdsumner/gdal-builds/pkgs/container/gdal-builds</a> is based on the GDAL <a href="https://github.com/OSGeo/gdal/tree/master/docker#full-ghcrioosgeogdalubuntu-full-latest-aliased-to-osgeogdal" class="external-link"><code>ubuntu-full-latest</code> image</a>, and adds the current released version of R along with development version of <strong>gdalraster</strong> and its dependencies (thanks to Michael Sumner):</p>
+<div class="sourceCode" id="cb10"><pre class="sourceCode R"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" tabindex="-1"></a>docker pull ghcr.io<span class="sc">/</span>mdsumner<span class="sc">/</span>gdal<span class="sc">-</span>builds<span class="sc">:</span>r<span class="sc">-</span>gdalraster</span></code></pre></div>
+</div>
 </div>
 <div class="section level2">
 <h2 id="documentation">Documentation<a class="anchor" aria-label="anchor" href="#documentation"></a>
