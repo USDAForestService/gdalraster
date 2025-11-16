@@ -1,6 +1,17 @@
 # Changelog
 
-## gdalraster 2.2.1.9054 (dev)
+## gdalraster 2.2.1.9055 (dev)
+
+- add
+  [`vsi_stat_exists()`](https://usdaforestservice.github.io/gdalraster/reference/vsi_stat.md),
+  [`vsi_stat_type()`](https://usdaforestservice.github.io/gdalraster/reference/vsi_stat.md)
+  and
+  [`vsi_stat_size()`](https://usdaforestservice.github.io/gdalraster/reference/vsi_stat.md):
+  specializations of
+  [`vsi_stat()`](https://usdaforestservice.github.io/gdalraster/reference/vsi_stat.md)
+  operating on a vector of potentially multiple file system object names
+  ([\#825](https://github.com/USDAForestService/gdalraster/issues/825))
+  (2025-11-15)
 
 - fixes for
   [`ogr_ds_delete_field_domain()`](https://usdaforestservice.github.io/gdalraster/reference/ogr_manage.md),
