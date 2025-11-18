@@ -1,4 +1,6 @@
-# gdalraster 2.2.1.9055 (dev)
+# gdalraster 2.2.1.9056 (dev)
+
+* miscellaneous documentation updates for release 2.3 (#827) (2025-11-17)
 
 * add `vsi_stat_exists()`, `vsi_stat_type()` and `vsi_stat_size()`: specializations of `vsi_stat()` operating on a vector of potentially multiple file system object names (#825) (2025-11-15)
 
