@@ -78,8 +78,8 @@ If an output raster of combination IDs is written, the user should verify
 that the number of combinations obtained did not exceed the range of the
 output data type. Combination IDs are sequential integers starting at 1.
 Typical output data types are the unsigned types:
-Byte (0 to 255), UInt16 (0 to 65,535) and UInt32 (the default, 0 to
-4,294,967,295).
+Byte (\code{0} to \code{255}), UInt16 (\code{0} to \code{65535}) and UInt32 (the default, \code{0} to
+\code{4294967295}).
 }
 \examples{
 evt_file <- system.file("extdata/storml_evt.tif", package="gdalraster")

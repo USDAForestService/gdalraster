@@ -109,6 +109,8 @@ pixel_extract(raster_file, pts)
 
 # or as GDALRaster object
 ds <- new(GDALRaster, raster_file)
+# optionally suppress progress reporting
+# ds$quiet <- TRUE
 pixel_extract(ds, pts)
 
 # interpolated values
