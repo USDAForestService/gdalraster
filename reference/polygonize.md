@@ -136,11 +136,12 @@ will be implicitly truncated before processing.
 
 When 8-connectedness is used, many of the resulting polygons will likely
 be invalid due to ring self-intersection (in the strict OGC definition
-of polygon validity). They may be suitable as-is for certain purposes
-such as calculating geometry attributes (area, perimeter). Package
-**sf** has `st_make_valid()`, PostGIS has `ST_MakeValid()`, and QGIS has
-vector processing utility "Fix geometries" (single polygons can become
-MultiPolygon in the case of self-intersections).
+of polygon validity). See
+[`g_is_valid()`](https://usdaforestservice.github.io/gdalraster/reference/g_query.md)
+/
+[`g_make_valid()`](https://usdaforestservice.github.io/gdalraster/reference/g_util.md)
+(single polygons can become MultiPolygon' in the case of
+self-intersections).
 
 If writing to a SQLite database format as either `GPKG` (GeoPackage
 vector) or `SQLite` (Spatialite vector), setting the

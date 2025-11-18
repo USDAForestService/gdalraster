@@ -159,6 +159,8 @@ pixel_extract(raster_file, pts)
 
 # or as GDALRaster object
 ds <- new(GDALRaster, raster_file)
+# optionally suppress progress reporting
+# ds$quiet <- TRUE
 pixel_extract(ds, pts)
 #> extracting from band 1...
 #> 0...10...20...30...40...50...60...70...80...90...100 - done.

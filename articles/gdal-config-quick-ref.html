@@ -145,7 +145,8 @@ Setting <code>GDAL_CACHEMAX</code> after that point will not resize the
 cache. It is a per-session setting. If <code>GDAL_CACHEMAX</code> has
 not been set upon first use of the cache, then the default cache size
 (<code>5%</code> of physical RAM) will be in effect for the current
-session. See also <a href="https://usdaforestservice.github.io/gdalraster/articles/gdal-block-cache.html">GDAL
+session. <code><a href="../reference/set_cache_max.html">gdalraster::set_cache_max()</a></code> can be used to change
+the value programmatically during operation of the program. See also <a href="https://usdaforestservice.github.io/gdalraster/articles/gdal-block-cache.html">GDAL
 Block Cache</a>.</p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># set to a specific size in MB</span></span>

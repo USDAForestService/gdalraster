@@ -232,6 +232,8 @@ of interest.</p>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># or as GDALRaster object</span></span></span>
 <span class="r-in"><span><span class="va">ds</span> <span class="op">&lt;-</span> <span class="fu">new</span><span class="op">(</span><span class="va">GDALRaster</span>, <span class="va">raster_file</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="co"># optionally suppress progress reporting</span></span></span>
+<span class="r-in"><span><span class="co"># ds$quiet &lt;- TRUE</span></span></span>
 <span class="r-in"><span><span class="fu">pixel_extract</span><span class="op">(</span><span class="va">ds</span>, <span class="va">pts</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> extracting from band 1...</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 0...10...20...30...40...50...60...70...80...90...100 - done.</span>

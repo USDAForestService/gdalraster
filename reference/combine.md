@@ -94,9 +94,9 @@ on a common extent and cell size.
 If an output raster of combination IDs is written, the user should
 verify that the number of combinations obtained did not exceed the range
 of the output data type. Combination IDs are sequential integers
-starting at 1. Typical output data types are the unsigned types: Byte (0
-to 255), UInt16 (0 to 65,535) and UInt32 (the default, 0 to
-4,294,967,295).
+starting at 1. Typical output data types are the unsigned types: Byte
+(`0` to `255`), UInt16 (`0` to `65535`) and UInt32 (the default, `0` to
+`4294967295`).
 
 ## See also
 
@@ -168,7 +168,7 @@ head(tbl)
 ds <- new(GDALRaster, cmb_file)
 ds$info()
 #> Driver: GTiff/GeoTIFF
-#> Files: /tmp/RtmpT3rAxD/fbfm_cov_cmbid.tif
+#> Files: /tmp/RtmpD8M3Si/fbfm_cov_cmbid.tif
 #> Size is 143, 107
 #> Coordinate System is:
 #> PROJCRS["NAD83 / UTM zone 12N",

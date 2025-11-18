@@ -202,11 +202,8 @@ relatively simple thematic rasters, masks, and classification results.</p>
 implicitly truncated before processing.</p>
 <p>When 8-connectedness is used, many of the resulting polygons will likely be
 invalid due to ring self-intersection (in the strict OGC definition of
-polygon validity). They may be suitable as-is for certain purposes such as
-calculating geometry attributes (area, perimeter). Package <strong>sf</strong> has
-<code>st_make_valid()</code>, PostGIS has <code>ST_MakeValid()</code>, and QGIS has vector
-processing utility "Fix geometries" (single polygons can become MultiPolygon
-in the case of self-intersections).</p>
+polygon validity). See <code><a href="g_query.html">g_is_valid()</a></code> / <code><a href="g_util.html">g_make_valid()</a></code> (single polygons
+can become MultiPolygon' in the case of self-intersections).</p>
 <p>If writing to a SQLite database format as either <code>GPKG</code> (GeoPackage
 vector) or <code>SQLite</code> (Spatialite vector), setting the
 <code>SQLITE_USE_OGR_VFS</code> and <code>OGR_SQLITE_JOURNAL</code> configuration options may
