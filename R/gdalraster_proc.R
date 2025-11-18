@@ -1345,8 +1345,8 @@ calc <- function(expr,
 #' that the number of combinations obtained did not exceed the range of the
 #' output data type. Combination IDs are sequential integers starting at 1.
 #' Typical output data types are the unsigned types:
-#' Byte (0 to 255), UInt16 (0 to 65,535) and UInt32 (the default, 0 to
-#' 4,294,967,295).
+#' Byte (`0` to `255`), UInt16 (`0` to `65535`) and UInt32 (the default, `0` to
+#' `4294967295`).
 #'
 #' @param rasterfiles Character vector of raster filenames to combine.
 #' @param var.names Character vector of `length(rasterfiles)` containing
@@ -1613,6 +1613,8 @@ dem_proc <- function(mode,
 #'
 #' # or as GDALRaster object
 #' ds <- new(GDALRaster, raster_file)
+#' # optionally suppress progress reporting
+#' # ds$quiet <- TRUE
 #' pixel_extract(ds, pts)
 #'
 #' # interpolated values
@@ -1965,11 +1967,8 @@ pixel_extract <- function(raster, xy, bands = NULL, interp = NULL,
 #'
 #' When 8-connectedness is used, many of the resulting polygons will likely be
 #' invalid due to ring self-intersection (in the strict OGC definition of
-#' polygon validity). They may be suitable as-is for certain purposes such as
-#' calculating geometry attributes (area, perimeter). Package **sf** has
-#' `st_make_valid()`, PostGIS has `ST_MakeValid()`, and QGIS has vector
-#' processing utility "Fix geometries" (single polygons can become MultiPolygon
-#' in the case of self-intersections).
+#' polygon validity). See `g_is_valid()` / `g_make_valid()` (single polygons
+#' can become MultiPolygon' in the case of self-intersections).
 #'
 #' If writing to a SQLite database format as either `GPKG` (GeoPackage
 #' vector) or `SQLite` (Spatialite vector), setting the

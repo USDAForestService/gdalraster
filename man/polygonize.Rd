@@ -105,11 +105,8 @@ implicitly truncated before processing.
 
 When 8-connectedness is used, many of the resulting polygons will likely be
 invalid due to ring self-intersection (in the strict OGC definition of
-polygon validity). They may be suitable as-is for certain purposes such as
-calculating geometry attributes (area, perimeter). Package \strong{sf} has
-\code{st_make_valid()}, PostGIS has \code{ST_MakeValid()}, and QGIS has vector
-processing utility "Fix geometries" (single polygons can become MultiPolygon
-in the case of self-intersections).
+polygon validity). See \code{g_is_valid()} / \code{g_make_valid()} (single polygons
+can become MultiPolygon' in the case of self-intersections).
 
 If writing to a SQLite database format as either \code{GPKG} (GeoPackage
 vector) or \code{SQLite} (Spatialite vector), setting the
