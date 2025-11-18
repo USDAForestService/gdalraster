@@ -1,6 +1,10 @@
 # Changelog
 
-## gdalraster 2.2.1.9055 (dev)
+## gdalraster 2.2.1.9056 (dev)
+
+- miscellaneous documentation updates for release 2.3
+  ([\#827](https://github.com/USDAForestService/gdalraster/issues/827))
+  (2025-11-17)
 
 - add
   [`vsi_stat_exists()`](https://usdaforestservice.github.io/gdalraster/reference/vsi_stat.md),
