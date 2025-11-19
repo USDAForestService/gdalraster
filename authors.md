@@ -33,7 +33,7 @@ for details.
 ## Citation
 
 Source:
-[`inst/CITATION`](https://github.com/USDAForestService/gdalraster/blob/main/inst/CITATION)
+[`inst/CITATION`](https://github.com/USDAForestService/gdalraster/blob/v.2.3.0/inst/CITATION)
 
 Toney C (2025). *gdalraster: R Bindings to the 'Geospatial Data
 Abstraction Library' Raster API*. USDA Forest Service, Rocky Mountain
