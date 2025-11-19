@@ -1,11 +1,105 @@
 # Changelog
 
-## gdalraster 2.2.1.9056 (dev)
+## gdalraster 2.3.0
 
-- miscellaneous documentation updates for release 2.3
-  ([\#827](https://github.com/USDAForestService/gdalraster/issues/827))
-  (2025-11-17)
+CRAN release: 2025-11-19
 
+### Dependencies
+
+- package **yyjsonr** has been added to Imports
+
+### Features / enhancements
+
+#### GDAL CLI bindings
+
+- [`gdal_usage()`](https://usdaforestservice.github.io/gdalraster/reference/gdal_cli.md):
+  include the list of potential step algorithms for `"raster pipeline"`
+  and `"vector pipeline"`
+  ([\#789](https://github.com/USDAForestService/gdalraster/issues/789))
+- [`gdal_run()`](https://usdaforestservice.github.io/gdalraster/reference/gdal_cli.md):
+  add argument `setVectorArgsFromObject`
+  ([\#790](https://github.com/USDAForestService/gdalraster/issues/790))
+- add `GDALAlg::getExplicitlySetArgs()`: exposed class method to return
+  a named list of arguments that have been set explicitly along with
+  their values
+  ([\#807](https://github.com/USDAForestService/gdalraster/issues/807))
+- add `GDALAlg::setArg()`: exposed class method to set algorithm
+  argument values individually by API
+  ([\#822](https://github.com/USDAForestService/gdalraster/issues/822))
+
+#### Raster
+
+- class `GDALRaster`: add helper methods for iterating I/O on raster
+  blocks, or on multi-block chunks of user-defined size, `readBlock()` /
+  `writeBlock()`,
+  [`make_chunk_index()`](https://usdaforestservice.github.io/gdalraster/reference/make_chunk_index.md)
+  and `readChunk()` / `writeChunk()`
+  ([\#819](https://github.com/USDAForestService/gdalraster/issues/819))
+- add
+  [`make_chunk_index()`](https://usdaforestservice.github.io/gdalraster/reference/make_chunk_index.md)
+  stand-alone function for use without a dataset object
+- add `GDALRaster::getMinMaxLocation()`: compute the min/max values for
+  a raster band and their locations, using
+  `GDALComputeRasterMinMaxLocation()` in GDAL \>= 3.11
+  ([\#820](https://github.com/USDAForestService/gdalraster/issues/820))
+- [`rasterToVRT()`](https://usdaforestservice.github.io/gdalraster/reference/rasterToVRT.md):
+  add argument `krnl_fn` supporting a Function element in
+  KernelFilteredSource with GDAL \>= 3.12, one of `"min"`, `"max"`,
+  `"stddev"`, `"median"` or `"mode"`
+  ([\#821](https://github.com/USDAForestService/gdalraster/issues/821))
+- class `GDALRaster`: add a constructor with `allowed_drivers` argument
+  ([\#793](https://github.com/USDAForestService/gdalraster/issues/793))
+
+#### Multidimensional raster
+
+- add
+  [`mdim_as_classic()`](https://usdaforestservice.github.io/gdalraster/reference/mdim_as_classic.md):
+  return a view of an MDArray as a “classic” GDALDataset (i.e., 2D), and
+  add column `multidim_raster` (`TRUE`\|`FALSE`) in the data frame
+  output of
+  [`gdal_formats()`](https://usdaforestservice.github.io/gdalraster/reference/gdal_formats.md)
+  ([\#799](https://github.com/USDAForestService/gdalraster/issues/799))
+- add
+  [`mdim_info()`](https://usdaforestservice.github.io/gdalraster/reference/mdim_info.md):
+  report structure and content of a multidimensional dataset, interface
+  to `gdalmdiminfo` utility
+- add
+  [`mdim_translate()`](https://usdaforestservice.github.io/gdalraster/reference/mdim_translate.md):
+  convert multidimensional data between different formats, and subset,
+  interface to `gdalmdimtranslate` utility
+  ([\#803](https://github.com/USDAForestService/gdalraster/issues/803))
+
+#### Geometry API
+
+- add
+  [`g_geom_count()`](https://usdaforestservice.github.io/gdalraster/reference/g_query.md):
+  return the number of elements in a geometry or number of geometries in
+  container
+- add
+  [`g_get_geom()`](https://usdaforestservice.github.io/gdalraster/reference/g_factory.md):
+  fetch a geometry from a geometry container
+- add
+  [`g_unary_union()`](https://usdaforestservice.github.io/gdalraster/reference/g_unary_op.md):
+  wrapper for `OGR_G_UnaryUnion()`
+- add
+  [`g_concave_hull()`](https://usdaforestservice.github.io/gdalraster/reference/g_unary_op.md):
+  wrapper for `OGR_G_ConcaveHull()`
+- add
+  [`g_normalize()`](https://usdaforestservice.github.io/gdalraster/reference/g_util.md):
+  wrapper for `OGR_G_Normalize()`
+- [`g_delaunay_triangulation()`](https://usdaforestservice.github.io/gdalraster/reference/g_unary_op.md):
+  add argument `constrained`, wrapper for
+  `OGR_G_ConstrainedDelaunayTriangulation()`
+- add
+  [`plot_geom()`](https://usdaforestservice.github.io/gdalraster/reference/plot_geom.md):
+  plot WKT or WKB geometries
+
+#### Other features
+
+- add
+  [`gdal_get_driver_md()`](https://usdaforestservice.github.io/gdalraster/reference/gdal_get_driver_md.md):
+  retrieve driver metadata
+  ([\#795](https://github.com/USDAForestService/gdalraster/issues/795))
 - add
   [`vsi_stat_exists()`](https://usdaforestservice.github.io/gdalraster/reference/vsi_stat.md),
   [`vsi_stat_type()`](https://usdaforestservice.github.io/gdalraster/reference/vsi_stat.md)
@@ -15,147 +109,24 @@
   [`vsi_stat()`](https://usdaforestservice.github.io/gdalraster/reference/vsi_stat.md)
   operating on a vector of potentially multiple file system object names
   ([\#825](https://github.com/USDAForestService/gdalraster/issues/825))
-  (2025-11-15)
+
+### Bug fix
 
 - fixes for
   [`ogr_ds_delete_field_domain()`](https://usdaforestservice.github.io/gdalraster/reference/ogr_manage.md),
   and condition tests on GDAL 3.12
   ([\#823](https://github.com/USDAForestService/gdalraster/issues/823))
-  (2025-11-15)
-
-- add `GDALAlg::setArg()`: exposed method to set algorithm argument
-  values individually by API
-  ([\#822](https://github.com/USDAForestService/gdalraster/issues/822))
-  (2025-11-14)
-
-- [`rasterToVRT()`](https://usdaforestservice.github.io/gdalraster/reference/rasterToVRT.md):
-  add argument `krnl_fn` supporting a Function element in
-  KernelFilteredSource with GDAL \>= 3.12, one of `"min"`, `"max"`,
-  `"stddev"`, `"median"` or `"mode"`
-  ([\#821](https://github.com/USDAForestService/gdalraster/issues/821))
-  (2025-11-13)
-
-- add `GDALRaster::getMinMaxLocation()`: compute the min/max values for
-  a raster band and their locations, using
-  `GDALComputeRasterMinMaxLocation()` in GDAL \>= 3.11
-  ([\#820](https://github.com/USDAForestService/gdalraster/issues/820))
-  (2025-11-13)
-
-- class `GDALRaster`: add helper methods for iterating I/O on raster
-  blocks, or on multi-block chunks of user-defined size
-  ([\#819](https://github.com/USDAForestService/gdalraster/issues/819))
-  (2025-11-13)
-
-- various C++ code linting, small refactorings and performance
-  improvements
-  ([\#818](https://github.com/USDAForestService/gdalraster/issues/818))
-  (2025-11-13)
-
-- [`g_delaunay_triangulation()`](https://usdaforestservice.github.io/gdalraster/reference/g_unary_op.md):
-  add argument `constrained`, wrapper for
-  `OGR_G_ConstrainedDelaunayTriangulation()` (2025-09-30)
-
-- add
-  [`g_concave_hull()`](https://usdaforestservice.github.io/gdalraster/reference/g_unary_op.md):
-  wrapper for `OGR_G_ConcaveHull()` (2025-09-30)
-
-- add `GDALAlg::getExplicitlySetArgs()`: return a named list of
-  arguments that have been set explicitly along with their values
-  ([\#807](https://github.com/USDAForestService/gdalraster/issues/807))
-  (2025-09-29)
-
-- [`mdim_as_classic()`](https://usdaforestservice.github.io/gdalraster/reference/mdim_as_classic.md):
-  add open flag `GDAL_OF_VERBOSE_ERROR` and use
-  `GDALMDArrayAsClassicDatasetEx()` if GDAL \>= 3.8
-  ([\#806](https://github.com/USDAForestService/gdalraster/issues/806))
-  (2025-09-27)
-
-- [`mdim_info()`](https://usdaforestservice.github.io/gdalraster/reference/mdim_info.md):
-  add argument `cout` to control printing output to the console, with
-  the info string returned invisibly (2025-09-25)
-
-- add
-  [`mdim_translate()`](https://usdaforestservice.github.io/gdalraster/reference/mdim_translate.md):
-  convert multidimensional data between different formats, and subset,
-  interface to `gdalmdimtranslate` utility
-  ([\#803](https://github.com/USDAForestService/gdalraster/issues/803))
-  (2025-09-25)
-
-- [`mdim_as_classic()`](https://usdaforestservice.github.io/gdalraster/reference/mdim_as_classic.md):
-  add argument `view_expr` for array slicing or field access by name
-  ([\#802](https://github.com/USDAForestService/gdalraster/issues/802))
-  (2025-09-22)
-
-- code linting: use `unique_ptr`
-  ([\#801](https://github.com/USDAForestService/gdalraster/issues/801))
-  (2025-09-22)
-
-- add
-  [`mdim_info()`](https://usdaforestservice.github.io/gdalraster/reference/mdim_info.md):
-  report structure and content of a multidimensional dataset, interface
-  to `gdalmdiminfo` utility (2025-09-22)
-
-- add
-  [`mdim_as_classic()`](https://usdaforestservice.github.io/gdalraster/reference/mdim_as_classic.md):
-  return a view of an MDArray as a “classic” GDALDataset (i.e., 2D), and
-  add column `multidim_raster` (`TRUE`\|`FALSE`) in the data frame
-  output of
-  [`gdal_formats()`](https://usdaforestservice.github.io/gdalraster/reference/gdal_formats.md)
-  ([\#799](https://github.com/USDAForestService/gdalraster/issues/799))
-  (2025-09-21)
-
-- add
-  [`g_normalize()`](https://usdaforestservice.github.io/gdalraster/reference/g_util.md):
-  wrapper for `OGR_G_Normalize()`
-  ([\#798](https://github.com/USDAForestService/gdalraster/issues/798))
-  (2025-09-20)
-
-- add
-  [`g_unary_union()`](https://usdaforestservice.github.io/gdalraster/reference/g_unary_op.md):
-  wrapper for `OGR_G_UnaryUnion()`
-  ([\#797](https://github.com/USDAForestService/gdalraster/issues/797))
-  (2025-09-20)
-
-- add
-  [`gdal_get_driver_md()`](https://usdaforestservice.github.io/gdalraster/reference/gdal_get_driver_md.md):
-  retrieve driver metadata
-  ([\#795](https://github.com/USDAForestService/gdalraster/issues/795))
-  (2025-09-19)
-
-- add
-  [`g_geom_count()`](https://usdaforestservice.github.io/gdalraster/reference/g_query.md)
-  and
-  [`g_get_geom()`](https://usdaforestservice.github.io/gdalraster/reference/g_factory.md)
-  ([\#796](https://github.com/USDAForestService/gdalraster/issues/796))
-  (2025-09-19)
-
-- class `GDALRaster`: add a constructor with `allowed_drivers` argument
-  ([\#793](https://github.com/USDAForestService/gdalraster/issues/793))
-  (2025-09-19)
-
-- add
-  [`plot_geom()`](https://usdaforestservice.github.io/gdalraster/reference/plot_geom.md):
-  plot WKT or WKB geometries (2025-09-18)
-
-- [`gdal_run()`](https://usdaforestservice.github.io/gdalraster/reference/gdal_cli.md):
-  add argument `setVectorArgsFromObject`
-  ([\#790](https://github.com/USDAForestService/gdalraster/issues/790))
-  (2025-09-13)
-
-- [`gdal_usage()`](https://usdaforestservice.github.io/gdalraster/reference/gdal_cli.md):
-  include the list of potential step algorithms for `"raster pipeline"`
-  and `"vector pipeline"`
-  ([\#789](https://github.com/USDAForestService/gdalraster/issues/789),
-  adds **yyjsonr** to `Imports`) (2025-09-10)
-
-- (internal) various C++ code linting
-  ([\#788](https://github.com/USDAForestService/gdalraster/issues/788))
-  (2025-08-31)
-
 - ensure that the global error handler is restored when the input
   dataset cannot be opened in some OGR management functions
   ([\#787](https://github.com/USDAForestService/gdalraster/issues/787))
-  (2025-08-30)
+
+### Internal
+
+- various C++ code linting, small refactorings and performance
+  improvements
+  ([\#788](https://github.com/USDAForestService/gdalraster/issues/788),
+  [\#801](https://github.com/USDAForestService/gdalraster/issues/801),
+  [\#818](https://github.com/USDAForestService/gdalraster/issues/818))
 
 ## gdalraster 2.2.1
 

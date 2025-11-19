@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">gdalraster</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">2.2.1.9056</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">2.3.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -53,36 +53,68 @@
     </div>
 
     <div class="section level2">
-<h2 class="pkg-version" data-toc-text="2.2.1.9056" id="gdalraster-2219056-dev">gdalraster 2.2.1.9056 (dev)<a class="anchor" aria-label="anchor" href="#gdalraster-2219056-dev"></a></h2>
-<ul><li><p>miscellaneous documentation updates for release 2.3 (<a href="https://github.com/USDAForestService/gdalraster/issues/827" class="external-link">#827</a>) (2025-11-17)</p></li>
-<li><p>add <code><a href="../reference/vsi_stat.html">vsi_stat_exists()</a></code>, <code><a href="../reference/vsi_stat.html">vsi_stat_type()</a></code> and <code><a href="../reference/vsi_stat.html">vsi_stat_size()</a></code>: specializations of <code><a href="../reference/vsi_stat.html">vsi_stat()</a></code> operating on a vector of potentially multiple file system object names (<a href="https://github.com/USDAForestService/gdalraster/issues/825" class="external-link">#825</a>) (2025-11-15)</p></li>
-<li><p>fixes for <code><a href="../reference/ogr_manage.html">ogr_ds_delete_field_domain()</a></code>, and condition tests on GDAL 3.12 (<a href="https://github.com/USDAForestService/gdalraster/issues/823" class="external-link">#823</a>) (2025-11-15)</p></li>
-<li><p>add <code>GDALAlg::setArg()</code>: exposed method to set algorithm argument values individually by API (<a href="https://github.com/USDAForestService/gdalraster/issues/822" class="external-link">#822</a>) (2025-11-14)</p></li>
-<li><p><code><a href="../reference/rasterToVRT.html">rasterToVRT()</a></code>: add argument <code>krnl_fn</code> supporting a Function element in KernelFilteredSource with GDAL &gt;= 3.12, one of <code>"min"</code>, <code>"max"</code>, <code>"stddev"</code>, <code>"median"</code> or <code>"mode"</code> (<a href="https://github.com/USDAForestService/gdalraster/issues/821" class="external-link">#821</a>) (2025-11-13)</p></li>
-<li><p>add <code>GDALRaster::getMinMaxLocation()</code>: compute the min/max values for a raster band and their locations, using <code>GDALComputeRasterMinMaxLocation()</code> in GDAL &gt;= 3.11 (<a href="https://github.com/USDAForestService/gdalraster/issues/820" class="external-link">#820</a>) (2025-11-13)</p></li>
-<li><p>class <code>GDALRaster</code>: add helper methods for iterating I/O on raster blocks, or on multi-block chunks of user-defined size (<a href="https://github.com/USDAForestService/gdalraster/issues/819" class="external-link">#819</a>) (2025-11-13)</p></li>
-<li><p>various C++ code linting, small refactorings and performance improvements (<a href="https://github.com/USDAForestService/gdalraster/issues/818" class="external-link">#818</a>) (2025-11-13)</p></li>
-<li><p><code><a href="../reference/g_unary_op.html">g_delaunay_triangulation()</a></code>: add argument <code>constrained</code>, wrapper for <code>OGR_G_ConstrainedDelaunayTriangulation()</code> (2025-09-30)</p></li>
-<li><p>add <code><a href="../reference/g_unary_op.html">g_concave_hull()</a></code>: wrapper for <code>OGR_G_ConcaveHull()</code> (2025-09-30)</p></li>
-<li><p>add <code>GDALAlg::getExplicitlySetArgs()</code>: return a named list of arguments that have been set explicitly along with their values (<a href="https://github.com/USDAForestService/gdalraster/issues/807" class="external-link">#807</a>) (2025-09-29)</p></li>
-<li><p><code><a href="../reference/mdim_as_classic.html">mdim_as_classic()</a></code>: add open flag <code>GDAL_OF_VERBOSE_ERROR</code> and use <code>GDALMDArrayAsClassicDatasetEx()</code> if GDAL &gt;= 3.8 (<a href="https://github.com/USDAForestService/gdalraster/issues/806" class="external-link">#806</a>) (2025-09-27)</p></li>
-<li><p><code><a href="../reference/mdim_info.html">mdim_info()</a></code>: add argument <code>cout</code> to control printing output to the console, with the info string returned invisibly (2025-09-25)</p></li>
-<li><p>add <code><a href="../reference/mdim_translate.html">mdim_translate()</a></code>: convert multidimensional data between different formats, and subset, interface to <code>gdalmdimtranslate</code> utility (<a href="https://github.com/USDAForestService/gdalraster/issues/803" class="external-link">#803</a>) (2025-09-25)</p></li>
-<li><p><code><a href="../reference/mdim_as_classic.html">mdim_as_classic()</a></code>: add argument <code>view_expr</code> for array slicing or field access by name (<a href="https://github.com/USDAForestService/gdalraster/issues/802" class="external-link">#802</a>) (2025-09-22)</p></li>
-<li><p>code linting: use <code>unique_ptr</code> (<a href="https://github.com/USDAForestService/gdalraster/issues/801" class="external-link">#801</a>) (2025-09-22)</p></li>
-<li><p>add <code><a href="../reference/mdim_info.html">mdim_info()</a></code>: report structure and content of a multidimensional dataset, interface to <code>gdalmdiminfo</code> utility (2025-09-22)</p></li>
-<li><p>add <code><a href="../reference/mdim_as_classic.html">mdim_as_classic()</a></code>: return a view of an MDArray as a “classic” GDALDataset (i.e., 2D), and add column <code>multidim_raster</code> (<code>TRUE</code>|<code>FALSE</code>) in the data frame output of <code><a href="../reference/gdal_formats.html">gdal_formats()</a></code> (<a href="https://github.com/USDAForestService/gdalraster/issues/799" class="external-link">#799</a>) (2025-09-21)</p></li>
-<li><p>add <code><a href="../reference/g_util.html">g_normalize()</a></code>: wrapper for <code>OGR_G_Normalize()</code> (<a href="https://github.com/USDAForestService/gdalraster/issues/798" class="external-link">#798</a>) (2025-09-20)</p></li>
-<li><p>add <code><a href="../reference/g_unary_op.html">g_unary_union()</a></code>: wrapper for <code>OGR_G_UnaryUnion()</code> (<a href="https://github.com/USDAForestService/gdalraster/issues/797" class="external-link">#797</a>) (2025-09-20)</p></li>
-<li><p>add <code><a href="../reference/gdal_get_driver_md.html">gdal_get_driver_md()</a></code>: retrieve driver metadata (<a href="https://github.com/USDAForestService/gdalraster/issues/795" class="external-link">#795</a>) (2025-09-19)</p></li>
-<li><p>add <code><a href="../reference/g_query.html">g_geom_count()</a></code> and <code><a href="../reference/g_factory.html">g_get_geom()</a></code> (<a href="https://github.com/USDAForestService/gdalraster/issues/796" class="external-link">#796</a>) (2025-09-19)</p></li>
-<li><p>class <code>GDALRaster</code>: add a constructor with <code>allowed_drivers</code> argument (<a href="https://github.com/USDAForestService/gdalraster/issues/793" class="external-link">#793</a>) (2025-09-19)</p></li>
-<li><p>add <code><a href="../reference/plot_geom.html">plot_geom()</a></code>: plot WKT or WKB geometries (2025-09-18)</p></li>
-<li><p><code><a href="../reference/gdal_cli.html">gdal_run()</a></code>: add argument <code>setVectorArgsFromObject</code> (<a href="https://github.com/USDAForestService/gdalraster/issues/790" class="external-link">#790</a>) (2025-09-13)</p></li>
-<li><p><code><a href="../reference/gdal_cli.html">gdal_usage()</a></code>: include the list of potential step algorithms for <code>"raster pipeline"</code> and <code>"vector pipeline"</code> (<a href="https://github.com/USDAForestService/gdalraster/issues/789" class="external-link">#789</a>, adds <strong>yyjsonr</strong> to <code>Imports</code>) (2025-09-10)</p></li>
-<li><p>(internal) various C++ code linting (<a href="https://github.com/USDAForestService/gdalraster/issues/788" class="external-link">#788</a>) (2025-08-31)</p></li>
-<li><p>ensure that the global error handler is restored when the input dataset cannot be opened in some OGR management functions (<a href="https://github.com/USDAForestService/gdalraster/issues/787" class="external-link">#787</a>) (2025-08-30)</p></li>
+<h2 class="pkg-version" data-toc-text="2.3.0" id="gdalraster-230">gdalraster 2.3.0<a class="anchor" aria-label="anchor" href="#gdalraster-230"></a></h2><p class="text-muted">CRAN release: 2025-11-19</p>
+<div class="section level3">
+<h3 id="dependencies-2-3-0">Dependencies<a class="anchor" aria-label="anchor" href="#dependencies-2-3-0"></a></h3>
+<ul><li>package <strong>yyjsonr</strong> has been added to Imports</li>
 </ul></div>
+<div class="section level3">
+<h3 id="features--enhancements-2-3-0">Features / enhancements<a class="anchor" aria-label="anchor" href="#features--enhancements-2-3-0"></a></h3>
+<div class="section level4">
+<h4 id="gdal-cli-bindings-2-3-0">GDAL CLI bindings<a class="anchor" aria-label="anchor" href="#gdal-cli-bindings-2-3-0"></a></h4>
+<ul><li>
+<code><a href="../reference/gdal_cli.html">gdal_usage()</a></code>: include the list of potential step algorithms for <code>"raster pipeline"</code> and <code>"vector pipeline"</code> (<a href="https://github.com/USDAForestService/gdalraster/issues/789" class="external-link">#789</a>)</li>
+<li>
+<code><a href="../reference/gdal_cli.html">gdal_run()</a></code>: add argument <code>setVectorArgsFromObject</code> (<a href="https://github.com/USDAForestService/gdalraster/issues/790" class="external-link">#790</a>)</li>
+<li>add <code>GDALAlg::getExplicitlySetArgs()</code>: exposed class method to return a named list of arguments that have been set explicitly along with their values (<a href="https://github.com/USDAForestService/gdalraster/issues/807" class="external-link">#807</a>)</li>
+<li>add <code>GDALAlg::setArg()</code>: exposed class method to set algorithm argument values individually by API (<a href="https://github.com/USDAForestService/gdalraster/issues/822" class="external-link">#822</a>)</li>
+</ul></div>
+<div class="section level4">
+<h4 id="raster-2-3-0">Raster<a class="anchor" aria-label="anchor" href="#raster-2-3-0"></a></h4>
+<ul><li>class <code>GDALRaster</code>: add helper methods for iterating I/O on raster blocks, or on multi-block chunks of user-defined size, <code>readBlock()</code> / <code>writeBlock()</code>, <code><a href="../reference/make_chunk_index.html">make_chunk_index()</a></code> and <code>readChunk()</code> / <code>writeChunk()</code> (<a href="https://github.com/USDAForestService/gdalraster/issues/819" class="external-link">#819</a>)</li>
+<li>add <code><a href="../reference/make_chunk_index.html">make_chunk_index()</a></code> stand-alone function for use without a dataset object</li>
+<li>add <code>GDALRaster::getMinMaxLocation()</code>: compute the min/max values for a raster band and their locations, using <code>GDALComputeRasterMinMaxLocation()</code> in GDAL &gt;= 3.11 (<a href="https://github.com/USDAForestService/gdalraster/issues/820" class="external-link">#820</a>)</li>
+<li>
+<code><a href="../reference/rasterToVRT.html">rasterToVRT()</a></code>: add argument <code>krnl_fn</code> supporting a Function element in KernelFilteredSource with GDAL &gt;= 3.12, one of <code>"min"</code>, <code>"max"</code>, <code>"stddev"</code>, <code>"median"</code> or <code>"mode"</code> (<a href="https://github.com/USDAForestService/gdalraster/issues/821" class="external-link">#821</a>)</li>
+<li>class <code>GDALRaster</code>: add a constructor with <code>allowed_drivers</code> argument (<a href="https://github.com/USDAForestService/gdalraster/issues/793" class="external-link">#793</a>)</li>
+</ul></div>
+<div class="section level4">
+<h4 id="multidimensional-raster-2-3-0">Multidimensional raster<a class="anchor" aria-label="anchor" href="#multidimensional-raster-2-3-0"></a></h4>
+<ul><li>add <code><a href="../reference/mdim_as_classic.html">mdim_as_classic()</a></code>: return a view of an MDArray as a “classic” GDALDataset (i.e., 2D), and add column <code>multidim_raster</code> (<code>TRUE</code>|<code>FALSE</code>) in the data frame output of <code><a href="../reference/gdal_formats.html">gdal_formats()</a></code> (<a href="https://github.com/USDAForestService/gdalraster/issues/799" class="external-link">#799</a>)</li>
+<li>add <code><a href="../reference/mdim_info.html">mdim_info()</a></code>: report structure and content of a multidimensional dataset, interface to <code>gdalmdiminfo</code> utility</li>
+<li>add <code><a href="../reference/mdim_translate.html">mdim_translate()</a></code>: convert multidimensional data between different formats, and subset, interface to <code>gdalmdimtranslate</code> utility (<a href="https://github.com/USDAForestService/gdalraster/issues/803" class="external-link">#803</a>)</li>
+</ul></div>
+<div class="section level4">
+<h4 id="geometry-api-2-3-0">Geometry API<a class="anchor" aria-label="anchor" href="#geometry-api-2-3-0"></a></h4>
+<ul><li>add <code><a href="../reference/g_query.html">g_geom_count()</a></code>: return the number of elements in a geometry or number of geometries in container</li>
+<li>add <code><a href="../reference/g_factory.html">g_get_geom()</a></code>: fetch a geometry from a geometry container</li>
+<li>add <code><a href="../reference/g_unary_op.html">g_unary_union()</a></code>: wrapper for <code>OGR_G_UnaryUnion()</code>
+</li>
+<li>add <code><a href="../reference/g_unary_op.html">g_concave_hull()</a></code>: wrapper for <code>OGR_G_ConcaveHull()</code>
+</li>
+<li>add <code><a href="../reference/g_util.html">g_normalize()</a></code>: wrapper for <code>OGR_G_Normalize()</code>
+</li>
+<li>
+<code><a href="../reference/g_unary_op.html">g_delaunay_triangulation()</a></code>: add argument <code>constrained</code>, wrapper for <code>OGR_G_ConstrainedDelaunayTriangulation()</code>
+</li>
+<li>add <code><a href="../reference/plot_geom.html">plot_geom()</a></code>: plot WKT or WKB geometries</li>
+</ul></div>
+<div class="section level4">
+<h4 id="other-features-2-3-0">Other features<a class="anchor" aria-label="anchor" href="#other-features-2-3-0"></a></h4>
+<ul><li>add <code><a href="../reference/gdal_get_driver_md.html">gdal_get_driver_md()</a></code>: retrieve driver metadata (<a href="https://github.com/USDAForestService/gdalraster/issues/795" class="external-link">#795</a>)</li>
+<li>add <code><a href="../reference/vsi_stat.html">vsi_stat_exists()</a></code>, <code><a href="../reference/vsi_stat.html">vsi_stat_type()</a></code> and <code><a href="../reference/vsi_stat.html">vsi_stat_size()</a></code>: specializations of <code><a href="../reference/vsi_stat.html">vsi_stat()</a></code> operating on a vector of potentially multiple file system object names (<a href="https://github.com/USDAForestService/gdalraster/issues/825" class="external-link">#825</a>)</li>
+</ul></div>
+</div>
+<div class="section level3">
+<h3 id="bug-fix-2-3-0">Bug fix<a class="anchor" aria-label="anchor" href="#bug-fix-2-3-0"></a></h3>
+<ul><li>fixes for <code><a href="../reference/ogr_manage.html">ogr_ds_delete_field_domain()</a></code>, and condition tests on GDAL 3.12 (<a href="https://github.com/USDAForestService/gdalraster/issues/823" class="external-link">#823</a>)</li>
+<li>ensure that the global error handler is restored when the input dataset cannot be opened in some OGR management functions (<a href="https://github.com/USDAForestService/gdalraster/issues/787" class="external-link">#787</a>)</li>
+</ul></div>
+<div class="section level3">
+<h3 id="internal-2-3-0">Internal<a class="anchor" aria-label="anchor" href="#internal-2-3-0"></a></h3>
+<ul><li>various C++ code linting, small refactorings and performance improvements (<a href="https://github.com/USDAForestService/gdalraster/issues/788" class="external-link">#788</a>, <a href="https://github.com/USDAForestService/gdalraster/issues/801" class="external-link">#801</a>, <a href="https://github.com/USDAForestService/gdalraster/issues/818" class="external-link">#818</a>)</li>
+</ul></div>
+</div>
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="2.2.1" id="gdalraster-221">gdalraster 2.2.1<a class="anchor" aria-label="anchor" href="#gdalraster-221"></a></h2><p class="text-muted">CRAN release: 2025-08-29</p>
 <div class="section level3">
