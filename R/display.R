@@ -177,10 +177,16 @@
 #' percentile cutoffs (removes outliers). A numeric vector of length two giving
 #' the percentiles to use (e.g., `c(2, 98)`). Applied per band. Ignored if
 #' `minmax_def` is used.
-#' @param col_map_fn An optional color map function (default is
+#' @param col_map_fn An optional color map function that maps input pixel values
+#' to colors in "#RRGGBB" (or "#RRGGBBAA") character form (default is
 #' `grDevices::gray` for single-band data or `grDevices::rgb` for 3-band).
-#' Ignored if `col_tbl` is used. Set `normalize` to `FALSE` if using a color
-#' map function that operates on raw pixel values.
+#' Ignored if `col_tbl` is used. Set `normalize = FALSE` if using a color
+#' map function that operates on raw pixel values. This argument can also be
+#' given as a color palette, in which case a color-ramp function is assumed.
+#' The color palette can be a character vector of `"#RRGGBB"` or `"#RRGGBBAA"`,
+#' color names from `grDevices::colors()`, or a positive integer that indexes
+#' into `grDevices::palette()` (i.e., must be a valid argument to
+#' `grDevices::col2rgb()`).
 #' @param pixel_fn An optional function that will be applied to the input
 #' pixel data. Must accept vector input and return a numeric vector of the same
 #' length as its input.
@@ -246,11 +252,12 @@
 #' # grayscale
 #' plot_raster(ds, legend = TRUE, main = "Storm Lake elevation (m)")
 #'
-#' # color ramp from user-defined palette
-#' elev_pal <- c("#00A60E","#63C600","#E6E600","#E9BD3B",
-#'               "#ECB176","#EFC2B3","#F2F2F2")
-#' ramp <- scales::colour_ramp(elev_pal, alpha = FALSE)
-#' plot_raster(ds, col_map_fn = ramp, legend = TRUE,
+#' # color ramp from a user-defined palette: the `col_map_fn` can optionally
+#' # be given as a color palette, for which a color ramp function is assumed
+#' pal <- c("#00A60E", "#63C600", "#E6E600", "#E9BD3B", "#ECB176", "#EFC2B3",
+#'          "#F2F2F2")
+#'
+#' plot_raster(ds, col_map_fn = pal, legend = TRUE,
 #'             main = "Storm Lake elevation (m)")
 #'
 #' ds$close()
@@ -291,11 +298,12 @@
 #' ds <- new(GDALRaster, f)
 #' ds$getDataTypeName(band = 1)  # complex floating point
 #'
-#' ramp <- scales::colour_ramp(scales::pal_viridis(option = "plasma")(6),
-#'                             alpha = FALSE)
-#'
-#' plot_raster(ds, pixel_fn = Arg, col_map_fn = ramp, interpolate = FALSE,
-#'             legend = TRUE, main = "Arg(complex.tif)")
+#' plot_raster(ds,
+#'             pixel_fn = Arg,
+#'             col_map_fn = scales::pal_viridis(option = "plasma")(6),
+#'             interpolate = FALSE,
+#'             legend = TRUE,
+#'             main = "Arg(complex.tif)")
 #'
 #' ds$close()
 #' @export
@@ -314,15 +322,27 @@ plot_raster <- function(data, xsize=NULL, ysize=NULL, nbands=NULL,
 
     if (!is.null(nbands)) {
         if (!(nbands %in% c(1, 3)))
-            stop("number of bands must be 1 or 3", call.=FALSE)
+            stop("number of bands must be 1 or 3", call. = FALSE)
     }
 
     if (is.null(max_pixels))
         max_pixels <- Inf
 
     if (!is.null(col_map_fn)) {
-        if (!is.function(col_map_fn))
-            stop("'col_map_fn' must be a function", call. = FALSE)
+        if (!is.function(col_map_fn)) {
+            # assume a palette was given for implied color ramp function
+            pal <- col_map_fn
+            # use `colour_ramp()` from suggested package {scales} if available,
+            # else fall back to built-in {grDevices}
+            if (requireNamespace("scales", quietly = TRUE)) {
+                col_map_fn <- scales::colour_ramp(pal, alpha = FALSE)
+            } else {
+                col_map_fn <- function(x) {
+                    ramp <- grDevices::colorRamp(pal)
+                    return(ramp(x) |> grDevices::rgb(maxColorValue = 255))
+                }
+            }
+        }
     }
 
     if (!is.null(pixel_fn)) {
