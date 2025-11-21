@@ -1,5 +1,13 @@
 # Changelog
 
+## gdalraster 2.3.0.9000 (dev)
+
+- [`plot_raster()`](https://usdaforestservice.github.io/gdalraster/reference/plot_raster.md):
+  accept a color palette for the argument `col_map_fn`, to support an
+  implied ramp function
+  ([\#830](https://github.com/USDAForestService/gdalraster/issues/830))
+  (2025-11-20)
+
 ## gdalraster 2.3.0
 
 CRAN release: 2025-11-19
