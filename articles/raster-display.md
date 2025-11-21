@@ -19,7 +19,7 @@ f <- paste0(base_url, "lf_elev_220_mt_hood_utm.tif")
 ds <- new(GDALRaster, f)
 
 # gray
-plot_raster(ds, legend=TRUE, main="Mount Hood elevation (m)")
+plot_raster(ds, legend = TRUE, main = "Mount Hood elevation (m)")
 ```
 
 ![A plot of an elevation raster for an area of interest around Mt. Hood,
@@ -28,10 +28,11 @@ gray (minimum 553 m) and the highest values almost white (maximum 3421
 m).](raster-display_files/figure-html/unnamed-chunk-2-1.png)
 
 ``` r
-elev_pal <- c("#00A60E","#63C600","#E6E600","#E9BD3B","#ECB176","#EFC2B3","#F2F2F2")
-ramp <- scales::colour_ramp(elev_pal, alpha=FALSE)
+pal <- c("#00A60E", "#63C600", "#E6E600", "#E9BD3B", "#ECB176", "#EFC2B3",
+         "#F2F2F2")
 
-plot_raster(ds, legend=TRUE, col_map_fn=ramp, main="Mount Hood elevation (m)")
+plot_raster(ds, legend = TRUE, col_map_fn = pal,
+            main = "Mount Hood elevation (m)")
 ```
 
 ![A plot of an elevation raster for an area of interest around Mt. Hood,
@@ -51,14 +52,12 @@ f <- paste0(base_url, "landsat_c2ard_sr_mt_hood_jul2022_utm.tif")
 ds <- new(GDALRaster, f)
 
 # passing a vector of pixel values rather than the open dataset
-r <- read_ds(ds, bands=c(7,5,4))
+r <- read_ds(ds, bands = c(7, 5, 4))
 ds$close()
 
 # normalizing to ranges derived from the full Landsat scene (2-98 percentiles)
-plot_raster(r,
-            minmax_def=c(7551,7679,7585,14842,24997,12451),
-            main="Mount Hood July 2022 Landsat 7-5-4 (SWIR)"
-           )
+plot_raster(r, minmax_def = c(7551,7679,7585,14842,24997,12451),
+            main = "Mount Hood July 2022 Landsat 7-5-4 (SWIR)")
 ```
 
 ![A plot of a Landsat image for an area of interest around Mt. Hood,
@@ -72,7 +71,7 @@ composite of Landsat bands 7, 5 and 4
 f <- paste0(base_url, "lf_fbfm40_220_mt_hood_utm.tif")
 ds <- new(GDALRaster, f)
 dm <- ds$dim()
-print(paste("Size is", dm[1], "x",  dm[2], "x", dm[3]))
+paste("Size is", dm[1], "x",  dm[2], "x", dm[3])
 #> [1] "Size is 1013 x 799 x 1"
 
 # using the CSV attribute table distributed by LANDFIRE
@@ -86,12 +85,12 @@ head(vat)
 #> 4    98    NB8   0  14 214 0.000000 0.054902 0.839216
 #> 5    99    NB9  77 110 112 0.301961 0.431373 0.439216
 #> 6   101    GR1 255 235 190 1.000000 0.921569 0.745098
-vat <- vat[,c(1,6:8)]
+vat <- vat[, c(1,6:8)]
 
 # read at reduced resolution for display
-plot_raster(ds, xsize=dm[1] / 2, ysize=dm[2] / 2,
-            col_tbl=vat, interpolate=FALSE,
-            main="LANDFIRE surface fuel class (FBFM40)")
+plot_raster(ds, xsize = dm[1] / 2, ysize = dm[2] / 2,
+            col_tbl = vat, interpolate = FALSE,
+            main = "LANDFIRE surface fuel class (FBFM40)")
 ```
 
 ![A plot of LANDFIRE surface fuel classes for an area of interest around
@@ -107,15 +106,13 @@ ds$close()
 ``` r
 f <- paste0(base_url, "bl_mrbl_ng_jul2004_rgb_720x360.tif")
 ds <- new(GDALRaster, f)
-srs_is_projected(ds$getProjectionRef())
+ds$getProjectionRef() |> srs_is_projected()
 #> [1] FALSE
 r <- read_ds(ds)
 ds$close()
 
-plot_raster(r,
-            xlab="longitude", ylab="latitude",
-            main="NASA Earth Observatory Blue Marble July 2004"
-           )
+plot_raster(r, xlab = "longitude", ylab = "latitude",
+            main = "NASA Earth Observatory Blue Marble July 2004")
 ```
 
 ![A plot of the NASA Earth Observatory Blue Marble image from July 2004.

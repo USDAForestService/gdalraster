@@ -59,7 +59,7 @@ output to the console.'></head><body>
   <main id="main" class="col-md-9"><div class="page-header">
 
       <h1>Report open datasets</h1>
-      <small class="dont-index">Source: <a href="https://github.com/USDAForestService/gdalraster/blob/v.2.3.0/R/gdal_helpers.R" class="external-link"><code>R/gdal_helpers.R</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/USDAForestService/gdalraster/blob/main/R/gdal_helpers.R" class="external-link"><code>R/gdal_helpers.R</code></a></small>
       <div class="d-none name"><code>dump_open_datasets.Rd</code></div>
     </div>
 
@@ -88,12 +88,12 @@ output to the console.</p>
 <span class="r-in"><span><span class="va">ds</span> <span class="op">&lt;-</span> <span class="fu">new</span><span class="op">(</span><span class="va">GDALRaster</span>, <span class="va">elev_file</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="fu">dump_open_datasets</span><span class="op">(</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Open GDAL Datasets:</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   1 S GTiff  -1554446336 143x107x1 /home/runner/work/_temp/Library/gdalraster/extdata/storml_elev.tif</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   1 S GTiff  1030248448 143x107x1 /home/runner/work/_temp/Library/gdalraster/extdata/storml_elev.tif</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] 1</span>
 <span class="r-in"><span><span class="va">ds2</span> <span class="op">&lt;-</span> <span class="fu">new</span><span class="op">(</span><span class="va">GDALRaster</span>, <span class="va">elev_file</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="fu">dump_open_datasets</span><span class="op">(</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Open GDAL Datasets:</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   2 S GTiff  -1554446336 143x107x1 /home/runner/work/_temp/Library/gdalraster/extdata/storml_elev.tif</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   2 S GTiff  1030248448 143x107x1 /home/runner/work/_temp/Library/gdalraster/extdata/storml_elev.tif</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] 1</span>
 <span class="r-in"><span><span class="co"># open without using shared mode</span></span></span>
 <span class="r-in"><span><span class="va">ds3</span> <span class="op">&lt;-</span> <span class="fu">new</span><span class="op">(</span><span class="va">GDALRaster</span>, <span class="va">elev_file</span>, read_only <span class="op">=</span> <span class="cn">TRUE</span>,</span></span>
@@ -101,13 +101,13 @@ output to the console.</p>
 <span class="r-in"><span><span class="fu">dump_open_datasets</span><span class="op">(</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Open GDAL Datasets:</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   1 N GTiff       -1 143x107x1 /home/runner/work/_temp/Library/gdalraster/extdata/storml_elev.tif</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   2 S GTiff  -1554446336 143x107x1 /home/runner/work/_temp/Library/gdalraster/extdata/storml_elev.tif</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   2 S GTiff  1030248448 143x107x1 /home/runner/work/_temp/Library/gdalraster/extdata/storml_elev.tif</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] 2</span>
 <span class="r-in"><span><span class="va">ds</span><span class="op">$</span><span class="fu">close</span><span class="op">(</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="fu">dump_open_datasets</span><span class="op">(</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Open GDAL Datasets:</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   1 N GTiff       -1 143x107x1 /home/runner/work/_temp/Library/gdalraster/extdata/storml_elev.tif</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   1 S GTiff  -1554446336 143x107x1 /home/runner/work/_temp/Library/gdalraster/extdata/storml_elev.tif</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   1 S GTiff  1030248448 143x107x1 /home/runner/work/_temp/Library/gdalraster/extdata/storml_elev.tif</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] 2</span>
 <span class="r-in"><span><span class="va">ds2</span><span class="op">$</span><span class="fu">close</span><span class="op">(</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="fu">dump_open_datasets</span><span class="op">(</span><span class="op">)</span></span></span>
