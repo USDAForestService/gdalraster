@@ -1,3 +1,7 @@
+# gdalraster 2.3.0.9000 (dev)
+
+* `plot_raster()`: accept a color palette for the argument `col_map_fn`, to support an implied ramp function (#830) (2025-11-20)
+
 # gdalraster 2.3.0
 
 ## Dependencies
