@@ -14,7 +14,7 @@ dnl 2025-04-25: drop PROJ include directory and libs since we require GDAL >= 3.
 dnl 2025-08-31: check size of long long which should always by 64 bits in practice
 dnl             but is guaranteed only to be at least 64
 
-AC_INIT([gdalraster],[2.3.0],[jctoney@gmail.com])
+AC_INIT([gdalraster],[2.3.0.9000],[jctoney@gmail.com])
 AC_LANG(C++)
 
 # find R home and set CC/CFLAGS
