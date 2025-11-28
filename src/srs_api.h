@@ -35,5 +35,6 @@ SEXP srs_get_linear_units(const std::string &srs);
 double srs_get_coord_epoch(const std::string &srs);
 int srs_get_utm_zone(const std::string &srs);
 std::string srs_get_axis_mapping_strategy(const std::string &srs);
+SEXP srs_get_area_of_use(const std::string &srs);
 
 #endif  // SRS_API_H_
