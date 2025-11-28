@@ -1,6 +1,12 @@
 # Changelog
 
-## gdalraster 2.3.0.9001 (dev)
+## gdalraster 2.3.0.9002 (dev)
+
+- add
+  [`srs_info_from_db()`](https://usdaforestservice.github.io/gdalraster/reference/srs_info_from_db.md):
+  obtain information about coordinate reference systems in the PROJ DB
+  ([\#832](https://github.com/USDAForestService/gdalraster/issues/832))
+  (2025-11-28)
 
 - add to the GDAL Spatial Reference System API bindings:
   [`srs_get_area_of_use()`](https://usdaforestservice.github.io/gdalraster/reference/srs_query.md),

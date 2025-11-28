@@ -186,7 +186,7 @@ hi_file <- calc(expr = expr,
                 setRasterNodataValue = TRUE)
 #> calculating from 1 input layer(s)...
 #> ================================================================================
-#> output written to: /tmp/Rtmp3x89Bt/rastcalc1f2a5872bc2.tif
+#> output written to: /tmp/RtmpeNjoJb/rastcalc1f3d61990d45.tif
 
 ds <- new(GDALRaster, hi_file)
 # min, max, mean, sd
@@ -212,7 +212,7 @@ ndvi_file <- calc(expr = expr,
                   setRasterNodataValue = TRUE)
 #> calculating from 2 input layer(s)...
 #> ================================================================================
-#> output written to: /tmp/Rtmp3x89Bt/rastcalc1f2a7c3de8ac.tif
+#> output written to: /tmp/RtmpeNjoJb/rastcalc1f3d602609ff.tif
 
 ds <- new(GDALRaster, ndvi_file)
 ds$getStatistics(band=1, approx_ok=FALSE, force=TRUE)
@@ -284,7 +284,7 @@ calc(expr = expr,
      write_mode = "update")
 #> calculating from 2 input layer(s)...
 #> ================================================================================
-#> output written to: /tmp/Rtmp3x89Bt/storml_lndscp.tif
+#> output written to: /tmp/RtmpeNjoJb/storml_lndscp.tif
 
 # verify the ouput
 rasterfiles <- c(tif_file, tif_file)
