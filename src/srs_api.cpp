@@ -332,6 +332,27 @@ std::string srs_to_projjson(const std::string &srs,
 //' axis.
 //' * `OAMS_CUSTOM`: custom-defined data axis
 //'
+//' `srs_get_area_of_use()` is a wrapper of `OSRGetAreaOfUse()` in the GDAL API.
+//' Returns a named list containing the following elements (or returns `NULL` if
+//' the API call does not succeed):
+//' * `AreaName`: the area of use
+//' * `WestLongitudeDeg`: the western-most longitude expressed in degree, or
+//' `NA` if the bounding box is unknown
+//' * `SouthLatitudeDeg`: the southern-most latitude expressed in degree, or
+//' `NA` if the bounding box is unknown
+//' * `EastLongitudeDeg`: the eastern-most longitude expressed in degree, or
+//' `NA` if the bounding box is unknown
+//' * `NorthLatitudeDeg`: the northern-most latitude expressed in degree, or
+//' `NA` if the bounding box is unknown
+//'
+//' `srs_get_axes_count()` returns the integer number of axes of the coordinate
+//' system of the SRS. Wrapper of `OSRGetAxesCount()` in the GDAL API.
+//'
+//' `srs_get_celestial_body_name()` returns the name of the celestial body of
+//' the SRS, e.g., `"Earth"` for an Earth SRS. Wrapper of
+//' `OSRGetCelestialBodyName()` in the GDAL API. Requires GDAL >= 3.12 and
+//' PROJ >= 8.1.
+//'
 //' @param srs Character string containing an SRS definition in various
 //' formats (e.g., WKT, PROJ.4 string, well known name such as NAD27, NAD83,
 //' WGS84, etc., see [srs_to_wkt()]).
@@ -398,6 +419,17 @@ std::string srs_to_projjson(const std::string &srs,
 //'
 //' srs_is_vertical("EPSG:5705")
 //'
+//' srs_get_area_of_use("EPSG:3976")
+//'
+//' srs_get_axes_count("EPSG:4326")
+//' srs_get_axes_count("EPSG:4979")
+//'
+//' ## Requires GDAL >= 3.12 and PROJ >= 8.1
+//' # srs_get_celestial_body_name("EPSG:4326")
+//' #> [1] "Earth"
+//' # srs_get_celestial_body_name("IAU_2015:30100")
+//' #> [1] "Moon"
+//'
 //' f <- system.file("extdata/storml_elev.tif", package="gdalraster")
 //' ds <- new(GDALRaster, f)
 //'
@@ -412,7 +444,7 @@ std::string srs_to_projjson(const std::string &srs,
 //'
 //' ds$close()
 //'
-//' # Requires GDAL >= 3.4
+//' ## Requires GDAL >= 3.4
 //' if (gdal_version_num() >= gdal_compute_version(3, 4, 0)) {
 //'   if (srs_is_dynamic("WGS84"))
 //'     print("WGS84 is dynamic")
@@ -852,4 +884,109 @@ std::string srs_get_axis_mapping_strategy(const std::string &srs) {
         return "OAMS_CUSTOM";
     else
         return "";
+}
+
+//' @rdname srs_query
+// [[Rcpp::export]]
+SEXP srs_get_area_of_use(const std::string &srs) {
+    if (srs == "")
+        return R_NilValue;
+
+    OGRSpatialReferenceH hSRS = OSRNewSpatialReference(nullptr);
+
+    if (OSRSetFromUserInput(hSRS, srs.c_str()) != OGRERR_NONE) {
+        if (hSRS != nullptr)
+            OSRDestroySpatialReference(hSRS);
+        Rcpp::stop("error importing SRS from user input");
+    }
+
+    double dfWestLongitudeDeg = NA_REAL;
+    double dfSouthLatitudeDeg = NA_REAL;
+    double dfEastLongitudeDeg = NA_REAL;
+    double dfNorthLatitudeDeg = NA_REAL;
+    const char *pszAreaName = nullptr;
+
+    if (!OSRGetAreaOfUse(hSRS, &dfWestLongitudeDeg, &dfSouthLatitudeDeg,
+                         &dfEastLongitudeDeg, &dfNorthLatitudeDeg,
+                         &pszAreaName)) {
+
+        OSRDestroySpatialReference(hSRS);
+        Rcpp::Rcout << "OSRGetAreaOfUse() API call did not succeed\n";
+        return R_NilValue;
+    }
+
+    Rcpp::List list_out = Rcpp::List::create();
+    if (pszAreaName)
+        list_out.push_back(pszAreaName, "AreaName");
+    else
+        list_out.push_back("", "AreaName");
+    if (dfWestLongitudeDeg != -1000)
+        list_out.push_back(dfWestLongitudeDeg, "WestLongitudeDeg");
+    else
+        list_out.push_back(NA_REAL, "WestLongitudeDeg");
+    if (dfSouthLatitudeDeg != -1000)
+        list_out.push_back(dfSouthLatitudeDeg, "SouthLatitudeDeg");
+    else
+        list_out.push_back(NA_REAL, "SouthLatitudeDeg");
+    if (dfEastLongitudeDeg != -1000)
+        list_out.push_back(dfEastLongitudeDeg, "EastLongitudeDeg");
+    else
+        list_out.push_back(NA_REAL, "EastLongitudeDeg");
+    if (dfNorthLatitudeDeg != -1000)
+        list_out.push_back(dfNorthLatitudeDeg, "NorthLatitudeDeg");
+    else
+        list_out.push_back(NA_REAL, "NorthLatitudeDeg");
+
+    OSRDestroySpatialReference(hSRS);
+    return list_out;
+}
+
+//' @rdname srs_query
+// [[Rcpp::export]]
+int srs_get_axes_count(const std::string &srs) {
+    if (srs == "")
+        return NA_INTEGER;
+
+    OGRSpatialReferenceH hSRS = OSRNewSpatialReference(nullptr);
+
+    if (OSRSetFromUserInput(hSRS, srs.c_str()) != OGRERR_NONE) {
+        if (hSRS != nullptr)
+            OSRDestroySpatialReference(hSRS);
+        Rcpp::stop("error importing SRS from user input");
+    }
+
+    int axes_count = OSRGetAxesCount(hSRS);
+    OSRDestroySpatialReference(hSRS);
+    return axes_count;
+}
+
+//' @rdname srs_query
+// [[Rcpp::export]]
+std::string srs_get_celestial_body_name(const std::string &srs) {
+#if GDAL_VERSION_NUM < GDAL_COMPUTE_VERSION(3, 12, 0)
+    Rcpp::stop("srs_get_celestial_body_name() requires GDAL >= 3.12");
+#else
+    if (srs == "")
+        return "";
+
+    std::vector<int> proj_ver = getPROJVersion();
+    if (!(proj_ver[0] > 8 || (proj_ver[0] == 8 && proj_ver[1] >= 1)))
+        Rcpp::stop("srs_get_celestial_body_name() requires PROJ >= 8.1");
+
+    OGRSpatialReferenceH hSRS = OSRNewSpatialReference(nullptr);
+
+    if (OSRSetFromUserInput(hSRS, srs.c_str()) != OGRERR_NONE) {
+        if (hSRS != nullptr)
+            OSRDestroySpatialReference(hSRS);
+        Rcpp::stop("error importing SRS from user input");
+    }
+
+    const char *pszName = OSRGetCelestialBodyName(hSRS);
+    std::string ret = "";
+    if (pszName)
+        ret = pszName;
+
+    OSRDestroySpatialReference(hSRS);
+    return ret;
+#endif  // GDAL 3.12
 }
