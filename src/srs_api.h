@@ -37,4 +37,6 @@ int srs_get_utm_zone(const std::string &srs);
 std::string srs_get_axis_mapping_strategy(const std::string &srs);
 SEXP srs_get_area_of_use(const std::string &srs);
 
+Rcpp::DataFrame srs_info_from_db(std::string auth_name);
+
 #endif  // SRS_API_H_

@@ -3406,6 +3406,41 @@ srs_get_celestial_body_name <- function(srs) {
     .Call(`_gdalraster_srs_get_celestial_body_name`, srs)
 }
 
+#' Obtain information about coordinate reference systems in the PROJ DB
+#'
+#' `srs_info_from_db()` returns a data frame containing descriptive information
+#' about spatial coordinate reference systems in the PROJ database. Wrapper of
+#' `OSRGetCRSInfoListFromDatabase()` in the GDAL SRS API.
+#'
+#' @details
+#' The returned information includes the authority name, object code, object
+#' name, object type (e.g., Geographic 2D CRS, Geographic 3D CRS, Projected
+#' CRS, etc.), whether the object is deprecated, whether the bounding box
+#' values for the area of use are valid, the bounding box values in longitude
+#' and latitude degrees, the name of the area of use, the name of the
+#' projection method for a projected CRS, and the name of the celestial body of
+#' the CRS (e.g., "Earth", populated only if GDAL >= 3.12 and PROJ >= 8.1).
+#'
+#' @param auth_name Character string containing an authority name used to
+#' restrict the search, or empty string (`""`) for all authorities (the
+#' default).
+#' @returns
+#' A data frame (will contain `0` rows if no objects are found that match the
+#' search criterion).
+#'
+#' @seealso
+#' [srs_query]
+#'
+#' @examples
+#' epsg <- srs_info_from_db("EPSG")
+#' str(epsg)
+#'
+#' iau <- srs_info_from_db("IAU_2015")
+#' str(iau)
+srs_info_from_db <- function(auth_name = "") {
+    .Call(`_gdalraster_srs_info_from_db`, auth_name)
+}
+
 #' get PROJ version
 #' @noRd
 .getPROJVersion <- function() {

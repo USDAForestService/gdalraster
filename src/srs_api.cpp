@@ -990,3 +990,161 @@ std::string srs_get_celestial_body_name(const std::string &srs) {
     return ret;
 #endif  // GDAL 3.12
 }
+
+//' Obtain information about coordinate reference systems in the PROJ DB
+//'
+//' `srs_info_from_db()` returns a data frame containing descriptive information
+//' about spatial coordinate reference systems in the PROJ database. Wrapper of
+//' `OSRGetCRSInfoListFromDatabase()` in the GDAL SRS API.
+//'
+//' @details
+//' The returned information includes the authority name, object code, object
+//' name, object type (e.g., Geographic 2D CRS, Geographic 3D CRS, Projected
+//' CRS, etc.), whether the object is deprecated, whether the bounding box
+//' values for the area of use are valid, the bounding box values in longitude
+//' and latitude degrees, the name of the area of use, the name of the
+//' projection method for a projected CRS, and the name of the celestial body of
+//' the CRS (e.g., "Earth", populated only if GDAL >= 3.12 and PROJ >= 8.1).
+//'
+//' @param auth_name Character string containing an authority name used to
+//' restrict the search, or empty string (`""`) for all authorities (the
+//' default).
+//' @returns
+//' A data frame (will contain `0` rows if no objects are found that match the
+//' search criterion).
+//'
+//' @seealso
+//' [srs_query]
+//'
+//' @examples
+//' epsg <- srs_info_from_db("EPSG")
+//' str(epsg)
+//'
+//' iau <- srs_info_from_db("IAU_2015")
+//' str(iau)
+// [[Rcpp::export]]
+Rcpp::DataFrame srs_info_from_db(std::string auth_name = "") {
+    const char *pszAuthName = nullptr;
+    if (auth_name != "")
+        pszAuthName = auth_name.c_str();
+    
+    int nObjects = 0;
+    std::unique_ptr<OSRCRSInfo *, decltype(&OSRDestroyCRSInfoList)>
+        pCRSList(OSRGetCRSInfoListFromDatabase(pszAuthName, nullptr, &nObjects),
+                 OSRDestroyCRSInfoList);
+
+    Rcpp::CharacterVector auth_name_vec(nObjects, NA_STRING);
+    Rcpp::CharacterVector obj_code_vec(nObjects, NA_STRING);
+    Rcpp::CharacterVector obj_name_vec(nObjects, NA_STRING);
+    Rcpp::CharacterVector obj_type_vec(nObjects, NA_STRING);
+    Rcpp::LogicalVector is_deprecated_vec(nObjects, NA_LOGICAL);
+    Rcpp::LogicalVector is_bbox_valid_vec(nObjects, NA_LOGICAL);
+    Rcpp::NumericVector west_longitude_vec(nObjects, NA_REAL);
+    Rcpp::NumericVector south_latitude_vec(nObjects, NA_REAL);
+    Rcpp::NumericVector east_longitude_vec(nObjects, NA_REAL);
+    Rcpp::NumericVector north_latitude_vec(nObjects, NA_REAL);
+    Rcpp::CharacterVector area_name_vec(nObjects, NA_STRING);
+    Rcpp::CharacterVector proj_method_vec(nObjects, NA_STRING);
+    Rcpp::CharacterVector celestial_body_name_vec(nObjects, NA_STRING);
+
+#if GDAL_VERSION_NUM >= GDAL_COMPUTE_VERSION(3, 12, 0)
+    bool is_proj_8_1_min = false;
+    std::vector<int> proj_ver = getPROJVersion();
+    if (proj_ver[0] > 8 || (proj_ver[0] == 8 && proj_ver[1] >= 1))
+        is_proj_8_1_min = true;
+#endif  // GDAL >= 3.12
+
+    for (int i = 0; i < nObjects; ++i) {
+        const auto *entry = (pCRSList.get())[i];
+        if (entry->pszAuthName)
+            auth_name_vec[i] = entry->pszAuthName;
+        if (entry->pszCode)
+            obj_code_vec[i] = entry->pszCode;
+        if (entry->pszName)
+            obj_name_vec[i] = entry->pszName;
+
+        switch (entry->eType) {
+            case OSR_CRS_TYPE_GEOGRAPHIC_2D:
+                obj_type_vec[i] = "Geographic 2D";
+            break;
+            case OSR_CRS_TYPE_GEOGRAPHIC_3D:
+                obj_type_vec[i] = "Geographic 3D";
+            break;
+            case OSR_CRS_TYPE_GEOCENTRIC:
+                obj_type_vec[i] = "Geocentric";
+            break;
+            case OSR_CRS_TYPE_PROJECTED:
+                obj_type_vec[i] = "Projected";
+            break;
+            case OSR_CRS_TYPE_VERTICAL:
+                obj_type_vec[i] = "Vertical";
+            break;
+            case OSR_CRS_TYPE_COMPOUND:
+                obj_type_vec[i] = "Compound";
+            break;
+            case OSR_CRS_TYPE_OTHER:
+                obj_type_vec[i] = "Other";
+            break;
+            default:
+                obj_type_vec[i] = "unhandled CRS type";
+            break;
+        }
+
+        if (entry->bDeprecated)
+            is_deprecated_vec[i] = TRUE;
+        else
+            is_deprecated_vec[i] = FALSE;
+
+        if (entry->bBboxValid)
+            is_bbox_valid_vec[i] = TRUE;
+        else
+            is_bbox_valid_vec[i] = FALSE;
+
+        if (entry->dfWestLongitudeDeg != -1000)
+            west_longitude_vec[i] = entry->dfWestLongitudeDeg;
+        if (entry->dfSouthLatitudeDeg != -1000)
+            south_latitude_vec[i] = entry->dfSouthLatitudeDeg;
+        if (entry->dfEastLongitudeDeg != -1000)
+            east_longitude_vec[i] = entry->dfEastLongitudeDeg;
+        if (entry->dfNorthLatitudeDeg != -1000)
+            north_latitude_vec[i] = entry->dfNorthLatitudeDeg;
+        
+        if (entry->pszAreaName)
+            area_name_vec[i] = entry->pszAreaName;
+        if (entry->pszProjectionMethod)
+            proj_method_vec[i] = entry->pszProjectionMethod;
+
+#if GDAL_VERSION_NUM >= GDAL_COMPUTE_VERSION(3, 12, 0)
+        if (is_proj_8_1_min) {
+            if (entry->pszCelestialBodyName)
+                celestial_body_name_vec[i] = entry->pszCelestialBodyName;
+        }
+#endif  // GDAL >= 3.12
+    }
+    
+    Rcpp::List df(13);
+    Rcpp::CharacterVector col_names =
+        {"auth_name", "obj_code", "obj_name", "obj_type", "is_deprecated",
+         "is_bbox_valid", "west_long_deg", "south_lat_deg", "east_long_deg",
+         "north_lat_deg", "area_of_use", "projection_method",
+         "celestial_body_name"};
+
+    df[0] = auth_name_vec;
+    df[1] = obj_code_vec;
+    df[2] = obj_name_vec;
+    df[3] = obj_type_vec;
+    df[4] = is_deprecated_vec;
+    df[5] = is_bbox_valid_vec;
+    df[6] = west_longitude_vec;
+    df[7] = south_latitude_vec;
+    df[8] = east_longitude_vec;
+    df[9] = north_latitude_vec;
+    df[10] = area_name_vec;
+    df[11] = proj_method_vec;
+    df[12] = celestial_body_name_vec;
+
+    df.attr("class") = Rcpp::CharacterVector{"data.frame"};
+    df.names() = col_names;
+    df.attr("row.names") = Rcpp::seq_len(nObjects);
+    return df;
+}
