@@ -67,6 +67,18 @@ test_that("srs functions work", {
     expect_equal(srs_get_axis_mapping_strategy("WGS84"),
                  "OAMS_AUTHORITY_COMPLIANT")
 
+    aou <- srs_get_area_of_use("EPSG:3976")
+    expect_true(is.list(aou))
+    expect_equal(length(aou), 5)
+    expect_true(is.character(aou$AreaName))
+    expect_equal(aou$WestLongitudeDeg, -180)
+    expect_equal(aou$SouthLatitudeDeg, -90)
+    expect_equal(aou$EastLongitudeDeg, 180)
+    expect_equal(aou$NorthLatitudeDeg, -60)
+
+    expect_equal(srs_get_axes_count("EPSG:4326"), 2)
+    expect_equal(srs_get_axes_count("EPSG:4979"), 3)
+
     # errors
     expect_error(epsg_to_wkt(-1))
     expect_equal(srs_to_wkt(""), "")
@@ -85,15 +97,25 @@ test_that("srs functions work", {
     expect_error(srs_get_linear_units("invalid"))
     expect_error(srs_get_utm_zone("invalid"))
     expect_error(srs_get_axis_mapping_strategy("invalid"))
-
+    expect_error(srs_get_area_of_use("invalid"))
+    expect_true(is.null(srs_get_area_of_use("")))
+    expect_error(srs_get_axes_count("invalid"))
+    expect_true(is.na(srs_get_axes_count("")))
 
     # dynamic srs GDAL >= 3.4
-    skip_if(gdal_version_num() < 3040000)
+    skip_if(gdal_version_num() < gdal_compute_version(3, 4, 0))
 
     expect_true(srs_is_dynamic("EPSG:4326"))
     expect_false(srs_is_dynamic("EPSG:4171"))
     expect_error(srs_is_dynamic("invalid"))
     expect_equal(srs_get_coord_epoch("WGS84"), 0.0)
     expect_error(srs_get_coord_epoch("invalid"))
-})
 
+    # celestial body name GDAL >= 3.12, PROJ >= 8.1
+    skip_if(gdal_version_num() < gdal_compute_version(3, 12, 0))
+    pv <- proj_version()
+    skip_if(pv$major < 8 || (pv$major == 8 && pv$minor < 1))
+    expect_equal(srs_get_celestial_body_name("EPSG:4326"), "Earth")
+    expect_error(srs_get_celestial_body_name("invalid"))
+    expect_equal(srs_get_celestial_body_name(""), "")
+})

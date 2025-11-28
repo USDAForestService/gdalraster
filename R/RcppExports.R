@@ -3192,6 +3192,27 @@ srs_to_projjson <- function(srs, multiline = TRUE, indent_width = 2L, schema = N
 #' axis.
 #' * `OAMS_CUSTOM`: custom-defined data axis
 #'
+#' `srs_get_area_of_use()` is a wrapper of `OSRGetAreaOfUse()` in the GDAL API.
+#' Returns a named list containing the following elements (or returns `NULL` if
+#' the API call does not succeed):
+#' * `AreaName`: the area of use
+#' * `WestLongitudeDeg`: the western-most longitude expressed in degree, or
+#' `NA` if the bounding box is unknown
+#' * `SouthLatitudeDeg`: the southern-most latitude expressed in degree, or
+#' `NA` if the bounding box is unknown
+#' * `EastLongitudeDeg`: the eastern-most longitude expressed in degree, or
+#' `NA` if the bounding box is unknown
+#' * `NorthLatitudeDeg`: the northern-most latitude expressed in degree, or
+#' `NA` if the bounding box is unknown
+#'
+#' `srs_get_axes_count()` returns the integer number of axes of the coordinate
+#' system of the SRS. Wrapper of `OSRGetAxesCount()` in the GDAL API.
+#'
+#' `srs_get_celestial_body_name()` returns the name of the celestial body of
+#' the SRS, e.g., `"Earth"` for an Earth SRS. Wrapper of
+#' `OSRGetCelestialBodyName()` in the GDAL API. Requires GDAL >= 3.12 and
+#' PROJ >= 8.1.
+#'
 #' @param srs Character string containing an SRS definition in various
 #' formats (e.g., WKT, PROJ.4 string, well known name such as NAD27, NAD83,
 #' WGS84, etc., see [srs_to_wkt()]).
@@ -3258,6 +3279,17 @@ srs_to_projjson <- function(srs, multiline = TRUE, indent_width = 2L, schema = N
 #'
 #' srs_is_vertical("EPSG:5705")
 #'
+#' srs_get_area_of_use("EPSG:3976")
+#'
+#' srs_get_axes_count("EPSG:4326")
+#' srs_get_axes_count("EPSG:4979")
+#'
+#' ## Requires GDAL >= 3.12 and PROJ >= 8.1
+#' # srs_get_celestial_body_name("EPSG:4326")
+#' #> [1] "Earth"
+#' # srs_get_celestial_body_name("IAU_2015:30100")
+#' #> [1] "Moon"
+#'
 #' f <- system.file("extdata/storml_elev.tif", package="gdalraster")
 #' ds <- new(GDALRaster, f)
 #'
@@ -3272,7 +3304,7 @@ srs_to_projjson <- function(srs, multiline = TRUE, indent_width = 2L, schema = N
 #'
 #' ds$close()
 #'
-#' # Requires GDAL >= 3.4
+#' ## Requires GDAL >= 3.4
 #' if (gdal_version_num() >= gdal_compute_version(3, 4, 0)) {
 #'   if (srs_is_dynamic("WGS84"))
 #'     print("WGS84 is dynamic")
@@ -3357,6 +3389,21 @@ srs_get_utm_zone <- function(srs) {
 #' @rdname srs_query
 srs_get_axis_mapping_strategy <- function(srs) {
     .Call(`_gdalraster_srs_get_axis_mapping_strategy`, srs)
+}
+
+#' @rdname srs_query
+srs_get_area_of_use <- function(srs) {
+    .Call(`_gdalraster_srs_get_area_of_use`, srs)
+}
+
+#' @rdname srs_query
+srs_get_axes_count <- function(srs) {
+    .Call(`_gdalraster_srs_get_axes_count`, srs)
+}
+
+#' @rdname srs_query
+srs_get_celestial_body_name <- function(srs) {
+    .Call(`_gdalraster_srs_get_celestial_body_name`, srs)
 }
 
 #' get PROJ version
