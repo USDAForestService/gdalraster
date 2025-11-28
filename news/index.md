@@ -1,6 +1,14 @@
 # Changelog
 
-## gdalraster 2.3.0.9000 (dev)
+## gdalraster 2.3.0.9001 (dev)
+
+- add to the GDAL Spatial Reference System API bindings:
+  [`srs_get_area_of_use()`](https://usdaforestservice.github.io/gdalraster/reference/srs_query.md),
+  [`srs_get_axes_count()`](https://usdaforestservice.github.io/gdalraster/reference/srs_query.md)
+  and
+  [`srs_get_celestial_body_name()`](https://usdaforestservice.github.io/gdalraster/reference/srs_query.md)
+  ([\#831](https://github.com/USDAForestService/gdalraster/issues/831))
+  (2025-11-28)
 
 - [`plot_raster()`](https://usdaforestservice.github.io/gdalraster/reference/plot_raster.md):
   accept a color palette for the argument `col_map_fn`, to support an
