@@ -1,4 +1,6 @@
-# gdalraster 2.3.0.9000 (dev)
+# gdalraster 2.3.0.9001 (dev)
+
+* add to the GDAL Spatial Reference System API bindings: `srs_get_area_of_use()`, `srs_get_axes_count()` and `srs_get_celestial_body_name()` (#831) (2025-11-28)
 
 * `plot_raster()`: accept a color palette for the argument `col_map_fn`, to support an implied ramp function (#830) (2025-11-20)
 
