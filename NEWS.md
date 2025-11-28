@@ -1,4 +1,6 @@
-# gdalraster 2.3.0.9001 (dev)
+# gdalraster 2.3.0.9002 (dev)
+
+* add `srs_info_from_db()`: obtain information about coordinate reference systems in the PROJ DB (#832) (2025-11-28)
 
 * add to the GDAL Spatial Reference System API bindings: `srs_get_area_of_use()`, `srs_get_axes_count()` and `srs_get_celestial_body_name()` (#831) (2025-11-28)
 
