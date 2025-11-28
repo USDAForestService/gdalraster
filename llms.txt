@@ -408,6 +408,8 @@ docker pull ghcr.io/mdsumner/gdal-builds:r-gdalraster
   [`srs_to_wkt()`](https://usdaforestservice.github.io/gdalraster/reference/srs_convert.md)
   [`srs_to_projjson()`](https://usdaforestservice.github.io/gdalraster/reference/srs_convert.md)
   : Convert spatial reference definitions to OGC WKT or PROJJSON
+- [`srs_info_from_db()`](https://usdaforestservice.github.io/gdalraster/reference/srs_info_from_db.md)
+  : Obtain information about coordinate reference systems in the PROJ DB
 - [`srs_get_name()`](https://usdaforestservice.github.io/gdalraster/reference/srs_query.md)
   [`srs_find_epsg()`](https://usdaforestservice.github.io/gdalraster/reference/srs_query.md)
   [`srs_is_geographic()`](https://usdaforestservice.github.io/gdalraster/reference/srs_query.md)

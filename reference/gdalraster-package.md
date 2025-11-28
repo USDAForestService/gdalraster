@@ -126,6 +126,7 @@ implemented in several stand-alone functions:
 
 - Spatial Reference Systems API:
   [`srs_convert`](https://usdaforestservice.github.io/gdalraster/reference/srs_convert.md),
+  [`srs_info_from_db()`](https://usdaforestservice.github.io/gdalraster/reference/srs_info_from_db.md),
   [`srs_query`](https://usdaforestservice.github.io/gdalraster/reference/srs_query.md)
 
 - coordinate transformation:
