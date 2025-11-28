@@ -90,6 +90,7 @@ reference:
 - subtitle: Spatial reference systems
 - contents:
   - srs_convert
+  - srs_info_from_db
   - srs_query
 - subtitle: Vector utilities
 - contents:

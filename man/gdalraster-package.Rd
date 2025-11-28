@@ -122,6 +122,7 @@
 
   \item Spatial Reference Systems API:
   \code{\link[=srs_convert]{srs_convert}},
+  \code{\link[=srs_info_from_db]{srs_info_from_db()}},
   \code{\link[=srs_query]{srs_query}}
 
   \item coordinate transformation:

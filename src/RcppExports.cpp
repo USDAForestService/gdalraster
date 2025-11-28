@@ -2329,6 +2329,17 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// srs_info_from_db
+Rcpp::DataFrame srs_info_from_db(std::string auth_name);
+RcppExport SEXP _gdalraster_srs_info_from_db(SEXP auth_nameSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< std::string >::type auth_name(auth_nameSEXP);
+    rcpp_result_gen = Rcpp::wrap(srs_info_from_db(auth_name));
+    return rcpp_result_gen;
+END_RCPP
+}
 // getPROJVersion
 std::vector<int> getPROJVersion();
 RcppExport SEXP _gdalraster_getPROJVersion() {
@@ -2611,6 +2622,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_gdalraster_srs_get_area_of_use", (DL_FUNC) &_gdalraster_srs_get_area_of_use, 1},
     {"_gdalraster_srs_get_axes_count", (DL_FUNC) &_gdalraster_srs_get_axes_count, 1},
     {"_gdalraster_srs_get_celestial_body_name", (DL_FUNC) &_gdalraster_srs_get_celestial_body_name, 1},
+    {"_gdalraster_srs_info_from_db", (DL_FUNC) &_gdalraster_srs_info_from_db, 1},
     {"_gdalraster_getPROJVersion", (DL_FUNC) &_gdalraster_getPROJVersion, 0},
     {"_gdalraster_getPROJSearchPaths", (DL_FUNC) &_gdalraster_getPROJSearchPaths, 0},
     {"_gdalraster_setPROJSearchPaths", (DL_FUNC) &_gdalraster_setPROJSearchPaths, 1},

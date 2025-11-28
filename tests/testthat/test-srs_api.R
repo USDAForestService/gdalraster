@@ -79,6 +79,14 @@ test_that("srs functions work", {
     expect_equal(srs_get_axes_count("EPSG:4326"), 2)
     expect_equal(srs_get_axes_count("EPSG:4979"), 3)
 
+    epsg <- srs_info_from_db("EPSG")
+    expect_true(is.data.frame(epsg))
+    expect_true(nrow(epsg) > 1000)
+    # if none found, should return a 0-row data frame
+    df <- srs_info_from_db("_invalid_")
+    expect_true(is.data.frame(df))
+    expect_equal(nrow(df), 0)
+
     # errors
     expect_error(epsg_to_wkt(-1))
     expect_equal(srs_to_wkt(""), "")
