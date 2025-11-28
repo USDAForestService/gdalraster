@@ -94,7 +94,7 @@ tcc_file <- calc(expr = "ifelse(CANCOV == -9999, 255, CANCOV)",
                  setRasterNodataValue = TRUE)
 #> calculating from 1 input layer(s)...
 #> ================================================================================
-#> output written to: /tmp/RtmpZR6WMD/rastcalc1f613855ccad.tif
+#> output written to: /tmp/RtmpqKhUt9/rastcalc1f2f4ea8224b.tif
 
 ds_tcc <- new(GDALRaster, tcc_file, read_only=FALSE)
 

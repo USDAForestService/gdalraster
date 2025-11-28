@@ -424,6 +424,9 @@ docker pull ghcr.io/mdsumner/gdal-builds:r-gdalraster
   [`srs_get_coord_epoch()`](https://usdaforestservice.github.io/gdalraster/reference/srs_query.md)
   [`srs_get_utm_zone()`](https://usdaforestservice.github.io/gdalraster/reference/srs_query.md)
   [`srs_get_axis_mapping_strategy()`](https://usdaforestservice.github.io/gdalraster/reference/srs_query.md)
+  [`srs_get_area_of_use()`](https://usdaforestservice.github.io/gdalraster/reference/srs_query.md)
+  [`srs_get_axes_count()`](https://usdaforestservice.github.io/gdalraster/reference/srs_query.md)
+  [`srs_get_celestial_body_name()`](https://usdaforestservice.github.io/gdalraster/reference/srs_query.md)
   : Obtain information about a spatial reference system
 
 ### Vector utilities

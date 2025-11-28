@@ -46,6 +46,12 @@ srs_get_coord_epoch(srs)
 srs_get_utm_zone(srs)
 
 srs_get_axis_mapping_strategy(srs)
+
+srs_get_area_of_use(srs)
+
+srs_get_axes_count(srs)
+
+srs_get_celestial_body_name(srs)
 ```
 
 ## Arguments
@@ -167,6 +173,33 @@ mapping strategy as a character string, one of:
 
 - `OAMS_CUSTOM`: custom-defined data axis
 
+`srs_get_area_of_use()` is a wrapper of `OSRGetAreaOfUse()` in the GDAL
+API. Returns a named list containing the following elements (or returns
+`NULL` if the API call does not succeed):
+
+- `AreaName`: the area of use
+
+- `WestLongitudeDeg`: the western-most longitude expressed in degree, or
+  `NA` if the bounding box is unknown
+
+- `SouthLatitudeDeg`: the southern-most latitude expressed in degree, or
+  `NA` if the bounding box is unknown
+
+- `EastLongitudeDeg`: the eastern-most longitude expressed in degree, or
+  `NA` if the bounding box is unknown
+
+- `NorthLatitudeDeg`: the northern-most latitude expressed in degree, or
+  `NA` if the bounding box is unknown
+
+`srs_get_axes_count()` returns the integer number of axes of the
+coordinate system of the SRS. Wrapper of `OSRGetAxesCount()` in the GDAL
+API.
+
+`srs_get_celestial_body_name()` returns the name of the celestial body
+of the SRS, e.g., `"Earth"` for an Earth SRS. Wrapper of
+`OSRGetCelestialBodyName()` in the GDAL API. Requires GDAL \>= 3.12 and
+PROJ \>= 8.1.
+
 ## See also
 
 [srs_convert](https://usdaforestservice.github.io/gdalraster/reference/srs_convert.md)
@@ -229,6 +262,34 @@ srs_is_geocentric("EPSG:7789")
 srs_is_vertical("EPSG:5705")
 #> [1] TRUE
 
+srs_get_area_of_use("EPSG:3976")
+#> $AreaName
+#> [1] "Southern hemisphere - south of 60°S onshore and offshore - Antarctica."
+#> 
+#> $WestLongitudeDeg
+#> [1] -180
+#> 
+#> $SouthLatitudeDeg
+#> [1] -90
+#> 
+#> $EastLongitudeDeg
+#> [1] 180
+#> 
+#> $NorthLatitudeDeg
+#> [1] -60
+#> 
+
+srs_get_axes_count("EPSG:4326")
+#> [1] 2
+srs_get_axes_count("EPSG:4979")
+#> [1] 3
+
+## Requires GDAL >= 3.12 and PROJ >= 8.1
+# srs_get_celestial_body_name("EPSG:4326")
+#> [1] "Earth"
+# srs_get_celestial_body_name("IAU_2015:30100")
+#> [1] "Moon"
+
 f <- system.file("extdata/storml_elev.tif", package="gdalraster")
 ds <- new(GDALRaster, f)
 
@@ -260,7 +321,7 @@ ds$getProjection() |> srs_is_same("NAD83")
 
 ds$close()
 
-# Requires GDAL >= 3.4
+## Requires GDAL >= 3.4
 if (gdal_version_num() >= gdal_compute_version(3, 4, 0)) {
   if (srs_is_dynamic("WGS84"))
     print("WGS84 is dynamic")
