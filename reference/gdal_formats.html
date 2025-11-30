@@ -77,11 +77,29 @@ returned.</p></dd>
 </dl></div>
     <div class="section level2">
     <h2 id="value">Value<a class="anchor" aria-label="anchor" href="#value"></a></h2>
-    <p>A data frame containing the format short name, long name, raster
-(logical), vector (logical), read/write flag (<code>ro</code> is read-only,
-<code>w</code> supports CreateCopy, <code>w+</code> supports Create), virtual I/O supported
-(logical), and subdatasets (logical).</p>
-    </div>
+    <p>A data frame containing:</p><ul><li><p>the format short name</p></li>
+<li><p>file extension(s) if applicable (space-delimited string), or empty string
+(<code>""</code>)</p></li>
+<li><p>supports raster (logical)</p></li>
+<li><p>supports multidimensional raster (logical)</p></li>
+<li><p>supports vector (logical)</p></li>
+<li><p>supports geography network (logical)</p></li>
+<li><p>read/write flags (concatenated string, <code>ro</code> is read-only, <code>w</code> supports
+CreateCopy, <code>w+</code> supports Create, and <code>u</code> supports Update is reported if
+GDAL &gt;= 3.11)</p></li>
+<li><p>supports virtual I/O e.g. /vsimem/ (logical)</p></li>
+<li><p>supports subdatasets (logical)</p></li>
+<li><p>supported SQL dialects reported if GDAL &gt;= 3.6 (e.g.,
+<code>"NATIVE OGRSQL SQLITE"</code>)</p></li>
+<li><p>creation raster data types (e.g., <code>"Byte Int16 UInt16 Float32"</code> etc.)</p></li>
+<li><p>creation vector field types (e.g.,
+<code>"Integer Integer64 Real String Date DateTime Binary"</code> etc.)</p></li>
+<li><p>creation field sub-types (e.g., <code>"Boolean Int16 Float32 JSON"</code> etc.)</p></li>
+<li><p>supports multiple vector layers reported if GDAL &gt;= 3.4 (logical)</p></li>
+<li><p>supports reading field domains if GDAL &gt;= 3.5 (logical)</p></li>
+<li><p>creation field domain types if GDAL &gt;= 3.5 (supported values are <code>Coded</code>,
+<code>Range</code> and <code>Glob</code>)</p></li>
+</ul></div>
     <div class="section level2">
     <h2 id="note">Note<a class="anchor" aria-label="anchor" href="#note"></a></h2>
     <p>Virtual I/O refers to operations on GDAL Virtual File Systems. See
@@ -90,29 +108,37 @@ returned.</p></dd>
 
     <div class="section level2">
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">nrow</a></span><span class="op">(</span><span class="fu">gdal_formats</span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 214</span>
-<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="fu">gdal_formats</span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   short_name raster multidim_raster vector rw_flag virtual_io subdatasets</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1        VRT   TRUE            TRUE  FALSE     rw+       TRUE       FALSE</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2    DERIVED   TRUE           FALSE  FALSE      ro      FALSE       FALSE</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 3      GTiff   TRUE           FALSE  FALSE     rw+       TRUE        TRUE</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 4        COG   TRUE           FALSE  FALSE       w       TRUE       FALSE</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 5       NITF   TRUE           FALSE  FALSE     rw+       TRUE        TRUE</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 6     RPFTOC   TRUE           FALSE  FALSE      ro       TRUE        TRUE</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>                                    long_name</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1                             Virtual Raster</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2 Derived datasets using VRT pixel functions</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 3                                    GeoTIFF</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 4          Cloud optimized GeoTIFF generator</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 5       National Imagery Transmission Format</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 6           Raster Product Format TOC format</span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="fu">gdal_formats</span><span class="op">(</span><span class="op">)</span> <span class="op">|&gt;</span> <span class="fu"><a href="https://rdrr.io/r/utils/str.html" class="external-link">str</a></span><span class="op">(</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 'data.frame':	216 obs. of  17 variables:</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  $ short_name             : chr  "VRT" "DERIVED" "GTiff" "COG" ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  $ extensions             : chr  "vrt" "" "tif tiff" "tif tiff" ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  $ raster                 : logi  TRUE TRUE TRUE TRUE TRUE TRUE ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  $ multidim_raster        : logi  TRUE FALSE FALSE FALSE FALSE FALSE ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  $ vector                 : logi  FALSE FALSE FALSE FALSE FALSE FALSE ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  $ geography_network      : logi  FALSE FALSE FALSE FALSE FALSE FALSE ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  $ rw_flag                : chr  "rw+" "ro" "rw+" "w" ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  $ virtual_io             : logi  TRUE FALSE TRUE TRUE TRUE TRUE ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  $ subdatasets            : logi  FALSE FALSE TRUE FALSE TRUE TRUE ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  $ long_name              : chr  "Virtual Raster" "Derived datasets using VRT pixel functions" "GeoTIFF" "Cloud optimized GeoTIFF generator" ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  $ sql_dialects           : chr  "" "" "" "" ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  $ creation_datatypes     : chr  "Byte Int8 Int16 UInt16 Int32 UInt32 Int64 UInt64 Float32 Float64 CInt16 CInt32 CFloat32 CFloat64" "" "Byte Int8 UInt16 Int16 UInt32 Int32 Float32 Float64 CInt16 CInt32 CFloat32 CFloat64" "Byte Int8 UInt16 Int16 UInt32 Int32 UInt64 Int64 Float32 Float64 CInt16 CInt32 CFloat32 CFloat64" ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  $ creation_field_types   : chr  "" "" "" "" ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  $ creation_field_subtypes: chr  "" "" "" "" ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  $ multiple_vec_layers    : logi  FALSE FALSE FALSE FALSE FALSE FALSE ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  $ read_field_domains     : logi  FALSE FALSE FALSE FALSE FALSE FALSE ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  $ creation_fld_dom_types : chr  "" "" "" "" ...</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="fu">gdal_formats</span><span class="op">(</span><span class="st">"GPKG"</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   short_name raster multidim_raster vector rw_flag virtual_io subdatasets</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1       GPKG   TRUE           FALSE   TRUE     rw+       TRUE        TRUE</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>    long_name</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1 GeoPackage</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   short_name    extensions raster multidim_raster vector geography_network</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1       GPKG gpkg gpkg.zip   TRUE           FALSE   TRUE             FALSE</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   rw_flag virtual_io subdatasets  long_name         sql_dialects</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1     rw+       TRUE        TRUE GeoPackage NATIVE OGRSQL SQLITE</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>          creation_datatypes                               creation_field_types</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1 Byte Int16 UInt16 Float32 Integer Integer64 Real String Date DateTime Binary</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>      creation_field_subtypes multiple_vec_layers read_field_domains</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1 Boolean Int16 Float32 JSON                TRUE               TRUE</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   creation_fld_dom_types</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1       Coded Range Glob</span>
 </code></pre></div>
     </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>

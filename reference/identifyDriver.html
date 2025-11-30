@@ -142,10 +142,16 @@ filesystem semantics then the file list should be <code>NULL</code>.</p>
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="va">src</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"extdata/ynp_fires_1984_2022.gpkg"</span>, package<span class="op">=</span><span class="st">"gdalraster"</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="fu">identifyDriver</span><span class="op">(</span><span class="va">src</span><span class="op">)</span> <span class="op">|&gt;</span> <span class="fu"><a href="gdal_formats.html">gdal_formats</a></span><span class="op">(</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   short_name raster multidim_raster vector rw_flag virtual_io subdatasets</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1       GPKG   TRUE           FALSE   TRUE     rw+       TRUE        TRUE</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>    long_name</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1 GeoPackage</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   short_name    extensions raster multidim_raster vector geography_network</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1       GPKG gpkg gpkg.zip   TRUE           FALSE   TRUE             FALSE</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   rw_flag virtual_io subdatasets  long_name         sql_dialects</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1     rw+       TRUE        TRUE GeoPackage NATIVE OGRSQL SQLITE</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>          creation_datatypes                               creation_field_types</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1 Byte Int16 UInt16 Float32 Integer Integer64 Real String Date DateTime Binary</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>      creation_field_subtypes multiple_vec_layers read_field_domains</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1 Boolean Int16 Float32 JSON                TRUE               TRUE</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   creation_fld_dom_types</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1       Coded Range Glob</span>
 </code></pre></div>
     </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>

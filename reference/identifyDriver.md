@@ -77,8 +77,14 @@ At least one of the `raster` or `vector` arguments must be `TRUE`.
 src <- system.file("extdata/ynp_fires_1984_2022.gpkg", package="gdalraster")
 
 identifyDriver(src) |> gdal_formats()
-#>   short_name raster multidim_raster vector rw_flag virtual_io subdatasets
-#> 1       GPKG   TRUE           FALSE   TRUE     rw+       TRUE        TRUE
-#>    long_name
-#> 1 GeoPackage
+#>   short_name    extensions raster multidim_raster vector geography_network
+#> 1       GPKG gpkg gpkg.zip   TRUE           FALSE   TRUE             FALSE
+#>   rw_flag virtual_io subdatasets  long_name         sql_dialects
+#> 1     rw+       TRUE        TRUE GeoPackage NATIVE OGRSQL SQLITE
+#>          creation_datatypes                               creation_field_types
+#> 1 Byte Int16 UInt16 Float32 Integer Integer64 Real String Date DateTime Binary
+#>      creation_field_subtypes multiple_vec_layers read_field_domains
+#> 1 Boolean Int16 Float32 JSON                TRUE               TRUE
+#>   creation_fld_dom_types
+#> 1       Coded Range Glob
 ```

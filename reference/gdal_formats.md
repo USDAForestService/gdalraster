@@ -19,10 +19,45 @@ gdal_formats(format = "")
 
 ## Value
 
-A data frame containing the format short name, long name, raster
-(logical), vector (logical), read/write flag (`ro` is read-only, `w`
-supports CreateCopy, `w+` supports Create), virtual I/O supported
-(logical), and subdatasets (logical).
+A data frame containing:
+
+- the format short name
+
+- file extension(s) if applicable (space-delimited string), or empty
+  string (`""`)
+
+- supports raster (logical)
+
+- supports multidimensional raster (logical)
+
+- supports vector (logical)
+
+- supports geography network (logical)
+
+- read/write flags (concatenated string, `ro` is read-only, `w` supports
+  CreateCopy, `w+` supports Create, and `u` supports Update is reported
+  if GDAL \>= 3.11)
+
+- supports virtual I/O e.g. /vsimem/ (logical)
+
+- supports subdatasets (logical)
+
+- supported SQL dialects reported if GDAL \>= 3.6 (e.g.,
+  `"NATIVE OGRSQL SQLITE"`)
+
+- creation raster data types (e.g., `"Byte Int16 UInt16 Float32"` etc.)
+
+- creation vector field types (e.g.,
+  `"Integer Integer64 Real String Date DateTime Binary"` etc.)
+
+- creation field sub-types (e.g., `"Boolean Int16 Float32 JSON"` etc.)
+
+- supports multiple vector layers reported if GDAL \>= 3.4 (logical)
+
+- supports reading field domains if GDAL \>= 3.5 (logical)
+
+- creation field domain types if GDAL \>= 3.5 (supported values are
+  `Coded`, `Range` and `Glob`)
 
 ## Note
 
@@ -32,27 +67,35 @@ Virtual I/O refers to operations on GDAL Virtual File Systems. See
 ## Examples
 
 ``` r
-nrow(gdal_formats())
-#> [1] 214
-head(gdal_formats())
-#>   short_name raster multidim_raster vector rw_flag virtual_io subdatasets
-#> 1        VRT   TRUE            TRUE  FALSE     rw+       TRUE       FALSE
-#> 2    DERIVED   TRUE           FALSE  FALSE      ro      FALSE       FALSE
-#> 3      GTiff   TRUE           FALSE  FALSE     rw+       TRUE        TRUE
-#> 4        COG   TRUE           FALSE  FALSE       w       TRUE       FALSE
-#> 5       NITF   TRUE           FALSE  FALSE     rw+       TRUE        TRUE
-#> 6     RPFTOC   TRUE           FALSE  FALSE      ro       TRUE        TRUE
-#>                                    long_name
-#> 1                             Virtual Raster
-#> 2 Derived datasets using VRT pixel functions
-#> 3                                    GeoTIFF
-#> 4          Cloud optimized GeoTIFF generator
-#> 5       National Imagery Transmission Format
-#> 6           Raster Product Format TOC format
+gdal_formats() |> str()
+#> 'data.frame':    216 obs. of  17 variables:
+#>  $ short_name             : chr  "VRT" "DERIVED" "GTiff" "COG" ...
+#>  $ extensions             : chr  "vrt" "" "tif tiff" "tif tiff" ...
+#>  $ raster                 : logi  TRUE TRUE TRUE TRUE TRUE TRUE ...
+#>  $ multidim_raster        : logi  TRUE FALSE FALSE FALSE FALSE FALSE ...
+#>  $ vector                 : logi  FALSE FALSE FALSE FALSE FALSE FALSE ...
+#>  $ geography_network      : logi  FALSE FALSE FALSE FALSE FALSE FALSE ...
+#>  $ rw_flag                : chr  "rw+" "ro" "rw+" "w" ...
+#>  $ virtual_io             : logi  TRUE FALSE TRUE TRUE TRUE TRUE ...
+#>  $ subdatasets            : logi  FALSE FALSE TRUE FALSE TRUE TRUE ...
+#>  $ long_name              : chr  "Virtual Raster" "Derived datasets using VRT pixel functions" "GeoTIFF" "Cloud optimized GeoTIFF generator" ...
+#>  $ sql_dialects           : chr  "" "" "" "" ...
+#>  $ creation_datatypes     : chr  "Byte Int8 Int16 UInt16 Int32 UInt32 Int64 UInt64 Float32 Float64 CInt16 CInt32 CFloat32 CFloat64" "" "Byte Int8 UInt16 Int16 UInt32 Int32 Float32 Float64 CInt16 CInt32 CFloat32 CFloat64" "Byte Int8 UInt16 Int16 UInt32 Int32 UInt64 Int64 Float32 Float64 CInt16 CInt32 CFloat32 CFloat64" ...
+#>  $ creation_field_types   : chr  "" "" "" "" ...
+#>  $ creation_field_subtypes: chr  "" "" "" "" ...
+#>  $ multiple_vec_layers    : logi  FALSE FALSE FALSE FALSE FALSE FALSE ...
+#>  $ read_field_domains     : logi  FALSE FALSE FALSE FALSE FALSE FALSE ...
+#>  $ creation_fld_dom_types : chr  "" "" "" "" ...
 
 gdal_formats("GPKG")
-#>   short_name raster multidim_raster vector rw_flag virtual_io subdatasets
-#> 1       GPKG   TRUE           FALSE   TRUE     rw+       TRUE        TRUE
-#>    long_name
-#> 1 GeoPackage
+#>   short_name    extensions raster multidim_raster vector geography_network
+#> 1       GPKG gpkg gpkg.zip   TRUE           FALSE   TRUE             FALSE
+#>   rw_flag virtual_io subdatasets  long_name         sql_dialects
+#> 1     rw+       TRUE        TRUE GeoPackage NATIVE OGRSQL SQLITE
+#>          creation_datatypes                               creation_field_types
+#> 1 Byte Int16 UInt16 Float32 Integer Integer64 Real String Date DateTime Binary
+#>      creation_field_subtypes multiple_vec_layers read_field_domains
+#> 1 Boolean Int16 Float32 JSON                TRUE               TRUE
+#>   creation_fld_dom_types
+#> 1       Coded Range Glob
 ```
