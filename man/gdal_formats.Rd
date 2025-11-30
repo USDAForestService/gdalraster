@@ -12,10 +12,31 @@ information for all configured raster and vector format drivers will be
 returned.}
 }
 \value{
-A data frame containing the format short name, long name, raster
-(logical), vector (logical), read/write flag (\code{ro} is read-only,
-\code{w} supports CreateCopy, \verb{w+} supports Create), virtual I/O supported
-(logical), and subdatasets (logical).
+A data frame containing:
+\itemize{
+\item the format short name
+\item file extension(s) if applicable (space-delimited string), or empty string
+(\code{""})
+\item supports raster (logical)
+\item supports multidimensional raster (logical)
+\item supports vector (logical)
+\item supports geography network (logical)
+\item read/write flags (concatenated string, \code{ro} is read-only, \code{w} supports
+CreateCopy, \verb{w+} supports Create, and \code{u} supports Update is reported if
+GDAL >= 3.11)
+\item supports virtual I/O e.g. /vsimem/ (logical)
+\item supports subdatasets (logical)
+\item supported SQL dialects reported if GDAL >= 3.6 (e.g.,
+\code{"NATIVE OGRSQL SQLITE"})
+\item creation raster data types (e.g., \code{"Byte Int16 UInt16 Float32"} etc.)
+\item creation vector field types (e.g.,
+\code{"Integer Integer64 Real String Date DateTime Binary"} etc.)
+\item creation field sub-types (e.g., \code{"Boolean Int16 Float32 JSON"} etc.)
+\item supports multiple vector layers reported if GDAL >= 3.4 (logical)
+\item supports reading field domains if GDAL >= 3.5 (logical)
+\item creation field domain types if GDAL >= 3.5 (supported values are \code{Coded},
+\code{Range} and \code{Glob})
+}
 }
 \description{
 \code{gdal_formats()} returns a table of the supported raster and vector
@@ -26,8 +47,7 @@ Virtual I/O refers to operations on GDAL Virtual File Systems. See
 \url{https://gdal.org/en/stable/user/virtual_file_systems.html#virtual-file-systems}.
 }
 \examples{
-nrow(gdal_formats())
-head(gdal_formats())
+gdal_formats() |> str()
 
 gdal_formats("GPKG")
 }
