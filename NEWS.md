@@ -1,4 +1,6 @@
-# gdalraster 2.3.0.9002 (dev)
+# gdalraster 2.3.0.9003 (dev)
+
+* `gdal_formats()`: add Update (`u`) to `rw_flags` when GDAL >= 3.11, and add several new columns to the output data frame containing various driver metadata (#833) (2025-11-29)
 
 * add `srs_info_from_db()`: obtain information about coordinate reference systems in the PROJ DB (#832) (2025-11-28)
 
