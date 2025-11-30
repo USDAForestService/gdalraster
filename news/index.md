@@ -1,6 +1,12 @@
 # Changelog
 
-## gdalraster 2.3.0.9002 (dev)
+## gdalraster 2.3.0.9003 (dev)
+
+- [`gdal_formats()`](https://usdaforestservice.github.io/gdalraster/reference/gdal_formats.md):
+  add Update (`u`) to `rw_flags` when GDAL \>= 3.11, and add several new
+  columns to the output data frame containing various driver metadata
+  ([\#833](https://github.com/USDAForestService/gdalraster/issues/833))
+  (2025-11-29)
 
 - add
   [`srs_info_from_db()`](https://usdaforestservice.github.io/gdalraster/reference/srs_info_from_db.md):
