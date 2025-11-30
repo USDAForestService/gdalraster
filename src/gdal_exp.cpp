@@ -80,92 +80,225 @@ int gdal_version_num() {
 //' @param format A character string containing a driver short name. By default,
 //' information for all configured raster and vector format drivers will be
 //' returned.
-//' @returns A data frame containing the format short name, long name, raster
-//' (logical), vector (logical), read/write flag (`ro` is read-only,
-//' `w` supports CreateCopy, `w+` supports Create), virtual I/O supported
-//' (logical), and subdatasets (logical).
+//' @returns A data frame containing:
+//' * the format short name
+//' * file extension(s) if applicable (space-delimited string), or empty string
+//' (`""`)
+//' * supports raster (logical)
+//' * supports multidimensional raster (logical)
+//' * supports vector (logical)
+//' * supports geography network (logical)
+//' * read/write flags (concatenated string, `ro` is read-only, `w` supports
+//' CreateCopy, `w+` supports Create, and `u` supports Update is reported if
+//' GDAL >= 3.11)
+//' * supports virtual I/O e.g. /vsimem/ (logical)
+//' * supports subdatasets (logical)
+//' * supported SQL dialects reported if GDAL >= 3.6 (e.g.,
+//' `"NATIVE OGRSQL SQLITE"`)
+//' * creation raster data types (e.g., `"Byte Int16 UInt16 Float32"` etc.)
+//' * creation vector field types (e.g.,
+//' `"Integer Integer64 Real String Date DateTime Binary"` etc.)
+//' * creation field sub-types (e.g., `"Boolean Int16 Float32 JSON"` etc.)
+//' * supports multiple vector layers reported if GDAL >= 3.4 (logical)
+//' * supports reading field domains if GDAL >= 3.5 (logical)
+//' * creation field domain types if GDAL >= 3.5 (supported values are `Coded`,
+//' `Range` and `Glob`)
 //'
 //' @note
 //' Virtual I/O refers to operations on GDAL Virtual File Systems. See
 //' \url{https://gdal.org/en/stable/user/virtual_file_systems.html#virtual-file-systems}.
 //'
 //' @examples
-//' nrow(gdal_formats())
-//' head(gdal_formats())
+//' gdal_formats() |> str()
 //'
 //' gdal_formats("GPKG")
 // [[Rcpp::export]]
 Rcpp::DataFrame gdal_formats(const std::string &format = "") {
-    Rcpp::CharacterVector short_name = Rcpp::CharacterVector::create();
-    Rcpp::CharacterVector long_name = Rcpp::CharacterVector::create();
-    Rcpp::LogicalVector raster_fmt = Rcpp::LogicalVector::create();
-    Rcpp::LogicalVector mdim_fmt = Rcpp::LogicalVector::create();
-    Rcpp::LogicalVector vector_fmt = Rcpp::LogicalVector::create();
-    Rcpp::CharacterVector rw_flag = Rcpp::CharacterVector::create();
-    Rcpp::LogicalVector virtual_io = Rcpp::LogicalVector::create();
-    Rcpp::LogicalVector subdatasets = Rcpp::LogicalVector::create();
+    int nDriverCount = GDALGetDriverCount();
+    int nRowsOut = nDriverCount;
+    if (format != "")
+        nRowsOut = 1;
 
-    for (int i = 0; i < GDALGetDriverCount(); ++i) {
+    Rcpp::CharacterVector short_name(nRowsOut, NA_STRING);
+    Rcpp::CharacterVector extensions(nRowsOut, "");
+    Rcpp::LogicalVector raster_fmt(nRowsOut, NA_LOGICAL);
+    Rcpp::LogicalVector mdim_fmt(nRowsOut, NA_LOGICAL);
+    Rcpp::LogicalVector vector_fmt(nRowsOut, NA_LOGICAL);
+    Rcpp::LogicalVector gnm_fmt(nRowsOut, NA_LOGICAL);
+    Rcpp::CharacterVector rw_flag(nRowsOut, NA_STRING);
+    Rcpp::LogicalVector virtual_io(nRowsOut, NA_LOGICAL);
+    Rcpp::LogicalVector subdatasets(nRowsOut, NA_LOGICAL);
+    Rcpp::CharacterVector long_name(nRowsOut, NA_STRING);
+    Rcpp::CharacterVector sql_dialects(nRowsOut, "");
+    Rcpp::CharacterVector creation_datatypes(nRowsOut, "");
+    Rcpp::CharacterVector creation_field_types(nRowsOut, "");
+    Rcpp::CharacterVector creation_field_subtypes(nRowsOut, "");
+    Rcpp::LogicalVector multiple_vec_layers(nRowsOut, NA_LOGICAL);
+    Rcpp::LogicalVector field_domains(nRowsOut, NA_LOGICAL);
+    Rcpp::CharacterVector fld_dom_types(nRowsOut, "");
+
+    for (int i = 0; i < nDriverCount; ++i) {
         GDALDriverH hDriver = GDALGetDriver(i);
         char **papszMD = GDALGetMetadata(hDriver, nullptr);
-        std::string rw = "";
+        int out_idx = i;
+        if (nRowsOut == 1)
+            out_idx = 0;
 
         if (format != "" && !EQUAL(format.c_str(),
                                    GDALGetDriverShortName(hDriver))) {
-
             continue;
         }
 
-        if (CPLFetchBool(papszMD, GDAL_DCAP_RASTER, false) ||
-            CPLFetchBool(papszMD, GDAL_DCAP_MULTIDIM_RASTER, false) ||
-            CPLFetchBool(papszMD, GDAL_DCAP_VECTOR, false)) {
+        // format types
+        if (CPLFetchBool(papszMD, GDAL_DCAP_RASTER, false))
+            raster_fmt[out_idx] = TRUE;
+        else
+            raster_fmt[out_idx] = FALSE;
 
-            CPLFetchBool(papszMD, GDAL_DCAP_RASTER, false) ?
-                raster_fmt.push_back(true) : raster_fmt.push_back(false);
+        if (CPLFetchBool(papszMD, GDAL_DCAP_MULTIDIM_RASTER, false))
+            mdim_fmt[out_idx] = TRUE;
+        else
+            mdim_fmt[out_idx] = FALSE;
 
-            CPLFetchBool(papszMD, GDAL_DCAP_MULTIDIM_RASTER, false) ?
-                mdim_fmt.push_back(true) : mdim_fmt.push_back(false);
+        if (CPLFetchBool(papszMD, GDAL_DCAP_VECTOR, false))
+            vector_fmt[out_idx] = TRUE;
+        else
+            vector_fmt[out_idx] = FALSE;
 
-            CPLFetchBool(papszMD, GDAL_DCAP_VECTOR, false) ?
-                vector_fmt.push_back(true) : vector_fmt.push_back(false);
+        if (CPLFetchBool(papszMD, GDAL_DCAP_GNM, false))
+            gnm_fmt[out_idx] = TRUE;
+        else
+            gnm_fmt[out_idx] = FALSE;
 
-        } else {
-            continue;
-        }
-
+        // read/write flags
+        std::string rw = "";
         if (CPLFetchBool(papszMD, GDAL_DCAP_OPEN, false))
             rw += "r";
-
-        if (CPLFetchBool(papszMD, GDAL_DCAP_CREATE, false))
+        if (CPLFetchBool(papszMD, GDAL_DCAP_CREATE, false) ||
+            CPLFetchBool(papszMD, GDAL_DCAP_CREATE_MULTIDIMENSIONAL, false))
             rw += "w+";
         else if (CPLFetchBool(papszMD, GDAL_DCAP_CREATECOPY, false))
             rw += "w";
         else
             rw += "o";
+#if GDAL_VERSION_NUM >= GDAL_COMPUTE_VERSION(3, 11, 0)
+        if (CPLFetchBool(papszMD, GDAL_DCAP_UPDATE, false))
+            rw += "u";
+#endif  // GDAL 3.11
+        rw_flag[out_idx] = rw;
 
-        rw_flag.push_back(rw);
+        // virtual I/O
+        if (CPLFetchBool(papszMD, GDAL_DCAP_VIRTUALIO, false))
+            virtual_io[out_idx] = TRUE;
+        else
+            virtual_io[out_idx] = FALSE;
 
-        CPLFetchBool(papszMD, GDAL_DCAP_VIRTUALIO, false) ?
-            virtual_io.push_back(true) : virtual_io.push_back(false);
+        // subdatasets
+        if (CPLFetchBool(papszMD, GDAL_DMD_SUBDATASETS, false))
+            subdatasets[out_idx] = TRUE;
+        else
+            subdatasets[out_idx] = FALSE;
 
-        CPLFetchBool(papszMD, GDAL_DMD_SUBDATASETS, false) ?
-            subdatasets.push_back(true) : subdatasets.push_back(false);
+        // names
+        short_name[out_idx] = GDALGetDriverShortName(hDriver);
+        long_name[out_idx] = GDALGetDriverLongName(hDriver);
 
-        short_name.push_back(GDALGetDriverShortName(hDriver));
-        long_name.push_back(GDALGetDriverLongName(hDriver));
+        // extensions
+        const char *pszExt = CSLFetchNameValue(papszMD, GDAL_DMD_EXTENSIONS);
+        if (pszExt != nullptr)
+            extensions[out_idx] = pszExt;
+
+        // sql dialects
+#if GDAL_VERSION_NUM >= GDAL_COMPUTE_VERSION(3, 6, 0)
+        const char *pszSql = nullptr;
+        pszSql = CSLFetchNameValue(papszMD, GDAL_DMD_SUPPORTED_SQL_DIALECTS);
+        if (pszSql)
+            sql_dialects[out_idx] = pszSql;
+#else
+        sql_dialects[out_idx] = NA_STRING;
+#endif  // GDAL 3.6
+
+        // creation datatypes
+        const char *pszDatatypes =
+            CSLFetchNameValue(papszMD, GDAL_DMD_CREATIONDATATYPES);
+        if (pszDatatypes != nullptr)
+            creation_datatypes[out_idx] = pszDatatypes;
+
+        // creation field types
+        const char *pszFieldTypes =
+            CSLFetchNameValue(papszMD, GDAL_DMD_CREATIONFIELDDATATYPES);
+        if (pszFieldTypes != nullptr)
+            creation_field_types[out_idx] = pszFieldTypes;
+
+        // creation field subtypes
+        const char *pszFieldSubtypes =
+            CSLFetchNameValue(papszMD, GDAL_DMD_CREATIONFIELDDATASUBTYPES);
+        if (pszFieldSubtypes != nullptr)
+            creation_field_subtypes[out_idx] = pszFieldSubtypes;
+
+        // multiple vector layers
+#if GDAL_VERSION_NUM >= GDAL_COMPUTE_VERSION(3, 4, 0)
+        bool mult_vec_lyr_cap =
+            CPLFetchBool(papszMD, GDAL_DCAP_MULTIPLE_VECTOR_LAYERS, false);
+        if (mult_vec_lyr_cap)
+            multiple_vec_layers[out_idx] = TRUE;
+        else
+            multiple_vec_layers[out_idx] = FALSE;
+#endif  // GDAL 3.4
+
+        // field domains
+#if GDAL_VERSION_NUM >= GDAL_COMPUTE_VERSION(3, 5, 0)
+        bool has_fld_dom =
+            CPLFetchBool(papszMD, GDAL_DCAP_FIELD_DOMAINS, false);
+        if (has_fld_dom)
+            field_domains[out_idx] = TRUE;
+        else
+            field_domains[out_idx] = FALSE;
+#endif  // GDAL 3.5
+
+        // creation_field domain types
+#if GDAL_VERSION_NUM >= GDAL_COMPUTE_VERSION(3, 5, 0)
+        const char *pszFldDomTypes = nullptr;
+        pszFldDomTypes =
+            CSLFetchNameValue(papszMD, GDAL_DMD_CREATION_FIELD_DOMAIN_TYPES);
+        if (pszFldDomTypes)
+            fld_dom_types[out_idx] = pszFldDomTypes;
+#else
+        fld_dom_types[out_idx] = NA_STRING;
+#endif  // GDAL 3.5
     }
 
-    Rcpp::DataFrame df_out = Rcpp::DataFrame::create();
-    df_out.push_back(short_name, "short_name");
-    df_out.push_back(raster_fmt, "raster");
-    df_out.push_back(mdim_fmt, "multidim_raster");
-    df_out.push_back(vector_fmt, "vector");
-    df_out.push_back(rw_flag, "rw_flag");
-    df_out.push_back(virtual_io, "virtual_io");
-    df_out.push_back(subdatasets, "subdatasets");
-    df_out.push_back(long_name, "long_name");
+    // output data frame
+    Rcpp::List df(17);
+    Rcpp::CharacterVector col_names =
+        {"short_name", "extensions", "raster", "multidim_raster", "vector",
+         "geography_network", "rw_flag", "virtual_io", "subdatasets",
+         "long_name", "sql_dialects", "creation_datatypes",
+         "creation_field_types", "creation_field_subtypes",
+         "multiple_vec_layers", "read_field_domains", "creation_fld_dom_types"};
 
-    return df_out;
+    df[0] = short_name;
+    df[1] = extensions;
+    df[2] = raster_fmt;
+    df[3] = mdim_fmt;
+    df[4] = vector_fmt;
+    df[5] = gnm_fmt;
+    df[6] = rw_flag;
+    df[7] = virtual_io;
+    df[8] = subdatasets;
+    df[9] = long_name;
+    df[10] = sql_dialects;
+    df[11] = creation_datatypes;
+    df[12] = creation_field_types;
+    df[13] = creation_field_subtypes;
+    df[14] = multiple_vec_layers;
+    df[15] = field_domains;
+    df[16] = fld_dom_types;
+
+    df.attr("class") = Rcpp::CharacterVector{"data.frame"};
+    df.names() = col_names;
+    df.attr("row.names") = Rcpp::seq_len(nRowsOut);
+    return df;
 }
 
 

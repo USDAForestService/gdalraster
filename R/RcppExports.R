@@ -173,18 +173,36 @@ gdal_version_num <- function() {
 #' @param format A character string containing a driver short name. By default,
 #' information for all configured raster and vector format drivers will be
 #' returned.
-#' @returns A data frame containing the format short name, long name, raster
-#' (logical), vector (logical), read/write flag (`ro` is read-only,
-#' `w` supports CreateCopy, `w+` supports Create), virtual I/O supported
-#' (logical), and subdatasets (logical).
+#' @returns A data frame containing:
+#' * the format short name
+#' * file extension(s) if applicable (space-delimited string), or empty string
+#' (`""`)
+#' * supports raster (logical)
+#' * supports multidimensional raster (logical)
+#' * supports vector (logical)
+#' * supports geography network (logical)
+#' * read/write flags (concatenated string, `ro` is read-only, `w` supports
+#' CreateCopy, `w+` supports Create, and `u` supports Update is reported if
+#' GDAL >= 3.11)
+#' * supports virtual I/O e.g. /vsimem/ (logical)
+#' * supports subdatasets (logical)
+#' * supported SQL dialects reported if GDAL >= 3.6 (e.g.,
+#' `"NATIVE OGRSQL SQLITE"`)
+#' * creation raster data types (e.g., `"Byte Int16 UInt16 Float32"` etc.)
+#' * creation vector field types (e.g.,
+#' `"Integer Integer64 Real String Date DateTime Binary"` etc.)
+#' * creation field sub-types (e.g., `"Boolean Int16 Float32 JSON"` etc.)
+#' * supports multiple vector layers reported if GDAL >= 3.4 (logical)
+#' * supports reading field domains if GDAL >= 3.5 (logical)
+#' * creation field domain types if GDAL >= 3.5 (supported values are `Coded`,
+#' `Range` and `Glob`)
 #'
 #' @note
 #' Virtual I/O refers to operations on GDAL Virtual File Systems. See
 #' \url{https://gdal.org/en/stable/user/virtual_file_systems.html#virtual-file-systems}.
 #'
 #' @examples
-#' nrow(gdal_formats())
-#' head(gdal_formats())
+#' gdal_formats() |> str()
 #'
 #' gdal_formats("GPKG")
 gdal_formats <- function(format = "") {
