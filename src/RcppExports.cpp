@@ -2318,6 +2318,18 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// srs_get_axes
+SEXP srs_get_axes(const std::string& srs, const Rcpp::Nullable<Rcpp::CharacterVector>& target_key);
+RcppExport SEXP _gdalraster_srs_get_axes(SEXP srsSEXP, SEXP target_keySEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< const std::string& >::type srs(srsSEXP);
+    Rcpp::traits::input_parameter< const Rcpp::Nullable<Rcpp::CharacterVector>& >::type target_key(target_keySEXP);
+    rcpp_result_gen = Rcpp::wrap(srs_get_axes(srs, target_key));
+    return rcpp_result_gen;
+END_RCPP
+}
 // srs_get_celestial_body_name
 std::string srs_get_celestial_body_name(const std::string& srs);
 RcppExport SEXP _gdalraster_srs_get_celestial_body_name(SEXP srsSEXP) {
@@ -2621,6 +2633,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_gdalraster_srs_get_axis_mapping_strategy", (DL_FUNC) &_gdalraster_srs_get_axis_mapping_strategy, 1},
     {"_gdalraster_srs_get_area_of_use", (DL_FUNC) &_gdalraster_srs_get_area_of_use, 1},
     {"_gdalraster_srs_get_axes_count", (DL_FUNC) &_gdalraster_srs_get_axes_count, 1},
+    {"_gdalraster_srs_get_axes", (DL_FUNC) &_gdalraster_srs_get_axes, 2},
     {"_gdalraster_srs_get_celestial_body_name", (DL_FUNC) &_gdalraster_srs_get_celestial_body_name, 1},
     {"_gdalraster_srs_info_from_db", (DL_FUNC) &_gdalraster_srs_info_from_db, 1},
     {"_gdalraster_getPROJVersion", (DL_FUNC) &_gdalraster_getPROJVersion, 0},

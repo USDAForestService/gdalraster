@@ -79,6 +79,18 @@ test_that("srs functions work", {
     expect_equal(srs_get_axes_count("EPSG:4326"), 2)
     expect_equal(srs_get_axes_count("EPSG:4979"), 3)
 
+    ax <- srs_get_axes("EPSG:4326", "GEOGCS")
+    expect_equal(names(ax), c("Geodetic latitude", "Geodetic longitude"))
+    expect_equal(ax[[1]], "north")
+    expect_equal(ax[[2]], "east")
+
+    ax <- srs_get_axes("EPSG:4326+5773")
+    expect_equal(names(ax), c("Geodetic latitude", "Geodetic longitude",
+                              "Gravity-related height"))
+    expect_equal(ax[[1]], "north")
+    expect_equal(ax[[2]], "east")
+    expect_equal(ax[[3]], "up")
+
     epsg <- srs_info_from_db("EPSG")
     expect_true(is.data.frame(epsg))
     expect_true(nrow(epsg) > 1000)
@@ -109,6 +121,9 @@ test_that("srs functions work", {
     expect_true(is.null(srs_get_area_of_use("")))
     expect_error(srs_get_axes_count("invalid"))
     expect_true(is.na(srs_get_axes_count("")))
+    expect_error(srs_get_axes("invalid"))
+    expect_error(srs_get_axes("EPSG:4326", "invalid"))
+    expect_true(is.null(srs_get_axes("")))
 
     # dynamic srs GDAL >= 3.4
     skip_if(gdal_version_num() < gdal_compute_version(3, 4, 0))

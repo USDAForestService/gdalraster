@@ -348,6 +348,9 @@ std::string srs_to_projjson(const std::string &srs,
 //' `srs_get_axes_count()` returns the integer number of axes of the coordinate
 //' system of the SRS. Wrapper of `OSRGetAxesCount()` in the GDAL API.
 //'
+//' `srs_get_axes()` returns a named list of the axis names and their
+//' orientations. Wrapper of `OSRGetAxis()` in the GDAL API.
+//'
 //' `srs_get_celestial_body_name()` returns the name of the celestial body of
 //' the SRS, e.g., `"Earth"` for an Earth SRS. Wrapper of
 //' `OSRGetCelestialBodyName()` in the GDAL API. Requires GDAL >= 3.12 and
@@ -371,6 +374,8 @@ std::string srs_to_projjson(const std::string &srs,
 //' in a data frame, including a confidence value (0-100) for each match. The
 //' default is `FALSE` which returns a character string in the form
 //' `"EPSG:<code>"` for the first match (highest confidence).
+//' @param target_key Optional character string giving the coordinate system
+//' part to query, either `"PROJCS"` or `"GEOGCS"` (case-insensitive)
 //'
 //' @seealso
 //' [srs_convert]
@@ -423,6 +428,9 @@ std::string srs_to_projjson(const std::string &srs,
 //'
 //' srs_get_axes_count("EPSG:4326")
 //' srs_get_axes_count("EPSG:4979")
+//'
+//' ## ordered list of axis names and their orientation
+//' srs_get_axes("EPSG:4326+5773")
 //'
 //' ## Requires GDAL >= 3.12 and PROJ >= 8.1
 //' # srs_get_celestial_body_name("EPSG:4326")
@@ -962,6 +970,82 @@ int srs_get_axes_count(const std::string &srs) {
 
 //' @rdname srs_query
 // [[Rcpp::export]]
+SEXP srs_get_axes(const std::string &srs,
+    const Rcpp::Nullable<Rcpp::CharacterVector> &target_key = R_NilValue) {
+
+    if (srs == "")
+        return R_NilValue;
+
+    OGRSpatialReferenceH hSRS = OSRNewSpatialReference(nullptr);
+
+    if (OSRSetFromUserInput(hSRS, srs.c_str()) != OGRERR_NONE) {
+        if (hSRS != nullptr)
+            OSRDestroySpatialReference(hSRS);
+        Rcpp::stop("error importing SRS from user input");
+    }
+
+    const char *pszTargetKey = nullptr;
+    if (target_key.isNotNull()) {
+        Rcpp::CharacterVector target_key_in(target_key);
+        if (target_key_in.size() > 0) {
+            if (!EQUAL(target_key_in[0], "GEOGCS") &&
+                !EQUAL(target_key_in[0], "PROJCS")) {
+
+                OSRDestroySpatialReference(hSRS);
+                Rcpp::stop(
+                    "'target_key' must be one of \"GEOGCS\" or \"PROJCS\"");
+            }
+            Rcpp::String s(target_key_in[0]);
+            pszTargetKey = s.get_cstring();
+        }
+    }
+
+    int axes_count = OSRGetAxesCount(hSRS);
+    if (axes_count <= 0) {
+        OSRDestroySpatialReference(hSRS);
+        return R_NilValue;
+    }
+
+    Rcpp::List axes_out = Rcpp::List::create();
+    bool is_axis_found = false;
+    for (int i = 0; i < axes_count; ++i) {
+        const char *axis_name = nullptr;
+        OGRAxisOrientation orientation = OAO_Other;
+        axis_name = OSRGetAxis(hSRS, pszTargetKey, i, &orientation);
+
+        if (!axis_name)
+            axis_name = std::to_string(i).c_str();
+        else
+            is_axis_found = true;
+
+        if (orientation == OAO_Other)
+            axes_out.push_back("other", axis_name);
+        else if (orientation == OAO_North)
+            axes_out.push_back("north", axis_name);
+        else if (orientation == OAO_South)
+            axes_out.push_back("south", axis_name);
+        else if (orientation == OAO_East)
+            axes_out.push_back("east", axis_name);
+        else if (orientation == OAO_West)
+            axes_out.push_back("west", axis_name);
+        else if (orientation == OAO_Up)
+            axes_out.push_back("up", axis_name);
+        else if (orientation == OAO_Down)
+            axes_out.push_back("down", axis_name);
+        else
+            axes_out.push_back(NA_STRING, axis_name);
+    }
+
+    OSRDestroySpatialReference(hSRS);
+
+    if (is_axis_found)
+        return axes_out;
+    else
+        return R_NilValue;
+}
+
+//' @rdname srs_query
+// [[Rcpp::export]]
 std::string srs_get_celestial_body_name(const std::string &srs) {
 #if GDAL_VERSION_NUM < GDAL_COMPUTE_VERSION(3, 12, 0)
     Rcpp::stop("srs_get_celestial_body_name() requires GDAL >= 3.12");
@@ -1027,7 +1111,7 @@ Rcpp::DataFrame srs_info_from_db(std::string auth_name = "") {
     const char *pszAuthName = nullptr;
     if (auth_name != "")
         pszAuthName = auth_name.c_str();
-    
+
     int nObjects = 0;
     std::unique_ptr<OSRCRSInfo *, decltype(&OSRDestroyCRSInfoList)>
         pCRSList(OSRGetCRSInfoListFromDatabase(pszAuthName, nullptr, &nObjects),
@@ -1108,7 +1192,7 @@ Rcpp::DataFrame srs_info_from_db(std::string auth_name = "") {
             east_longitude_vec[i] = entry->dfEastLongitudeDeg;
         if (entry->dfNorthLatitudeDeg != -1000)
             north_latitude_vec[i] = entry->dfNorthLatitudeDeg;
-        
+
         if (entry->pszAreaName)
             area_name_vec[i] = entry->pszAreaName;
         if (entry->pszProjectionMethod)
@@ -1121,7 +1205,7 @@ Rcpp::DataFrame srs_info_from_db(std::string auth_name = "") {
         }
 #endif  // GDAL >= 3.12
     }
-    
+
     Rcpp::List df(13);
     Rcpp::CharacterVector col_names =
         {"auth_name", "obj_code", "obj_name", "obj_type", "is_deprecated",
