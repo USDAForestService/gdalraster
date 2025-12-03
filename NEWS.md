@@ -1,4 +1,6 @@
-# gdalraster 2.3.0.9003 (dev)
+# gdalraster 2.3.0.9004 (dev)
+
+* add `srs_get_axes()`: return a list of the axis names and orientations for a spatial coordinate reference system (#837) (2025-12-02)
 
 * `gdal_formats()`: add Update (`u`) to `rw_flags` when GDAL >= 3.11, and add several new columns to the output data frame containing various driver metadata (#833) (2025-11-29)
 
