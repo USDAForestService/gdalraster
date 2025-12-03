@@ -53,6 +53,10 @@ srs_get_axes_count(srs)
 
 srs_get_axes(srs, target_key = NULL)
 
+srs_epsg_treats_as_lat_long(srs)
+
+srs_epsg_treats_as_northing_easting(srs)
+
 srs_get_celestial_body_name(srs)
 ```
 
@@ -205,6 +209,16 @@ API.
 `srs_get_axes()` returns a named list of the axis names and their
 orientations. Wrapper of `OSRGetAxis()` in the GDAL API.
 
+`srs_epsg_treats_as_lat_long()` returns `TRUE` if this geographic
+coordinate system should be treated as having latitude/longitude
+coordinate ordering. Wrapper of `OSREPSGTreatsAsLatLong()` in the GDAL
+API.
+
+`srs_epsg_treats_as_northing_easting()` returns `TRUE` if this
+geographic coordinate system should be treated as having
+northing/easting coordinate ordering. Wrapper of
+`OSREPSGTreatsAsNorthingEasting()` in the GDAL API.
+
 `srs_get_celestial_body_name()` returns the name of the celestial body
 of the SRS, e.g., `"Earth"` for an Earth SRS. Wrapper of
 `OSRGetCelestialBodyName()` in the GDAL API. Requires GDAL \>= 3.12 and
@@ -294,7 +308,7 @@ srs_get_axes_count("EPSG:4326")
 srs_get_axes_count("EPSG:4979")
 #> [1] 3
 
-## ordered list of axis names and their orientation
+# ordered list of axis names and their orientation
 srs_get_axes("EPSG:4326+5773")
 #> $Geodetic_latitude
 #> [1] "north"
@@ -305,6 +319,19 @@ srs_get_axes("EPSG:4326+5773")
 #> $`Gravity-related_height`
 #> [1] "up"
 #> 
+
+srs_epsg_treats_as_lat_long("WGS84")
+#> [1] TRUE
+
+# NAD83 / Conus Albers:
+srs_epsg_treats_as_northing_easting("EPSG:5070")
+#> [1] FALSE
+# WGS 84 / UPS North (N,E):
+srs_epsg_treats_as_northing_easting("EPSG:32661")
+#> [1] TRUE
+# WGS 84 / UPS South (N,E):
+srs_epsg_treats_as_northing_easting("EPSG:32761")
+#> [1] TRUE
 
 ## Requires GDAL >= 3.12 and PROJ >= 8.1
 # srs_get_celestial_body_name("EPSG:4326")

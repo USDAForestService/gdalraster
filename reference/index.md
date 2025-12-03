@@ -185,6 +185,8 @@
   [`srs_get_area_of_use()`](https://usdaforestservice.github.io/gdalraster/reference/srs_query.md)
   [`srs_get_axes_count()`](https://usdaforestservice.github.io/gdalraster/reference/srs_query.md)
   [`srs_get_axes()`](https://usdaforestservice.github.io/gdalraster/reference/srs_query.md)
+  [`srs_epsg_treats_as_lat_long()`](https://usdaforestservice.github.io/gdalraster/reference/srs_query.md)
+  [`srs_epsg_treats_as_northing_easting()`](https://usdaforestservice.github.io/gdalraster/reference/srs_query.md)
   [`srs_get_celestial_body_name()`](https://usdaforestservice.github.io/gdalraster/reference/srs_query.md)
   : Obtain information about a spatial reference system
 
