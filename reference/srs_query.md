@@ -296,13 +296,13 @@ srs_get_axes_count("EPSG:4979")
 
 ## ordered list of axis names and their orientation
 srs_get_axes("EPSG:4326+5773")
-#> $`Geodetic latitude`
+#> $Geodetic_latitude
 #> [1] "north"
 #> 
-#> $`Geodetic longitude`
+#> $Geodetic_longitude
 #> [1] "east"
 #> 
-#> $`Gravity-related height`
+#> $`Gravity-related_height`
 #> [1] "up"
 #> 
 
