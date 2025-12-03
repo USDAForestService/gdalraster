@@ -1,4 +1,6 @@
-# gdalraster 2.3.0.9004 (dev)
+# gdalraster 2.3.0.9005 (dev)
+
+* add `srs_epsg_treats_as_lat_long()` and `srs_epsg_treats_as_northing_easting()` (#839) (2025-12-03)
 
 * add `srs_get_axes()`: return a list of the axis names and orientations for a spatial coordinate reference system (#837) (2025-12-02)
 
