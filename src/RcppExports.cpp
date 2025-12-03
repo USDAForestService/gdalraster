@@ -2330,6 +2330,28 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// srs_epsg_treats_as_lat_long
+bool srs_epsg_treats_as_lat_long(const std::string& srs);
+RcppExport SEXP _gdalraster_srs_epsg_treats_as_lat_long(SEXP srsSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< const std::string& >::type srs(srsSEXP);
+    rcpp_result_gen = Rcpp::wrap(srs_epsg_treats_as_lat_long(srs));
+    return rcpp_result_gen;
+END_RCPP
+}
+// srs_epsg_treats_as_northing_easting
+bool srs_epsg_treats_as_northing_easting(const std::string& srs);
+RcppExport SEXP _gdalraster_srs_epsg_treats_as_northing_easting(SEXP srsSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< const std::string& >::type srs(srsSEXP);
+    rcpp_result_gen = Rcpp::wrap(srs_epsg_treats_as_northing_easting(srs));
+    return rcpp_result_gen;
+END_RCPP
+}
 // srs_get_celestial_body_name
 std::string srs_get_celestial_body_name(const std::string& srs);
 RcppExport SEXP _gdalraster_srs_get_celestial_body_name(SEXP srsSEXP) {
@@ -2634,6 +2656,8 @@ static const R_CallMethodDef CallEntries[] = {
     {"_gdalraster_srs_get_area_of_use", (DL_FUNC) &_gdalraster_srs_get_area_of_use, 1},
     {"_gdalraster_srs_get_axes_count", (DL_FUNC) &_gdalraster_srs_get_axes_count, 1},
     {"_gdalraster_srs_get_axes", (DL_FUNC) &_gdalraster_srs_get_axes, 2},
+    {"_gdalraster_srs_epsg_treats_as_lat_long", (DL_FUNC) &_gdalraster_srs_epsg_treats_as_lat_long, 1},
+    {"_gdalraster_srs_epsg_treats_as_northing_easting", (DL_FUNC) &_gdalraster_srs_epsg_treats_as_northing_easting, 1},
     {"_gdalraster_srs_get_celestial_body_name", (DL_FUNC) &_gdalraster_srs_get_celestial_body_name, 1},
     {"_gdalraster_srs_info_from_db", (DL_FUNC) &_gdalraster_srs_info_from_db, 1},
     {"_gdalraster_getPROJVersion", (DL_FUNC) &_gdalraster_getPROJVersion, 0},

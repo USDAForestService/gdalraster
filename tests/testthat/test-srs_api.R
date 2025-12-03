@@ -91,6 +91,13 @@ test_that("srs functions work", {
     expect_equal(ax[[2]], "east")
     expect_equal(ax[[3]], "up")
 
+    expect_true(srs_epsg_treats_as_lat_long("WGS84"))
+    
+    # NAD83 / Conus Albers:
+    expect_false(srs_epsg_treats_as_northing_easting("EPSG:5070"))
+    # WGS 84 / UPS North (N,E):
+    expect_true(srs_epsg_treats_as_northing_easting("EPSG:32661"))
+
     epsg <- srs_info_from_db("EPSG")
     expect_true(is.data.frame(epsg))
     expect_true(nrow(epsg) > 1000)
