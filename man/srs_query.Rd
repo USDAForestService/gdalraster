@@ -21,6 +21,8 @@
 \alias{srs_get_area_of_use}
 \alias{srs_get_axes_count}
 \alias{srs_get_axes}
+\alias{srs_epsg_treats_as_lat_long}
+\alias{srs_epsg_treats_as_northing_easting}
 \alias{srs_get_celestial_body_name}
 \title{Obtain information about a spatial reference system}
 \usage{
@@ -67,6 +69,10 @@ srs_get_area_of_use(srs)
 srs_get_axes_count(srs)
 
 srs_get_axes(srs, target_key = NULL)
+
+srs_epsg_treats_as_lat_long(srs)
+
+srs_epsg_treats_as_northing_easting(srs)
 
 srs_get_celestial_body_name(srs)
 }
@@ -203,6 +209,14 @@ system of the SRS. Wrapper of \code{OSRGetAxesCount()} in the GDAL API.
 \code{srs_get_axes()} returns a named list of the axis names and their
 orientations. Wrapper of \code{OSRGetAxis()} in the GDAL API.
 
+\code{srs_epsg_treats_as_lat_long()} returns \code{TRUE} if this geographic coordinate
+system should be treated as having latitude/longitude coordinate ordering.
+Wrapper of \code{OSREPSGTreatsAsLatLong()} in the GDAL API.
+
+\code{srs_epsg_treats_as_northing_easting()} returns \code{TRUE} if this geographic
+coordinate system should be treated as having northing/easting coordinate
+ordering. Wrapper of \code{OSREPSGTreatsAsNorthingEasting()} in the GDAL API.
+
 \code{srs_get_celestial_body_name()} returns the name of the celestial body of
 the SRS, e.g., \code{"Earth"} for an Earth SRS. Wrapper of
 \code{OSRGetCelestialBodyName()} in the GDAL API. Requires GDAL >= 3.12 and
@@ -257,8 +271,17 @@ srs_get_area_of_use("EPSG:3976")
 srs_get_axes_count("EPSG:4326")
 srs_get_axes_count("EPSG:4979")
 
-## ordered list of axis names and their orientation
+# ordered list of axis names and their orientation
 srs_get_axes("EPSG:4326+5773")
+
+srs_epsg_treats_as_lat_long("WGS84")
+
+# NAD83 / Conus Albers:
+srs_epsg_treats_as_northing_easting("EPSG:5070")
+# WGS 84 / UPS North (N,E):
+srs_epsg_treats_as_northing_easting("EPSG:32661")
+# WGS 84 / UPS South (N,E):
+srs_epsg_treats_as_northing_easting("EPSG:32761")
 
 ## Requires GDAL >= 3.12 and PROJ >= 8.1
 # srs_get_celestial_body_name("EPSG:4326")

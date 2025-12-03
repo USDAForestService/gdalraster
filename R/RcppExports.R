@@ -3229,6 +3229,14 @@ srs_to_projjson <- function(srs, multiline = TRUE, indent_width = 2L, schema = N
 #' `srs_get_axes()` returns a named list of the axis names and their
 #' orientations. Wrapper of `OSRGetAxis()` in the GDAL API.
 #'
+#' `srs_epsg_treats_as_lat_long()` returns `TRUE` if this geographic coordinate
+#' system should be treated as having latitude/longitude coordinate ordering.
+#' Wrapper of `OSREPSGTreatsAsLatLong()` in the GDAL API.
+#'
+#' `srs_epsg_treats_as_northing_easting()` returns `TRUE` if this geographic
+#' coordinate system should be treated as having northing/easting coordinate
+#' ordering. Wrapper of `OSREPSGTreatsAsNorthingEasting()` in the GDAL API.
+#'
 #' `srs_get_celestial_body_name()` returns the name of the celestial body of
 #' the SRS, e.g., `"Earth"` for an Earth SRS. Wrapper of
 #' `OSRGetCelestialBodyName()` in the GDAL API. Requires GDAL >= 3.12 and
@@ -3307,8 +3315,17 @@ srs_to_projjson <- function(srs, multiline = TRUE, indent_width = 2L, schema = N
 #' srs_get_axes_count("EPSG:4326")
 #' srs_get_axes_count("EPSG:4979")
 #'
-#' ## ordered list of axis names and their orientation
+#' # ordered list of axis names and their orientation
 #' srs_get_axes("EPSG:4326+5773")
+#'
+#' srs_epsg_treats_as_lat_long("WGS84")
+#'
+#' # NAD83 / Conus Albers:
+#' srs_epsg_treats_as_northing_easting("EPSG:5070")
+#' # WGS 84 / UPS North (N,E):
+#' srs_epsg_treats_as_northing_easting("EPSG:32661")
+#' # WGS 84 / UPS South (N,E):
+#' srs_epsg_treats_as_northing_easting("EPSG:32761")
 #'
 #' ## Requires GDAL >= 3.12 and PROJ >= 8.1
 #' # srs_get_celestial_body_name("EPSG:4326")
@@ -3430,6 +3447,16 @@ srs_get_axes_count <- function(srs) {
 #' @rdname srs_query
 srs_get_axes <- function(srs, target_key = NULL) {
     .Call(`_gdalraster_srs_get_axes`, srs, target_key)
+}
+
+#' @rdname srs_query
+srs_epsg_treats_as_lat_long <- function(srs) {
+    .Call(`_gdalraster_srs_epsg_treats_as_lat_long`, srs)
+}
+
+#' @rdname srs_query
+srs_epsg_treats_as_northing_easting <- function(srs) {
+    .Call(`_gdalraster_srs_epsg_treats_as_northing_easting`, srs)
 }
 
 #' @rdname srs_query

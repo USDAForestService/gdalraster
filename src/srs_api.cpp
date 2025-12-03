@@ -351,6 +351,14 @@ std::string srs_to_projjson(const std::string &srs,
 //' `srs_get_axes()` returns a named list of the axis names and their
 //' orientations. Wrapper of `OSRGetAxis()` in the GDAL API.
 //'
+//' `srs_epsg_treats_as_lat_long()` returns `TRUE` if this geographic coordinate
+//' system should be treated as having latitude/longitude coordinate ordering.
+//' Wrapper of `OSREPSGTreatsAsLatLong()` in the GDAL API.
+//'
+//' `srs_epsg_treats_as_northing_easting()` returns `TRUE` if this geographic
+//' coordinate system should be treated as having northing/easting coordinate
+//' ordering. Wrapper of `OSREPSGTreatsAsNorthingEasting()` in the GDAL API.
+//'
 //' `srs_get_celestial_body_name()` returns the name of the celestial body of
 //' the SRS, e.g., `"Earth"` for an Earth SRS. Wrapper of
 //' `OSRGetCelestialBodyName()` in the GDAL API. Requires GDAL >= 3.12 and
@@ -429,8 +437,17 @@ std::string srs_to_projjson(const std::string &srs,
 //' srs_get_axes_count("EPSG:4326")
 //' srs_get_axes_count("EPSG:4979")
 //'
-//' ## ordered list of axis names and their orientation
+//' # ordered list of axis names and their orientation
 //' srs_get_axes("EPSG:4326+5773")
+//'
+//' srs_epsg_treats_as_lat_long("WGS84")
+//'
+//' # NAD83 / Conus Albers:
+//' srs_epsg_treats_as_northing_easting("EPSG:5070")
+//' # WGS 84 / UPS North (N,E):
+//' srs_epsg_treats_as_northing_easting("EPSG:32661")
+//' # WGS 84 / UPS South (N,E):
+//' srs_epsg_treats_as_northing_easting("EPSG:32761")
 //'
 //' ## Requires GDAL >= 3.12 and PROJ >= 8.1
 //' # srs_get_celestial_body_name("EPSG:4326")
@@ -1045,6 +1062,44 @@ SEXP srs_get_axes(const std::string &srs,
         return axes_out;
     else
         return R_NilValue;
+}
+
+//' @rdname srs_query
+// [[Rcpp::export]]
+bool srs_epsg_treats_as_lat_long(const std::string &srs) {
+    if (srs == "")
+        return false;
+
+    OGRSpatialReferenceH hSRS = OSRNewSpatialReference(nullptr);
+
+    if (OSRSetFromUserInput(hSRS, srs.c_str()) != OGRERR_NONE) {
+        if (hSRS != nullptr)
+            OSRDestroySpatialReference(hSRS);
+        Rcpp::stop("error importing SRS from user input");
+    }
+
+    bool ret = OSREPSGTreatsAsLatLong(hSRS);
+    OSRDestroySpatialReference(hSRS);
+    return ret;
+}
+
+//' @rdname srs_query
+// [[Rcpp::export]]
+bool srs_epsg_treats_as_northing_easting(const std::string &srs) {
+    if (srs == "")
+        return false;
+
+    OGRSpatialReferenceH hSRS = OSRNewSpatialReference(nullptr);
+
+    if (OSRSetFromUserInput(hSRS, srs.c_str()) != OGRERR_NONE) {
+        if (hSRS != nullptr)
+            OSRDestroySpatialReference(hSRS);
+        Rcpp::stop("error importing SRS from user input");
+    }
+
+    bool ret = OSREPSGTreatsAsNorthingEasting(hSRS);
+    OSRDestroySpatialReference(hSRS);
+    return ret;
 }
 
 //' @rdname srs_query
