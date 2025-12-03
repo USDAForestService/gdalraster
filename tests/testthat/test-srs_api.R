@@ -80,13 +80,13 @@ test_that("srs functions work", {
     expect_equal(srs_get_axes_count("EPSG:4979"), 3)
 
     ax <- srs_get_axes("EPSG:4326", "GEOGCS")
-    expect_equal(names(ax), c("Geodetic latitude", "Geodetic longitude"))
+    expect_equal(names(ax), c("Geodetic_latitude", "Geodetic_longitude"))
     expect_equal(ax[[1]], "north")
     expect_equal(ax[[2]], "east")
 
     ax <- srs_get_axes("EPSG:4326+5773")
-    expect_equal(names(ax), c("Geodetic latitude", "Geodetic longitude",
-                              "Gravity-related height"))
+    expect_equal(names(ax), c("Geodetic_latitude", "Geodetic_longitude",
+                              "Gravity-related_height"))
     expect_equal(ax[[1]], "north")
     expect_equal(ax[[2]], "east")
     expect_equal(ax[[3]], "up")
