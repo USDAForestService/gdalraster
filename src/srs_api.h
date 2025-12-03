@@ -36,6 +36,10 @@ double srs_get_coord_epoch(const std::string &srs);
 int srs_get_utm_zone(const std::string &srs);
 std::string srs_get_axis_mapping_strategy(const std::string &srs);
 SEXP srs_get_area_of_use(const std::string &srs);
+int srs_get_axes_count(const std::string &srs);
+SEXP srs_get_axes(const std::string &srs,
+                  const Rcpp::Nullable<Rcpp::CharacterVector> &target_key);
+std::string srs_get_celestial_body_name(const std::string &srs);
 
 Rcpp::DataFrame srs_info_from_db(std::string auth_name);
 

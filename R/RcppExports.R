@@ -3226,6 +3226,9 @@ srs_to_projjson <- function(srs, multiline = TRUE, indent_width = 2L, schema = N
 #' `srs_get_axes_count()` returns the integer number of axes of the coordinate
 #' system of the SRS. Wrapper of `OSRGetAxesCount()` in the GDAL API.
 #'
+#' `srs_get_axes()` returns a named list of the axis names and their
+#' orientations. Wrapper of `OSRGetAxis()` in the GDAL API.
+#'
 #' `srs_get_celestial_body_name()` returns the name of the celestial body of
 #' the SRS, e.g., `"Earth"` for an Earth SRS. Wrapper of
 #' `OSRGetCelestialBodyName()` in the GDAL API. Requires GDAL >= 3.12 and
@@ -3249,6 +3252,8 @@ srs_to_projjson <- function(srs, multiline = TRUE, indent_width = 2L, schema = N
 #' in a data frame, including a confidence value (0-100) for each match. The
 #' default is `FALSE` which returns a character string in the form
 #' `"EPSG:<code>"` for the first match (highest confidence).
+#' @param target_key Optional character string giving the coordinate system
+#' part to query, either `"PROJCS"` or `"GEOGCS"` (case-insensitive)
 #'
 #' @seealso
 #' [srs_convert]
@@ -3301,6 +3306,9 @@ srs_to_projjson <- function(srs, multiline = TRUE, indent_width = 2L, schema = N
 #'
 #' srs_get_axes_count("EPSG:4326")
 #' srs_get_axes_count("EPSG:4979")
+#'
+#' ## ordered list of axis names and their orientation
+#' srs_get_axes("EPSG:4326+5773")
 #'
 #' ## Requires GDAL >= 3.12 and PROJ >= 8.1
 #' # srs_get_celestial_body_name("EPSG:4326")
@@ -3417,6 +3425,11 @@ srs_get_area_of_use <- function(srs) {
 #' @rdname srs_query
 srs_get_axes_count <- function(srs) {
     .Call(`_gdalraster_srs_get_axes_count`, srs)
+}
+
+#' @rdname srs_query
+srs_get_axes <- function(srs, target_key = NULL) {
+    .Call(`_gdalraster_srs_get_axes`, srs, target_key)
 }
 
 #' @rdname srs_query

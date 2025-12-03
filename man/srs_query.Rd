@@ -20,6 +20,7 @@
 \alias{srs_get_axis_mapping_strategy}
 \alias{srs_get_area_of_use}
 \alias{srs_get_axes_count}
+\alias{srs_get_axes}
 \alias{srs_get_celestial_body_name}
 \title{Obtain information about a spatial reference system}
 \usage{
@@ -65,6 +66,8 @@ srs_get_area_of_use(srs)
 
 srs_get_axes_count(srs)
 
+srs_get_axes(srs, target_key = NULL)
+
 srs_get_celestial_body_name(srs)
 }
 \arguments{
@@ -91,6 +94,9 @@ in the GDAL Spatial Reference System API. Defaults to \code{NO}.}
 \item{ignore_coord_epoch}{Logical scalar. If \code{TRUE}, sets
 \code{IGNORE_COORDINATE_EPOCH=YES} in the call to \code{OSRIsSameEx()}
 in the GDAL Spatial Reference System API. Defaults to \code{NO}.}
+
+\item{target_key}{Optional character string giving the coordinate system
+part to query, either \code{"PROJCS"} or \code{"GEOGCS"} (case-insensitive)}
 }
 \description{
 Bindings to a subset of the GDAL Spatial Reference System API
@@ -194,6 +200,9 @@ the API call does not succeed):
 \code{srs_get_axes_count()} returns the integer number of axes of the coordinate
 system of the SRS. Wrapper of \code{OSRGetAxesCount()} in the GDAL API.
 
+\code{srs_get_axes()} returns a named list of the axis names and their
+orientations. Wrapper of \code{OSRGetAxis()} in the GDAL API.
+
 \code{srs_get_celestial_body_name()} returns the name of the celestial body of
 the SRS, e.g., \code{"Earth"} for an Earth SRS. Wrapper of
 \code{OSRGetCelestialBodyName()} in the GDAL API. Requires GDAL >= 3.12 and
@@ -247,6 +256,9 @@ srs_get_area_of_use("EPSG:3976")
 
 srs_get_axes_count("EPSG:4326")
 srs_get_axes_count("EPSG:4979")
+
+## ordered list of axis names and their orientation
+srs_get_axes("EPSG:4326+5773")
 
 ## Requires GDAL >= 3.12 and PROJ >= 8.1
 # srs_get_celestial_body_name("EPSG:4326")
