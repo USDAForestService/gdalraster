@@ -1,6 +1,13 @@
 # Changelog
 
-## gdalraster 2.3.0.9003 (dev)
+## gdalraster 2.3.0.9004 (dev)
+
+- add
+  [`srs_get_axes()`](https://usdaforestservice.github.io/gdalraster/reference/srs_query.md):
+  return a list of the axis names and orientations for a spatial
+  coordinate reference system
+  ([\#837](https://github.com/USDAForestService/gdalraster/issues/837))
+  (2025-12-02)
 
 - [`gdal_formats()`](https://usdaforestservice.github.io/gdalraster/reference/gdal_formats.md):
   add Update (`u`) to `rw_flags` when GDAL \>= 3.11, and add several new
