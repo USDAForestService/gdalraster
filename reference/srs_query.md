@@ -51,6 +51,8 @@ srs_get_area_of_use(srs)
 
 srs_get_axes_count(srs)
 
+srs_get_axes(srs, target_key = NULL)
+
 srs_get_celestial_body_name(srs)
 ```
 
@@ -93,6 +95,11 @@ srs_get_celestial_body_name(srs)
   Logical scalar. If `TRUE`, sets `IGNORE_COORDINATE_EPOCH=YES` in the
   call to `OSRIsSameEx()` in the GDAL Spatial Reference System API.
   Defaults to `NO`.
+
+- target_key:
+
+  Optional character string giving the coordinate system part to query,
+  either `"PROJCS"` or `"GEOGCS"` (case-insensitive)
 
 ## Details
 
@@ -195,6 +202,9 @@ API. Returns a named list containing the following elements (or returns
 coordinate system of the SRS. Wrapper of `OSRGetAxesCount()` in the GDAL
 API.
 
+`srs_get_axes()` returns a named list of the axis names and their
+orientations. Wrapper of `OSRGetAxis()` in the GDAL API.
+
 `srs_get_celestial_body_name()` returns the name of the celestial body
 of the SRS, e.g., `"Earth"` for an Earth SRS. Wrapper of
 `OSRGetCelestialBodyName()` in the GDAL API. Requires GDAL \>= 3.12 and
@@ -283,6 +293,18 @@ srs_get_axes_count("EPSG:4326")
 #> [1] 2
 srs_get_axes_count("EPSG:4979")
 #> [1] 3
+
+## ordered list of axis names and their orientation
+srs_get_axes("EPSG:4326+5773")
+#> $`Geodetic latitude`
+#> [1] "north"
+#> 
+#> $`Geodetic longitude`
+#> [1] "east"
+#> 
+#> $`Gravity-related height`
+#> [1] "up"
+#> 
 
 ## Requires GDAL >= 3.12 and PROJ >= 8.1
 # srs_get_celestial_body_name("EPSG:4326")

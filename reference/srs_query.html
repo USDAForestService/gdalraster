@@ -110,6 +110,8 @@ system passed as text in any of the formats supported by <code><a href="srs_conv
 <span></span>
 <span><span class="fu">srs_get_axes_count</span><span class="op">(</span><span class="va">srs</span><span class="op">)</span></span>
 <span></span>
+<span><span class="fu">srs_get_axes</span><span class="op">(</span><span class="va">srs</span>, target_key <span class="op">=</span> <span class="cn">NULL</span><span class="op">)</span></span>
+<span></span>
 <span><span class="fu">srs_get_celestial_body_name</span><span class="op">(</span><span class="va">srs</span><span class="op">)</span></span></code></pre></div>
     </div>
 
@@ -151,6 +153,11 @@ in the GDAL Spatial Reference System API. Defaults to <code>NO</code>.</p></dd>
 <dd><p>Logical scalar. If <code>TRUE</code>, sets
 <code>IGNORE_COORDINATE_EPOCH=YES</code> in the call to <code>OSRIsSameEx()</code>
 in the GDAL Spatial Reference System API. Defaults to <code>NO</code>.</p></dd>
+
+
+<dt id="arg-target-key">target_key<a class="anchor" aria-label="anchor" href="#arg-target-key"></a></dt>
+<dd><p>Optional character string giving the coordinate system
+part to query, either <code>"PROJCS"</code> or <code>"GEOGCS"</code> (case-insensitive)</p></dd>
 
 </dl></div>
     <div class="section level2">
@@ -226,6 +233,8 @@ the API call does not succeed):</p><ul><li><p><code>AreaName</code>: the area of
 <code>NA</code> if the bounding box is unknown</p></li>
 </ul><p><code>srs_get_axes_count()</code> returns the integer number of axes of the coordinate
 system of the SRS. Wrapper of <code>OSRGetAxesCount()</code> in the GDAL API.</p>
+<p><code>srs_get_axes()</code> returns a named list of the axis names and their
+orientations. Wrapper of <code>OSRGetAxis()</code> in the GDAL API.</p>
 <p><code>srs_get_celestial_body_name()</code> returns the name of the celestial body of
 the SRS, e.g., <code>"Earth"</code> for an Earth SRS. Wrapper of
 <code>OSRGetCelestialBodyName()</code> in the GDAL API. Requires GDAL &gt;= 3.12 and
@@ -314,6 +323,18 @@ PROJ &gt;= 8.1.</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] 2</span>
 <span class="r-in"><span><span class="fu">srs_get_axes_count</span><span class="op">(</span><span class="st">"EPSG:4979"</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] 3</span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co">## ordered list of axis names and their orientation</span></span></span>
+<span class="r-in"><span><span class="fu">srs_get_axes</span><span class="op">(</span><span class="st">"EPSG:4326+5773"</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $`Geodetic latitude`</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "north"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $`Geodetic longitude`</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "east"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $`Gravity-related height`</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "up"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co">## Requires GDAL &gt;= 3.12 and PROJ &gt;= 8.1</span></span></span>
 <span class="r-in"><span><span class="co"># srs_get_celestial_body_name("EPSG:4326")</span></span></span>
