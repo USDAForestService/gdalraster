@@ -1018,22 +1018,25 @@ SEXP srs_get_axes(const std::string &srs,
         else
             is_axis_found = true;
 
+        Rcpp::String axis_name_r(axis_name);
+        axis_name_r.replace_all(" ", "_");
+
         if (orientation == OAO_Other)
-            axes_out.push_back("other", axis_name);
+            axes_out.push_back("other", axis_name_r);
         else if (orientation == OAO_North)
-            axes_out.push_back("north", axis_name);
+            axes_out.push_back("north", axis_name_r);
         else if (orientation == OAO_South)
-            axes_out.push_back("south", axis_name);
+            axes_out.push_back("south", axis_name_r);
         else if (orientation == OAO_East)
-            axes_out.push_back("east", axis_name);
+            axes_out.push_back("east", axis_name_r);
         else if (orientation == OAO_West)
-            axes_out.push_back("west", axis_name);
+            axes_out.push_back("west", axis_name_r);
         else if (orientation == OAO_Up)
-            axes_out.push_back("up", axis_name);
+            axes_out.push_back("up", axis_name_r);
         else if (orientation == OAO_Down)
-            axes_out.push_back("down", axis_name);
+            axes_out.push_back("down", axis_name_r);
         else
-            axes_out.push_back(NA_STRING, axis_name);
+            axes_out.push_back(NA_STRING, axis_name_r);
     }
 
     OSRDestroySpatialReference(hSRS);
