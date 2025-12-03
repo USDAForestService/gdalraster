@@ -556,7 +556,7 @@ ogr_layer_field_names(dsn, layer = "layer2")
 # add a field using SQL instead
 ogr_execute_sql(dsn, sql = "ALTER TABLE layer2 ADD field4 float")
 #> info: open dataset successful on DSN:
-#>   '/tmp/RtmprcDqYR/test1.gpkg'
+#>   '/tmp/RtmpO4j4Ij/test1.gpkg'
 
 # rename a field
 if (ogr_layer_test_cap(dsn, "layer1")$AlterFieldDefn) {
@@ -572,7 +572,7 @@ ogr_layer_field_names(dsn, layer = "layer2")
 # GDAL >= 3.7
 if (gdal_version_num() >= gdal_compute_version(3, 7, 0))
   ogrinfo(dsn, "layer2")
-#> INFO: Open of `/tmp/RtmprcDqYR/test1.gpkg'
+#> INFO: Open of `/tmp/RtmpO4j4Ij/test1.gpkg'
 #>       using driver `GPKG' successful.
 #> 
 #> Layer name: layer2
@@ -623,13 +623,13 @@ ogr_layer_field_names(dsn = perims_shp, layer = "mtbs_perims")
 alt_tbl <- "ALTER TABLE mtbs_perims ADD burn_bnd_ha float"
 ogr_execute_sql(dsn = perims_shp, sql = alt_tbl)
 #> info: open dataset successful on DSN:
-#>   '/tmp/RtmprcDqYR/mtbs_perims.shp'
+#>   '/tmp/RtmpO4j4Ij/mtbs_perims.shp'
 #> GDAL WARNING 6: Normalized/laundered field name: 'burn_bnd_ha' to 'burn_bnd_h'
 
 upd <- "UPDATE mtbs_perims SET burn_bnd_ha = (burn_bnd_ac / 2.471)"
 ogr_execute_sql(dsn = perims_shp, sql = upd, dialect = "SQLite")
 #> info: open dataset successful on DSN:
-#>   '/tmp/RtmprcDqYR/mtbs_perims.shp'
+#>   '/tmp/RtmpO4j4Ij/mtbs_perims.shp'
 #> GDAL FAILURE 1: In ExecuteSQL(): sqlite3_prepare_v2(UPDATE mtbs_perims SET burn_bnd_ha = (burn_bnd_ac / 2.471)):
 #>   no such column: burn_bnd_ac
 ogr_layer_field_names(dsn = perims_shp, layer = "mtbs_perims")

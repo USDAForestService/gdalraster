@@ -1,6 +1,13 @@
 # Changelog
 
-## gdalraster 2.3.0.9004 (dev)
+## gdalraster 2.3.0.9005 (dev)
+
+- add
+  [`srs_epsg_treats_as_lat_long()`](https://usdaforestservice.github.io/gdalraster/reference/srs_query.md)
+  and
+  [`srs_epsg_treats_as_northing_easting()`](https://usdaforestservice.github.io/gdalraster/reference/srs_query.md)
+  ([\#839](https://github.com/USDAForestService/gdalraster/issues/839))
+  (2025-12-03)
 
 - add
   [`srs_get_axes()`](https://usdaforestservice.github.io/gdalraster/reference/srs_query.md):
