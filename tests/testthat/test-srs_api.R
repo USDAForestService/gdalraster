@@ -92,7 +92,7 @@ test_that("srs functions work", {
     expect_equal(ax[[3]], "up")
 
     expect_true(srs_epsg_treats_as_lat_long("WGS84"))
-    
+
     # NAD83 / Conus Albers:
     expect_false(srs_epsg_treats_as_northing_easting("EPSG:5070"))
     # WGS 84 / UPS North (N,E):
@@ -131,6 +131,10 @@ test_that("srs functions work", {
     expect_error(srs_get_axes("invalid"))
     expect_error(srs_get_axes("EPSG:4326", "invalid"))
     expect_true(is.null(srs_get_axes("")))
+    expect_false(srs_epsg_treats_as_lat_long(""))
+    expect_error(srs_epsg_treats_as_lat_long("invalid"))
+    expect_false(srs_epsg_treats_as_northing_easting(""))
+    expect_error(srs_epsg_treats_as_northing_easting("invalid"))
 
     # dynamic srs GDAL >= 3.4
     skip_if(gdal_version_num() < gdal_compute_version(3, 4, 0))
