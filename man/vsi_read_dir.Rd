@@ -23,10 +23,10 @@ will be returned.}
 }
 \value{
 A character vector containing the names of files and directories
-in the directory given by \code{path}. The listing is in alphabetical order, and
-does not include the special entries '.' and '..' even if they are present
-in the directory. An empty string (\code{""}) is returned if \code{path} does not
-exist.
+in the directory given by \code{path} (may be an empty vector \code{character(0)}).
+The listing is in alphabetical order, and does not include the special
+entries '.' and '..' even if they are present in the directory. An empty
+string (\code{""}) is returned if \code{path} does not exist.
 }
 \description{
 \code{vsi_read_dir()} abstracts access to directory contents. It returns a
