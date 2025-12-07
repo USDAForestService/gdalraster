@@ -1,4 +1,4 @@
-# gdalraster 2.3.0.9006 (dev)
+# gdalraster 2.3.0.9007 (dev)
 
 * `vsi_read_dir()`: fix slow string processing of the file list for return (#841, thanks to @mdsumner) (2025-12-06)
 
