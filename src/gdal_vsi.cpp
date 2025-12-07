@@ -205,7 +205,7 @@ Rcpp::CharacterVector vsi_read_dir(const Rcpp::CharacterVector &path,
 
     int nCount = CSLCount(papszNames);
     std::sort(papszNames, papszNames + nCount,
-        [](const char* a, const char* b) {
+        [](const char *a, const char *b) {
             return std::strcmp(a, b) < 0;
         });
 
@@ -214,18 +214,21 @@ Rcpp::CharacterVector vsi_read_dir(const Rcpp::CharacterVector &path,
     if (idx >= 0)
         papszNames = CSLRemoveStrings(papszNames, idx, 1, nullptr);
 
-    idx = -1;
-    idx = CSLFindString(papszNames, "..");
-    if (idx >= 0)
-        papszNames = CSLRemoveStrings(papszNames, idx, 1, nullptr);
-
     if (papszNames) {
-        nCount = CSLCount(papszNames);
+        idx = -1;
+        idx = CSLFindString(papszNames, "..");
+        if (idx >= 0)
+            papszNames = CSLRemoveStrings(papszNames, idx, 1, nullptr);
+    }
+
+    nCount = CSLCount(papszNames);
+    if (nCount > 0) {
         Rcpp::CharacterVector names(papszNames, papszNames + nCount);
         CSLDestroy(papszNames);
         return names;
     }
     else {
+        CSLDestroy(papszNames);
         return Rcpp::CharacterVector::create();
     }
 }
