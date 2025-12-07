@@ -1,4 +1,6 @@
-# gdalraster 2.3.0.9005 (dev)
+# gdalraster 2.3.0.9006 (dev)
+
+* `vsi_read_dir()`: fix slow string processing of the file list for return (#841, thanks to @mdsumner) (2025-12-06)
 
 * add `srs_epsg_treats_as_lat_long()` and `srs_epsg_treats_as_northing_easting()` (#839) (2025-12-03)
 
