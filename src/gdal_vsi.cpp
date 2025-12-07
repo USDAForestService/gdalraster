@@ -165,10 +165,10 @@ void vsi_curl_clear_cache(bool partial = false,
 //' files whose name does not start with a dot). If `TRUE`, all file names
 //' will be returned.
 //' @returns A character vector containing the names of files and directories
-//' in the directory given by `path`. The listing is in alphabetical order, and
-//' does not include the special entries '.' and '..' even if they are present
-//' in the directory. An empty string (`""`) is returned if `path` does not
-//' exist.
+//' in the directory given by `path` (may be an empty vector `character(0)`).
+//' The listing is in alphabetical order, and does not include the special
+//' entries '.' and '..' even if they are present in the directory. An empty
+//' string (`""`) is returned if `path` does not exist.
 //'
 //' @note
 //' If `max_files` is set to a positive number, directory listing will stop
@@ -194,29 +194,39 @@ Rcpp::CharacterVector vsi_read_dir(const Rcpp::CharacterVector &path,
     const std::string path_in =
         Rcpp::as<std::string>(check_gdal_filename(path));
 
-    char **papszFiles = nullptr;
+    char **papszNames = nullptr;
     if (recursive)
-        papszFiles = VSIReadDirRecursive(path_in.c_str());
+        papszNames = VSIReadDirRecursive(path_in.c_str());
     else
-        papszFiles = VSIReadDirEx(path_in.c_str(), max_files);
+        papszNames = VSIReadDirEx(path_in.c_str(), max_files);
 
-    int nItems = CSLCount(papszFiles);
-    if (nItems > 0) {
-        std::vector<std::string> files{};
-        for (int i=0; i < nItems; ++i) {
-            if (!all_files && STARTS_WITH(papszFiles[i], "."))
-                continue;
-            if (!EQUAL(papszFiles[i], ".") && !EQUAL(papszFiles[i], "..")) {
-                files.push_back(papszFiles[i]);
-            }
-            std::sort(files.begin(), files.end());
-        }
-        CSLDestroy(papszFiles);
-        return Rcpp::wrap(files);
+    if (!papszNames)
+        return "";
+
+    int nCount = CSLCount(papszNames);
+    std::sort(papszNames, papszNames + nCount,
+        [](const char* a, const char* b) {
+            return std::strcmp(a, b) < 0;
+        });
+
+    int idx = -1;
+    idx = CSLFindString(papszNames, ".");
+    if (idx >= 0)
+        papszNames = CSLRemoveStrings(papszNames, idx, 1, nullptr);
+
+    idx = -1;
+    idx = CSLFindString(papszNames, "..");
+    if (idx >= 0)
+        papszNames = CSLRemoveStrings(papszNames, idx, 1, nullptr);
+
+    if (papszNames) {
+        nCount = CSLCount(papszNames);
+        Rcpp::CharacterVector names(papszNames, papszNames + nCount);
+        CSLDestroy(papszNames);
+        return names;
     }
     else {
-        CSLDestroy(papszFiles);
-        return "";
+        return Rcpp::CharacterVector::create();
     }
 }
 
