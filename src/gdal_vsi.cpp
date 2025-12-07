@@ -168,7 +168,7 @@ void vsi_curl_clear_cache(bool partial = false,
 //' in the directory given by `path` (may be an empty vector `character(0)`).
 //' The listing is in alphabetical order, and does not include the special
 //' entries '.' and '..' even if they are present in the directory. An empty
-//' string (`""`) is returned if `path` does not exist.
+//' vector (`character(0)`) is returned if `path` does not exist.
 //'
 //' @note
 //' If `max_files` is set to a positive number, directory listing will stop
@@ -201,7 +201,7 @@ Rcpp::CharacterVector vsi_read_dir(const Rcpp::CharacterVector &path,
         papszNames = VSIReadDirEx(path_in.c_str(), max_files);
 
     if (!papszNames)
-        return "";
+        return Rcpp::CharacterVector::create();
 
     int nCount = CSLCount(papszNames);
     std::sort(papszNames, papszNames + nCount,
@@ -222,6 +222,27 @@ Rcpp::CharacterVector vsi_read_dir(const Rcpp::CharacterVector &path,
     }
 
     nCount = CSLCount(papszNames);
+    if (nCount > 0 && !all_files) {
+        int nStartIdx = -1;
+        int nNumToRemove = 0;
+        for (int i = 0; i < nCount; ++i) {
+            if (STARTS_WITH(papszNames[i], ".")) {
+                ++nNumToRemove;
+                if (nStartIdx < 0)
+                    nStartIdx = i;
+            }
+            else if (nNumToRemove > 0) {
+                break;
+            }
+        }
+
+        if (nNumToRemove) {
+            papszNames = CSLRemoveStrings(papszNames, nStartIdx, nNumToRemove,
+                                          nullptr);
+            nCount = CSLCount(papszNames);
+        }
+    }
+
     if (nCount > 0) {
         Rcpp::CharacterVector names(papszNames, papszNames + nCount);
         CSLDestroy(papszNames);

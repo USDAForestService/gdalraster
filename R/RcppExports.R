@@ -1847,7 +1847,7 @@ vsi_curl_clear_cache <- function(partial = FALSE, file_prefix = "", quiet = TRUE
 #' in the directory given by `path` (may be an empty vector `character(0)`).
 #' The listing is in alphabetical order, and does not include the special
 #' entries '.' and '..' even if they are present in the directory. An empty
-#' string (`""`) is returned if `path` does not exist.
+#' vector (`character(0)`) is returned if `path` does not exist.
 #'
 #' @note
 #' If `max_files` is set to a positive number, directory listing will stop
