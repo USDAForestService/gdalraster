@@ -23,7 +23,37 @@ test_that("vsi_stat works", {
 
 test_that("vsi_read_dir works", {
     data_dir <- system.file("extdata", package="gdalraster")
-    expect_type(vsi_read_dir(data_dir), "character")
+    dir_list <- vsi_read_dir(data_dir)
+    expect_type(dir_list, "character")
+    expect_true(length(dir_list) > 5)
+
+    skip_if(gdal_version_num() < gdal_compute_version(3, 6, 0))
+
+    mem_dir <- "/vsimem/_000testtemp"
+    expect_true(vsi_mkdir(mem_dir) == 0)
+    on.exit(vsi_rmdir(mem_dir, recursive = TRUE), add = TRUE)
+    expect_vector(vsi_read_dir(mem_dir), ptype = character(), size = 0)
+
+    expect_true(copyDatasetFiles(file.path(mem_dir, "byte.tif"),
+                                 file.path(data_dir, "byte.tif")))
+    expect_true(copyDatasetFiles(file.path(mem_dir, ".byte.tif"),
+                                 file.path(data_dir, "byte.tif")))
+
+    expect_vector(vsi_read_dir(mem_dir), ptype = character(), size = 1)
+    expect_vector(vsi_read_dir(mem_dir, all_files = TRUE), ptype = character(),
+                  size = 2)
+
+    mem_sub_dir <- file.path(mem_dir, "_000testsubdir")
+    expect_true(vsi_mkdir(mem_sub_dir) == 0)
+    expect_vector(vsi_read_dir(mem_sub_dir), ptype = character(), size = 0)
+    expect_true(copyDatasetFiles(file.path(mem_sub_dir, "int64.tif"),
+                                 file.path(data_dir, "int64.tif")))
+
+    expect_vector(vsi_read_dir(mem_dir), ptype = character(), size = 2)
+    expect_vector(vsi_read_dir(mem_dir, recursive = TRUE),
+                  ptype = character(), size = 3)
+    expect_vector(vsi_read_dir(mem_dir, recursive = TRUE, all_files = TRUE),
+                  ptype = character(), size = 4)
 })
 
 test_that("vsi_copy_file works", {
