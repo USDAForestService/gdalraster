@@ -1611,13 +1611,14 @@ Rcpp::DataFrame combine(const Rcpp::CharacterVector &src_files,
 
         Rcpp::NumericVector cmbid = tbl.updateFromMatrix(rowdata, 1);
 
-        if (out_raster) {
+        if (out_raster)
             dst_ds->write(1, 0, y, ncols, 1, cmbid);
-        }
 
-        if (!quiet) {
+        if (!quiet)
             pfnProgress(y / (nrows - 1.0), nullptr, pProgressData);
-        }
+
+        if (y % 10000 == 0)
+            Rcpp::checkUserInterrupt();
     }
 
     if (out_raster)
@@ -1661,12 +1662,14 @@ Rcpp::DataFrame value_count(const GDALRaster* const &src_ds, int band = 1,
             Rcpp::IntegerVector rowdata(
                 src_ds->read(band, 0, y, ncols, 1, ncols, 1));
 
-            for (auto const &i : rowdata) {
+            for (auto const &i : rowdata)
                 tbl[i] += 1.0;
-            }
 
             if (!quiet)
                 pfnProgress(y / (nrows-1.0), nullptr, pProgressData);
+
+            if (y % 10000 == 0)
+                Rcpp::checkUserInterrupt();
         }
         Rcpp::IntegerVector value = Rcpp::no_init(tbl.size());
         Rcpp::NumericVector count = Rcpp::no_init(tbl.size());
@@ -1690,12 +1693,14 @@ Rcpp::DataFrame value_count(const GDALRaster* const &src_ds, int band = 1,
             Rcpp::NumericVector rowdata(
                 src_ds->read(band, 0, y, ncols, 1, ncols, 1));
 
-            for (auto const &i : rowdata) {
+            for (auto const &i : rowdata)
                 tbl[i] += 1.0;
-            }
 
             if (!quiet)
                 pfnProgress(y / (nrows-1.0), nullptr, pProgressData);
+
+            if (y % 10000 == 0)
+                Rcpp::checkUserInterrupt();
         }
         Rcpp::NumericVector value = Rcpp::no_init(tbl.size());
         Rcpp::NumericVector count = Rcpp::no_init(tbl.size());
