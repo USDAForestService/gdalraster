@@ -31,13 +31,13 @@ transform_bounds(
 
   Character string specifying the spatial reference system for `pts`.
   May be in WKT format or any of the formats supported by
-  [`srs_to_wkt()`](https://usdaforestservice.github.io/gdalraster/reference/srs_convert.md).
+  [`srs_to_wkt()`](https://firelab.github.io/gdalraster/reference/srs_convert.md).
 
 - srs_to:
 
   Character string specifying the output spatial reference system. May
   be in WKT format or any of the formats supported by
-  [`srs_to_wkt()`](https://usdaforestservice.github.io/gdalraster/reference/srs_convert.md).
+  [`srs_to_wkt()`](https://firelab.github.io/gdalraster/reference/srs_convert.md).
 
 - densify_pts:
 

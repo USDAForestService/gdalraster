@@ -65,11 +65,11 @@ Returns the destination filename invisibly.
 
 ## See also
 
-[`GDALRaster-class`](https://usdaforestservice.github.io/gdalraster/reference/GDALRaster-class.md),
-[`create()`](https://usdaforestservice.github.io/gdalraster/reference/create.md),
-[`createCopy()`](https://usdaforestservice.github.io/gdalraster/reference/createCopy.md),
-[`bandCopyWholeRaster()`](https://usdaforestservice.github.io/gdalraster/reference/bandCopyWholeRaster.md),
-[`translate()`](https://usdaforestservice.github.io/gdalraster/reference/translate.md)
+[`GDALRaster-class`](https://firelab.github.io/gdalraster/reference/GDALRaster-class.md),
+[`create()`](https://firelab.github.io/gdalraster/reference/create.md),
+[`createCopy()`](https://firelab.github.io/gdalraster/reference/createCopy.md),
+[`bandCopyWholeRaster()`](https://firelab.github.io/gdalraster/reference/bandCopyWholeRaster.md),
+[`translate()`](https://firelab.github.io/gdalraster/reference/translate.md)
 
 ## Examples
 

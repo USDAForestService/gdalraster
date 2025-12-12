@@ -165,9 +165,9 @@ of `OGR_G_SwapXY()` in the GDAL API.
 
 ## See also
 
-[`g_is_valid()`](https://usdaforestservice.github.io/gdalraster/reference/g_query.md),
-[`g_is_3D()`](https://usdaforestservice.github.io/gdalraster/reference/g_query.md),
-[`g_is_measured()`](https://usdaforestservice.github.io/gdalraster/reference/g_query.md)
+[`g_is_valid()`](https://firelab.github.io/gdalraster/reference/g_query.md),
+[`g_is_3D()`](https://firelab.github.io/gdalraster/reference/g_query.md),
+[`g_is_measured()`](https://firelab.github.io/gdalraster/reference/g_query.md)
 
 ## Examples
 

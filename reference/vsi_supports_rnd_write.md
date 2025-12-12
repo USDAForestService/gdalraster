@@ -31,7 +31,7 @@ The location GDAL uses for temporary files can be forced via the
 
 ## See also
 
-[`vsi_supports_seq_write()`](https://usdaforestservice.github.io/gdalraster/reference/vsi_supports_seq_write.md)
+[`vsi_supports_seq_write()`](https://firelab.github.io/gdalraster/reference/vsi_supports_seq_write.md)
 
 ## Examples
 

@@ -90,7 +90,7 @@ geometry in `other_geom` (otherwise no recycling is done).
 
 Geometry validity is not checked. In case you are unsure of the validity
 of the input geometries, call
-[`g_is_valid()`](https://usdaforestservice.github.io/gdalraster/reference/g_query.md)
+[`g_is_valid()`](https://firelab.github.io/gdalraster/reference/g_query.md)
 before, otherwise the result might be wrong.
 
 ## See also

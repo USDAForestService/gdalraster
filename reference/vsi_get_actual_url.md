@@ -25,7 +25,7 @@ not a network-based virtual file system.
 
 ## See also
 
-[`vsi_get_signed_url()`](https://usdaforestservice.github.io/gdalraster/reference/vsi_get_signed_url.md)
+[`vsi_get_signed_url()`](https://firelab.github.io/gdalraster/reference/vsi_get_signed_url.md)
 
 ## Examples
 

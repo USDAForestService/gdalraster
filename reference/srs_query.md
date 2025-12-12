@@ -4,7 +4,7 @@ Bindings to a subset of the GDAL Spatial Reference System API
 (<https://gdal.org/en/stable/api/ogr_srs_api.html>). These functions
 return various information about a spatial reference system passed as
 text in any of the formats supported by
-[`srs_to_wkt()`](https://usdaforestservice.github.io/gdalraster/reference/srs_convert.md).
+[`srs_to_wkt()`](https://firelab.github.io/gdalraster/reference/srs_convert.md).
 
 ## Usage
 
@@ -67,7 +67,7 @@ srs_get_celestial_body_name(srs)
   Character string containing an SRS definition in various formats
   (e.g., WKT, PROJ.4 string, well known name such as NAD27, NAD83,
   WGS84, etc., see
-  [`srs_to_wkt()`](https://usdaforestservice.github.io/gdalraster/reference/srs_convert.md)).
+  [`srs_to_wkt()`](https://firelab.github.io/gdalraster/reference/srs_convert.md)).
 
 - all_matches:
 
@@ -226,7 +226,7 @@ PROJ \>= 8.1.
 
 ## See also
 
-[srs_convert](https://usdaforestservice.github.io/gdalraster/reference/srs_convert.md)
+[srs_convert](https://firelab.github.io/gdalraster/reference/srs_convert.md)
 
 ## Examples
 

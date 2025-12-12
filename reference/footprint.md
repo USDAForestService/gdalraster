@@ -59,7 +59,7 @@ order:
 
 ## See also
 
-[`polygonize()`](https://usdaforestservice.github.io/gdalraster/reference/polygonize.md)
+[`polygonize()`](https://firelab.github.io/gdalraster/reference/polygonize.md)
 
 ## Examples
 

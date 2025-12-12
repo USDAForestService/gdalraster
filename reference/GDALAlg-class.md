@@ -382,10 +382,10 @@ may be filed at:
 
 ## See also
 
-[`gdal_alg()`](https://usdaforestservice.github.io/gdalraster/reference/gdal_cli.md),
-[`gdal_commands()`](https://usdaforestservice.github.io/gdalraster/reference/gdal_cli.md),
-[`gdal_run()`](https://usdaforestservice.github.io/gdalraster/reference/gdal_cli.md),
-[`gdal_usage()`](https://usdaforestservice.github.io/gdalraster/reference/gdal_cli.md)
+[`gdal_alg()`](https://firelab.github.io/gdalraster/reference/gdal_cli.md),
+[`gdal_commands()`](https://firelab.github.io/gdalraster/reference/gdal_cli.md),
+[`gdal_run()`](https://firelab.github.io/gdalraster/reference/gdal_cli.md),
+[`gdal_usage()`](https://firelab.github.io/gdalraster/reference/gdal_cli.md)
 
 Using `gdal` CLI algorithms from R  
 <https://usdaforestservice.github.io/gdalraster/articles/use-gdal-cli-from-r.html>

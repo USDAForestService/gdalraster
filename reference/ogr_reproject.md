@@ -56,7 +56,7 @@ ogr_reproject(
 
   Character string specifying the output spatial reference system. May
   be in WKT format or any of the formats supported by
-  [`srs_to_wkt()`](https://usdaforestservice.github.io/gdalraster/reference/srs_convert.md).
+  [`srs_to_wkt()`](https://firelab.github.io/gdalraster/reference/srs_convert.md).
 
 - out_fmt:
 
@@ -132,19 +132,19 @@ ogr_reproject(
 
   Optional character vector of additional command-line arguments to be
   passed to
-  [`ogr2ogr()`](https://usdaforestservice.github.io/gdalraster/reference/ogr2ogr.md)
+  [`ogr2ogr()`](https://firelab.github.io/gdalraster/reference/ogr2ogr.md)
   (see Note).
 
 - return_obj:
 
   Logical value, `TRUE` to return an object of class
-  [`GDALVector`](https://usdaforestservice.github.io/gdalraster/reference/GDALVector-class.md)
+  [`GDALVector`](https://firelab.github.io/gdalraster/reference/GDALVector-class.md)
   open on the output layer (the default).
 
 ## Value
 
 Upon successful completion, an object of class
-[`GDALVector`](https://usdaforestservice.github.io/gdalraster/reference/GDALVector-class.md)
+[`GDALVector`](https://firelab.github.io/gdalraster/reference/GDALVector-class.md)
 is returned by default (if `return_obj = TRUE`), or logical `TRUE` is
 returned (invisibly) if `return_obj = FALSE`. An error is raised if
 reprojection fails.
@@ -153,14 +153,14 @@ reprojection fails.
 
 `ogr_reproject()` is a convenience wrapper to perform vector
 reprojection via
-[`ogr2ogr()`](https://usdaforestservice.github.io/gdalraster/reference/ogr2ogr.md),
+[`ogr2ogr()`](https://firelab.github.io/gdalraster/reference/ogr2ogr.md),
 which in turn is an API binding to GDAL's `ogr2ogr` command-line
 utility.
 
 ## Note
 
 For advanced use, additional command-line arguments may be passed to
-[`ogr2ogr()`](https://usdaforestservice.github.io/gdalraster/reference/ogr2ogr.md)
+[`ogr2ogr()`](https://firelab.github.io/gdalraster/reference/ogr2ogr.md)
 in `add_cl_arg` (e.g., advanced geometry and SRS related options). Users
 should be aware of possible implications and compatibility with the
 arguments already implied by the parameterization of `ogr_reproject()`.
@@ -172,13 +172,13 @@ can be written to an existing database.
 
 ## See also
 
-[`ogr2ogr()`](https://usdaforestservice.github.io/gdalraster/reference/ogr2ogr.md)
+[`ogr2ogr()`](https://firelab.github.io/gdalraster/reference/ogr2ogr.md)
 
 GDAL documentation for `ogr2ogr`:  
 <https://gdal.org/en/stable/programs/ogr2ogr.html>
 
-[`warp()`](https://usdaforestservice.github.io/gdalraster/reference/warp.md)
-for raster reprojection
+[`warp()`](https://firelab.github.io/gdalraster/reference/warp.md) for
+raster reprojection
 
 ## Examples
 
@@ -204,7 +204,7 @@ ynp_dsn <- file.path(tempdir(), "ynp_features.gpkg")
 (bnd <- new(GDALVector, ynp_dsn, "ynp_bnd"))
 #> C++ object of class GDALVector
 #>  Driver : GeoPackage (GPKG)
-#>  DSN    : /tmp/RtmpO4j4Ij/ynp_features.gpkg
+#>  DSN    : /tmp/Rtmpj4jsZs/ynp_features.gpkg
 #>  Layer  : ynp_bnd
 #>  CRS    : NAD83 (EPSG:4269)
 #>  Geom   : POLYGON
@@ -217,7 +217,7 @@ out_dsn <- tempfile(fileext = ".gpkg")
 (bnd_mtsp <- ogr_reproject(ynp_dsn, "ynp_bnd", out_dsn, mtbs$getSpatialRef()))
 #> C++ object of class GDALVector
 #>  Driver : GeoPackage (GPKG)
-#>  DSN    : /tmp/RtmpO4j4Ij/file1f583120cc95.gpkg
+#>  DSN    : /tmp/Rtmpj4jsZs/file2013140406e8.gpkg
 #>  Layer  : ynp_bnd
 #>  CRS    : NAD83 / Montana (EPSG:32100)
 #>  Geom   : POLYGON

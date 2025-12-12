@@ -21,21 +21,21 @@ bbox_transform(bbox, srs_from, srs_to, use_transform_bounds = TRUE)
 
   Character string specifying the spatial reference system for `pts`.
   May be in WKT format or any of the formats supported by
-  [`srs_to_wkt()`](https://usdaforestservice.github.io/gdalraster/reference/srs_convert.md).
+  [`srs_to_wkt()`](https://firelab.github.io/gdalraster/reference/srs_convert.md).
 
 - srs_to:
 
   Character string specifying the output spatial reference system. May
   be in WKT format or any of the formats supported by
-  [`srs_to_wkt()`](https://usdaforestservice.github.io/gdalraster/reference/srs_convert.md).
+  [`srs_to_wkt()`](https://firelab.github.io/gdalraster/reference/srs_convert.md).
 
 - use_transform_bounds:
 
   Logical value, `TRUE` to use
-  [`transform_bounds()`](https://usdaforestservice.github.io/gdalraster/reference/transform_bounds.md)
+  [`transform_bounds()`](https://firelab.github.io/gdalraster/reference/transform_bounds.md)
   (the default, requires GDAL \>= 3.4). If `FALSE`, transformation is
   done with
-  [`g_transform()`](https://usdaforestservice.github.io/gdalraster/reference/g_transform.md).
+  [`g_transform()`](https://firelab.github.io/gdalraster/reference/g_transform.md).
 
 ## Value
 
@@ -50,7 +50,7 @@ With `use_transform_bounds = TRUE` (the default) this function returns:
     transform_bounds(bbox, srs_from, srs_to)
 
 See Details for
-[`transform_bounds()`](https://usdaforestservice.github.io/gdalraster/reference/transform_bounds.md)
+[`transform_bounds()`](https://firelab.github.io/gdalraster/reference/transform_bounds.md)
 for cases where the bounds crossed the antimeridian.
 
 With `use_transform_bounds = FALSE`, this function returns:
@@ -60,14 +60,14 @@ With `use_transform_bounds = FALSE`, this function returns:
       bbox_from_wkt()
 
 See the Note for
-[`g_transform()`](https://usdaforestservice.github.io/gdalraster/reference/g_transform.md)
+[`g_transform()`](https://firelab.github.io/gdalraster/reference/g_transform.md)
 for cases where the bounds crossed the antimeridian.
 
 ## See also
 
-[`bbox_from_wkt()`](https://usdaforestservice.github.io/gdalraster/reference/bbox_from_wkt.md),
-[`g_transform()`](https://usdaforestservice.github.io/gdalraster/reference/g_transform.md),
-[`transform_bounds()`](https://usdaforestservice.github.io/gdalraster/reference/transform_bounds.md)
+[`bbox_from_wkt()`](https://firelab.github.io/gdalraster/reference/bbox_from_wkt.md),
+[`g_transform()`](https://firelab.github.io/gdalraster/reference/g_transform.md),
+[`transform_bounds()`](https://firelab.github.io/gdalraster/reference/transform_bounds.md)
 
 ## Examples
 

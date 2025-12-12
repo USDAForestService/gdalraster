@@ -27,7 +27,7 @@ inv_project(pts, srs, well_known_gcs = NULL)
 
   Character string specifying the projected spatial reference system for
   `pts`. May be in WKT format or any of the formats supported by
-  [`srs_to_wkt()`](https://usdaforestservice.github.io/gdalraster/reference/srs_convert.md).
+  [`srs_to_wkt()`](https://firelab.github.io/gdalraster/reference/srs_convert.md).
 
 - well_known_gcs:
 
@@ -69,7 +69,7 @@ specific warning indicating that case.
 
 ## See also
 
-[`transform_xy()`](https://usdaforestservice.github.io/gdalraster/reference/transform_xy.md)
+[`transform_xy()`](https://firelab.github.io/gdalraster/reference/transform_xy.md)
 
 ## Examples
 

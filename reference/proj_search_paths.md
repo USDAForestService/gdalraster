@@ -25,8 +25,8 @@ Spatial Reference System C API.
 
 ## See also
 
-[`proj_version()`](https://usdaforestservice.github.io/gdalraster/reference/proj_version.md),
-[`proj_networking()`](https://usdaforestservice.github.io/gdalraster/reference/proj_networking.md)
+[`proj_version()`](https://firelab.github.io/gdalraster/reference/proj_version.md),
+[`proj_networking()`](https://firelab.github.io/gdalraster/reference/proj_networking.md)
 
 ## Examples
 

@@ -151,9 +151,9 @@ above are assumed and not read from the return value of `expr`.
 
 ## See also
 
-[`GDALRaster-class`](https://usdaforestservice.github.io/gdalraster/reference/GDALRaster-class.md),
-[`combine()`](https://usdaforestservice.github.io/gdalraster/reference/combine.md),
-[`rasterToVRT()`](https://usdaforestservice.github.io/gdalraster/reference/rasterToVRT.md)
+[`GDALRaster-class`](https://firelab.github.io/gdalraster/reference/GDALRaster-class.md),
+[`combine()`](https://firelab.github.io/gdalraster/reference/combine.md),
+[`rasterToVRT()`](https://firelab.github.io/gdalraster/reference/rasterToVRT.md)
 
 ## Examples
 
@@ -186,7 +186,7 @@ hi_file <- calc(expr = expr,
                 setRasterNodataValue = TRUE)
 #> calculating from 1 input layer(s)...
 #> ================================================================================
-#> output written to: /tmp/RtmpO4j4Ij/rastcalc1f584e685410.tif
+#> output written to: /tmp/Rtmpj4jsZs/rastcalc20134efccf02.tif
 
 ds <- new(GDALRaster, hi_file)
 # min, max, mean, sd
@@ -212,7 +212,7 @@ ndvi_file <- calc(expr = expr,
                   setRasterNodataValue = TRUE)
 #> calculating from 2 input layer(s)...
 #> ================================================================================
-#> output written to: /tmp/RtmpO4j4Ij/rastcalc1f583f91ba00.tif
+#> output written to: /tmp/Rtmpj4jsZs/rastcalc20135f011686.tif
 
 ds <- new(GDALRaster, ndvi_file)
 ds$getStatistics(band=1, approx_ok=FALSE, force=TRUE)
@@ -284,7 +284,7 @@ calc(expr = expr,
      write_mode = "update")
 #> calculating from 2 input layer(s)...
 #> ================================================================================
-#> output written to: /tmp/RtmpO4j4Ij/storml_lndscp.tif
+#> output written to: /tmp/Rtmpj4jsZs/storml_lndscp.tif
 
 # verify the ouput
 rasterfiles <- c(tif_file, tif_file)

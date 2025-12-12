@@ -33,13 +33,13 @@ g_transform(
 
   Character string specifying the spatial reference system for `geom`.
   May be in WKT format or any of the formats supported by
-  [`srs_to_wkt()`](https://usdaforestservice.github.io/gdalraster/reference/srs_convert.md).
+  [`srs_to_wkt()`](https://firelab.github.io/gdalraster/reference/srs_convert.md).
 
 - srs_to:
 
   Character string specifying the output spatial reference system. May
   be in WKT format or any of the formats supported by
-  [`srs_to_wkt()`](https://usdaforestservice.github.io/gdalraster/reference/srs_convert.md).
+  [`srs_to_wkt()`](https://firelab.github.io/gdalraster/reference/srs_convert.md).
 
 - wrap_date_line:
 
@@ -106,8 +106,8 @@ will be transformed to
 
 ## See also
 
-[`bbox_transform()`](https://usdaforestservice.github.io/gdalraster/reference/bbox_transform.md),
-[`transform_bounds()`](https://usdaforestservice.github.io/gdalraster/reference/transform_bounds.md)
+[`bbox_transform()`](https://firelab.github.io/gdalraster/reference/bbox_transform.md),
+[`transform_bounds()`](https://firelab.github.io/gdalraster/reference/transform_bounds.md)
 
 ## Examples
 

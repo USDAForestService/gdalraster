@@ -13,10 +13,10 @@ This quick reference covers a small subset of configuration options that
 may be useful in common scenarios, with links to topic-specific
 documentation provided by the GDAL project. Options can be set from R
 with
-[`gdalraster::set_config_option()`](https://usdaforestservice.github.io/gdalraster/reference/set_config_option.md).
+[`gdalraster::set_config_option()`](https://firelab.github.io/gdalraster/reference/set_config_option.md).
 Note that specific usage is context dependent. Passing `value = ""`
 (empty string) will unset a value previously set by
-[`set_config_option()`](https://usdaforestservice.github.io/gdalraster/reference/set_config_option.md):
+[`set_config_option()`](https://firelab.github.io/gdalraster/reference/set_config_option.md):
 
 ``` r
 library(gdalraster)
@@ -66,8 +66,8 @@ Sets the number of worker threads to be used by GDAL operations that
 support multithreading. This affects several different parts of GDAL
 including multi-threaded compression for GeoTiff and SOZip, and
 multithreaded computation during
-[`warp()`](https://usdaforestservice.github.io/gdalraster/reference/warp.md)
-(see topics below).
+[`warp()`](https://firelab.github.io/gdalraster/reference/warp.md) (see
+topics below).
 
 **`GDAL_CACHEMAX`**
 
@@ -76,7 +76,7 @@ Setting `GDAL_CACHEMAX` after that point will not resize the cache. It
 is a per-session setting. If `GDAL_CACHEMAX` has not been set upon first
 use of the cache, then the default cache size (`5%` of physical RAM)
 will be in effect for the current session.
-[`gdalraster::set_cache_max()`](https://usdaforestservice.github.io/gdalraster/reference/set_cache_max.md)
+[`gdalraster::set_cache_max()`](https://firelab.github.io/gdalraster/reference/set_cache_max.md)
 can be used to change the value programmatically during operation of the
 program. See also [GDAL Block
 Cache](https://usdaforestservice.github.io/gdalraster/articles/gdal-block-cache.html).
@@ -110,7 +110,7 @@ set_config_option("GDAL_MAX_DATASET_POOL_SIZE", "450")
 This configures PostgreSQL/PostGIS to use `COPY` for inserting data
 which is significantly faster than `INSERT`. This can increase
 performance substantially when using
-[`gdalraster::polygonize()`](https://usdaforestservice.github.io/gdalraster/reference/polygonize.md)
+[`gdalraster::polygonize()`](https://firelab.github.io/gdalraster/reference/polygonize.md)
 to write polygons to PostGIS vector. See also [GDAL configuration
 options for
 PostgreSQL](https://gdal.org/en/stable/drivers/vector/pg.html#configuration-options).
@@ -128,7 +128,7 @@ by the GDAL/OGR I/O layer and can speed up I/O. Be aware that no file
 locking will occur if this option is activated, so concurrent edits may
 lead to database corruption. This setting may increase performance
 substantially when using
-[`gdalraster::polygonize()`](https://usdaforestservice.github.io/gdalraster/reference/polygonize.md)
+[`gdalraster::polygonize()`](https://firelab.github.io/gdalraster/reference/polygonize.md)
 to write polygons to a vector layer in these formats. Additional
 configuration and performance hints for SQLite databases are in the
 driver documentation at:
@@ -171,7 +171,7 @@ mode (or even `OFF`) can be much faster in this case:
 See the SQLite documentation for all available [journal
 modes](https://www.sqlite.org/pragma.html#pragma_journal_mode). This
 setting also applies when using
-[`gdalraster::polygonize()`](https://usdaforestservice.github.io/gdalraster/reference/polygonize.md)
+[`gdalraster::polygonize()`](https://firelab.github.io/gdalraster/reference/polygonize.md)
 to write polygons to a vector layer in GeoPackage (.gpkg) or Spatialite
 (.sqlite) formats (see `SQLITE_USE_OGR_VFS` above).
 
@@ -226,14 +226,14 @@ GDAL doc:
 
 The [performance and caching](#performance-and-caching) topic above
 generally applies to processing with
-[`gdalraster::warp()`](https://usdaforestservice.github.io/gdalraster/reference/warp.md)
+[`gdalraster::warp()`](https://firelab.github.io/gdalraster/reference/warp.md)
 (reproject/resample/crop/mosaic).
 
 **`GDAL_NUM_THREADS`**
 
 Multithreaded computation in
-[`warp()`](https://usdaforestservice.github.io/gdalraster/reference/warp.md)
-can be enabled with:
+[`warp()`](https://firelab.github.io/gdalraster/reference/warp.md) can
+be enabled with:
 
 ``` r
 # note this also affects several other parts of GDAL
@@ -241,13 +241,13 @@ set_config_option("GDAL_NUM_THREADS", "4")  # number of threads or ALL_CPUS
 ```
 
 Increasing the memory available to
-[`warp()`](https://usdaforestservice.github.io/gdalraster/reference/warp.md)
-may also increase performance (i.e., the options passed in `cl_arg`
-include a value like `c("-wm", "1000")`). The warp memory specified by
-`"-wm"` is shared among all threads. It is especially beneficial to
-increase this value when running
-[`warp()`](https://usdaforestservice.github.io/gdalraster/reference/warp.md)
-with multithreading enabled.
+[`warp()`](https://firelab.github.io/gdalraster/reference/warp.md) may
+also increase performance (i.e., the options passed in `cl_arg` include
+a value like `c("-wm", "1000")`). The warp memory specified by `"-wm"`
+is shared among all threads. It is especially beneficial to increase
+this value when running
+[`warp()`](https://firelab.github.io/gdalraster/reference/warp.md) with
+multithreading enabled.
 
 Multithreading could also be enabled by including a GDAL warp option in
 `cl_arg` with `c("-wo", "NUM_THREADS=<value>")` greater than 1, which is
@@ -257,9 +257,9 @@ shown above.
 This option can be combined with the [`-multi` command-line
 argument](https://gdal.org/en/stable/programs/gdalwarp.html#cmdoption-gdalwarp-multi)
 passed to
-[`warp()`](https://usdaforestservice.github.io/gdalraster/reference/warp.md)
-in `cl_arg`. With `-multi`, two threads will be used to process chunks
-of the raster and perform input/output operation simultaneously, whereas
+[`warp()`](https://firelab.github.io/gdalraster/reference/warp.md) in
+`cl_arg`. With `-multi`, two threads will be used to process chunks of
+the raster and perform input/output operation simultaneously, whereas
 the `GDAL_NUM_THREADS` configuration option affects computation
 separately.
 
@@ -367,7 +367,7 @@ set_config_option("CPL_VSIL_CURL_CHUNK_SIZE", "<bytes>")
 A global least-recently-used cache of 16 MB shared among all downloaded
 content is used, and content in it may be reused after a file handle has
 been closed and reopen, during the life-time of the process or until
-[`vsi_curl_clear_cache()`](https://usdaforestservice.github.io/gdalraster/reference/vsi_curl_clear_cache.md)
+[`vsi_curl_clear_cache()`](https://firelab.github.io/gdalraster/reference/vsi_curl_clear_cache.md)
 is called. The size of this global LRU cache can be modified with:
 
 ``` r
@@ -501,7 +501,7 @@ GDAL doc:
 (Seek-Optimized ZIP files, GDAL \>= 3.7)
 
 The function
-[`gdalraster::addFilesInZip()`](https://usdaforestservice.github.io/gdalraster/reference/addFilesInZip.md)
+[`gdalraster::addFilesInZip()`](https://firelab.github.io/gdalraster/reference/addFilesInZip.md)
 can be used to create new or append to existing ZIP files, potentially
 using the seek optimization extension. Function arguments are available
 for the options below, or the configuration options can be set to change

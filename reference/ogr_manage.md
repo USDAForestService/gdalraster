@@ -127,7 +127,7 @@ ogr_execute_sql(dsn, sql, spatial_filter = NULL, dialect = NULL)
   A feature class definition for `layer` as a list of zero or more
   attribute field definitions, and at least one geometry field
   definition (see
-  [ogr_define](https://usdaforestservice.github.io/gdalraster/reference/ogr_define.md)).
+  [ogr_define](https://firelab.github.io/gdalraster/reference/ogr_define.md)).
   Each field definition is a list with named elements containing values
   for the field `type` element and other properties. If `layer_defn` is
   given, it will be used and any additional parameters passed that
@@ -148,7 +148,7 @@ ogr_execute_sql(dsn, sql, spatial_filter = NULL, dialect = NULL)
   Character string containing a spatial reference system definition as
   OGC WKT or other well-known format (e.g., the input formats usable
   with
-  [`srs_to_wkt()`](https://usdaforestservice.github.io/gdalraster/reference/srs_convert.md)).
+  [`srs_to_wkt()`](https://firelab.github.io/gdalraster/reference/srs_convert.md)).
 
 - fld_name:
 
@@ -177,14 +177,14 @@ ogr_execute_sql(dsn, sql, spatial_filter = NULL, dialect = NULL)
 - return_obj:
 
   Logical value. If `TRUE`, an object of class
-  [`GDALVector`](https://usdaforestservice.github.io/gdalraster/reference/GDALVector-class.md)
+  [`GDALVector`](https://firelab.github.io/gdalraster/reference/GDALVector-class.md)
   open on the newly created layer will be returned. Defaults to `FALSE`.
   Must be used with either the `layer` or `layer_defn` arguments.
 
 - fld_dom_defn:
 
   A field domain definition, i.e., a list generated with
-  [`ogr_def_field_domain()`](https://usdaforestservice.github.io/gdalraster/reference/ogr_define.md).
+  [`ogr_def_field_domain()`](https://firelab.github.io/gdalraster/reference/ogr_define.md).
 
 - domain_name:
 
@@ -197,7 +197,7 @@ ogr_execute_sql(dsn, sql, spatial_filter = NULL, dialect = NULL)
 - fld_defn:
 
   A field definition as list (see
-  [`ogr_def_field()`](https://usdaforestservice.github.io/gdalraster/reference/ogr_define.md)).
+  [`ogr_def_field()`](https://firelab.github.io/gdalraster/reference/ogr_define.md)).
   Additional arguments in `ogr_field_create()` will be ignored if a
   `fld_defn` is given.
 
@@ -233,7 +233,7 @@ ogr_execute_sql(dsn, sql, spatial_filter = NULL, dialect = NULL)
 - geom_fld_defn:
 
   A geometry field definition as list (see
-  [`ogr_def_geom_field()`](https://usdaforestservice.github.io/gdalraster/reference/ogr_define.md)).
+  [`ogr_def_geom_field()`](https://firelab.github.io/gdalraster/reference/ogr_define.md)).
   Additional arguments in `ogr_geom_field_create()` will be ignored if a
   `geom_fld_defn` is given.
 
@@ -256,9 +256,9 @@ ogr_execute_sql(dsn, sql, spatial_filter = NULL, dialect = NULL)
 ## Details
 
 These functions are complementary to
-[`ogrinfo()`](https://usdaforestservice.github.io/gdalraster/reference/ogrinfo.md)
+[`ogrinfo()`](https://firelab.github.io/gdalraster/reference/ogrinfo.md)
 and
-[`ogr2ogr()`](https://usdaforestservice.github.io/gdalraster/reference/ogr2ogr.md)
+[`ogr2ogr()`](https://firelab.github.io/gdalraster/reference/ogr2ogr.md)
 for vector data management. Bindings to OGR wrap portions of the GDAL
 Vector API (ogr_core.h and ogr_api.h,
 <https://gdal.org/en/stable/api/vector_c_api.html>).
@@ -312,12 +312,12 @@ contains the following named elements:
 a layer, and optionally creating one or more fields on the layer. The
 attribute fields and geometry field(s) to create can be specified as a
 feature class definition (`layer_defn` as list, see
-[ogr_define](https://usdaforestservice.github.io/gdalraster/reference/ogr_define.md)),
+[ogr_define](https://firelab.github.io/gdalraster/reference/ogr_define.md)),
 or alternatively, by giving the `geom_type` and `srs`, optionally along
 with one `fld_name` and `fld_type` to be created in the layer. By
 default, returns logical `TRUE` indicating success (output written to
 `dst_filename`), or an object of class
-[`GDALVector`](https://usdaforestservice.github.io/gdalraster/reference/GDALVector-class.md)
+[`GDALVector`](https://firelab.github.io/gdalraster/reference/GDALVector-class.md)
 for the output layer will be returned if `return_obj = TRUE`. An error
 is raised if the operation fails.
 
@@ -332,7 +332,7 @@ warning if an error occurs or if the format does not support reading
 field domains. Returns a character vector of length 0 (`character(0)`)
 if the format supports field domains but none are present in the
 dataset. Requires GDAL \>= 3.5. See
-[ogr_define](https://usdaforestservice.github.io/gdalraster/reference/ogr_define.md)
+[ogr_define](https://firelab.github.io/gdalraster/reference/ogr_define.md)
 for information on field domains.
 
 `ogr_ds_add_field_domain()` adds a field domain to a vector dataset.
@@ -368,11 +368,11 @@ named elements: `RandomRead`, `SequentialWrite`, `RandomWrite`,
 source, with a specified geometry type and spatial reference definition.
 This function also accepts a feature class definition given as a list of
 field names and their definitions (see
-[ogr_define](https://usdaforestservice.github.io/gdalraster/reference/ogr_define.md)).
+[ogr_define](https://firelab.github.io/gdalraster/reference/ogr_define.md)).
 (Note: use `ogr_ds_create()` to create single-layer formats such as
 "ESRI Shapefile", "FlatGeobuf", "GeoJSON", etc.) By default, returns
 logical `TRUE` indicating success, or an object of class
-[`GDALVector`](https://usdaforestservice.github.io/gdalraster/reference/GDALVector-class.md)
+[`GDALVector`](https://firelab.github.io/gdalraster/reference/GDALVector-class.md)
 will be returned if `return_obj = TRUE`. An error is raised if the
 operation fails.
 
@@ -445,7 +445,7 @@ GeoPackage format
 (<https://gdal.org/en/stable/drivers/vector/gpkg.html#sql>).
 
 The function
-[`ogrinfo()`](https://usdaforestservice.github.io/gdalraster/reference/ogrinfo.md)
+[`ogrinfo()`](https://firelab.github.io/gdalraster/reference/ogrinfo.md)
 can also be used to edit data with SQL statements (GDAL \>= 3.7).
 
 The name of the geometry column of a layer is empty (`""`) with some
@@ -556,7 +556,7 @@ ogr_layer_field_names(dsn, layer = "layer2")
 # add a field using SQL instead
 ogr_execute_sql(dsn, sql = "ALTER TABLE layer2 ADD field4 float")
 #> info: open dataset successful on DSN:
-#>   '/tmp/RtmpO4j4Ij/test1.gpkg'
+#>   '/tmp/Rtmpj4jsZs/test1.gpkg'
 
 # rename a field
 if (ogr_layer_test_cap(dsn, "layer1")$AlterFieldDefn) {
@@ -572,7 +572,7 @@ ogr_layer_field_names(dsn, layer = "layer2")
 # GDAL >= 3.7
 if (gdal_version_num() >= gdal_compute_version(3, 7, 0))
   ogrinfo(dsn, "layer2")
-#> INFO: Open of `/tmp/RtmpO4j4Ij/test1.gpkg'
+#> INFO: Open of `/tmp/Rtmpj4jsZs/test1.gpkg'
 #>       using driver `GPKG' successful.
 #> 
 #> Layer name: layer2
@@ -623,13 +623,13 @@ ogr_layer_field_names(dsn = perims_shp, layer = "mtbs_perims")
 alt_tbl <- "ALTER TABLE mtbs_perims ADD burn_bnd_ha float"
 ogr_execute_sql(dsn = perims_shp, sql = alt_tbl)
 #> info: open dataset successful on DSN:
-#>   '/tmp/RtmpO4j4Ij/mtbs_perims.shp'
+#>   '/tmp/Rtmpj4jsZs/mtbs_perims.shp'
 #> GDAL WARNING 6: Normalized/laundered field name: 'burn_bnd_ha' to 'burn_bnd_h'
 
 upd <- "UPDATE mtbs_perims SET burn_bnd_ha = (burn_bnd_ac / 2.471)"
 ogr_execute_sql(dsn = perims_shp, sql = upd, dialect = "SQLite")
 #> info: open dataset successful on DSN:
-#>   '/tmp/RtmpO4j4Ij/mtbs_perims.shp'
+#>   '/tmp/Rtmpj4jsZs/mtbs_perims.shp'
 #> GDAL FAILURE 1: In ExecuteSQL(): sqlite3_prepare_v2(UPDATE mtbs_perims SET burn_bnd_ha = (burn_bnd_ac / 2.471)):
 #>   no such column: burn_bnd_ac
 ogr_layer_field_names(dsn = perims_shp, layer = "mtbs_perims")

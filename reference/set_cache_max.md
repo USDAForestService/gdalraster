@@ -29,13 +29,13 @@ No return value, called for side effects.
 the passed value with the effective capabilities of the OS.**
 
 It is recommended to consult the documentation for
-[`get_cache_max()`](https://usdaforestservice.github.io/gdalraster/reference/get_cache_max.md)
+[`get_cache_max()`](https://firelab.github.io/gdalraster/reference/get_cache_max.md)
 and
-[`get_cache_used()`](https://usdaforestservice.github.io/gdalraster/reference/get_cache_used.md)
+[`get_cache_used()`](https://firelab.github.io/gdalraster/reference/get_cache_used.md)
 before using this function.
 
-[`get_cache_max()`](https://usdaforestservice.github.io/gdalraster/reference/get_cache_max.md),
-[`get_cache_used()`](https://usdaforestservice.github.io/gdalraster/reference/get_cache_used.md)
+[`get_cache_max()`](https://firelab.github.io/gdalraster/reference/get_cache_max.md),
+[`get_cache_used()`](https://firelab.github.io/gdalraster/reference/get_cache_used.md)
 
 ## Examples
 

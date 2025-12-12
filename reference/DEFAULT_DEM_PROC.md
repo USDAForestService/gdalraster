@@ -1,7 +1,7 @@
 # List of default DEM processing options
 
 These values are used in
-[`dem_proc()`](https://usdaforestservice.github.io/gdalraster/reference/dem_proc.md)
+[`dem_proc()`](https://firelab.github.io/gdalraster/reference/dem_proc.md)
 as the default processing options:
 
         list(
@@ -27,7 +27,7 @@ An object of class `list` of length 7.
 
 ## See also
 
-[`dem_proc()`](https://usdaforestservice.github.io/gdalraster/reference/dem_proc.md)
+[`dem_proc()`](https://firelab.github.io/gdalraster/reference/dem_proc.md)
 
 <https://gdal.org/en/stable/programs/gdaldem.html> for a description of
 all available command-line options for each processing mode

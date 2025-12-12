@@ -27,7 +27,7 @@ Returns `NULL` if no metadata items are found for the given inputs.
 
 ## See also
 
-[`getCreationOptions()`](https://usdaforestservice.github.io/gdalraster/reference/getCreationOptions.md)
+[`getCreationOptions()`](https://firelab.github.io/gdalraster/reference/getCreationOptions.md)
 
 ## Examples
 

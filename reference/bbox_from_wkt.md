@@ -35,7 +35,7 @@ the geometry specified by `wkt` (possibly extended by values in
 
 ## See also
 
-[`bbox_to_wkt()`](https://usdaforestservice.github.io/gdalraster/reference/bbox_to_wkt.md)
+[`bbox_to_wkt()`](https://firelab.github.io/gdalraster/reference/bbox_to_wkt.md)
 
 ## Examples
 

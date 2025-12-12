@@ -1,6 +1,6 @@
 # Raster Display
 
-[`plot_raster()`](https://usdaforestservice.github.io/gdalraster/reference/plot_raster.md)
+[`plot_raster()`](https://firelab.github.io/gdalraster/reference/plot_raster.md)
 displays data using base R `graphics`. The function will read from an
 open dataset, or use pixel values that have already been read into a
 vector.

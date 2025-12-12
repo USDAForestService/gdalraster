@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">gdalraster</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">2.3.0.9005</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">2.3.0.9007</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -53,8 +53,9 @@
     </div>
 
     <div class="section level2">
-<h2 class="pkg-version" data-toc-text="2.3.0.9005" id="gdalraster-2309005-dev">gdalraster 2.3.0.9005 (dev)<a class="anchor" aria-label="anchor" href="#gdalraster-2309005-dev"></a></h2>
-<ul><li><p>add <code><a href="../reference/srs_query.html">srs_epsg_treats_as_lat_long()</a></code> and <code><a href="../reference/srs_query.html">srs_epsg_treats_as_northing_easting()</a></code> (<a href="https://github.com/USDAForestService/gdalraster/issues/839" class="external-link">#839</a>) (2025-12-03)</p></li>
+<h2 class="pkg-version" data-toc-text="2.3.0.9007" id="gdalraster-2309007-dev">gdalraster 2.3.0.9007 (dev)<a class="anchor" aria-label="anchor" href="#gdalraster-2309007-dev"></a></h2>
+<ul><li><p><code><a href="../reference/vsi_read_dir.html">vsi_read_dir()</a></code>: fix slow string processing of the file list for return (<a href="https://github.com/USDAForestService/gdalraster/issues/841" class="external-link">#841</a>, thanks to <a href="https://github.com/mdsumner" class="external-link">@mdsumner</a>) (2025-12-06)</p></li>
+<li><p>add <code><a href="../reference/srs_query.html">srs_epsg_treats_as_lat_long()</a></code> and <code><a href="../reference/srs_query.html">srs_epsg_treats_as_northing_easting()</a></code> (<a href="https://github.com/USDAForestService/gdalraster/issues/839" class="external-link">#839</a>) (2025-12-03)</p></li>
 <li><p>add <code><a href="../reference/srs_query.html">srs_get_axes()</a></code>: return a list of the axis names and orientations for a spatial coordinate reference system (<a href="https://github.com/USDAForestService/gdalraster/issues/837" class="external-link">#837</a>) (2025-12-02)</p></li>
 <li><p><code><a href="../reference/gdal_formats.html">gdal_formats()</a></code>: add Update (<code>u</code>) to <code>rw_flags</code> when GDAL &gt;= 3.11, and add several new columns to the output data frame containing various driver metadata (<a href="https://github.com/USDAForestService/gdalraster/issues/833" class="external-link">#833</a>) (2025-11-29)</p></li>
 <li><p>add <code><a href="../reference/srs_info_from_db.html">srs_info_from_db()</a></code>: obtain information about coordinate reference systems in the PROJ DB (<a href="https://github.com/USDAForestService/gdalraster/issues/832" class="external-link">#832</a>) (2025-11-28)</p></li>
@@ -152,9 +153,9 @@
 <h3 id="features-2-2-0">Features<a class="anchor" aria-label="anchor" href="#features-2-2-0"></a></h3>
 <ul><li>initial bindings to the “gdal” command line interface (CLI) added in GDAL 3.11
 <ul><li>
-<a href="https://usdaforestservice.github.io/gdalraster/reference/gdal_cli.html">functions</a> for using “gdal” CLI algorithms: <code><a href="../reference/gdal_cli.html">gdal_commands()</a></code>, <code><a href="../reference/gdal_cli.html">gdal_usage()</a></code>, <code><a href="../reference/gdal_cli.html">gdal_run()</a></code>, <code><a href="../reference/gdal_cli.html">gdal_alg()</a></code>
+<a href="https://usdaforestservice.github.io/gdalraster/reference/gdal_cli.html" class="external-link">functions</a> for using “gdal” CLI algorithms: <code><a href="../reference/gdal_cli.html">gdal_commands()</a></code>, <code><a href="../reference/gdal_cli.html">gdal_usage()</a></code>, <code><a href="../reference/gdal_cli.html">gdal_run()</a></code>, <code><a href="../reference/gdal_cli.html">gdal_alg()</a></code>
 </li>
-<li>bindings to the GDALAlgorithm API implemented in class <a href="https://usdaforestservice.github.io/gdalraster/reference/GDALAlg-class.html"><code>GDALAlg</code></a>
+<li>bindings to the GDALAlgorithm API implemented in class <a href="https://usdaforestservice.github.io/gdalraster/reference/GDALAlg-class.html" class="external-link"><code>GDALAlg</code></a>
 </li>
 <li>requires <strong>gdalraster</strong> built against GDAL &gt;= 3.11.3</li>
 </ul></li>
@@ -167,14 +168,14 @@
 <li>changes to address crash in <code><a href="../reference/ogr_reproject.html">ogr_reproject()</a></code> following GDAL <code>ERROR 1: Reprojection failed</code> on certain CRAN platforms with alternative BLAS/LAPACK implementations
 <ul><li>disable for now the Arrow code path for GDAL vector translate in the examples and tests for <code><a href="../reference/ogr_reproject.html">ogr_reproject()</a></code> (cf. <a href="https://gdal.org/en/stable/programs/ogr2ogr.html#known-issues" class="external-link uri">https://gdal.org/en/stable/programs/ogr2ogr.html#known-issues</a>)</li>
 <li>retain basic tests of <code><a href="../reference/ogr_reproject.html">ogr_reproject()</a></code> across all GDAL versions but skip more complex tests if GDAL &lt; 3.11.3 (“stable” version as of July 2025)</li>
-<li>move <a href="https://usdaforestservice.github.io/gdalraster/articles/vector-api-overview.html"><em>Vector API Overview</em></a> from vignette to a web article</li>
+<li>move <a href="https://usdaforestservice.github.io/gdalraster/articles/vector-api-overview.html" class="external-link"><em>Vector API Overview</em></a> from vignette to a web article</li>
 </ul></li>
 </ul></div>
 <div class="section level3">
 <h3 id="documentation-2-2-0">Documentation<a class="anchor" aria-label="anchor" href="#documentation-2-2-0"></a></h3>
 <ul><li>add conda-forge installation instructions in the README and web docs (<a href="https://github.com/USDAForestService/gdalraster/issues/762" class="external-link">#762</a>, thanks to <a href="https://github.com/matthewfeickert" class="external-link">@matthewfeickert</a>)</li>
 <li>update the sample data elevation raster (inst/extdata/storml_elev.tif) to avoid visual artifacts (<a href="https://github.com/USDAForestService/gdalraster/issues/768" class="external-link">#768</a>)</li>
-<li>add web article <a href="https://usdaforestservice.github.io/gdalraster/articles/use-gdal-cli-from-r.html"><em>Using “gdal” CLI algorithms from R</em></a>
+<li>add web article <a href="https://usdaforestservice.github.io/gdalraster/articles/use-gdal-cli-from-r.html" class="external-link"><em>Using “gdal” CLI algorithms from R</em></a>
 </li>
 </ul></div>
 <div class="section level3">
@@ -248,7 +249,7 @@
 </ul></div>
 <div class="section level3">
 <h3 id="documentation-2-1-0">Documentation<a class="anchor" aria-label="anchor" href="#documentation-2-1-0"></a></h3>
-<ul><li>add web article <a href="https://usdaforestservice.github.io/gdalraster/articles/vector-read-benchmarks.html">Vector Read Benchmarks</a>
+<ul><li>add web article <a href="https://usdaforestservice.github.io/gdalraster/articles/vector-read-benchmarks.html" class="external-link">Vector Read Benchmarks</a>
 </li>
 </ul></div>
 </div>
@@ -256,10 +257,10 @@
 <h2 class="pkg-version" data-toc-text="2.0.0" id="gdalraster-200">gdalraster 2.0.0<a class="anchor" aria-label="anchor" href="#gdalraster-200"></a></h2><p class="text-muted">CRAN release: 2025-05-11</p>
 <div class="section level3">
 <h3 id="summary-of-main-changes-2-0-0">Summary of main changes<a class="anchor" aria-label="anchor" href="#summary-of-main-changes-2-0-0"></a></h3>
-<ul><li>add bindings to the GDAL Vector API, implemented in the exposed C++ class <a href="https://usdaforestservice.github.io/gdalraster/reference/GDALVector-class.html"><code>GDALVector</code></a> along with several additions and enhancements to <a href="https://usdaforestservice.github.io/gdalraster/reference/index.html#ogr-vector-utilities"><code>ogr_*()</code> stand-alone functions</a>
+<ul><li>add bindings to the GDAL Vector API, implemented in the exposed C++ class <a href="https://usdaforestservice.github.io/gdalraster/reference/GDALVector-class.html" class="external-link"><code>GDALVector</code></a> along with several additions and enhancements to <a href="https://usdaforestservice.github.io/gdalraster/reference/index.html#ogr-vector-utilities" class="external-link"><code>ogr_*()</code> stand-alone functions</a>
 </li>
-<li>enhance and expand existing <a href="https://usdaforestservice.github.io/gdalraster/reference/index.html#geometry">bindings to the Geometry API</a>, now operating on raw vectors of WKB or WKT strings</li>
-<li>enhance and expand existing <a href="https://usdaforestservice.github.io/gdalraster/reference/index.html#spatial-reference-systems">bindings to the Spatial Reference Systems API</a>
+<li>enhance and expand existing <a href="https://usdaforestservice.github.io/gdalraster/reference/index.html#geometry" class="external-link">bindings to the Geometry API</a>, now operating on raw vectors of WKB or WKT strings</li>
+<li>enhance and expand existing <a href="https://usdaforestservice.github.io/gdalraster/reference/index.html#spatial-reference-systems" class="external-link">bindings to the Spatial Reference Systems API</a>
 </li>
 <li>add several new features and improvements to the Raster API, Virtual Systems Interface (VSI) API, and coordinate transformation functions</li>
 <li>add helper functions for working with GDAL raster data types (see <code><a href="../reference/data_type_helpers.html">?data_type_helpers</a></code>)</li>
@@ -281,7 +282,7 @@
 </ul></div>
 <div class="section level3">
 <h3 id="vector-api-bindings-2-0-0">Vector API bindings<a class="anchor" aria-label="anchor" href="#vector-api-bindings-2-0-0"></a></h3>
-<ul><li>add class <a href="https://usdaforestservice.github.io/gdalraster/reference/GDALVector-class.html"><code>GDALVector</code></a>: encapsulates an <code>OGRLayer</code> object and the <code>GDALDataset</code> that contains it, exposing 48 class methods for obtaining vector layer information, attribute and spatial filtering, and reading/writing feature data</li>
+<ul><li>add class <a href="https://usdaforestservice.github.io/gdalraster/reference/GDALVector-class.html" class="external-link"><code>GDALVector</code></a>: encapsulates an <code>OGRLayer</code> object and the <code>GDALDataset</code> that contains it, exposing 48 class methods for obtaining vector layer information, attribute and spatial filtering, and reading/writing feature data</li>
 <li>wrap GDAL’s Arrow C Stream interface for reading vector data by exposing an ArrowArrayStream on a layer as a <code>nanoarrow_array_stream</code> object (GDAL &gt;= 3.6) (<a href="https://github.com/USDAForestService/gdalraster/issues/591" class="external-link">#591</a>)</li>
 <li>add <code><a href="../reference/ogr_reproject.html">ogr_reproject()</a></code>: reproject a vector layer (purpose-built wrapper of <code>GDALVectorTranslate()</code>)</li>
 <li>add <code><a href="../reference/ogr_proc.html">ogr_proc()</a></code>: interface to GDAL OGR facilities for vector geoprocessing</li>
@@ -420,12 +421,12 @@
 <div class="section level3">
 <h3 id="documentation-2-0-0">Documentation<a class="anchor" aria-label="anchor" href="#documentation-2-0-0"></a></h3>
 <ul><li>update the package Description</li>
-<li>add package vignette <a href="https://usdaforestservice.github.io/gdalraster/articles/vector-api-overview.html">Vector API Overview</a>
+<li>add package vignette <a href="https://usdaforestservice.github.io/gdalraster/articles/vector-api-overview.html" class="external-link">Vector API Overview</a>
 </li>
 <li>update descriptions of the C++ exposed classes and emphasize lack of named argument support in those cases (i.e., argument order matters, mainly of concern with class constructors)</li>
-<li>update <a href="https://usdaforestservice.github.io/gdalraster/articles/raster-api-tutorial.html">Raster API Tutorial</a> to use the argument <code>return_obj</code> with <code><a href="../reference/create.html">create()</a></code> and <code><a href="../reference/createCopy.html">createCopy()</a></code>
+<li>update <a href="https://usdaforestservice.github.io/gdalraster/articles/raster-api-tutorial.html" class="external-link">Raster API Tutorial</a> to use the argument <code>return_obj</code> with <code><a href="../reference/create.html">create()</a></code> and <code><a href="../reference/createCopy.html">createCopy()</a></code>
 </li>
-<li>additions to the section on Azure (/vsiaz/) in <a href="https://usdaforestservice.github.io/gdalraster/articles/gdal-config-quick-ref.html">GDAL Config Quick Reference</a>
+<li>additions to the section on Azure (/vsiaz/) in <a href="https://usdaforestservice.github.io/gdalraster/articles/gdal-config-quick-ref.html" class="external-link">GDAL Config Quick Reference</a>
 </li>
 <li>add the <code>-srcband</code> and <code>-dstband</code> command-line options in the documentation for <code><a href="../reference/warp.html">warp()</a></code>
 </li>
@@ -438,7 +439,7 @@
 <li>add alt text to images in the package vignettes and other web-only articles</li>
 <li>code that cleans up temp files in the examples is now wrapped in <code>\dontshow{}</code>
 </li>
-<li>add <a href="https://usdaforestservice.github.io/gdalraster/CONTRIBUTING.html#development-practices">Development practices</a> in CONTRIBUTING.md</li>
+<li>add <a href="https://usdaforestservice.github.io/gdalraster/CONTRIBUTING.html#development-practices" class="external-link">Development practices</a> in CONTRIBUTING.md</li>
 <li>add the <a href="https://www.bestpractices.dev/projects/9382" class="external-link">OpenSSF best practices</a> badge in README.md</li>
 <li>add the <a href="https://scorecard.dev/viewer/?uri=github.com/USDAForestService/gdalraster" class="external-link">OpenSSF Scorecard</a> badge in README.md</li>
 </ul></div>
@@ -480,7 +481,7 @@
 <li><p>add <code><a href="../reference/apply_geotransform.html">apply_geotransform()</a></code>: convert raster column/row to geospatial x/y coordinates, wrapper of <code>GDALApplyGeoTransform()</code> in the GDAL API, operating on a matrix of input col/row coordinates (the internal wrapper <code>.apply_geotransform()</code> is unchanged)</p></li>
 <li><p>add <code>GDALRaster$apply_geotransform()</code>: class method alternative to calling the stand-alone function <code><a href="../reference/apply_geotransform.html">apply_geotransform()</a></code> on an object of class <code>GDALRaster</code></p></li>
 <li><p><code><a href="../reference/vsi_curl_clear_cache.html">vsi_curl_clear_cache()</a></code>: add parameter <code>quiet</code> to wrap the API call in a quiet error handler, <code>TRUE</code> by default</p></li>
-<li><p>Documentation: document the <code>w+</code> access flag for class <code>VSIFile</code>; add <code>CPL_VSIL_USE_TEMP_FILE_FOR_RANDOM_WRITE</code> configuration option in vignette <a href="https://usdaforestservice.github.io/gdalraster/articles/gdal-config-quick-ref.html">GDAL Config Quick Reference</a>; replace <code><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0()</a></code> with <code><a href="https://rdrr.io/r/base/file.path.html" class="external-link">file.path()</a></code> in the examples throughout</p></li>
+<li><p>Documentation: document the <code>w+</code> access flag for class <code>VSIFile</code>; add <code>CPL_VSIL_USE_TEMP_FILE_FOR_RANDOM_WRITE</code> configuration option in vignette <a href="https://usdaforestservice.github.io/gdalraster/articles/gdal-config-quick-ref.html" class="external-link">GDAL Config Quick Reference</a>; replace <code><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0()</a></code> with <code><a href="https://rdrr.io/r/base/file.path.html" class="external-link">file.path()</a></code> in the examples throughout</p></li>
 <li><p>code linting</p></li>
 </ul></div>
     <div class="section level2">
@@ -562,7 +563,7 @@
 <div class="section level3">
 <h3 id="documentation-1-11-0">Documentation<a class="anchor" aria-label="anchor" href="#documentation-1-11-0"></a></h3>
 <ul><li>add <a href="https://github.com/USDAForestService/gdalraster/discussions" class="external-link">Discussions</a> on the GitHub repository</li>
-<li>add a section for HTTP/HTTPS (/vsicurl/) in the vignette <a href="https://usdaforestservice.github.io/gdalraster/articles/gdal-config-quick-ref.html">GDAL Config Quick Reference</a>
+<li>add a section for HTTP/HTTPS (/vsicurl/) in the vignette <a href="https://usdaforestservice.github.io/gdalraster/articles/gdal-config-quick-ref.html" class="external-link">GDAL Config Quick Reference</a>
 </li>
 <li>DESCRIPTION file: add Michael D. Sumner in <code>Authors@R</code>
 </li>
@@ -684,9 +685,9 @@
 </ul></div>
 <div class="section level3">
 <h3 id="documentation-1-9-0">Documentation<a class="anchor" aria-label="anchor" href="#documentation-1-9-0"></a></h3>
-<ul><li>organize the website <a href="https://usdaforestservice.github.io/gdalraster/reference/index.html">reference index</a>
+<ul><li>organize the website <a href="https://usdaforestservice.github.io/gdalraster/reference/index.html" class="external-link">reference index</a>
 </li>
-<li>add Microsoft Azure information in <a href="https://usdaforestservice.github.io/gdalraster/articles/gdal-config-quick-ref.html">GDAL Config Quick Reference</a>
+<li>add Microsoft Azure information in <a href="https://usdaforestservice.github.io/gdalraster/articles/gdal-config-quick-ref.html" class="external-link">GDAL Config Quick Reference</a>
 </li>
 <li>update DESCRIPTION</li>
 </ul></div>
@@ -719,11 +720,11 @@
 <div class="section level3">
 <h3 id="documentation-1-8-0">Documentation<a class="anchor" aria-label="anchor" href="#documentation-1-8-0"></a></h3>
 <ul><li>example code for <code><a href="../reference/calc.html">calc()</a></code> using Landsat bands should have applied scale/offset as given in the .json metadata - this has been corrected</li>
-<li>add <code>AWS_REGION</code>, and a section for SOZip to <a href="https://usdaforestservice.github.io/gdalraster/articles/gdal-config-quick-ref.html">GDAL Config Quick Ref</a>
+<li>add <code>AWS_REGION</code>, and a section for SOZip to <a href="https://usdaforestservice.github.io/gdalraster/articles/gdal-config-quick-ref.html" class="external-link">GDAL Config Quick Ref</a>
 </li>
 <li>update documentation and examples throughout for default <code>read_only=TRUE</code> in the constructor for <code>GDALRaster</code>
 </li>
-<li>add <code><a href="../reference/translate.html">translate()</a></code> and <code><a href="../reference/warp.html">warp()</a></code> in <a href="https://usdaforestservice.github.io/gdalraster/articles/raster-api-tutorial.html#see-also">Raster API Tutorial</a>
+<li>add <code><a href="../reference/translate.html">translate()</a></code> and <code><a href="../reference/warp.html">warp()</a></code> in <a href="https://usdaforestservice.github.io/gdalraster/articles/raster-api-tutorial.html#see-also" class="external-link">Raster API Tutorial</a>
 </li>
 </ul></div>
 <div class="section level3">
@@ -749,14 +750,14 @@
 </ul></div>
 <div class="section level3">
 <h3 id="documentation-1-7-0">Documentation<a class="anchor" aria-label="anchor" href="#documentation-1-7-0"></a></h3>
-<ul><li>add <a href="https://usdaforestservice.github.io/gdalraster/articles/gdal-config-quick-ref.html">GDAL Config Quick Reference</a> to vignettes</li>
+<ul><li>add <a href="https://usdaforestservice.github.io/gdalraster/articles/gdal-config-quick-ref.html" class="external-link">GDAL Config Quick Reference</a> to vignettes</li>
 <li>
 <code><a href="../reference/warp.html">warp()</a></code> has additional documentation covering several processing options</li>
 <li>add the <code>COMPRESS_OVERVIEW</code> configuration option to the documentation for <code>GDALRaster::buildOverviews()</code>
 </li>
-<li>add <code><a href="https://rdrr.io/r/utils/str.html" class="external-link">str()</a></code> of the <code>GDALRaster</code> object in the <a href="https://usdaforestservice.github.io/gdalraster/articles/raster-api-tutorial.html">Raster API Tutorial</a>
+<li>add <code><a href="https://rdrr.io/r/utils/str.html" class="external-link">str()</a></code> of the <code>GDALRaster</code> object in the <a href="https://usdaforestservice.github.io/gdalraster/articles/raster-api-tutorial.html" class="external-link">Raster API Tutorial</a>
 </li>
-<li>add display of the EVT raster itself along with its attribute table in <a href="https://usdaforestservice.github.io/gdalraster/articles/raster-attribute-tables.html">Raster Attribute Tables</a>
+<li>add display of the EVT raster itself along with its attribute table in <a href="https://usdaforestservice.github.io/gdalraster/articles/raster-attribute-tables.html" class="external-link">Raster Attribute Tables</a>
 </li>
 </ul></div>
 <div class="section level3">
@@ -810,11 +811,11 @@
 </ul></div>
 <div class="section level3">
 <h3 id="documentation-1-6-0">Documentation<a class="anchor" aria-label="anchor" href="#documentation-1-6-0"></a></h3>
-<ul><li>add vignette <a href="https://usdaforestservice.github.io/gdalraster/articles/raster-attribute-tables.html">Raster Attribute Tables</a>
+<ul><li>add vignette <a href="https://usdaforestservice.github.io/gdalraster/articles/raster-attribute-tables.html" class="external-link">Raster Attribute Tables</a>
 </li>
-<li>add <a href="https://usdaforestservice.github.io/gdalraster/reference/RunningStats-class.html#note">notes</a> for <code>RunningStats-class</code>
+<li>add <a href="https://usdaforestservice.github.io/gdalraster/reference/RunningStats-class.html#note" class="external-link">notes</a> for <code>RunningStats-class</code>
 </li>
-<li>update vignette <a href="https://usdaforestservice.github.io/gdalraster/articles/raster-api-tutorial.html">Raster API Tutorial</a> with <code><a href="../reference/gdal_formats.html">gdal_formats()</a></code> and <code><a href="../reference/getCreationOptions.html">getCreationOptions()</a></code>
+<li>update vignette <a href="https://usdaforestservice.github.io/gdalraster/articles/raster-api-tutorial.html" class="external-link">Raster API Tutorial</a> with <code><a href="../reference/gdal_formats.html">gdal_formats()</a></code> and <code><a href="../reference/getCreationOptions.html">getCreationOptions()</a></code>
 </li>
 <li>update installation instructions in <a href="https://github.com/USDAForestService/gdalraster/blob/main/README.md" class="external-link">README</a>
 </li>
@@ -886,13 +887,13 @@
 <li><p><code>GDALRaster$info()</code>: drop <code>-nomd</code> argument from the internal call</p></li>
 <li><p><code><a href="../reference/bbox_from_wkt.html">bbox_from_wkt()</a></code>: return <code>NA</code> if creation of the geometry object fails (<a href="https://github.com/USDAForestService/gdalraster/issues/27" class="external-link">#27</a>)</p></li>
 <li><p>fix <code>GDALRaster$getMetadata()</code>: requesting band-level metadata for a domain other than the default metadata domain was returning dataset-level metadata instead</p></li>
-<li><p>add vignette containing an <a href="https://usdaforestservice.github.io/gdalraster/articles/raster-api-tutorial.html">R port of the GDAL Raster API tutorial</a></p></li>
+<li><p>add vignette containing an <a href="https://usdaforestservice.github.io/gdalraster/articles/raster-api-tutorial.html" class="external-link">R port of the GDAL Raster API tutorial</a></p></li>
 <li><p>add description of the <code>GDAL_RASTERIO_RESAMPLING</code> configuration option in the documentation for <code>GDALRaster$read()</code></p></li>
-<li><p>add web article on the <a href="https://usdaforestservice.github.io/gdalraster/articles/gdal-block-cache.html">GDAL block cache</a> and configuration of <code>GDAL_CACHEMAX</code></p></li>
+<li><p>add web article on the <a href="https://usdaforestservice.github.io/gdalraster/articles/gdal-block-cache.html" class="external-link">GDAL block cache</a> and configuration of <code>GDAL_CACHEMAX</code></p></li>
 </ul></div>
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="1.2.0" id="gdalraster-120">gdalraster 1.2.0<a class="anchor" aria-label="anchor" href="#gdalraster-120"></a></h2><p class="text-muted">CRAN release: 2023-05-28</p>
-<ul><li><p>starting at v. 1.2.0, <a href="https://usdaforestservice.github.io/gdalraster/">gdalraster</a> will require R &gt;= 4.2.0</p></li>
+<ul><li><p>starting at v. 1.2.0, <a href="https://usdaforestservice.github.io/gdalraster/" class="external-link">gdalraster</a> will require R &gt;= 4.2.0</p></li>
 <li><p>fix: check for GEOS availability in bbox geometry functions</p></li>
 <li><p>fix: wrong array dimensions in <code>read()</code> (<a href="https://github.com/USDAForestService/gdalraster/issues/5" class="external-link">#5</a>). Starting at v. 1.2.0, <code>read()</code> will return vector instead of matrix which better matches the concept of a native GDAL-like interface (thanks to Michael Sumner).</p></li>
 <li><p>add: <code><a href="../reference/has_geos.html">has_geos()</a></code> exported to R</p></li>

@@ -35,7 +35,7 @@ No return value, called for side effect.
 ## Details
 
 Options may also be set with
-[`set_config_option()`](https://usdaforestservice.github.io/gdalraster/reference/set_config_option.md),
+[`set_config_option()`](https://firelab.github.io/gdalraster/reference/set_config_option.md),
 but `vsi_set_path_option()` allows specifying them with a granularity at
 the level of a file path. This makes it easier if using the same virtual
 file system but with different credentials (e.g., different credentials
@@ -55,5 +55,5 @@ to read them.
 
 ## See also
 
-[`set_config_option()`](https://usdaforestservice.github.io/gdalraster/reference/set_config_option.md),
-[`vsi_clear_path_options()`](https://usdaforestservice.github.io/gdalraster/reference/vsi_clear_path_options.md)
+[`set_config_option()`](https://firelab.github.io/gdalraster/reference/set_config_option.md),
+[`vsi_clear_path_options()`](https://firelab.github.io/gdalraster/reference/vsi_clear_path_options.md)

@@ -22,14 +22,14 @@ get_config_option(key)
 ## Value
 
 Character. The value of a (key, value) option previously set with
-[`set_config_option()`](https://usdaforestservice.github.io/gdalraster/reference/set_config_option.md).
+[`set_config_option()`](https://firelab.github.io/gdalraster/reference/set_config_option.md).
 An empty string (`""`) is returned if `key` is not found.
 
 ## See also
 
-[`set_config_option()`](https://usdaforestservice.github.io/gdalraster/reference/set_config_option.md)
+[`set_config_option()`](https://firelab.github.io/gdalraster/reference/set_config_option.md)
 
-[`vignette("gdal-config-quick-ref")`](https://usdaforestservice.github.io/gdalraster/articles/gdal-config-quick-ref.md)
+[`vignette("gdal-config-quick-ref")`](https://firelab.github.io/gdalraster/articles/gdal-config-quick-ref.md)
 
 ## Examples
 

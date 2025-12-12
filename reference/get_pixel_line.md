@@ -42,8 +42,8 @@ Examples).
 
 ## See also
 
-[`GDALRaster$getGeoTransform()`](https://usdaforestservice.github.io/gdalraster/reference/GDALRaster-class.md),
-[`inv_geotransform()`](https://usdaforestservice.github.io/gdalraster/reference/inv_geotransform.md)
+[`GDALRaster$getGeoTransform()`](https://firelab.github.io/gdalraster/reference/GDALRaster-class.md),
+[`inv_geotransform()`](https://firelab.github.io/gdalraster/reference/inv_geotransform.md)
 
 ## Examples
 

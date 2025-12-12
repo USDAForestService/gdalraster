@@ -3,7 +3,7 @@
 `vsi_get_fs_options()` returns the list of options associated with a
 virtual file system handler. Those options may be set as configuration
 options with
-[`set_config_option()`](https://usdaforestservice.github.io/gdalraster/reference/set_config_option.md).
+[`set_config_option()`](https://firelab.github.io/gdalraster/reference/set_config_option.md).
 Wrapper for `VSIGetFileSystemOptions()` in the GDAL API.
 
 ## Usage
@@ -32,8 +32,8 @@ with `xml2::as_list()`.
 
 ## See also
 
-[`set_config_option()`](https://usdaforestservice.github.io/gdalraster/reference/set_config_option.md),
-[`vsi_get_fs_prefixes()`](https://usdaforestservice.github.io/gdalraster/reference/vsi_get_fs_prefixes.md)
+[`set_config_option()`](https://firelab.github.io/gdalraster/reference/set_config_option.md),
+[`vsi_get_fs_prefixes()`](https://firelab.github.io/gdalraster/reference/vsi_get_fs_prefixes.md)
 
 <https://gdal.org/en/stable/user/virtual_file_systems.html>
 

@@ -30,8 +30,8 @@ vsi_rename(oldpath, newpath)
 
 ## See also
 
-[`renameDataset()`](https://usdaforestservice.github.io/gdalraster/reference/renameDataset.md),
-[`vsi_copy_file()`](https://usdaforestservice.github.io/gdalraster/reference/vsi_copy_file.md)
+[`renameDataset()`](https://firelab.github.io/gdalraster/reference/renameDataset.md),
+[`vsi_copy_file()`](https://firelab.github.io/gdalraster/reference/vsi_copy_file.md)
 
 ## Examples
 

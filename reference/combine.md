@@ -86,7 +86,7 @@ band numbers in `bands`. For example:
     bands <- c(4, 5, 1)
     var.names <- c("multi_b4", "multi_b5", "other")
 
-[`rasterToVRT()`](https://usdaforestservice.github.io/gdalraster/reference/rasterToVRT.md)
+[`rasterToVRT()`](https://firelab.github.io/gdalraster/reference/rasterToVRT.md)
 provides options for virtual clipping, resampling and pixel alignment,
 which may be helpful here if the input rasters are not already aligned
 on a common extent and cell size.
@@ -100,12 +100,12 @@ starting at 1. Typical output data types are the unsigned types: Byte
 
 ## See also
 
-[`CmbTable-class`](https://usdaforestservice.github.io/gdalraster/reference/CmbTable-class.md),
-[`GDALRaster-class`](https://usdaforestservice.github.io/gdalraster/reference/GDALRaster-class.md),
-[`calc()`](https://usdaforestservice.github.io/gdalraster/reference/calc.md),
-[`rasterToVRT()`](https://usdaforestservice.github.io/gdalraster/reference/rasterToVRT.md)
+[`CmbTable-class`](https://firelab.github.io/gdalraster/reference/CmbTable-class.md),
+[`GDALRaster-class`](https://firelab.github.io/gdalraster/reference/GDALRaster-class.md),
+[`calc()`](https://firelab.github.io/gdalraster/reference/calc.md),
+[`rasterToVRT()`](https://firelab.github.io/gdalraster/reference/rasterToVRT.md)
 
-[`buildRAT()`](https://usdaforestservice.github.io/gdalraster/reference/buildRAT.md)
+[`buildRAT()`](https://firelab.github.io/gdalraster/reference/buildRAT.md)
 to compute a table of the unique pixel values and their counts for a
 single raster layer
 
@@ -168,7 +168,7 @@ head(tbl)
 ds <- new(GDALRaster, cmb_file)
 ds$info()
 #> Driver: GTiff/GeoTIFF
-#> Files: /tmp/RtmpO4j4Ij/fbfm_cov_cmbid.tif
+#> Files: /tmp/Rtmpj4jsZs/fbfm_cov_cmbid.tif
 #> Size is 143, 107
 #> Coordinate System is:
 #> PROJCRS["NAD83 / UTM zone 12N",

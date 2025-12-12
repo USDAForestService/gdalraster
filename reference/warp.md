@@ -173,7 +173,7 @@ list.
   Set one or more format specific creation options for the output
   dataset. For example, the GeoTIFF driver supports creation options to
   control compression, and whether the file should be tiled.
-  [`getCreationOptions()`](https://usdaforestservice.github.io/gdalraster/reference/getCreationOptions.md)
+  [`getCreationOptions()`](https://firelab.github.io/gdalraster/reference/getCreationOptions.md)
   can be used to look up available creation options, but the GDAL
   [Raster drivers](https://gdal.org/en/stable/drivers/raster/index.html)
   documentation is the definitive reference for format specific options.
@@ -227,9 +227,9 @@ dataset.
 
 ## See also
 
-[`GDALRaster-class`](https://usdaforestservice.github.io/gdalraster/reference/GDALRaster-class.md),
-[`srs_to_wkt()`](https://usdaforestservice.github.io/gdalraster/reference/srs_convert.md),
-[`translate()`](https://usdaforestservice.github.io/gdalraster/reference/translate.md)
+[`GDALRaster-class`](https://firelab.github.io/gdalraster/reference/GDALRaster-class.md),
+[`srs_to_wkt()`](https://firelab.github.io/gdalraster/reference/srs_convert.md),
+[`translate()`](https://firelab.github.io/gdalraster/reference/translate.md)
 
 ## Examples
 

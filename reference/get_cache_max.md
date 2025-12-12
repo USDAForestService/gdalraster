@@ -40,7 +40,7 @@ the first time the cache size is requested (i.e., it must be set as a
 configuration option prior to any raster I/O during the current
 session). To change this value programmatically during operation of the
 program it is better to use
-[`set_cache_max()`](https://usdaforestservice.github.io/gdalraster/reference/set_cache_max.md)
+[`set_cache_max()`](https://firelab.github.io/gdalraster/reference/set_cache_max.md)
 (in which case, always given in bytes).
 
 ## See also
@@ -48,11 +48,11 @@ program it is better to use
 [GDAL_CACHEMAX configuration
 option](https://gdal.org/en/stable/user/configoptions.html#performance-and-caching)
 
-[`get_config_option()`](https://usdaforestservice.github.io/gdalraster/reference/get_config_option.md),
-[`set_config_option()`](https://usdaforestservice.github.io/gdalraster/reference/set_config_option.md),
-[`get_usable_physical_ram()`](https://usdaforestservice.github.io/gdalraster/reference/get_usable_physical_ram.md),
-[`get_cache_used()`](https://usdaforestservice.github.io/gdalraster/reference/get_cache_used.md),
-[`set_cache_max()`](https://usdaforestservice.github.io/gdalraster/reference/set_cache_max.md)
+[`get_config_option()`](https://firelab.github.io/gdalraster/reference/get_config_option.md),
+[`set_config_option()`](https://firelab.github.io/gdalraster/reference/set_config_option.md),
+[`get_usable_physical_ram()`](https://firelab.github.io/gdalraster/reference/get_usable_physical_ram.md),
+[`get_cache_used()`](https://firelab.github.io/gdalraster/reference/get_cache_used.md),
+[`set_cache_max()`](https://firelab.github.io/gdalraster/reference/set_cache_max.md)
 
 ## Examples
 

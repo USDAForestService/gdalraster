@@ -306,10 +306,10 @@ dataset.
 `$info()`  
 Prints information about the vector layer to the console (no return
 value, called for that side effect only). For non-SQL DSN/layer, calls
-[`ogrinfo()`](https://usdaforestservice.github.io/gdalraster/reference/ogrinfo.md)
+[`ogrinfo()`](https://firelab.github.io/gdalraster/reference/ogrinfo.md)
 passing the command options `cl_arg = c("-so", "-nomd")`, and for layers
 open with a SQL statement, calls
-[`ogrinfo()`](https://usdaforestservice.github.io/gdalraster/reference/ogrinfo.md)
+[`ogrinfo()`](https://firelab.github.io/gdalraster/reference/ogrinfo.md)
 passing the command options
 `cl_arg = c("-so", "-nomd", "-sql", <statement>)`.
 
@@ -375,13 +375,13 @@ Returns a list containing the OGR feature class definition for this
 layer (a.k.a. layer definition). The list contains zero or more
 attribute field definitions, along with one or more geometry field
 definitions. See
-[ogr_define](https://usdaforestservice.github.io/gdalraster/reference/ogr_define.md)
+[ogr_define](https://firelab.github.io/gdalraster/reference/ogr_define.md)
 for details of the field and feature class definitions.
 
 `$getFieldDomain(domain_name)`  
 Returns a list containing the definition of the OGR field domain with
 the passed `domain_name`, or `NULL` if `domain_name` is not found. See
-[ogr_define](https://usdaforestservice.github.io/gdalraster/reference/ogr_define.md)
+[ogr_define](https://firelab.github.io/gdalraster/reference/ogr_define.md)
 for specification of the list containing a field domain definition. Some
 formats support the use of field domains which describe the valid values
 that can be stored in a given attribute field, e.g., coded values that
@@ -753,7 +753,7 @@ default, only "efficient" transactions will be attempted. See the
 writable field `$transactionsForce` above, which must be set to `TRUE`
 to allow for emulated transactions. These are supported by some drivers
 but with potentially significant overhead. The function
-[`ogr_ds_test_cap()`](https://usdaforestservice.github.io/gdalraster/reference/ogr_manage.md)
+[`ogr_ds_test_cap()`](https://firelab.github.io/gdalraster/reference/ogr_manage.md)
 can be used to determine whether a vector data source supports efficient
 or emulated transactions.
 
@@ -812,10 +812,10 @@ pending writes. The `GDALVector` object is still available after calling
 
 ## See also
 
-[ogr_define](https://usdaforestservice.github.io/gdalraster/reference/ogr_define.md),
-[ogr_manage](https://usdaforestservice.github.io/gdalraster/reference/ogr_manage.md),
-[`ogr2ogr()`](https://usdaforestservice.github.io/gdalraster/reference/ogr2ogr.md),
-[`ogrinfo()`](https://usdaforestservice.github.io/gdalraster/reference/ogrinfo.md)
+[ogr_define](https://firelab.github.io/gdalraster/reference/ogr_define.md),
+[ogr_manage](https://firelab.github.io/gdalraster/reference/ogr_manage.md),
+[`ogr2ogr()`](https://firelab.github.io/gdalraster/reference/ogr2ogr.md),
+[`ogrinfo()`](https://firelab.github.io/gdalraster/reference/ogrinfo.md)
 
 GDAL vector format descriptions:  
 <https://gdal.org/en/stable/drivers/vector/index.html>
@@ -840,7 +840,7 @@ file.copy(f, dsn)
 (lyr <- new(GDALVector, dsn, "mtbs_perims"))
 #> C++ object of class GDALVector
 #>  Driver : GeoPackage (GPKG)
-#>  DSN    : /tmp/RtmpO4j4Ij/ynp_fires_1984_2022.gpkg
+#>  DSN    : /tmp/Rtmpj4jsZs/ynp_fires_1984_2022.gpkg
 #>  Layer  : mtbs_perims
 #>  CRS    : NAD83 / Montana (EPSG:32100)
 #>  Geom   : MULTIPOLYGON
@@ -879,7 +879,7 @@ lyr$getDriverShortName()
 lyr$getDriverLongName()
 #> [1] "GeoPackage"
 lyr$getFileList()
-#> [1] "/tmp/RtmpO4j4Ij/ynp_fires_1984_2022.gpkg"
+#> [1] "/tmp/Rtmpj4jsZs/ynp_fires_1984_2022.gpkg"
 
 ## layer info
 lyr$getName()
@@ -1383,7 +1383,7 @@ str(feat_set)
 #>  $ doubles    : num  1.23 2.35
 #>  $ strings    : chr  "A test string" "A test string 2"
 #>  $ dates      : Date, format: "2025-01-01" "2024-01-02"
-#>  $ dt_modified: POSIXct, format: "2025-12-03 18:07:01" "2025-12-03 18:07:01"
+#>  $ dt_modified: POSIXct, format: "2025-12-12 20:10:16" "2025-12-12 20:10:16"
 #>  $ blobs      :List of 2
 #>   ..$ : raw  41 20 62 69 ...
 #>   ..$ : raw  41 20 62 69 ...
@@ -1409,7 +1409,7 @@ str(feat)
 #>  $ doubles    : num 2.35
 #>  $ strings    : chr "A test string 2"
 #>  $ dates      : Date, format: "2024-01-02"
-#>  $ dt_modified: POSIXct, format: "2025-12-03 18:07:01"
+#>  $ dt_modified: POSIXct, format: "2025-12-12 20:10:16"
 #>  $ blobs      :List of 1
 #>   ..$ : raw  41 20 62 69 ...
 #>  $ geom       :List of 1
@@ -1449,7 +1449,7 @@ str(feat_set)
 #>  $ doubles    : num  1.23 2.35
 #>  $ strings    : chr  "A test string" "A test string 2 - edited"
 #>  $ dates      : Date, format: "2025-01-01" "2024-01-02"
-#>  $ dt_modified: POSIXct, format: "2025-12-03 18:07:01" "2025-12-03 18:07:02"
+#>  $ dt_modified: POSIXct, format: "2025-12-12 20:10:16" "2025-12-12 20:10:17"
 #>  $ blobs      :List of 2
 #>   ..$ : raw  41 20 62 69 ...
 #>   ..$ : raw  41 20 62 69 ...

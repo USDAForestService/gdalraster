@@ -153,9 +153,9 @@ be combined, e.g. `"[1]['field_name']"`.
 
 ## See also
 
-[`GDALRaster-class`](https://usdaforestservice.github.io/gdalraster/reference/GDALRaster-class.md),
-[`mdim_info()`](https://usdaforestservice.github.io/gdalraster/reference/mdim_info.md),
-[`mdim_translate()`](https://usdaforestservice.github.io/gdalraster/reference/mdim_translate.md)
+[`GDALRaster-class`](https://firelab.github.io/gdalraster/reference/GDALRaster-class.md),
+[`mdim_info()`](https://firelab.github.io/gdalraster/reference/mdim_info.md),
+[`mdim_translate()`](https://firelab.github.io/gdalraster/reference/mdim_translate.md)
 
 ## Examples
 

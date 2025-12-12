@@ -6,7 +6,7 @@ and /vsioss/ For example "/vsis3/bucket/filename" will be expanded as
 "https://bucket.s3.amazon.com/filename?X-Amz-Algorithm=AWS4-HMAC-SHA256..."
 Configuration options that apply for file opening (typically to provide
 credentials), and are returned by
-[`vsi_get_fs_options()`](https://usdaforestservice.github.io/gdalraster/reference/vsi_get_fs_options.md),
+[`vsi_get_fs_options()`](https://firelab.github.io/gdalraster/reference/vsi_get_fs_options.md),
 are also valid in that context. Wrapper for `VSIGetSignedURL()` in the
 GDAL API.
 
@@ -58,7 +58,7 @@ supported:
 
 ## See also
 
-[`vsi_get_actual_url()`](https://usdaforestservice.github.io/gdalraster/reference/vsi_get_actual_url.md)
+[`vsi_get_actual_url()`](https://firelab.github.io/gdalraster/reference/vsi_get_actual_url.md)
 
 ## Examples
 

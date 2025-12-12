@@ -13,7 +13,7 @@ dimension `N` may be given to extract values of the individual pixels
 within an `N x N` kernel centered on the pixel containing the point
 location. If `xy_srs` is given, the function will attempt to transform
 the input points to the projection of the raster with a call to
-[`transform_xy()`](https://usdaforestservice.github.io/gdalraster/reference/transform_xy.md).
+[`transform_xy()`](https://firelab.github.io/gdalraster/reference/transform_xy.md).
 
 ## Usage
 
@@ -72,7 +72,7 @@ pixel_extract(
 
   Optional character string specifying the spatial reference system for
   `xy`. May be in WKT format or any of the formats supported by
-  [`srs_to_wkt()`](https://usdaforestservice.github.io/gdalraster/reference/srs_convert.md).
+  [`srs_to_wkt()`](https://firelab.github.io/gdalraster/reference/srs_convert.md).
 
 - max_ram:
 
@@ -114,11 +114,11 @@ GDAL \>= 3.6).
 
 For alternative workflows that involve copying to local storage, the
 data management functions (e.g.,
-[`copyDatasetFiles()`](https://usdaforestservice.github.io/gdalraster/reference/copyDatasetFiles.md))
+[`copyDatasetFiles()`](https://firelab.github.io/gdalraster/reference/copyDatasetFiles.md))
 and the VSI filesystem functions (e.g.,
-[`vsi_is_local()`](https://usdaforestservice.github.io/gdalraster/reference/vsi_is_local.md),
-[`vsi_stat()`](https://usdaforestservice.github.io/gdalraster/reference/vsi_stat.md),
-[`vsi_copy_file()`](https://usdaforestservice.github.io/gdalraster/reference/vsi_copy_file.md))
+[`vsi_is_local()`](https://firelab.github.io/gdalraster/reference/vsi_is_local.md),
+[`vsi_stat()`](https://firelab.github.io/gdalraster/reference/vsi_stat.md),
+[`vsi_copy_file()`](https://firelab.github.io/gdalraster/reference/vsi_copy_file.md))
 may be of interest.
 
 ## Examples

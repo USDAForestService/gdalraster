@@ -98,7 +98,7 @@ given `value` (returns a data type name as character string).
 
 ## See also
 
-[`GDALRaster$getDataTypeName()`](https://usdaforestservice.github.io/gdalraster/reference/GDALRaster-class.md)
+[`GDALRaster$getDataTypeName()`](https://firelab.github.io/gdalraster/reference/GDALRaster-class.md)
 
 ## Examples
 

@@ -38,9 +38,9 @@ driver), otherwise `FALSE`.
 
 ## See also
 
-[`getCreationOptions()`](https://usdaforestservice.github.io/gdalraster/reference/getCreationOptions.md),
-[`create()`](https://usdaforestservice.github.io/gdalraster/reference/create.md),
-[`createCopy()`](https://usdaforestservice.github.io/gdalraster/reference/createCopy.md)
+[`getCreationOptions()`](https://firelab.github.io/gdalraster/reference/getCreationOptions.md),
+[`create()`](https://firelab.github.io/gdalraster/reference/create.md),
+[`createCopy()`](https://firelab.github.io/gdalraster/reference/createCopy.md)
 
 ## Examples
 

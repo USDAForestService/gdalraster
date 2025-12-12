@@ -22,7 +22,7 @@
 
     <a class="navbar-brand me-2" href="index.html">gdalraster</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">2.3.0.9005</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">2.3.0.9007</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -79,40 +79,40 @@
 <h2 id="overview">Overview<a class="anchor" aria-label="anchor" href="#overview"></a>
 </h2>
 <p><strong>gdalraster</strong> is an R interface to the Raster and Vector <a href="https://gdal.org/en/stable/api/index.html" class="external-link">APIs</a> of the Geospatial Data Abstraction Library (<a href="https://gdal.org/en/stable/" class="external-link">GDAL</a>).</p>
-<p>API bindings are implemented in the exposed C++ classes <a href="https://usdaforestservice.github.io/gdalraster/reference/GDALRaster-class.html"><code>GDALRaster</code></a> and <a href="https://usdaforestservice.github.io/gdalraster/reference/GDALVector-class.html"><code>GDALVector</code></a>, along with several <a href="https://usdaforestservice.github.io/gdalraster/reference/index.html#stand-alone-functions">stand-alone functions</a>. Initial bindings are provided to the “gdal” command line interface (CLI) algorithms added in GDAL 3.11. Bindings to the GDAL Virtual Systems Interface (<a href="https://gdal.org/en/stable/api/cpl.html#cpl-vsi-h" class="external-link">VSI</a>) are also included to support file system operations on URLs, cloud storage services, Zip/GZip/7z/RAR, and in-memory files, as well as regular file systems. Calling signatures resemble the native C, C++ and Python APIs provided by the GDAL project.</p>
+<p>API bindings are implemented in the exposed C++ classes <a href="https://firelab.github.io/gdalraster/reference/GDALRaster-class.html"><code>GDALRaster</code></a> and <a href="https://firelab.github.io/gdalraster/reference/GDALVector-class.html"><code>GDALVector</code></a>, along with several <a href="https://firelab.github.io/gdalraster/reference/index.html#stand-alone-functions">stand-alone functions</a>. Initial bindings are provided to the “gdal” command line interface (CLI) algorithms added in GDAL 3.11. Bindings to the GDAL Virtual Systems Interface (<a href="https://gdal.org/en/stable/api/cpl.html#cpl-vsi-h" class="external-link">VSI</a>) are also included to support file system operations on URLs, cloud storage services, Zip/GZip/7z/RAR, and in-memory files, as well as regular file systems. Calling signatures resemble the native C, C++ and Python APIs provided by the GDAL project.</p>
 <p>The package supports:</p>
 <ul>
 <li>
-<a href="https://usdaforestservice.github.io/gdalraster/articles/use-gdal-cli-from-r.html">using GDAL’s new CLI algorithms</a> from R when built against GDAL &gt;= 3.11.3</li>
+<a href="https://firelab.github.io/gdalraster/articles/use-gdal-cli-from-r.html">using GDAL’s new CLI algorithms</a> from R when built against GDAL &gt;= 3.11.3</li>
 <li>manual creation of uninitialized raster and vector datasets</li>
 <li>vector layer creation and schema management</li>
 <li>read/set parameters and metadata for raster bands and vector layers</li>
 <li>low-level I/O</li>
 <li>build/read/set color tables and raster attribute tables</li>
 <li>virtual raster (VRT) for virtual cropping, resampling, kernel filtering, mosaicing</li>
-<li><a href="https://usdaforestservice.github.io/gdalraster/reference/index.html#raster-utilities">raster utilities</a></li>
-<li>GDAL multidimensional raster (<a href="https://usdaforestservice.github.io/gdalraster/reference/mdim_as_classic.html"><code>mdim_as_classic()</code></a>, <a href="https://usdaforestservice.github.io/gdalraster/reference/mdim_info.html"><code>mdim_info()</code></a>, <a href="https://usdaforestservice.github.io/gdalraster/reference/mdim_translate.html"><code>mdim_translate()</code></a>)</li>
+<li><a href="https://firelab.github.io/gdalraster/reference/index.html#raster-utilities">raster utilities</a></li>
+<li>GDAL multidimensional raster (<a href="https://firelab.github.io/gdalraster/reference/mdim_as_classic.html"><code>mdim_as_classic()</code></a>, <a href="https://firelab.github.io/gdalraster/reference/mdim_info.html"><code>mdim_info()</code></a>, <a href="https://firelab.github.io/gdalraster/reference/mdim_translate.html"><code>mdim_translate()</code></a>)</li>
 <li>coordinate transformation</li>
 <li>spatial reference systems</li>
 <li>
-<a href="https://usdaforestservice.github.io/gdalraster/reference/index.html#geometry">geometry API</a> operating on raw vectors of WKB or WKT strings</li>
-<li><a href="https://usdaforestservice.github.io/gdalraster/reference/index.html#vector-utilities">vector utilities</a></li>
-<li>GDAL facilities for <a href="https://usdaforestservice.github.io/gdalraster/reference/ogr_proc.html">vector geoprocessing</a>
+<a href="https://firelab.github.io/gdalraster/reference/index.html#geometry">geometry API</a> operating on raw vectors of WKB or WKT strings</li>
+<li><a href="https://firelab.github.io/gdalraster/reference/index.html#vector-utilities">vector utilities</a></li>
+<li>GDAL facilities for <a href="https://firelab.github.io/gdalraster/reference/ogr_proc.html">vector geoprocessing</a>
 </li>
 <li>
-<a href="https://usdaforestservice.github.io/gdalraster/reference/index.html#general-data-management">dataset management</a> (inspect/copy files/rename/delete)</li>
+<a href="https://firelab.github.io/gdalraster/reference/index.html#general-data-management">dataset management</a> (inspect/copy files/rename/delete)</li>
 <li>create/append to Seek-Optimized ZIP (<a href="https://github.com/sozip/sozip-spec" class="external-link">SOZip</a>)</li>
-<li>abstraction of <a href="https://usdaforestservice.github.io/gdalraster/reference/index.html#virtual-file-systems">file system operations</a> on URLs, cloud storage, in-memory files, etc.</li>
-<li>Standard C binary file I/O through VSI (class <a href="https://usdaforestservice.github.io/gdalraster/reference/VSIFile-class.html"><code>VSIFile</code></a>)</li>
+<li>abstraction of <a href="https://firelab.github.io/gdalraster/reference/index.html#virtual-file-systems">file system operations</a> on URLs, cloud storage, in-memory files, etc.</li>
+<li>Standard C binary file I/O through VSI (class <a href="https://firelab.github.io/gdalraster/reference/VSIFile-class.html"><code>VSIFile</code></a>)</li>
 </ul>
 <p>Additional functionality includes:</p>
 <ul>
-<li>class <a href="https://usdaforestservice.github.io/gdalraster/reference/RunningStats-class.html"><code>RunningStats</code></a> calculates mean and variance in one pass, and tracks the min, max, sum, and count (i.e., summary statistics on a data stream). The input data values are not stored in memory, so this class can be used to compute statistics for very large data streams.</li>
-<li>class <a href="https://usdaforestservice.github.io/gdalraster/reference/CmbTable-class.html"><code>CmbTable</code></a> identifies and counts unique combinations of integer values using a hash table.</li>
+<li>class <a href="https://firelab.github.io/gdalraster/reference/RunningStats-class.html"><code>RunningStats</code></a> calculates mean and variance in one pass, and tracks the min, max, sum, and count (i.e., summary statistics on a data stream). The input data values are not stored in memory, so this class can be used to compute statistics for very large data streams.</li>
+<li>class <a href="https://firelab.github.io/gdalraster/reference/CmbTable-class.html"><code>CmbTable</code></a> identifies and counts unique combinations of integer values using a hash table.</li>
 <li>
-<a href="https://usdaforestservice.github.io/gdalraster/reference/combine.html"><code>combine()</code></a> overlays multiple rasters so that a unique ID is assigned to each unique combination of input values. Pixel counts for each unique combination are obtained, and combination IDs are optionally written to an output raster.</li>
+<a href="https://firelab.github.io/gdalraster/reference/combine.html"><code>combine()</code></a> overlays multiple rasters so that a unique ID is assigned to each unique combination of input values. Pixel counts for each unique combination are obtained, and combination IDs are optionally written to an output raster.</li>
 <li>
-<a href="https://usdaforestservice.github.io/gdalraster/reference/calc.html"><code>calc()</code></a> evaluates an R expression for each pixel in a raster layer or stack of layers. Individual pixel coordinates are available as variables in the R expression, as either x/y in the raster projected coordinate system or inverse projected longitude/latitude.</li>
+<a href="https://firelab.github.io/gdalraster/reference/calc.html"><code>calc()</code></a> evaluates an R expression for each pixel in a raster layer or stack of layers. Individual pixel coordinates are available as variables in the R expression, as either x/y in the raster projected coordinate system or inverse projected longitude/latitude.</li>
 <li>plot raster data, vector layers and WKB/WKT geometries</li>
 </ul>
 <p><strong>gdalraster</strong> may be useful in applications that need scalable, low-level I/O, or prefer a direct GDAL API. Comprehensive <a href="#documentation">documentation</a> is provided in the package and online.</p>
@@ -162,7 +162,7 @@
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html" class="external-link">install.packages</a></span><span class="op">(</span><span class="st">"gdalraster"</span><span class="op">)</span></span></code></pre></div>
 <p>Or install the development version from GitHub using package <a href="https://remotes.r-lib.org/" class="external-link">remotes</a>:</p>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu">remotes</span><span class="fu">::</span><span class="fu">install_github</span><span class="op">(</span><span class="st">"USDAForestService/gdalraster"</span><span class="op">)</span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="fu">remotes</span><span class="fu">::</span><span class="fu">install_github</span><span class="op">(</span><span class="st">"firelab/gdalraster"</span><span class="op">)</span></span></code></pre></div>
 </div>
 <div class="section level4">
 <h4 id="windows">Windows<a class="anchor" aria-label="anchor" href="#windows"></a>
@@ -171,7 +171,7 @@
 <p>With RTools installed:</p>
 <div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Install the development version from GitHub</span></span>
-<span><span class="fu">remotes</span><span class="fu">::</span><span class="fu">install_github</span><span class="op">(</span><span class="st">"USDAForestService/gdalraster"</span><span class="op">)</span></span></code></pre></div>
+<span><span class="fu">remotes</span><span class="fu">::</span><span class="fu">install_github</span><span class="op">(</span><span class="st">"firelab/gdalraster"</span><span class="op">)</span></span></code></pre></div>
 </div>
 <div class="section level4">
 <h4 id="macos">macOS<a class="anchor" aria-label="anchor" href="#macos"></a>
@@ -181,7 +181,7 @@
 <p>then</p>
 <div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Install the development version from GitHub</span></span>
-<span><span class="fu">remotes</span><span class="fu">::</span><span class="fu">install_github</span><span class="op">(</span><span class="st">"USDAForestService/gdalraster"</span><span class="op">)</span></span></code></pre></div>
+<span><span class="fu">remotes</span><span class="fu">::</span><span class="fu">install_github</span><span class="op">(</span><span class="st">"firelab/gdalraster"</span><span class="op">)</span></span></code></pre></div>
 <p>It is not recommended to mix source installations and installation of macOS binaries from CRAN. Consider installing the development version from R-universe instead.</p>
 </div>
 </div>
@@ -196,29 +196,29 @@
 <h2 id="documentation">Documentation<a class="anchor" aria-label="anchor" href="#documentation"></a>
 </h2>
 <ul>
-<li><a href="https://usdaforestservice.github.io/gdalraster/reference/">Reference Manual</a></li>
-<li><a href="https://usdaforestservice.github.io/gdalraster/articles/raster-api-tutorial.html">Raster API Tutorial</a></li>
-<li><a href="https://usdaforestservice.github.io/gdalraster/articles/vector-api-overview.html">Vector API Overview</a></li>
-<li><a href="https://usdaforestservice.github.io/gdalraster/articles/use-gdal-cli-from-r.html">Using <code>gdal</code> CLI algorithms from R</a></li>
-<li><a href="https://usdaforestservice.github.io/gdalraster/articles/raster-attribute-tables.html">Raster Attribute Tables</a></li>
-<li><a href="https://usdaforestservice.github.io/gdalraster/articles/raster-display.html">Raster Display</a></li>
-<li><a href="https://usdaforestservice.github.io/gdalraster/articles/gdal-block-cache.html">GDAL Block Caching</a></li>
-<li><a href="https://usdaforestservice.github.io/gdalraster/articles/gdal-config-quick-ref.html">GDAL Config Quick Ref</a></li>
-<li><a href="https://usdaforestservice.github.io/gdalraster/articles/vector-read-benchmarks.html">Vector Read Benchmarks</a></li>
+<li><a href="https://firelab.github.io/gdalraster/reference/">Reference Manual</a></li>
+<li><a href="https://firelab.github.io/gdalraster/articles/raster-api-tutorial.html">Raster API Tutorial</a></li>
+<li><a href="https://firelab.github.io/gdalraster/articles/vector-api-overview.html">Vector API Overview</a></li>
+<li><a href="https://firelab.github.io/gdalraster/articles/use-gdal-cli-from-r.html">Using <code>gdal</code> CLI algorithms from R</a></li>
+<li><a href="https://firelab.github.io/gdalraster/articles/raster-attribute-tables.html">Raster Attribute Tables</a></li>
+<li><a href="https://firelab.github.io/gdalraster/articles/raster-display.html">Raster Display</a></li>
+<li><a href="https://firelab.github.io/gdalraster/articles/gdal-block-cache.html">GDAL Block Caching</a></li>
+<li><a href="https://firelab.github.io/gdalraster/articles/gdal-config-quick-ref.html">GDAL Config Quick Ref</a></li>
+<li><a href="https://firelab.github.io/gdalraster/articles/vector-read-benchmarks.html">Vector Read Benchmarks</a></li>
 </ul>
 </div>
 </div>
   </main><aside class="col-md-3"><div class="dev-status">
 <h2 data-toc-skip>Dev status</h2>
 <ul class="list-unstyled">
-<li><a href="https://github.com/USDAForestService/gdalraster/actions/workflows/R-CMD-check.yaml" class="external-link"><img src="https://github.com/USDAForestService/gdalraster/actions/workflows/R-CMD-check.yaml/badge.svg" alt="R-CMD-check"></a></li>
+<li><a href="https://github.com/firelab/gdalraster/actions/workflows/R-CMD-check.yaml" class="external-link"><img src="https://github.com/firelab/gdalraster/actions/workflows/R-CMD-check.yaml/badge.svg" alt="R-CMD-check"></a></li>
 <li><a href="https://app.codecov.io/gh/ctoney/gdalraster" class="external-link"><img src="https://codecov.io/gh/ctoney/gdalraster/branch/main/graph/badge.svg?token=MXIOPZQ2IU" alt="codecov"></a></li>
-<li><a href="https://github.com/USDAForestService/gdalraster/actions/workflows/rhub.yaml" class="external-link"><img src="https://github.com/USDAForestService/gdalraster/actions/workflows/rhub.yaml/badge.svg" alt="R-hub"></a></li>
+<li><a href="https://github.com/firelab/gdalraster/actions/workflows/rhub.yaml" class="external-link"><img src="https://github.com/firelab/gdalraster/actions/workflows/rhub.yaml/badge.svg" alt="R-hub"></a></li>
 <li><a href="https://CRAN.R-project.org/package=gdalraster" class="external-link"><img src="https://www.r-pkg.org/badges/version/gdalraster" alt="CRAN status"></a></li>
 <li><a href="https://usdaforestservice.r-universe.dev/gdalraster" class="external-link"><img src="https://usdaforestservice.r-universe.dev/badges/gdalraster" alt="r-universe status"></a></li>
 <li><a href="https://anaconda.org/conda-forge/r-gdalraster" class="external-link"><img src="https://img.shields.io/conda/vn/conda-forge/r-gdalraster" alt="Conda Version"></a></li>
 <li><a href="https://www.bestpractices.dev/projects/9382" class="external-link"><img src="https://www.bestpractices.dev/projects/9382/badge" alt="OpenSSF Best Practices"></a></li>
-<li><a href="https://scorecard.dev/viewer/?uri=github.com/USDAForestService/gdalraster" class="external-link"><img src="https://api.scorecard.dev/projects/github.com/USDAForestService/gdalraster/badge" alt="OpenSSF Scorecard"></a></li>
+<li><a href="https://scorecard.dev/viewer/?uri=github.com/firelab/gdalraster" class="external-link"><img src="https://api.scorecard.dev/projects/github.com/firelab/gdalraster/badge" alt="OpenSSF Scorecard"></a></li>
 </ul>
 </div>
 
@@ -228,8 +228,8 @@
 <li><a href="https://cloud.r-project.org/package=gdalraster" class="external-link">View on CRAN</a></li>
 <li><a href="https://github.com/USDAForestService/gdalraster/" class="external-link">Browse source code</a></li>
 <li><a href="https://github.com/USDAForestService/gdalraster/issues" class="external-link">Report a bug</a></li>
-<li><a href="https://github.com/USDAForestService/gdalraster/discussions" class="external-link">Discussions</a></li>
-<li><a href="https://usdaforestservice.github.io/gdalraster/CONTRIBUTING.html#development-practices">Development practices</a></li>
+<li><a href="https://github.com/firelab/gdalraster/discussions" class="external-link">Discussions</a></li>
+<li><a href="https://firelab.github.io/gdalraster/CONTRIBUTING.html#development-practices">Development practices</a></li>
 </ul>
 </div>
 

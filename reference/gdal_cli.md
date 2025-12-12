@@ -70,9 +70,9 @@ gdal_global_reg_names()
 
 These functions provide an interface to GDAL CLI algorithms by way of
 the C++ exposed class
-[`GDALAlg`](https://usdaforestservice.github.io/gdalraster/reference/GDALAlg-class.md).
+[`GDALAlg`](https://firelab.github.io/gdalraster/reference/GDALAlg-class.md).
 See the class documentation for additional information
-([`?GDALAlg`](https://usdaforestservice.github.io/gdalraster/reference/GDALAlg-class.md)).
+([`?GDALAlg`](https://firelab.github.io/gdalraster/reference/GDALAlg-class.md)).
 
 `gdal_commands()` prints a list of commands and their descriptions to
 the console, and returns (invisibly) a data frame with columns
@@ -86,7 +86,7 @@ value, called for that side effect only.
 
 `gdal_run()` executes a GDAL CLI algorithm and returns it as an object
 of class
-[`GDALAlg`](https://usdaforestservice.github.io/gdalraster/reference/GDALAlg-class.md).
+[`GDALAlg`](https://firelab.github.io/gdalraster/reference/GDALAlg-class.md).
 A list containing algorithm output(s) can be accessed by calling the
 `$outputs()` method (plural) on the returned object, or, more
 conveniently in most cases, by calling `$output()` (singular) to return
@@ -95,7 +95,7 @@ output, or otherwise completing work with the `GDALAlg` object, its
 `$release()` method can be called to close datasets and free resources.
 
 `gdal_alg()` instantiates and returns an object of class
-[`GDALAlg`](https://usdaforestservice.github.io/gdalraster/reference/GDALAlg-class.md)
+[`GDALAlg`](https://firelab.github.io/gdalraster/reference/GDALAlg-class.md)
 without running it. Passing argument values to the requested CLI
 algorithm is optional. This function may be useful (with or without
 argument values) for obtaining algorithm properties with the returned
@@ -234,7 +234,7 @@ may be filed at:
 
 ## See also
 
-[`GDALAlg-class`](https://usdaforestservice.github.io/gdalraster/reference/GDALAlg-class.md)
+[`GDALAlg-class`](https://firelab.github.io/gdalraster/reference/GDALAlg-class.md)
 
 `gdal` Command Line Interface (CLI)  
 <https://gdal.org/en/stable/programs/index.html>

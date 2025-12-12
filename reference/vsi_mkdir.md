@@ -37,8 +37,8 @@ vsi_mkdir(path, mode = "0755", recursive = FALSE)
 
 ## See also
 
-[`vsi_read_dir()`](https://usdaforestservice.github.io/gdalraster/reference/vsi_read_dir.md),
-[`vsi_rmdir()`](https://usdaforestservice.github.io/gdalraster/reference/vsi_rmdir.md)
+[`vsi_read_dir()`](https://firelab.github.io/gdalraster/reference/vsi_read_dir.md),
+[`vsi_rmdir()`](https://firelab.github.io/gdalraster/reference/vsi_rmdir.md)
 
 ## Examples
 

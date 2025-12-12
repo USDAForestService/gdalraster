@@ -81,7 +81,7 @@ system.time(
 
 For comparison, we will read the same data from a raster arranged with
 blocks as whole rows (efficient for row-level access).
-[`gdalraster::createCopy()`](https://usdaforestservice.github.io/gdalraster/reference/createCopy.md)
+[`gdalraster::createCopy()`](https://firelab.github.io/gdalraster/reference/createCopy.md)
 copies a raster dataset with optional changes to the format. The extent,
 number of bands, data type, projection, and geotransform are all copied
 from the source raster:
@@ -195,7 +195,7 @@ To read on block boundaries but reduce the number of I/O operations
 required to iterate the whole raster, larger chunks comprised of
 multiple consecutive blocks could be defined. This may be more efficient
 in some cases. Class `GDALRaster` provides a helper method
-[`make_chunk_index()`](https://usdaforestservice.github.io/gdalraster/reference/make_chunk_index.md)
+[`make_chunk_index()`](https://firelab.github.io/gdalraster/reference/make_chunk_index.md)
 to compute the row/column offsets and pixels sizes for multi-block
 chunks containing \<= `max_pixels`:
 
@@ -276,7 +276,7 @@ would put cache memory use over the established limit (least recently
 used blocks are flushed from cache to accommodate adding new blocks).
 
 The code below uses the function
-[`gdalraster::get_cache_used()`](https://usdaforestservice.github.io/gdalraster/reference/get_cache_used.md)
+[`gdalraster::get_cache_used()`](https://firelab.github.io/gdalraster/reference/get_cache_used.md)
 to demonstrate the behavior:
 
 ``` r
@@ -340,7 +340,7 @@ will not resize the cache. It is a per-session setting. If
 then the default cache size will be in effect for the current session.
 The value can be changed programmatically during a session using the
 function
-[`gdalraster::set_cache_max()`](https://usdaforestservice.github.io/gdalraster/reference/set_cache_max.md).
+[`gdalraster::set_cache_max()`](https://firelab.github.io/gdalraster/reference/set_cache_max.md).
 
 I/O that involves block caching with large datasets may require setting
 `GDAL_CACHEMAX` larger than the default. If the LANDFIRE elevation

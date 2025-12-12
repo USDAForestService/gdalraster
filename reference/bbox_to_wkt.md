@@ -32,8 +32,8 @@ Character string for an OGC WKT polygon.
 
 ## See also
 
-[`bbox_from_wkt()`](https://usdaforestservice.github.io/gdalraster/reference/bbox_from_wkt.md),
-[`g_buffer()`](https://usdaforestservice.github.io/gdalraster/reference/g_unary_op.md)
+[`bbox_from_wkt()`](https://firelab.github.io/gdalraster/reference/bbox_from_wkt.md),
+[`g_buffer()`](https://firelab.github.io/gdalraster/reference/g_unary_op.md)
 
 ## Examples
 

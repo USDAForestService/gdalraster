@@ -65,8 +65,8 @@ metadata strings.
 
 ## See also
 
-[`ogr2ogr()`](https://usdaforestservice.github.io/gdalraster/reference/ogr2ogr.md),
-[ogr_manage](https://usdaforestservice.github.io/gdalraster/reference/ogr_manage.md)
+[`ogr2ogr()`](https://firelab.github.io/gdalraster/reference/ogr2ogr.md),
+[ogr_manage](https://firelab.github.io/gdalraster/reference/ogr_manage.md)
 
 ## Examples
 

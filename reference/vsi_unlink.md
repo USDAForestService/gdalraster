@@ -24,9 +24,9 @@ vsi_unlink(filename)
 
 ## See also
 
-[`deleteDataset()`](https://usdaforestservice.github.io/gdalraster/reference/deleteDataset.md),
-[`vsi_rmdir()`](https://usdaforestservice.github.io/gdalraster/reference/vsi_rmdir.md),
-[`vsi_unlink_batch()`](https://usdaforestservice.github.io/gdalraster/reference/vsi_unlink_batch.md)
+[`deleteDataset()`](https://firelab.github.io/gdalraster/reference/deleteDataset.md),
+[`vsi_rmdir()`](https://firelab.github.io/gdalraster/reference/vsi_rmdir.md),
+[`vsi_unlink_batch()`](https://firelab.github.io/gdalraster/reference/vsi_unlink_batch.md)
 
 ## Examples
 

@@ -45,7 +45,7 @@ frame named `"GDALRATTableType"` with a value of either `"thematic"` or
 frame. An object of class `GDALRaster` has method `$getDefaultRAT()` to
 read an existing RAT, and method `$setDefaultRAT()` to set a RAT from a
 data frame. The stand-alone function
-[`buildRAT()`](https://usdaforestservice.github.io/gdalraster/reference/buildRAT.md)
+[`buildRAT()`](https://firelab.github.io/gdalraster/reference/buildRAT.md)
 scans a raster to obtain the set of unique pixel values and their
 counts, optionally joins additional columns from a passed data frame,
 and returns a data frame with the appropriate metadata automatically
@@ -162,7 +162,7 @@ nrow(tbl)
 ## Display attribute tables
 
 An attribute table with RGB columns can be passed to
-[`gdalraster::plot_raster()`](https://usdaforestservice.github.io/gdalraster/reference/plot_raster.md)
+[`gdalraster::plot_raster()`](https://firelab.github.io/gdalraster/reference/plot_raster.md)
 as a color table (columns `VALUE`, `R`, `G`, `B`):
 
 ``` r
@@ -182,7 +182,7 @@ plot_raster(data = ds,
 ![](raster-attribute-tables_files/figure-html/unnamed-chunk-3-1.png)
 
 The function
-[`displayRAT()`](https://usdaforestservice.github.io/gdalraster/reference/displayRAT.md)
+[`displayRAT()`](https://firelab.github.io/gdalraster/reference/displayRAT.md)
 generates a nicely formatted table for display. Colors are shown if the
 RAT contains RGB columns:
 
@@ -218,7 +218,7 @@ displayRAT(tbl, title = "Raster Attribute Table for Storm Lake EVT")
 | \#B86018                                  | 9021  | 14    | Rocky Mountain Subalpine-Montane Riparian Shrubland               | Shrub  | Riparian           | 184 | 96  | 24  |
 | \#B86018                                  | 9022  | 98    | Rocky Mountain Subalpine-Montane Riparian Woodland                | Tree   | Riparian           | 184 | 96  | 24  |
 
-[`displayRAT()`](https://usdaforestservice.github.io/gdalraster/reference/displayRAT.md)
+[`displayRAT()`](https://firelab.github.io/gdalraster/reference/displayRAT.md)
 returns an object of class `"gt_tbl"`. The table object can be modified
 using functions of the **gt** package.
 

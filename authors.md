@@ -27,7 +27,7 @@ contributors](https://github.com/OSGeo/gdal/graphs/contributors))
   Boost combine hashes method in src/cmb_table.h
 
 See file
-[`inst/COPYRIGHTS`](https://github.com/USDAForestService/gdalraster/blob/HEAD/inst/COPYRIGHTS)
+[`inst/COPYRIGHTS`](https://github.com/firelab/gdalraster/blob/HEAD/inst/COPYRIGHTS)
 for details.
 
 ## Citation

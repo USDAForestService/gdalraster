@@ -44,7 +44,7 @@ g_geodesic_length(geom, srs, traditional_gis_order = TRUE, quiet = FALSE)
 
   Character string specifying the spatial reference system for `geom`.
   May be in WKT format or any of the formats supported by
-  [`srs_to_wkt()`](https://usdaforestservice.github.io/gdalraster/reference/srs_convert.md).
+  [`srs_to_wkt()`](https://firelab.github.io/gdalraster/reference/srs_convert.md).
 
 - traditional_gis_order:
 
@@ -119,7 +119,7 @@ pair of input geometries.
 
 Geometry validity is not checked. In case you are unsure of the validity
 of the input geometries, call
-[`g_is_valid()`](https://usdaforestservice.github.io/gdalraster/reference/g_query.md)
+[`g_is_valid()`](https://firelab.github.io/gdalraster/reference/g_query.md)
 before, otherwise the result might be wrong.
 
 ## Examples

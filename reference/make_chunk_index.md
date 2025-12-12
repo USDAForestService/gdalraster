@@ -72,7 +72,7 @@ defined as the maximum number of consecutive whole blocks containing
 ## See also
 
 Methods `make_chunk_index()`, `readChunk()` and `writeChunk()` in class
-[GDALRaster](https://usdaforestservice.github.io/gdalraster/reference/GDALRaster-class.md).
+[GDALRaster](https://firelab.github.io/gdalraster/reference/GDALRaster-class.md).
 
 Usage example in the web article [GDAL Block
 Cache](https://usdaforestservice.github.io/gdalraster/articles/gdal-block-cache.html).

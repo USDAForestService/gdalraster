@@ -39,8 +39,8 @@ those database systems.
 
 ## See also
 
-[`ogrinfo()`](https://usdaforestservice.github.io/gdalraster/reference/ogrinfo.md),
-[`ogr_execute_sql()`](https://usdaforestservice.github.io/gdalraster/reference/ogr_manage.md)
+[`ogrinfo()`](https://firelab.github.io/gdalraster/reference/ogrinfo.md),
+[`ogr_execute_sql()`](https://firelab.github.io/gdalraster/reference/ogr_manage.md)
 
 OGR SQL dialect and SQLITE SQL dialect:  
 <https://gdal.org/en/stable/user/ogr_sql_sqlite_dialect.html>

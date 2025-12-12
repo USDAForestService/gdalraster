@@ -4,7 +4,7 @@
 from one source dataset with options for virtual subsetting, virtually
 resampling the source data at a different pixel resolution, or applying
 a virtual kernel filter. (See
-[`buildVRT()`](https://usdaforestservice.github.io/gdalraster/reference/buildVRT.md)
+[`buildVRT()`](https://firelab.github.io/gdalraster/reference/buildVRT.md)
 for virtual mosaicing.)
 
 ## Usage
@@ -166,12 +166,12 @@ not specified. Examples for both cases of `src_align` are given below.
 
 ## See also
 
-[`GDALRaster-class`](https://usdaforestservice.github.io/gdalraster/reference/GDALRaster-class.md),
-[`bbox_from_wkt()`](https://usdaforestservice.github.io/gdalraster/reference/bbox_from_wkt.md),
-[`buildVRT()`](https://usdaforestservice.github.io/gdalraster/reference/buildVRT.md)
+[`GDALRaster-class`](https://firelab.github.io/gdalraster/reference/GDALRaster-class.md),
+[`bbox_from_wkt()`](https://firelab.github.io/gdalraster/reference/bbox_from_wkt.md),
+[`buildVRT()`](https://firelab.github.io/gdalraster/reference/buildVRT.md)
 
-[`warp()`](https://usdaforestservice.github.io/gdalraster/reference/warp.md)
-can write VRT for virtual reprojection
+[`warp()`](https://firelab.github.io/gdalraster/reference/warp.md) can
+write VRT for virtual reprojection
 
 ## Examples
 

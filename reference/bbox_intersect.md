@@ -34,8 +34,8 @@ containing OGC WKT for the bbox as POLYGON.
 
 ## See also
 
-[`bbox_from_wkt()`](https://usdaforestservice.github.io/gdalraster/reference/bbox_from_wkt.md),
-[`bbox_to_wkt()`](https://usdaforestservice.github.io/gdalraster/reference/bbox_to_wkt.md)
+[`bbox_from_wkt()`](https://firelab.github.io/gdalraster/reference/bbox_from_wkt.md),
+[`bbox_to_wkt()`](https://firelab.github.io/gdalraster/reference/bbox_to_wkt.md)
 
 ## Examples
 

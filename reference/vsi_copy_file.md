@@ -51,14 +51,14 @@ download from source and upload to target:
 
 If `target_file` has the form /vsizip/foo.zip/bar, the default options
 described for the function
-[`addFilesInZip()`](https://usdaforestservice.github.io/gdalraster/reference/addFilesInZip.md)
+[`addFilesInZip()`](https://firelab.github.io/gdalraster/reference/addFilesInZip.md)
 will be in effect.
 
 ## See also
 
-[`copyDatasetFiles()`](https://usdaforestservice.github.io/gdalraster/reference/copyDatasetFiles.md),
-[`vsi_stat()`](https://usdaforestservice.github.io/gdalraster/reference/vsi_stat.md),
-[`vsi_sync()`](https://usdaforestservice.github.io/gdalraster/reference/vsi_sync.md)
+[`copyDatasetFiles()`](https://firelab.github.io/gdalraster/reference/copyDatasetFiles.md),
+[`vsi_stat()`](https://firelab.github.io/gdalraster/reference/vsi_stat.md),
+[`vsi_sync()`](https://firelab.github.io/gdalraster/reference/vsi_sync.md)
 
 ## Examples
 

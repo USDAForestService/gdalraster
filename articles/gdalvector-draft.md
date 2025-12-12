@@ -58,11 +58,11 @@ schemas will be done with:
 
 - existing management functions in **gdalraster** that operate on vector
   datasets:
-  [`copyDatasetFiles()`](https://usdaforestservice.github.io/gdalraster/reference/copyDatasetFiles.md),
-  [`deleteDataset()`](https://usdaforestservice.github.io/gdalraster/reference/deleteDataset.md),
-  [`renameDataset()`](https://usdaforestservice.github.io/gdalraster/reference/renameDataset.md)
+  [`copyDatasetFiles()`](https://firelab.github.io/gdalraster/reference/copyDatasetFiles.md),
+  [`deleteDataset()`](https://firelab.github.io/gdalraster/reference/deleteDataset.md),
+  [`renameDataset()`](https://firelab.github.io/gdalraster/reference/renameDataset.md)
   and
-  [`addFilesInZip()`](https://usdaforestservice.github.io/gdalraster/reference/addFilesInZip.md)
+  [`addFilesInZip()`](https://firelab.github.io/gdalraster/reference/addFilesInZip.md)
   (supports SOZip)
 - existing utility functions for managing vector data sources (as of
   **gdalraster** 1.11.0):
@@ -70,11 +70,11 @@ schemas will be done with:
   and
   [ogr_define](https://usdaforestservice.github.io/gdalraster/reference/ogr_define.html)
 - existing wrappers
-  [`ogr2ogr()`](https://usdaforestservice.github.io/gdalraster/reference/ogr2ogr.md)
+  [`ogr2ogr()`](https://firelab.github.io/gdalraster/reference/ogr2ogr.md)
   and
-  [`ogrinfo()`](https://usdaforestservice.github.io/gdalraster/reference/ogrinfo.md)
+  [`ogrinfo()`](https://firelab.github.io/gdalraster/reference/ogrinfo.md)
   from the GDAL Utils API (as of **gdalraster** 1.10.0)
-- [`ogr_execute_sql()`](https://usdaforestservice.github.io/gdalraster/reference/ogr_manage.md):
+- [`ogr_execute_sql()`](https://firelab.github.io/gdalraster/reference/ogr_manage.md):
   execute an SQL statement against the data store to edit data (a SQL
   `SELECT` statement can be used in the constructor for class
   `GDALVector` described below, to open a layer of features)
@@ -163,8 +163,8 @@ containing Well Known Binary (WKB). An OGR Spatial Reference, which
 encapsulates the definition of a projection and datum, is represented in
 R as WKT. **gdalraster** has existing functions for working with spatial
 reference systems as WKT
-([`srs_to_wkt()`](https://usdaforestservice.github.io/gdalraster/reference/srs_convert.md),
-[`srs_is_projected()`](https://usdaforestservice.github.io/gdalraster/reference/srs_query.md),
+([`srs_to_wkt()`](https://firelab.github.io/gdalraster/reference/srs_convert.md),
+[`srs_is_projected()`](https://firelab.github.io/gdalraster/reference/srs_query.md),
 etc.), and a set of geometry convenience functions also operating on WKT
 (GEOS via GDAL headers).
 
@@ -1005,7 +1005,7 @@ need further consideration, to be determined:
   supported on the R side with package **nanoarrow**.
 - OGR layer geoprocessing expected to be moved to stand-alone functions
   instead of class methods in `GDALVector`, to be implemented in an
-  [`ogr_proc()`](https://usdaforestservice.github.io/gdalraster/reference/ogr_proc.md)
+  [`ogr_proc()`](https://firelab.github.io/gdalraster/reference/ogr_proc.md)
   interface.
 
 ## Document changelog
@@ -1030,15 +1030,15 @@ need further consideration, to be determined:
   `getNextFeature()` thus save some processing time and/or bandwidth.
   (2024-03-02)
 - add
-  [`ogr_execute_sql()`](https://usdaforestservice.github.io/gdalraster/reference/ogr_manage.md)
+  [`ogr_execute_sql()`](https://firelab.github.io/gdalraster/reference/ogr_manage.md)
   for dataset/schema management (2024-03-02)
 - add `GDALVector::setNextByIndex()` for cursor positioning (2024-03-03)
 - add `GDALVector::getSpatialFilter()`: get the WKT geometry currently
   in use as the spatial filter, or `""` (2024-03-03)
 - add section “Further consideration / TBD” (2024-03-03)
-- [`ogr2ogr()`](https://usdaforestservice.github.io/gdalraster/reference/ogr2ogr.md)
+- [`ogr2ogr()`](https://firelab.github.io/gdalraster/reference/ogr2ogr.md)
   and
-  [`ogrinfo()`](https://usdaforestservice.github.io/gdalraster/reference/ogrinfo.md)
+  [`ogrinfo()`](https://firelab.github.io/gdalraster/reference/ogrinfo.md)
   are available in 1.9.0.9080 dev (2024-03-04)
 - add potential output vectors of geos or ogr pointers, or wkb/wkt with
   support by {wk} (@mdsumner, 2024-03-04)
@@ -1048,9 +1048,9 @@ need further consideration, to be determined:
   methods TBD (2024-03-10)
 - add link to the header file to reference the class methods that have
   been implemented so far in the prototype (2024-03-10)
-- [`ogr2ogr()`](https://usdaforestservice.github.io/gdalraster/reference/ogr2ogr.md)
+- [`ogr2ogr()`](https://firelab.github.io/gdalraster/reference/ogr2ogr.md)
   and
-  [`ogrinfo()`](https://usdaforestservice.github.io/gdalraster/reference/ogrinfo.md)
+  [`ogrinfo()`](https://firelab.github.io/gdalraster/reference/ogrinfo.md)
   are available in **gdalraster** 1.10.0 on CRAN (2024-03-26)
 - initial int64 support; now linking to **RcppInt64**, and importing
   **bit64**; `FID` and `OFTInteger64` fields are now returned in R as
@@ -1077,11 +1077,11 @@ need further consideration, to be determined:
   (2024-07-13)
 - `GDALVector::testCapability()` returns a list of named capabilities
   with `TRUE`\|`FALSE`, class method version of
-  [`ogr_layer_test_cap()`](https://usdaforestservice.github.io/gdalraster/reference/ogr_manage.md)
+  [`ogr_layer_test_cap()`](https://firelab.github.io/gdalraster/reference/ogr_manage.md)
   (2024-07-21)
 - branch gdalvector was merged into main (2024-07-23)
 - added
-  [`ogr_proc()`](https://usdaforestservice.github.io/gdalraster/reference/ogr_proc.md),
+  [`ogr_proc()`](https://firelab.github.io/gdalraster/reference/ogr_proc.md),
   interface to GDAL OGR facilities for vector geoprocessing; updated
   “Example: layer geoprocessing” (2024-07-30)
 - removed `is_ignored` from feature class defintion, not needed for

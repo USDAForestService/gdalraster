@@ -59,11 +59,11 @@ following elements:
 
 ## See also
 
-[`create()`](https://usdaforestservice.github.io/gdalraster/reference/create.md),
-[`createCopy()`](https://usdaforestservice.github.io/gdalraster/reference/createCopy.md),
-[`translate()`](https://usdaforestservice.github.io/gdalraster/reference/translate.md),
-[`validateCreationOptions()`](https://usdaforestservice.github.io/gdalraster/reference/validateCreationOptions.md),
-[`warp()`](https://usdaforestservice.github.io/gdalraster/reference/warp.md)
+[`create()`](https://firelab.github.io/gdalraster/reference/create.md),
+[`createCopy()`](https://firelab.github.io/gdalraster/reference/createCopy.md),
+[`translate()`](https://firelab.github.io/gdalraster/reference/translate.md),
+[`validateCreationOptions()`](https://firelab.github.io/gdalraster/reference/validateCreationOptions.md),
+[`warp()`](https://firelab.github.io/gdalraster/reference/warp.md)
 
 ## Examples
 

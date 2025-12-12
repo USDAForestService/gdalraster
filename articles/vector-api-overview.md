@@ -77,7 +77,7 @@ methods to:
 
 A `GDALVector` object is typically generated with a call to `new()` but
 is also returned from certain `ogr_*()` functions. The documentation for
-[`?GDALVector`](https://usdaforestservice.github.io/gdalraster/reference/GDALVector-class.md)
+[`?GDALVector`](https://firelab.github.io/gdalraster/reference/GDALVector-class.md)
 gives a full list of available methods in the Usage section, along with
 their descriptions under Details. Methods of the class are accessed
 using the `$` operator.
@@ -86,9 +86,9 @@ using the `$` operator.
 
 Several of the stand-alone `ogr_*()` functions are grouped under the
 documentation topics
-[`?ogr_manage`](https://usdaforestservice.github.io/gdalraster/reference/ogr_manage.md)
+[`?ogr_manage`](https://firelab.github.io/gdalraster/reference/ogr_manage.md)
 and
-[`?ogr_define`](https://usdaforestservice.github.io/gdalraster/reference/ogr_define.md).
+[`?ogr_define`](https://firelab.github.io/gdalraster/reference/ogr_define.md).
 The `ogr_manage` functions can be used to:
 
 - create new vector datasets from scratch
@@ -107,29 +107,29 @@ definition) is modeled in R as a named list containing zero or more
 attribute field definitions, along with one or more geometry field
 definitions. Specifications of the the list structures for these
 definitions are given in
-[`?ogr_define`](https://usdaforestservice.github.io/gdalraster/reference/ogr_define.md).
+[`?ogr_define`](https://firelab.github.io/gdalraster/reference/ogr_define.md).
 The associated helper functions make it easy to create new layer
 definitions from scratch or modify an existing definition. A layer
 definition is convenient but not required for creating a new vector
 dataset, or a new layer within an existing dataset, using
-[`ogr_ds_create()`](https://usdaforestservice.github.io/gdalraster/reference/ogr_manage.md)
+[`ogr_ds_create()`](https://firelab.github.io/gdalraster/reference/ogr_manage.md)
 /
-[`ogr_layer_create()`](https://usdaforestservice.github.io/gdalraster/reference/ogr_manage.md).
+[`ogr_layer_create()`](https://firelab.github.io/gdalraster/reference/ogr_manage.md).
 
 OGR facilities for vector geoprocessing are available in
-[`ogr_proc()`](https://usdaforestservice.github.io/gdalraster/reference/ogr_proc.md).
+[`ogr_proc()`](https://firelab.github.io/gdalraster/reference/ogr_proc.md).
 This function can perform the following GIS overlay operations:
 Intersection, Union, SymDifference, Identity, Update, Clip and Erase
 (<https://en.wikipedia.org/wiki/Vector_overlay>).
-[`ogr_proc()`](https://usdaforestservice.github.io/gdalraster/reference/ogr_proc.md)
+[`ogr_proc()`](https://firelab.github.io/gdalraster/reference/ogr_proc.md)
 is basically an R port of the command-line utility
 [`ogr_layer_algebra`](https://gdal.org/en/stable/programs/ogr_layer_algebra.html#ogr-layer-algebra)
 included in the GDAL Python bindings. In both cases, these are
 interfaces to library functions in the OGR C++ API.
 
-[`ogrinfo()`](https://usdaforestservice.github.io/gdalraster/reference/ogrinfo.md)
+[`ogrinfo()`](https://firelab.github.io/gdalraster/reference/ogrinfo.md)
 and
-[`ogr2ogr()`](https://usdaforestservice.github.io/gdalraster/reference/ogr2ogr.md),
+[`ogr2ogr()`](https://firelab.github.io/gdalraster/reference/ogr2ogr.md),
 provide R wrappers of the GDAL command-line utilities
 [`ogrinfo`](https://gdal.org/en/stable/programs/ogrinfo.html) and
 [`ogr2ogr`](https://gdal.org/en/stable/programs/ogr2ogr.html). These
@@ -138,9 +138,9 @@ GDAL documentation, providing a powerful set of capabilities for
 obtaining information about an OGR-supported data source, converting
 vector data between file formats, and potentially editing data with SQL
 statements.
-[`ogr_reproject()`](https://usdaforestservice.github.io/gdalraster/reference/ogr_reproject.md)
+[`ogr_reproject()`](https://firelab.github.io/gdalraster/reference/ogr_reproject.md)
 is a convenience wrapper around
-[`ogr2ogr()`](https://usdaforestservice.github.io/gdalraster/reference/ogr2ogr.md)
+[`ogr2ogr()`](https://firelab.github.io/gdalraster/reference/ogr2ogr.md)
 for reprojecting vector layers with a user friendly interface.
 
 ### Supporting APIs
@@ -153,9 +153,9 @@ spatial reference definitions in various formats to OGC Well Known Text
 (WKT) representation (e.g., from EPSG codes, well known names such as
 NAD27, NAD83, WGS84, etc., PROJ.4 definitions, PROJJSON, and others, as
 well as between different versions of OGC WKT, see
-[`?srs_convert`](https://usdaforestservice.github.io/gdalraster/reference/srs_convert.md)).
+[`?srs_convert`](https://firelab.github.io/gdalraster/reference/srs_convert.md)).
 Functions under the
-[`?srs_query`](https://usdaforestservice.github.io/gdalraster/reference/srs_query.md)
+[`?srs_query`](https://firelab.github.io/gdalraster/reference/srs_query.md)
 topic provide various information about a given SRS definition, and
 support testing definitions for equality.
 
@@ -173,34 +173,34 @@ WKT strings, a single `raw` vector containing
 [WKB](https://libgeos.org/specifications/wkb/), or a list of WKB `raw`
 vectors. Output geometries are in WKB format by default, but WKT can
 also be requested. The convenience function
-[`g_wk2wk()`](https://usdaforestservice.github.io/gdalraster/reference/g_wk2wk.md)
+[`g_wk2wk()`](https://firelab.github.io/gdalraster/reference/g_wk2wk.md)
 will convert its input from one to the other accordingly.
 
 The factory functions
-[`g_create()`](https://usdaforestservice.github.io/gdalraster/reference/g_factory.md)
+[`g_create()`](https://firelab.github.io/gdalraster/reference/g_factory.md)
 and
-[`g_add_geom()`](https://usdaforestservice.github.io/gdalraster/reference/g_factory.md)
+[`g_add_geom()`](https://firelab.github.io/gdalraster/reference/g_factory.md)
 support creating basic geometry types from point data (vertices), and
 building container geometry types from sub-geometries. Other
 capabilities of the geometry bindings include:
 
 - inspection (see
-  [`?g_query`](https://usdaforestservice.github.io/gdalraster/reference/g_query.md))
+  [`?g_query`](https://firelab.github.io/gdalraster/reference/g_query.md))
 - binary predicates (see
-  [`?g_binary_pred`](https://usdaforestservice.github.io/gdalraster/reference/g_binary_pred.md))
+  [`?g_binary_pred`](https://firelab.github.io/gdalraster/reference/g_binary_pred.md))
 - binary operations (see
-  [`?g_binary_op`](https://usdaforestservice.github.io/gdalraster/reference/g_binary_op.md))
+  [`?g_binary_op`](https://firelab.github.io/gdalraster/reference/g_binary_op.md))
 - unary operations (see `g_unary_op`)
 - measurements (see
-  [`?g_measures`](https://usdaforestservice.github.io/gdalraster/reference/g_measures.md))
+  [`?g_measures`](https://firelab.github.io/gdalraster/reference/g_measures.md))
 - miscellaneous utilities (e.g.,
-  [`g_coords()`](https://usdaforestservice.github.io/gdalraster/reference/g_coords.md),
-  [`g_make_valid()`](https://usdaforestservice.github.io/gdalraster/reference/g_util.md),
-  [`g_transform()`](https://usdaforestservice.github.io/gdalraster/reference/g_transform.md))
+  [`g_coords()`](https://firelab.github.io/gdalraster/reference/g_coords.md),
+  [`g_make_valid()`](https://firelab.github.io/gdalraster/reference/g_util.md),
+  [`g_transform()`](https://firelab.github.io/gdalraster/reference/g_transform.md))
 
 Convenience functions for working with bounding boxes are also provided
 (e.g., convert to/from WKT, intersection/union, and
-[`bbox_transform()`](https://usdaforestservice.github.io/gdalraster/reference/bbox_transform.md)).
+[`bbox_transform()`](https://firelab.github.io/gdalraster/reference/bbox_transform.md)).
 
 #### Virtual Systems Interface
 
@@ -221,13 +221,13 @@ file systems ([`seek()`](https://rdrr.io/r/base/seek.html), `tell()`,
 
 Existing data management functions that operate on both raster and
 vector data sources include
-[`addFilesInZip()`](https://usdaforestservice.github.io/gdalraster/reference/addFilesInZip.md)
+[`addFilesInZip()`](https://firelab.github.io/gdalraster/reference/addFilesInZip.md)
 (supporting create/append to a potentially [Seek-Optimized
 ZIP](https://github.com/sozip/sozip-spec) file),
-[`deleteDataset()`](https://usdaforestservice.github.io/gdalraster/reference/deleteDataset.md),
-[`identifyDriver()`](https://usdaforestservice.github.io/gdalraster/reference/identifyDriver.md)
+[`deleteDataset()`](https://firelab.github.io/gdalraster/reference/deleteDataset.md),
+[`identifyDriver()`](https://firelab.github.io/gdalraster/reference/identifyDriver.md)
 and
-[`inspectDataset()`](https://usdaforestservice.github.io/gdalraster/reference/inspectDataset.md).
+[`inspectDataset()`](https://firelab.github.io/gdalraster/reference/inspectDataset.md).
 
 ## Workflow considerations
 
@@ -436,7 +436,7 @@ instead of the local file system could be accessed with a path like:
     /vsizip//vsicurl/https://www.example.com/path/to/file.zip
 
 Support for SOZip is available with GDAL \>= 3.7. The function
-[`vsi_get_file_metadata()`](https://usdaforestservice.github.io/gdalraster/reference/vsi_get_file_metadata.md)
+[`vsi_get_file_metadata()`](https://firelab.github.io/gdalraster/reference/vsi_get_file_metadata.md)
 can be used to validate an SOZip file and obtain compression
 information. Otherwise, SOZip is fully backward compatible and works as
 a regular .zip file.
@@ -480,7 +480,7 @@ if (gdal_version_num() >= gdal_compute_version(3, 7, 0)) {
 #> [1] "YES"
 ```
 
-[`inspectDataset()`](https://usdaforestservice.github.io/gdalraster/reference/inspectDataset.md)
+[`inspectDataset()`](https://firelab.github.io/gdalraster/reference/inspectDataset.md)
 returns information about the format and content of a data source that
 may contain raster and/or vector data.
 
@@ -530,7 +530,7 @@ ogr_ds_layer_names(zf_gpkg)
 #> [1] "ynp_bnd"            "roads"              "points_of_interest"
 ```
 
-[`ogrinfo()`](https://usdaforestservice.github.io/gdalraster/reference/ogrinfo.md)
+[`ogrinfo()`](https://firelab.github.io/gdalraster/reference/ogrinfo.md)
 requires GDAL \>= 3.7. It accepts an optional character vector
 containing any of the arguments supported by the
 [`ogrinfo`](https://gdal.org/en/stable/programs/ogrinfo.html)
@@ -697,7 +697,7 @@ To read back from the modified data source we need to instantiate
 objects of class `GDALVector`. More detail on working with `GDALVector`
 objects is given in the examples further below for data retrieval. For
 now, note that the function
-[`ogr_execute_sql()`](https://usdaforestservice.github.io/gdalraster/reference/ogr_manage.md)
+[`ogr_execute_sql()`](https://firelab.github.io/gdalraster/reference/ogr_manage.md)
 returns an object of class `GDALVector` for SQL statements that return a
 result set.
 
@@ -750,7 +750,7 @@ Features.](vector-api-overview_files/figure-html/unnamed-chunk-9-1.png)
 
 For clean up, the `$close()` method should be called on the layer object
 opened with
-[`ogr_execute_sql()`](https://usdaforestservice.github.io/gdalraster/reference/ogr_manage.md).
+[`ogr_execute_sql()`](https://firelab.github.io/gdalraster/reference/ogr_manage.md).
 We also delete the temporary in-memory file.
 
 ``` r
@@ -1133,7 +1133,7 @@ a data source to perform further processing.
 The MTBS layer uses a projected coordinate system, while layers of the
 “YNP features” dataset used in the examples above are in geographic
 coordinates. The
-[`ogr_reproject()`](https://usdaforestservice.github.io/gdalraster/reference/ogr_reproject.md)
+[`ogr_reproject()`](https://firelab.github.io/gdalraster/reference/ogr_reproject.md)
 function is used to project layers in geographic coordinates from
 ynp_features.gpkg to match the coordinate system of the MTBS layer.
 
@@ -1289,10 +1289,10 @@ fid <- poi$getLastWriteFID()
 #> [1] Information
 #> 
 #> $createdate
-#> [1] 2025-12-03
+#> [1] 2025-12-12
 #> 
 #> $editdate
-#> [1] 2025-12-03
+#> [1] 2025-12-12
 #> 
 #> $geom
 #> [1] WKB POINT: raw 01 01 00 00 ...
@@ -1379,7 +1379,7 @@ poi$syncToDisk()
 #> [1] 2016-02-03
 #> 
 #> $editdate
-#> [1] 2025-12-03
+#> [1] 2025-12-12
 #> 
 #> $geom
 #> [1] WKB POINT: raw 01 01 00 00 ...
@@ -1414,10 +1414,10 @@ poi$getFeature(fid)
 #> [1] Information
 #> 
 #> $createdate
-#> [1] 2025-12-03
+#> [1] 2025-12-12
 #> 
 #> $editdate
-#> [1] 2025-12-03
+#> [1] 2025-12-12
 #> 
 #> $geom
 #> [1] WKB POINT: raw 01 01 00 00 ...
@@ -1496,7 +1496,7 @@ d$geom <- pts_geom
 system.time(res <- lyr$batchCreateFeature(d))
 #> 0...10...20...30...40...50...60...70...80...90...100 - done.
 #>    user  system elapsed 
-#>   2.268   0.008   2.276
+#>   2.154   0.008   2.163
 
 (all(res))
 #> [1] TRUE
@@ -1528,7 +1528,7 @@ system.time({
 })
 #> 0...10...20...30...40...50...60...70...80...90...100 - done.
 #>    user  system elapsed 
-#>   1.033   0.005   1.038
+#>   1.021   0.006   1.027
 
 (all(res2))
 #> [1] TRUE
@@ -1541,22 +1541,22 @@ d_out <- lyr$fetch(-1)
 head(d_out)
 #> OGR feature set
 #>   FID               pt_desc         create_time                           geom
-#> 1   1 random points batch 1 2025-12-03 18:08:25 WKB POINT: raw 01 01 00 00 ...
-#> 2   2 random points batch 1 2025-12-03 18:08:25 WKB POINT: raw 01 01 00 00 ...
-#> 3   3 random points batch 1 2025-12-03 18:08:25 WKB POINT: raw 01 01 00 00 ...
-#> 4   4 random points batch 1 2025-12-03 18:08:25 WKB POINT: raw 01 01 00 00 ...
-#> 5   5 random points batch 1 2025-12-03 18:08:25 WKB POINT: raw 01 01 00 00 ...
-#> 6   6 random points batch 1 2025-12-03 18:08:25 WKB POINT: raw 01 01 00 00 ...
+#> 1   1 random points batch 1 2025-12-12 20:11:34 WKB POINT: raw 01 01 00 00 ...
+#> 2   2 random points batch 1 2025-12-12 20:11:34 WKB POINT: raw 01 01 00 00 ...
+#> 3   3 random points batch 1 2025-12-12 20:11:34 WKB POINT: raw 01 01 00 00 ...
+#> 4   4 random points batch 1 2025-12-12 20:11:34 WKB POINT: raw 01 01 00 00 ...
+#> 5   5 random points batch 1 2025-12-12 20:11:34 WKB POINT: raw 01 01 00 00 ...
+#> 6   6 random points batch 1 2025-12-12 20:11:34 WKB POINT: raw 01 01 00 00 ...
 
 tail(d_out)
 #> OGR feature set
 #>           FID               pt_desc         create_time
-#> 199995 199995 random points batch 2 2025-12-03 18:08:28
-#> 199996 199996 random points batch 2 2025-12-03 18:08:28
-#> 199997 199997 random points batch 2 2025-12-03 18:08:28
-#> 199998 199998 random points batch 2 2025-12-03 18:08:28
-#> 199999 199999 random points batch 2 2025-12-03 18:08:28
-#> 200000 200000 random points batch 2 2025-12-03 18:08:28
+#> 199995 199995 random points batch 2 2025-12-12 20:11:37
+#> 199996 199996 random points batch 2 2025-12-12 20:11:37
+#> 199997 199997 random points batch 2 2025-12-12 20:11:37
+#> 199998 199998 random points batch 2 2025-12-12 20:11:37
+#> 199999 199999 random points batch 2 2025-12-12 20:11:37
+#> 200000 200000 random points batch 2 2025-12-12 20:11:37
 #>                                  geom
 #> 199995 WKB POINT: raw 01 01 00 00 ...
 #> 199996 WKB POINT: raw 01 01 00 00 ...
@@ -1572,16 +1572,16 @@ lyr$close()
 
 Single-layer vector file formats (e.g., ESRI shapefile, FlatGeoBuf,
 GeoJSON) can be created from scratch with a call to
-[`ogr_ds_create()`](https://usdaforestservice.github.io/gdalraster/reference/ogr_manage.md).
+[`ogr_ds_create()`](https://firelab.github.io/gdalraster/reference/ogr_manage.md).
 This function provides optional arguments to add a single attribute
 field on the layer when it is created. More attribute fields could be
 added after layer creation with calls to
-[`ogr_field_create()`](https://usdaforestservice.github.io/gdalraster/reference/ogr_manage.md)
+[`ogr_field_create()`](https://firelab.github.io/gdalraster/reference/ogr_manage.md)
 (for vector formats that have the `CreateField` layer capability).
 Alternatively, a layer definition (as list object) can be passed to
-[`ogr_ds_create()`](https://usdaforestservice.github.io/gdalraster/reference/ogr_manage.md)
+[`ogr_ds_create()`](https://firelab.github.io/gdalraster/reference/ogr_manage.md)
 to specify multiple attribute fields and their properties (see
-[`?ogr_def_layer`](https://usdaforestservice.github.io/gdalraster/reference/ogr_define.md)).
+[`?ogr_def_layer`](https://firelab.github.io/gdalraster/reference/ogr_define.md)).
 
 GeoJSON does not support schema definition prior to creating features.
 Only the *Feature* object has a member with name *properties*. The
@@ -1590,7 +1590,7 @@ have the same schema of properties, nor does it require all *Feature*
 objects in a collection to have geometry of the same type
 (<https://geojson.org/>). Note that we set `return_obj = TRUE` in the
 call to
-[`ogr_ds_create()`](https://usdaforestservice.github.io/gdalraster/reference/ogr_manage.md).
+[`ogr_ds_create()`](https://firelab.github.io/gdalraster/reference/ogr_manage.md).
 This returns a live dataset object open for write access on the layer
 (i.e., an object of class `GDALVector`). A valid GeoJSON file will be
 generated once one or more features have been written to the layer.
@@ -1640,7 +1640,7 @@ readLines(json_file) |> writeLines()
 
 ### OGR facilities for vector geoprocessing
 
-[`ogr_proc()`](https://usdaforestservice.github.io/gdalraster/reference/ogr_proc.md)
+[`ogr_proc()`](https://firelab.github.io/gdalraster/reference/ogr_proc.md)
 performs GIS overlay operations on vector layers. It provides an
 interface to GDAL API methods for the following operations:
 [Intersection](https://gdal.org/en/stable/api/vector_c_api.html#_CPPv418OGR_L_Intersection9OGRLayerH9OGRLayerH9OGRLayerHPPc16GDALProgressFuncPv),

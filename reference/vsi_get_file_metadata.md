@@ -52,8 +52,8 @@ supported as of GDAL 3.9:
 
 ## See also
 
-[`vsi_stat()`](https://usdaforestservice.github.io/gdalraster/reference/vsi_stat.md),
-[`addFilesInZip()`](https://usdaforestservice.github.io/gdalraster/reference/addFilesInZip.md)
+[`vsi_stat()`](https://firelab.github.io/gdalraster/reference/vsi_stat.md),
+[`addFilesInZip()`](https://firelab.github.io/gdalraster/reference/addFilesInZip.md)
 
 ## Examples
 

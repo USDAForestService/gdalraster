@@ -15,7 +15,7 @@ displayRAT(tbl, title = "Raster Attribute Table")
 - tbl:
 
   A data frame formatted as a GDAL RAT (e.g., as returned by
-  [`buildRAT()`](https://usdaforestservice.github.io/gdalraster/reference/buildRAT.md)
+  [`buildRAT()`](https://firelab.github.io/gdalraster/reference/buildRAT.md)
   or `GDALRaster$getDefaultRAT()`).
 
 - title:
@@ -29,10 +29,10 @@ An object of class `"gt_tbl"` (i.e., a table created with
 
 ## See also
 
-[`buildRAT()`](https://usdaforestservice.github.io/gdalraster/reference/buildRAT.md),
-[`GDALRaster$getDefaultRAT()`](https://usdaforestservice.github.io/gdalraster/reference/GDALRaster-class.md)
+[`buildRAT()`](https://firelab.github.io/gdalraster/reference/buildRAT.md),
+[`GDALRaster$getDefaultRAT()`](https://firelab.github.io/gdalraster/reference/GDALRaster-class.md)
 
-[`vignette("raster-attribute-tables")`](https://usdaforestservice.github.io/gdalraster/articles/raster-attribute-tables.md)
+[`vignette("raster-attribute-tables")`](https://firelab.github.io/gdalraster/articles/raster-attribute-tables.md)
 
 ## Examples
 

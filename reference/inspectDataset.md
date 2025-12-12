@@ -2,7 +2,7 @@
 
 `inspectDataset()` returns information about the format and content of a
 dataset. The function first calls
-[`identifyDriver()`](https://usdaforestservice.github.io/gdalraster/reference/identifyDriver.md),
+[`identifyDriver()`](https://firelab.github.io/gdalraster/reference/identifyDriver.md),
 and then opens the dataset as raster and/or vector to obtain information
 about its content. The return value is a list with named elements.
 
@@ -23,7 +23,7 @@ inspectDataset(filename, ...)
 - ...:
 
   Additional arguments passed to
-  [`identifyDriver()`](https://usdaforestservice.github.io/gdalraster/reference/identifyDriver.md).
+  [`identifyDriver()`](https://firelab.github.io/gdalraster/reference/identifyDriver.md).
 
 ## Value
 
@@ -62,13 +62,13 @@ https://gdal.org/en/stable/en/latest/user/raster_data_model.html#subdatasets-dom
 
 PostgreSQL / PostGISRaster are handled as a special case. If additional
 arguments `raster` or `vector` are not given for
-[`identifyDriver()`](https://usdaforestservice.github.io/gdalraster/reference/identifyDriver.md),
+[`identifyDriver()`](https://firelab.github.io/gdalraster/reference/identifyDriver.md),
 then `raster = FALSE` is assumed.
 
 ## See also
 
-[`gdal_formats()`](https://usdaforestservice.github.io/gdalraster/reference/gdal_formats.md),
-[`identifyDriver()`](https://usdaforestservice.github.io/gdalraster/reference/identifyDriver.md)
+[`gdal_formats()`](https://firelab.github.io/gdalraster/reference/gdal_formats.md),
+[`identifyDriver()`](https://firelab.github.io/gdalraster/reference/identifyDriver.md)
 
 ## Examples
 

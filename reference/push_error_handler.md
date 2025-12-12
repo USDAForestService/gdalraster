@@ -4,7 +4,7 @@
 GDAL Common Portability Library. This pushes a new error handler on the
 thread-local error handler stack. This handler will be used until
 removed with
-[`pop_error_handler()`](https://usdaforestservice.github.io/gdalraster/reference/pop_error_handler.md).
+[`pop_error_handler()`](https://firelab.github.io/gdalraster/reference/pop_error_handler.md).
 A typical use is to temporarily set `CPLQuietErrorHandler()` which
 doesn't make any attempt to report passed error or warning messages, but
 will process debug messages via `CPLDefaultErrorHandler`.
@@ -40,7 +40,7 @@ This only affects error reporting from GDAL.
 
 ## See also
 
-[`pop_error_handler()`](https://usdaforestservice.github.io/gdalraster/reference/pop_error_handler.md)
+[`pop_error_handler()`](https://firelab.github.io/gdalraster/reference/pop_error_handler.md)
 
 ## Examples
 

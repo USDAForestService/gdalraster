@@ -5,7 +5,7 @@
 extent from all bands at full resolution. `read_ds()` is sometimes more
 convenient than `GDALRaster$read()`, e.g., to read specific multiple
 bands for display with
-[`plot_raster()`](https://usdaforestservice.github.io/gdalraster/reference/plot_raster.md),
+[`plot_raster()`](https://firelab.github.io/gdalraster/reference/plot_raster.md),
 or simply for the default arguments that read an entire raster into
 memory (see Note).
 
@@ -80,7 +80,7 @@ read_ds(
   the `GDALRaster` object, which will be temporarily updated in this
   function. To control this behavior in a persistent way on a dataset
   see `$readByteAsRaw` in
-  [`GDALRaster-class`](https://usdaforestservice.github.io/gdalraster/reference/GDALRaster-class.md).
+  [`GDALRaster-class`](https://firelab.github.io/gdalraster/reference/GDALRaster-class.md).
 
 ## Value
 
@@ -109,7 +109,7 @@ The output object has attribute `gis`, a list containing:
 
 The WKT version used for the projection string can be overridden by
 setting the `OSR_WKT_FORMAT` configuration option. See
-[`srs_to_wkt()`](https://usdaforestservice.github.io/gdalraster/reference/srs_convert.md)
+[`srs_to_wkt()`](https://firelab.github.io/gdalraster/reference/srs_convert.md)
 for a list of supported values.
 
 ## Note
@@ -129,7 +129,7 @@ read as `double` (plus small object overhead for the vector).
 
 ## See also
 
-[`GDALRaster$read()`](https://usdaforestservice.github.io/gdalraster/reference/GDALRaster-class.md)
+[`GDALRaster$read()`](https://firelab.github.io/gdalraster/reference/GDALRaster-class.md)
 
 ## Examples
 

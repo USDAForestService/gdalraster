@@ -90,7 +90,7 @@ These functions use the GEOS library via GDAL headers.
 
 `g_intersection()` returns a new geometry which is the region of
 intersection of the two geometries operated on.
-[`g_intersects()`](https://usdaforestservice.github.io/gdalraster/reference/g_binary_pred.md)
+[`g_intersects()`](https://firelab.github.io/gdalraster/reference/g_binary_pred.md)
 can be used to test if two geometries intersect.
 
 `g_union()` returns a new geometry which is the region of union of the
@@ -110,7 +110,7 @@ reference system.
 
 Geometry validity is not checked. In case you are unsure of the validity
 of the input geometries, call
-[`g_is_valid()`](https://usdaforestservice.github.io/gdalraster/reference/g_query.md)
+[`g_is_valid()`](https://firelab.github.io/gdalraster/reference/g_query.md)
 before, otherwise the result might be wrong.
 
 ## Examples

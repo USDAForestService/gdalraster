@@ -35,7 +35,7 @@ dem_proc(
 - mode_options:
 
   An optional character vector of command-line options (see
-  [DEFAULT_DEM_PROC](https://usdaforestservice.github.io/gdalraster/reference/DEFAULT_DEM_PROC.md)
+  [DEFAULT_DEM_PROC](https://firelab.github.io/gdalraster/reference/DEFAULT_DEM_PROC.md)
   for default values).
 
 - color_file:

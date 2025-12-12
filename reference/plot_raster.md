@@ -43,7 +43,7 @@ plot_raster(
   numeric vector of pixel values arranged in left to right, top to
   bottom order, or a list of band vectors. If input is vector or list,
   the information in attribute `gis` will be used if present (see
-  [`read_ds()`](https://usdaforestservice.github.io/gdalraster/reference/read_ds.md)),
+  [`read_ds()`](https://firelab.github.io/gdalraster/reference/read_ds.md)),
   potentially ignoring values below for `xsize`, `ysize`, `nbands`.
 
 - xsize:
@@ -246,9 +246,9 @@ LANCZOS, AVERAGE or MODE, for example:
 
 ## See also
 
-[`GDALRaster$read()`](https://usdaforestservice.github.io/gdalraster/reference/GDALRaster-class.md),
-[`read_ds()`](https://usdaforestservice.github.io/gdalraster/reference/read_ds.md),
-[`set_config_option()`](https://usdaforestservice.github.io/gdalraster/reference/set_config_option.md)
+[`GDALRaster$read()`](https://firelab.github.io/gdalraster/reference/GDALRaster-class.md),
+[`read_ds()`](https://firelab.github.io/gdalraster/reference/read_ds.md),
+[`set_config_option()`](https://firelab.github.io/gdalraster/reference/set_config_option.md)
 
 ## Examples
 

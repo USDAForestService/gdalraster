@@ -71,9 +71,9 @@ will silently return `0`.
 
 ## See also
 
-[`g_make_valid()`](https://usdaforestservice.github.io/gdalraster/reference/g_util.md),
-[`g_set_3D()`](https://usdaforestservice.github.io/gdalraster/reference/g_util.md),
-[`g_set_measured()`](https://usdaforestservice.github.io/gdalraster/reference/g_util.md)
+[`g_make_valid()`](https://firelab.github.io/gdalraster/reference/g_util.md),
+[`g_set_3D()`](https://firelab.github.io/gdalraster/reference/g_util.md),
+[`g_set_measured()`](https://firelab.github.io/gdalraster/reference/g_util.md)
 
 ## Examples
 

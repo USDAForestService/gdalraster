@@ -3,7 +3,7 @@
 `gdal_compute_version()` computes a full integer version number
 (GDAL_VERSION_NUM) from individual components (major, minor, revision).
 Convenience function for checking a GDAL version requirement using
-[`gdal_version_num()`](https://usdaforestservice.github.io/gdalraster/reference/gdal_version.md).
+[`gdal_version_num()`](https://firelab.github.io/gdalraster/reference/gdal_version.md).
 
 ## Usage
 
@@ -31,11 +31,11 @@ gdal_compute_version(maj, min, rev)
 ## Value
 
 Integer version number compatible with
-[`gdal_version_num()`](https://usdaforestservice.github.io/gdalraster/reference/gdal_version.md).
+[`gdal_version_num()`](https://firelab.github.io/gdalraster/reference/gdal_version.md).
 
 ## See also
 
-[`gdal_version_num()`](https://usdaforestservice.github.io/gdalraster/reference/gdal_version.md)
+[`gdal_version_num()`](https://firelab.github.io/gdalraster/reference/gdal_version.md)
 
 ## Examples
 

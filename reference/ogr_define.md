@@ -70,7 +70,7 @@ ogr_def_field_domain(
   Character string containing a spatial reference system definition as
   OGC WKT or other well-known format (e.g., the input formats usable
   with
-  [`srs_to_wkt()`](https://usdaforestservice.github.io/gdalraster/reference/srs_convert.md)).
+  [`srs_to_wkt()`](https://firelab.github.io/gdalraster/reference/srs_convert.md)).
 
 - fld_type:
 
@@ -302,9 +302,9 @@ geometry of the same type (<https://geojson.org/>).
 
 ## See also
 
-[`ogr_ds_create()`](https://usdaforestservice.github.io/gdalraster/reference/ogr_manage.md),
-[`ogr_layer_create()`](https://usdaforestservice.github.io/gdalraster/reference/ogr_manage.md),
-[`ogr_field_create()`](https://usdaforestservice.github.io/gdalraster/reference/ogr_manage.md)
+[`ogr_ds_create()`](https://firelab.github.io/gdalraster/reference/ogr_manage.md),
+[`ogr_layer_create()`](https://firelab.github.io/gdalraster/reference/ogr_manage.md),
+[`ogr_field_create()`](https://firelab.github.io/gdalraster/reference/ogr_manage.md)
 
 WKT representation of geometry:  
 <https://en.wikipedia.org/wiki/Well-known_text_representation_of_geometry>

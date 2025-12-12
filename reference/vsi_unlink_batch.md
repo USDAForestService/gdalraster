@@ -27,9 +27,9 @@ different file system handlers).
 
 ## See also
 
-[`deleteDataset()`](https://usdaforestservice.github.io/gdalraster/reference/deleteDataset.md),
-[`vsi_rmdir()`](https://usdaforestservice.github.io/gdalraster/reference/vsi_rmdir.md),
-[`vsi_unlink()`](https://usdaforestservice.github.io/gdalraster/reference/vsi_unlink.md)
+[`deleteDataset()`](https://firelab.github.io/gdalraster/reference/deleteDataset.md),
+[`vsi_rmdir()`](https://firelab.github.io/gdalraster/reference/vsi_rmdir.md),
+[`vsi_unlink()`](https://firelab.github.io/gdalraster/reference/vsi_unlink.md)
 
 ## Examples
 

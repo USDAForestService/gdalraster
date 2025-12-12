@@ -36,7 +36,7 @@ the celestial body of the CRS (e.g., "Earth", populated only if GDAL \>=
 
 ## See also
 
-[srs_query](https://usdaforestservice.github.io/gdalraster/reference/srs_query.md)
+[srs_query](https://firelab.github.io/gdalraster/reference/srs_query.md)
 
 ## Examples
 

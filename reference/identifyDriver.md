@@ -69,7 +69,7 @@ At least one of the `raster` or `vector` arguments must be `TRUE`.
 
 ## See also
 
-[`gdal_formats()`](https://usdaforestservice.github.io/gdalraster/reference/gdal_formats.md)
+[`gdal_formats()`](https://firelab.github.io/gdalraster/reference/gdal_formats.md)
 
 ## Examples
 

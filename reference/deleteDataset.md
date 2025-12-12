@@ -42,11 +42,11 @@ determined from the passed file name.
 
 ## See also
 
-[`GDALRaster-class`](https://usdaforestservice.github.io/gdalraster/reference/GDALRaster-class.md),
-[`create()`](https://usdaforestservice.github.io/gdalraster/reference/create.md),
-[`createCopy()`](https://usdaforestservice.github.io/gdalraster/reference/createCopy.md),
-[`copyDatasetFiles()`](https://usdaforestservice.github.io/gdalraster/reference/copyDatasetFiles.md),
-[`renameDataset()`](https://usdaforestservice.github.io/gdalraster/reference/renameDataset.md)
+[`GDALRaster-class`](https://firelab.github.io/gdalraster/reference/GDALRaster-class.md),
+[`create()`](https://firelab.github.io/gdalraster/reference/create.md),
+[`createCopy()`](https://firelab.github.io/gdalraster/reference/createCopy.md),
+[`copyDatasetFiles()`](https://firelab.github.io/gdalraster/reference/copyDatasetFiles.md),
+[`renameDataset()`](https://firelab.github.io/gdalraster/reference/renameDataset.md)
 
 ## Examples
 
@@ -61,7 +61,7 @@ ds$buildOverviews("BILINEAR", levels = c(2, 4, 8), bands = c(1))
 #> 0...10...20...30...40...50...60...70...80...90...100 - done.
 files <- ds$getFileList()
 print(files)
-#> [1] "/tmp/RtmpO4j4Ij/b5_tmp.tif"     "/tmp/RtmpO4j4Ij/b5_tmp.tif.ovr"
+#> [1] "/tmp/Rtmpj4jsZs/b5_tmp.tif"     "/tmp/Rtmpj4jsZs/b5_tmp.tif.ovr"
 ds$close()
 file.exists(files)
 #> [1] TRUE TRUE

@@ -175,11 +175,11 @@ should consider what is appropriate for a particular case.
 
 ## See also
 
-[`GDALRaster$getDefaultRAT()`](https://usdaforestservice.github.io/gdalraster/reference/GDALRaster-class.md),
-[`GDALRaster$setDefaultRAT()`](https://usdaforestservice.github.io/gdalraster/reference/GDALRaster-class.md),
-[`displayRAT()`](https://usdaforestservice.github.io/gdalraster/reference/displayRAT.md)
+[`GDALRaster$getDefaultRAT()`](https://firelab.github.io/gdalraster/reference/GDALRaster-class.md),
+[`GDALRaster$setDefaultRAT()`](https://firelab.github.io/gdalraster/reference/GDALRaster-class.md),
+[`displayRAT()`](https://firelab.github.io/gdalraster/reference/displayRAT.md)
 
-[`vignette("raster-attribute-tables")`](https://usdaforestservice.github.io/gdalraster/articles/raster-attribute-tables.md)
+[`vignette("raster-attribute-tables")`](https://firelab.github.io/gdalraster/articles/raster-attribute-tables.md)
 
 ## Examples
 

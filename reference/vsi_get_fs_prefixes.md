@@ -17,7 +17,7 @@ handlers.
 
 ## See also
 
-[`vsi_get_fs_options()`](https://usdaforestservice.github.io/gdalraster/reference/vsi_get_fs_options.md)
+[`vsi_get_fs_options()`](https://firelab.github.io/gdalraster/reference/vsi_get_fs_options.md)
 
 <https://gdal.org/en/stable/user/virtual_file_systems.html>
 

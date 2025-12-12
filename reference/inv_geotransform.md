@@ -26,8 +26,8 @@ uninvertable.
 
 ## See also
 
-[`GDALRaster$getGeoTransform()`](https://usdaforestservice.github.io/gdalraster/reference/GDALRaster-class.md),
-[`get_pixel_line()`](https://usdaforestservice.github.io/gdalraster/reference/get_pixel_line.md)
+[`GDALRaster$getGeoTransform()`](https://firelab.github.io/gdalraster/reference/GDALRaster-class.md),
+[`get_pixel_line()`](https://firelab.github.io/gdalraster/reference/get_pixel_line.md)
 
 ## Examples
 

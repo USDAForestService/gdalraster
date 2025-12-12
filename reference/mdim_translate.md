@@ -52,7 +52,7 @@ mdim_translate(
   Optional character vector of format-specific creation options as
   `"NAME=VALUE"` pairs. A list of options supported for a format can be
   obtained with
-  [`getCreationOptions()`](https://usdaforestservice.github.io/gdalraster/reference/getCreationOptions.md),
+  [`getCreationOptions()`](https://firelab.github.io/gdalraster/reference/getCreationOptions.md),
   but the documentation for the format is the definitive source of
   information on driver creation options (see
   <https://gdal.org/en/stable/drivers/raster/index.html>). Array-level
@@ -152,7 +152,7 @@ The following options are processed in that order:
   `GDALMDArray::GetView()`. When specifying a `view_expr` that performs
   a slicing or subsetting on a dimension, the equivalent operation will
   be applied to the corresponding indexing variable. See
-  [`?mdim_as_classic`](https://usdaforestservice.github.io/gdalraster/reference/mdim_as_classic.md)
+  [`?mdim_as_classic`](https://firelab.github.io/gdalraster/reference/mdim_as_classic.md)
   for details on view expressions.
 
 ### `group_specs`
@@ -205,8 +205,8 @@ option in `array_specs`.
 
 ## See also
 
-[`mdim_as_classic()`](https://usdaforestservice.github.io/gdalraster/reference/mdim_as_classic.md),
-[`mdim_info()`](https://usdaforestservice.github.io/gdalraster/reference/mdim_info.md)
+[`mdim_as_classic()`](https://firelab.github.io/gdalraster/reference/mdim_as_classic.md),
+[`mdim_info()`](https://firelab.github.io/gdalraster/reference/mdim_info.md)
 
 ## Examples
 

@@ -42,11 +42,11 @@ operation fails.
 
 ## See also
 
-[`GDALRaster-class`](https://usdaforestservice.github.io/gdalraster/reference/GDALRaster-class.md),
-[`rasterFromRaster()`](https://usdaforestservice.github.io/gdalraster/reference/rasterFromRaster.md),
-[`warp()`](https://usdaforestservice.github.io/gdalraster/reference/warp.md)
+[`GDALRaster-class`](https://firelab.github.io/gdalraster/reference/GDALRaster-class.md),
+[`rasterFromRaster()`](https://firelab.github.io/gdalraster/reference/rasterFromRaster.md),
+[`warp()`](https://firelab.github.io/gdalraster/reference/warp.md)
 
-[`ogr2ogr()`](https://usdaforestservice.github.io/gdalraster/reference/ogr2ogr.md)
+[`ogr2ogr()`](https://firelab.github.io/gdalraster/reference/ogr2ogr.md)
 for vector data
 
 ## Examples
@@ -66,8 +66,8 @@ translate(elev_file, img_file, args)
 ds <- new(GDALRaster, img_file)
 ds$info()
 #> Driver: HFA/Erdas Imagine Images (.img)
-#> Files: /tmp/RtmpO4j4Ij/storml_elev_90m.img
-#>        /tmp/RtmpO4j4Ij/storml_elev_90m.img.aux.xml
+#> Files: /tmp/Rtmpj4jsZs/storml_elev_90m.img
+#>        /tmp/Rtmpj4jsZs/storml_elev_90m.img.aux.xml
 #> Size is 48, 36
 #> Coordinate System is:
 #> PROJCRS["NAD83 / UTM zone 12N",

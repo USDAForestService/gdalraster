@@ -5,7 +5,7 @@
 interface to the GDAL API methods for these operations
 (`OGRLayer::Intersection()`, `OGRLayer::Union()`, etc). Inputs are given
 as objects of class
-[`GDALVector`](https://usdaforestservice.github.io/gdalraster/reference/GDALVector-class.md),
+[`GDALVector`](https://firelab.github.io/gdalraster/reference/GDALVector-class.md),
 which may have spatial and/or attribute filters applied. The output
 layer will be created if it does not exist, but output can also be
 appended to an existing layer, or written to an existing empty layer
@@ -45,14 +45,14 @@ ogr_proc(
 - input_lyr:
 
   An object of class
-  [`GDALVector`](https://usdaforestservice.github.io/gdalraster/reference/GDALVector-class.md)
+  [`GDALVector`](https://firelab.github.io/gdalraster/reference/GDALVector-class.md)
   to use as the input layer. For overlay operations, this is the first
   layer in the operation.
 
 - method_lyr:
 
   An object of class
-  [`GDALVector`](https://usdaforestservice.github.io/gdalraster/reference/GDALVector-class.md)
+  [`GDALVector`](https://firelab.github.io/gdalraster/reference/GDALVector-class.md)
   to use as the method layer. This is the conditional layer supplied to
   an operation (e.g., Clip, Erase, Update), or the second layer in
   overlay operations (e.g., Union, Intersection, SymDifference).
@@ -109,14 +109,14 @@ ogr_proc(
 - return_obj:
 
   Logical value. If `TRUE` (the default), an object of class
-  [`GDALVector`](https://usdaforestservice.github.io/gdalraster/reference/GDALVector-class.md)
+  [`GDALVector`](https://firelab.github.io/gdalraster/reference/GDALVector-class.md)
   opened on the output layer will be returned, otherwise the function
   returns a logical value.
 
 ## Value
 
 Upon successful completion, an object of class
-[`GDALVector`](https://usdaforestservice.github.io/gdalraster/reference/GDALVector-class.md)
+[`GDALVector`](https://firelab.github.io/gdalraster/reference/GDALVector-class.md)
 is returned by default (`return_obj = TRUE`), or logical `TRUE` is
 returned if `return_obj = FALSE`. Logical `FALSE` is returned if an
 error occurs during processing.
@@ -174,13 +174,13 @@ default prefixes can be overridden in the `mode_opt` argument as
 described below.
 
 Alternatively, the functions in the
-[`ogr_manage`](https://usdaforestservice.github.io/gdalraster/reference/ogr_manage.md)
+[`ogr_manage`](https://firelab.github.io/gdalraster/reference/ogr_manage.md)
 interface could be used to create an empty layer with user-defined
 schema (e.g.,
-[`ogr_ds_create()`](https://usdaforestservice.github.io/gdalraster/reference/ogr_manage.md),
-[`ogr_layer_create()`](https://usdaforestservice.github.io/gdalraster/reference/ogr_manage.md)
+[`ogr_ds_create()`](https://firelab.github.io/gdalraster/reference/ogr_manage.md),
+[`ogr_layer_create()`](https://firelab.github.io/gdalraster/reference/ogr_manage.md)
 and
-[`ogr_field_create()`](https://usdaforestservice.github.io/gdalraster/reference/ogr_manage.md)).
+[`ogr_field_create()`](https://firelab.github.io/gdalraster/reference/ogr_manage.md)).
 If the schema of the output layer is set by the user and contains fields
 that have the same name as a field in both the input and method layers,
 then the attribute for an output feature will get the value from the
@@ -232,9 +232,9 @@ layer and copy into a memory layer.
 
 ## See also
 
-[`GDALVector-class`](https://usdaforestservice.github.io/gdalraster/reference/GDALVector-class.md),
-[`ogr_define`](https://usdaforestservice.github.io/gdalraster/reference/ogr_define.md),
-[`ogr_manage`](https://usdaforestservice.github.io/gdalraster/reference/ogr_manage.md)
+[`GDALVector-class`](https://firelab.github.io/gdalraster/reference/GDALVector-class.md),
+[`ogr_define`](https://firelab.github.io/gdalraster/reference/ogr_define.md),
+[`ogr_manage`](https://firelab.github.io/gdalraster/reference/ogr_manage.md)
 
 Vector overlay operators:  
 <https://en.wikipedia.org/wiki/Vector_overlay>

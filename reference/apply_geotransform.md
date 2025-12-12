@@ -33,12 +33,12 @@ Numeric matrix of geospatial x/y coordinates.
 
 Bounds checking on the input coordinates is done if `gt` is obtained
 from an object of class `GDALRaster`. See Note for
-[`get_pixel_line()`](https://usdaforestservice.github.io/gdalraster/reference/get_pixel_line.md).
+[`get_pixel_line()`](https://firelab.github.io/gdalraster/reference/get_pixel_line.md).
 
 ## See also
 
-[`GDALRaster$getGeoTransform()`](https://usdaforestservice.github.io/gdalraster/reference/GDALRaster-class.md),
-[`get_pixel_line()`](https://usdaforestservice.github.io/gdalraster/reference/get_pixel_line.md)
+[`GDALRaster$getGeoTransform()`](https://firelab.github.io/gdalraster/reference/GDALRaster-class.md),
+[`get_pixel_line()`](https://firelab.github.io/gdalraster/reference/get_pixel_line.md)
 
 ## Examples
 

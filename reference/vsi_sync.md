@@ -102,8 +102,8 @@ Currently accepted options are:
 
 ## See also
 
-[`copyDatasetFiles()`](https://usdaforestservice.github.io/gdalraster/reference/copyDatasetFiles.md),
-[`vsi_copy_file()`](https://usdaforestservice.github.io/gdalraster/reference/vsi_copy_file.md)
+[`copyDatasetFiles()`](https://firelab.github.io/gdalraster/reference/copyDatasetFiles.md),
+[`vsi_copy_file()`](https://firelab.github.io/gdalraster/reference/vsi_copy_file.md)
 
 ## Examples
 

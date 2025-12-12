@@ -46,7 +46,7 @@ may be filed at:
 ## Command discovery and usage info
 
 The function
-[`gdal_commands()`](https://usdaforestservice.github.io/gdalraster/reference/gdal_cli.md)
+[`gdal_commands()`](https://firelab.github.io/gdalraster/reference/gdal_cli.md)
 prints a list of available commands to the console along with a short
 description and help URL for each. A data frame containing the command
 strings, descriptions and URLs is returned invisibly. By default, the
@@ -252,7 +252,7 @@ gdal_commands("raster")
 ```
 
 The function
-[`gdal_usage()`](https://usdaforestservice.github.io/gdalraster/reference/gdal_cli.md)
+[`gdal_usage()`](https://firelab.github.io/gdalraster/reference/gdal_cli.md)
 prints a help message to the console for a specific command.
 
 ``` r
@@ -300,7 +300,7 @@ gdal_usage("raster convert")
 ## Running CLI algorithms
 
 A convenient way to access a CLI algorithm and run it is to use the
-[`gdal_run()`](https://usdaforestservice.github.io/gdalraster/reference/gdal_cli.md)
+[`gdal_run()`](https://firelab.github.io/gdalraster/reference/gdal_cli.md)
 function. This function accepts a command string, along with its
 argument values given in a character vector or named list. It attempts
 to parse the algorithm arguments and then run the algorithm on the given
@@ -308,7 +308,7 @@ input data. The return value is an object of class
 [`GDALAlg`](https://usdaforestservice.github.io/gdalraster/reference/GDALAlg-class.html).
 If you do not need to access output value(s) of the algorithm, you can
 call
-[`gdal_run()`](https://usdaforestservice.github.io/gdalraster/reference/gdal_cli.md)
+[`gdal_run()`](https://firelab.github.io/gdalraster/reference/gdal_cli.md)
 without assigning its return value. More commonly, the return value is
 assigned to a variable so that algorithm output can be accessed via
 methods of the `GDALAlg` object.
@@ -763,6 +763,6 @@ deleteDataset(f_out)
 **gdalraster** documentation:
 
 - Functions for using “gdal” CLI algorithms
-  ([`?gdal_cli`](https://usdaforestservice.github.io/gdalraster/reference/gdal_cli.md))
+  ([`?gdal_cli`](https://firelab.github.io/gdalraster/reference/gdal_cli.md))
 - Class `GDALAlg`
-  ([`?GDALAlg`](https://usdaforestservice.github.io/gdalraster/reference/GDALAlg-class.md))
+  ([`?GDALAlg`](https://firelab.github.io/gdalraster/reference/GDALAlg-class.md))

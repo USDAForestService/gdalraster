@@ -40,10 +40,10 @@ vsi_read_dir(path, max_files = 0L, recursive = FALSE, all_files = FALSE)
 ## Value
 
 A character vector containing the names of files and directories in the
-directory given by `path`. The listing is in alphabetical order, and
-does not include the special entries '.' and '..' even if they are
-present in the directory. An empty string (`""`) is returned if `path`
-does not exist.
+directory given by `path` (may be an empty vector `character(0)`). The
+listing is in alphabetical order, and does not include the special
+entries '.' and '..' even if they are present in the directory. An empty
+vector (`character(0)`) is returned if `path` does not exist.
 
 ## Note
 
@@ -56,10 +56,10 @@ ignored when `recursive = TRUE`.
 
 ## See also
 
-[`vsi_mkdir()`](https://usdaforestservice.github.io/gdalraster/reference/vsi_mkdir.md),
-[`vsi_rmdir()`](https://usdaforestservice.github.io/gdalraster/reference/vsi_rmdir.md),
-[`vsi_stat()`](https://usdaforestservice.github.io/gdalraster/reference/vsi_stat.md),
-[`vsi_sync()`](https://usdaforestservice.github.io/gdalraster/reference/vsi_sync.md)
+[`vsi_mkdir()`](https://firelab.github.io/gdalraster/reference/vsi_mkdir.md),
+[`vsi_rmdir()`](https://firelab.github.io/gdalraster/reference/vsi_rmdir.md),
+[`vsi_stat()`](https://firelab.github.io/gdalraster/reference/vsi_stat.md),
+[`vsi_sync()`](https://firelab.github.io/gdalraster/reference/vsi_sync.md)
 
 ## Examples
 

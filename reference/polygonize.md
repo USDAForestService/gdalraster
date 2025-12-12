@@ -137,9 +137,9 @@ will be implicitly truncated before processing.
 When 8-connectedness is used, many of the resulting polygons will likely
 be invalid due to ring self-intersection (in the strict OGC definition
 of polygon validity). See
-[`g_is_valid()`](https://usdaforestservice.github.io/gdalraster/reference/g_query.md)
+[`g_is_valid()`](https://firelab.github.io/gdalraster/reference/g_query.md)
 /
-[`g_make_valid()`](https://usdaforestservice.github.io/gdalraster/reference/g_util.md)
+[`g_make_valid()`](https://firelab.github.io/gdalraster/reference/g_util.md)
 (single polygons can become MultiPolygon' in the case of
 self-intersections).
 
@@ -161,9 +161,9 @@ vector), setting `PG_USE_COPY=YES` is faster:
 
 ## See also
 
-[`rasterize()`](https://usdaforestservice.github.io/gdalraster/reference/rasterize.md)
+[`rasterize()`](https://firelab.github.io/gdalraster/reference/rasterize.md)
 
-[`vignette("gdal-config-quick-ref")`](https://usdaforestservice.github.io/gdalraster/articles/gdal-config-quick-ref.md)
+[`vignette("gdal-config-quick-ref")`](https://firelab.github.io/gdalraster/articles/gdal-config-quick-ref.md)
 
 ## Examples
 

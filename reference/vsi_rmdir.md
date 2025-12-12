@@ -37,10 +37,10 @@ deleting recursively, provided that OAuth2 authentication is used.
 
 ## See also
 
-[`deleteDataset()`](https://usdaforestservice.github.io/gdalraster/reference/deleteDataset.md),
-[`vsi_mkdir()`](https://usdaforestservice.github.io/gdalraster/reference/vsi_mkdir.md),
-[`vsi_read_dir()`](https://usdaforestservice.github.io/gdalraster/reference/vsi_read_dir.md),
-[`vsi_unlink()`](https://usdaforestservice.github.io/gdalraster/reference/vsi_unlink.md)
+[`deleteDataset()`](https://firelab.github.io/gdalraster/reference/deleteDataset.md),
+[`vsi_mkdir()`](https://firelab.github.io/gdalraster/reference/vsi_mkdir.md),
+[`vsi_read_dir()`](https://firelab.github.io/gdalraster/reference/vsi_read_dir.md),
+[`vsi_unlink()`](https://firelab.github.io/gdalraster/reference/vsi_unlink.md)
 
 ## Examples
 

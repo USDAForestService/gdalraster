@@ -76,7 +76,7 @@ region being read (`xsize * ysize`). In that case, the
 `GDAL_RASTERIO_RESAMPLING` configuration option could also be set to
 override the default resampling to one of `BILINEAR`, `CUBIC`,
 `CUBICSPLINE`, `LANCZOS`, `AVERAGE` or `MODE` (see
-[`set_config_option()`](https://usdaforestservice.github.io/gdalraster/reference/set_config_option.md)).
+[`set_config_option()`](https://firelab.github.io/gdalraster/reference/set_config_option.md)).
 
 ## Usage (see Details)
 
@@ -236,11 +236,11 @@ computation of statistics and histograms.
 `$readByteAsRaw`  
 A logical value, `FALSE` by default. This field can be set to `TRUE`
 which will affect the data type returned by the `$read()` method and the
-[`read_ds()`](https://usdaforestservice.github.io/gdalraster/reference/read_ds.md)
+[`read_ds()`](https://firelab.github.io/gdalraster/reference/read_ds.md)
 convenience function. When the underlying band data type is Byte and
 `readByteAsRaw` is `TRUE` the output type will be raw rather than
 integer. See also the `as_raw` argument to
-[`read_ds()`](https://usdaforestservice.github.io/gdalraster/reference/read_ds.md)
+[`read_ds()`](https://firelab.github.io/gdalraster/reference/read_ds.md)
 to control this in a non-persistent setting. If the underlying band data
 type is not Byte this setting has no effect.
 
@@ -258,7 +258,7 @@ associated filename. Explicitly setting the filename is an advanced
 setting that should only be used when the user has determined that it is
 needed. Writing certain virtual datasets to file is one potential use
 case (e.g., a dataset returned by
-[`autoCreateWarpedVRT()`](https://usdaforestservice.github.io/gdalraster/reference/autoCreateWarpedVRT.md)).
+[`autoCreateWarpedVRT()`](https://firelab.github.io/gdalraster/reference/autoCreateWarpedVRT.md)).
 
 `$open(read_only)`  
 (Re-)opens the raster dataset on the existing filename. Use this method
@@ -381,7 +381,7 @@ space (column/row), converting into georeferenced (x/y) coordinates.
 two-column data frame that will be coerced to numeric matrix). Returns a
 numeric matrix of geospatial x/y coordinates. See the stand-alone
 function of the same name
-([`apply_geotransform()`](https://usdaforestservice.github.io/gdalraster/reference/apply_geotransform.md))
+([`apply_geotransform()`](https://firelab.github.io/gdalraster/reference/apply_geotransform.md))
 for more info and examples.
 
 `$get_pixel_line(xy)`  
@@ -390,7 +390,7 @@ numbers). `xy` is a numeric matrix of geospatial x,y coordinates in the
 same spatial reference system as the raster (or two-column data frame
 that will be coerced to numeric matrix). Returns an integer matrix of
 raster pixel/line. See the stand-alone function of the same name
-([`get_pixel_line()`](https://usdaforestservice.github.io/gdalraster/reference/get_pixel_line.md))
+([`get_pixel_line()`](https://firelab.github.io/gdalraster/reference/get_pixel_line.md))
 for more info and examples.
 
 `$get_block_indexing(band)`  
@@ -489,7 +489,7 @@ files. The [GDAL documentation for
 `gdaladdo`](https://gdal.org/en/stable/programs/gdaladdo.html)
 command-line utility describes additional configuration for overview
 building. See also
-[`set_config_option()`](https://usdaforestservice.github.io/gdalraster/reference/set_config_option.md).
+[`set_config_option()`](https://firelab.github.io/gdalraster/reference/set_config_option.md).
 No return value, called for side effects.
 
 `$getDataTypeName(band)`  
@@ -895,7 +895,7 @@ this action is not supported by the driver.
 Returns the Raster Attribute Table for `band` as a data frame, or `NULL`
 if there is no associated Raster Attribute Table. See the stand-alone
 function
-[`buildRAT()`](https://usdaforestservice.github.io/gdalraster/reference/buildRAT.md)
+[`buildRAT()`](https://firelab.github.io/gdalraster/reference/buildRAT.md)
 for details of the Raster Attribute Table format.
 
 `$setDefaultRAT(band, df)`  
@@ -913,7 +913,7 @@ values (GFUs `"Red"`, "`Green"`, `"Blue"`), etc. The data frame will
 also be checked for attributes `"Row0Min"` and `"BinSize"` which can
 have numeric values that describe linear binning. See the stand-alone
 function
-[`buildRAT()`](https://usdaforestservice.github.io/gdalraster/reference/buildRAT.md)
+[`buildRAT()`](https://firelab.github.io/gdalraster/reference/buildRAT.md)
 for details of the GDAL Raster Attribute Table format and its
 representation as data frame.
 
@@ -947,11 +947,11 @@ afterwards. The `GDALRaster` object is still available after calling
 ## See also
 
 Package overview in
-[`help("gdalraster-package")`](https://usdaforestservice.github.io/gdalraster/reference/gdalraster-package.md)
+[`help("gdalraster-package")`](https://firelab.github.io/gdalraster/reference/gdalraster-package.md)
 
-[`vignette("raster-api-tutorial")`](https://usdaforestservice.github.io/gdalraster/articles/raster-api-tutorial.md)
+[`vignette("raster-api-tutorial")`](https://firelab.github.io/gdalraster/articles/raster-api-tutorial.md)
 
-[`read_ds()`](https://usdaforestservice.github.io/gdalraster/reference/read_ds.md)
+[`read_ds()`](https://firelab.github.io/gdalraster/reference/read_ds.md)
 is a convenience wrapper for `GDALRaster$read()`
 
 ## Examples

@@ -3,7 +3,7 @@
 `pop_error_handler()` is a wrapper for `CPLPopErrorHandler()` in the
 GDAL Common Portability Library. Discards the current error handler on
 the error handler stack, and restores the one in use before the last
-[`push_error_handler()`](https://usdaforestservice.github.io/gdalraster/reference/push_error_handler.md)
+[`push_error_handler()`](https://firelab.github.io/gdalraster/reference/push_error_handler.md)
 call. This method has no effect if there are no error handlers on the
 current thread's error handler stack.
 
@@ -19,7 +19,7 @@ No return value, called for side effects.
 
 ## See also
 
-[`push_error_handler()`](https://usdaforestservice.github.io/gdalraster/reference/push_error_handler.md)
+[`push_error_handler()`](https://firelab.github.io/gdalraster/reference/push_error_handler.md)
 
 ## Examples
 

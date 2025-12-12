@@ -246,7 +246,7 @@ be utilized to do the I/O more efficiently if overviews are available at
 suitable resolution.
 
 The stand-alone function
-[`plot_raster()`](https://usdaforestservice.github.io/gdalraster/reference/plot_raster.md)
+[`plot_raster()`](https://firelab.github.io/gdalraster/reference/plot_raster.md)
 uses base R `graphics` to display raster data read from an open dataset
 (with options to display a subwindow, to read a reduced resolution
 overview, or read from multiple bands for RGB data):
@@ -281,27 +281,27 @@ format driver supports creation. There are two general techniques for
 creating datasets in the GDAL API: `GDALDriver::CreateCopy()` and
 `GDALDriver::Create()`. Using the CreateCopy method in R involves
 calling the stand-alone function
-[`createCopy()`](https://usdaforestservice.github.io/gdalraster/reference/createCopy.md),
+[`createCopy()`](https://firelab.github.io/gdalraster/reference/createCopy.md),
 passing in a source raster file name that should be copied. Using the
 Create method in R involves calling the stand-alone function
-[`create()`](https://usdaforestservice.github.io/gdalraster/reference/create.md),
+[`create()`](https://firelab.github.io/gdalraster/reference/create.md),
 and then explicitly writing all the metadata and raster data with
 separate calls. All format drivers that support creating new datasets
 support
-[`createCopy()`](https://usdaforestservice.github.io/gdalraster/reference/createCopy.md),
+[`createCopy()`](https://firelab.github.io/gdalraster/reference/createCopy.md),
 but only a few support
-[`create()`](https://usdaforestservice.github.io/gdalraster/reference/create.md).
+[`create()`](https://firelab.github.io/gdalraster/reference/create.md).
 
 The function
-[`gdal_formats()`](https://usdaforestservice.github.io/gdalraster/reference/gdal_formats.md)
+[`gdal_formats()`](https://firelab.github.io/gdalraster/reference/gdal_formats.md)
 lists all currently configured raster formats along with the following
 read/write flags:
 
 - `ro` - read only
 - `rw` - read/write, supports
-  [`createCopy()`](https://usdaforestservice.github.io/gdalraster/reference/createCopy.md)
+  [`createCopy()`](https://firelab.github.io/gdalraster/reference/createCopy.md)
 - `rw+` - read/write/update, supports
-  [`create()`](https://usdaforestservice.github.io/gdalraster/reference/create.md)
+  [`create()`](https://firelab.github.io/gdalraster/reference/create.md)
 
 The table of GDAL [raster format
 drivers](https://gdal.org/en/stable/drivers/raster/index.html) can also
@@ -311,7 +311,7 @@ not support either creation method.
 
 ## Using createCopy()
 
-[`createCopy()`](https://usdaforestservice.github.io/gdalraster/reference/createCopy.md)
+[`createCopy()`](https://firelab.github.io/gdalraster/reference/createCopy.md)
 is simple to use as most information is collected from the source
 dataset. It includes an argument for passing a list of format specific
 creation options. It can be used to copy a raster to a different format,
@@ -354,11 +354,11 @@ vsi_stat(tif_file, "size")
 ```
 
 Note that the
-[`createCopy()`](https://usdaforestservice.github.io/gdalraster/reference/createCopy.md)
+[`createCopy()`](https://firelab.github.io/gdalraster/reference/createCopy.md)
 method with `return_obj = TRUE` returns a writable dataset, and that it
 must be closed properly to complete writing and flushing the dataset to
 disk.
-[`createCopy()`](https://usdaforestservice.github.io/gdalraster/reference/createCopy.md)
+[`createCopy()`](https://firelab.github.io/gdalraster/reference/createCopy.md)
 also has an optional `strict` argument that defaults to `FALSE`
 indicating that the call should proceed without a fatal error even if
 the destination dataset cannot be created to exactly match the input
@@ -368,7 +368,7 @@ support writing georeferencing for instance.
 
 Information about format specific creation options can be obtained with
 the function
-[`getCreationOptions()`](https://usdaforestservice.github.io/gdalraster/reference/getCreationOptions.md).
+[`getCreationOptions()`](https://firelab.github.io/gdalraster/reference/getCreationOptions.md).
 By default, this function lists all available creation options for a
 format. Output can also be filtered to specific options:
 
@@ -406,10 +406,10 @@ getCreationOptions("GTiff", "SPARSE_OK")
 
 ## Using create()
 
-[`create()`](https://usdaforestservice.github.io/gdalraster/reference/create.md)
+[`create()`](https://firelab.github.io/gdalraster/reference/create.md)
 can be used to create a new raster dataset manually. This function can
 also take a list of creation options as described above for
-[`createCopy()`](https://usdaforestservice.github.io/gdalraster/reference/createCopy.md),
+[`createCopy()`](https://firelab.github.io/gdalraster/reference/createCopy.md),
 but the raster size, number of bands and band type must be provided
 explicitly:
 
@@ -453,22 +453,21 @@ ds$close()
 **gdalraster** provides two additional functions for creating raster
 datasets:
 
-- [`rasterFromRaster()`](https://usdaforestservice.github.io/gdalraster/reference/rasterFromRaster.md)
+- [`rasterFromRaster()`](https://firelab.github.io/gdalraster/reference/rasterFromRaster.md)
   creates a new raster with spatial reference, extent and resolution
   taken from a template raster, without copying data. It optionally
   changes the format, number of bands, data type and nodata value, sets
   driver-specific dataset creation options, and initializes to a value.
 
-- [`rasterToVRT()`](https://usdaforestservice.github.io/gdalraster/reference/rasterToVRT.md)
+- [`rasterToVRT()`](https://firelab.github.io/gdalraster/reference/rasterToVRT.md)
   creates a virtual raster dataset (VRT) derived from a source raster
   with options for virtual subsetting, virtually resampling the source
   data at a different pixel resolution, or applying a virtual kernel
   filter.
 
 Wrapper functions for several GDAL utilities, including
-[`translate()`](https://usdaforestservice.github.io/gdalraster/reference/translate.md)
-and
-[`warp()`](https://usdaforestservice.github.io/gdalraster/reference/warp.md),
+[`translate()`](https://firelab.github.io/gdalraster/reference/translate.md)
+and [`warp()`](https://firelab.github.io/gdalraster/reference/warp.md),
 are also available. See the [package
 overview](https://usdaforestservice.github.io/gdalraster/reference/gdalraster-package.html)
 for a full summary of functionality provided by the GDAL API bindings.

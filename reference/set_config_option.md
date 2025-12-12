@@ -30,9 +30,9 @@ No return value, called for side effects.
 
 ## See also
 
-[`get_config_option()`](https://usdaforestservice.github.io/gdalraster/reference/get_config_option.md)
+[`get_config_option()`](https://firelab.github.io/gdalraster/reference/get_config_option.md)
 
-[`vignette("gdal-config-quick-ref")`](https://usdaforestservice.github.io/gdalraster/articles/gdal-config-quick-ref.md)
+[`vignette("gdal-config-quick-ref")`](https://firelab.github.io/gdalraster/articles/gdal-config-quick-ref.md)
 
 ## Examples
 

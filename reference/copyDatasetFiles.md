@@ -40,12 +40,12 @@ format cannot be determined from the passed file name.
 
 ## See also
 
-[`GDALRaster-class`](https://usdaforestservice.github.io/gdalraster/reference/GDALRaster-class.md),
-[`create()`](https://usdaforestservice.github.io/gdalraster/reference/create.md),
-[`createCopy()`](https://usdaforestservice.github.io/gdalraster/reference/createCopy.md),
-[`deleteDataset()`](https://usdaforestservice.github.io/gdalraster/reference/deleteDataset.md),
-[`renameDataset()`](https://usdaforestservice.github.io/gdalraster/reference/renameDataset.md),
-[`vsi_copy_file()`](https://usdaforestservice.github.io/gdalraster/reference/vsi_copy_file.md)
+[`GDALRaster-class`](https://firelab.github.io/gdalraster/reference/GDALRaster-class.md),
+[`create()`](https://firelab.github.io/gdalraster/reference/create.md),
+[`createCopy()`](https://firelab.github.io/gdalraster/reference/createCopy.md),
+[`deleteDataset()`](https://firelab.github.io/gdalraster/reference/deleteDataset.md),
+[`renameDataset()`](https://firelab.github.io/gdalraster/reference/renameDataset.md),
+[`vsi_copy_file()`](https://firelab.github.io/gdalraster/reference/vsi_copy_file.md)
 
 ## Examples
 
@@ -62,7 +62,7 @@ copyDatasetFiles(lcp_tmp, lcp_file)
 #> [1] TRUE
 ds_copy <- new(GDALRaster, lcp_tmp)
 ds_copy$getFileList()
-#> [1] "/tmp/RtmpO4j4Ij/storm_lake_copy.lcp" "/tmp/RtmpO4j4Ij/storm_lake_copy.prj"
+#> [1] "/tmp/Rtmpj4jsZs/storm_lake_copy.lcp" "/tmp/Rtmpj4jsZs/storm_lake_copy.prj"
 ds_copy$close()
 
 deleteDataset(lcp_tmp)

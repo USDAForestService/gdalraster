@@ -55,7 +55,7 @@ create(
 - return_obj:
 
   Logical scalar. If `TRUE`, an object of class
-  [`GDALRaster`](https://usdaforestservice.github.io/gdalraster/reference/GDALRaster-class.md)
+  [`GDALRaster`](https://firelab.github.io/gdalraster/reference/GDALRaster-class.md)
   opened on the newly created dataset will be returned, otherwise
   returns a logical value. Defaults to `FALSE`.
 
@@ -64,7 +64,7 @@ create(
 By default, returns a logical value indicating success (invisible
 `TRUE`, output written to `dst_filename`). An error is raised if the
 operation fails. An object of class
-[`GDALRaster`](https://usdaforestservice.github.io/gdalraster/reference/GDALRaster-class.md)
+[`GDALRaster`](https://firelab.github.io/gdalraster/reference/GDALRaster-class.md)
 open on the output dataset will be returned if `return_obj = TRUE`.
 
 ## Note
@@ -75,10 +75,10 @@ open on the output dataset will be returned if `return_obj = TRUE`.
 
 ## See also
 
-[`GDALRaster-class`](https://usdaforestservice.github.io/gdalraster/reference/GDALRaster-class.md),
-[`createCopy()`](https://usdaforestservice.github.io/gdalraster/reference/createCopy.md),
-[`getCreationOptions()`](https://usdaforestservice.github.io/gdalraster/reference/getCreationOptions.md),
-[`rasterFromRaster()`](https://usdaforestservice.github.io/gdalraster/reference/rasterFromRaster.md)
+[`GDALRaster-class`](https://firelab.github.io/gdalraster/reference/GDALRaster-class.md),
+[`createCopy()`](https://firelab.github.io/gdalraster/reference/createCopy.md),
+[`getCreationOptions()`](https://firelab.github.io/gdalraster/reference/getCreationOptions.md),
+[`rasterFromRaster()`](https://firelab.github.io/gdalraster/reference/rasterFromRaster.md)
 
 ## Examples
 

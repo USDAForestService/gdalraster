@@ -57,7 +57,7 @@ fetch data from less priority datasets.
 
 ## See also
 
-[`rasterToVRT()`](https://usdaforestservice.github.io/gdalraster/reference/rasterToVRT.md)
+[`rasterToVRT()`](https://firelab.github.io/gdalraster/reference/rasterToVRT.md)
 
 ## Examples
 

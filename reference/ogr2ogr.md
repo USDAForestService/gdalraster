@@ -58,12 +58,12 @@ count" capability.
 
 ## See also
 
-[`ogrinfo()`](https://usdaforestservice.github.io/gdalraster/reference/ogrinfo.md),
+[`ogrinfo()`](https://firelab.github.io/gdalraster/reference/ogrinfo.md),
 the
-[ogr_manage](https://usdaforestservice.github.io/gdalraster/reference/ogr_manage.md)
+[ogr_manage](https://firelab.github.io/gdalraster/reference/ogr_manage.md)
 utilities
 
-[`translate()`](https://usdaforestservice.github.io/gdalraster/reference/translate.md)
+[`translate()`](https://firelab.github.io/gdalraster/reference/translate.md)
 for raster data
 
 ## Examples

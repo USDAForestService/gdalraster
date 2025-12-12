@@ -101,7 +101,7 @@ imprecise as it must guess information about the format intended.
 As of GDAL 3.0, the default format for WKT export is OGC WKT 1. The WKT
 version can be overridden by using the OSR_WKT_FORMAT configuration
 option (see
-[`set_config_option()`](https://usdaforestservice.github.io/gdalraster/reference/set_config_option.md)).
+[`set_config_option()`](https://firelab.github.io/gdalraster/reference/set_config_option.md)).
 Valid values are one of: SFSQL, WKT1_SIMPLE, WKT1, WKT1_GDAL, WKT1_ESRI,
 WKT2_2015, WKT2_2018, WKT2, DEFAULT. If SFSQL, a WKT1 string without
 AXIS, TOWGS84, AUTHORITY or EXTENSION node is returned. If WKT1_SIMPLE,
@@ -118,7 +118,7 @@ GEOGCS node of the input `srs`.
 
 ## See also
 
-[srs_query](https://usdaforestservice.github.io/gdalraster/reference/srs_query.md)
+[srs_query](https://firelab.github.io/gdalraster/reference/srs_query.md)
 
 ## Examples
 

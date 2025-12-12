@@ -230,10 +230,10 @@ GDAL Virtual File Systems (compressed, network hosted, etc...):
 /vsimem, /vsizip, /vsitar, /vsicurl, ...  
 <https://gdal.org/en/stable/user/virtual_file_systems.html>
 
-[`vsi_copy_file()`](https://usdaforestservice.github.io/gdalraster/reference/vsi_copy_file.md),
-[`vsi_read_dir()`](https://usdaforestservice.github.io/gdalraster/reference/vsi_read_dir.md),
-[`vsi_stat()`](https://usdaforestservice.github.io/gdalraster/reference/vsi_stat.md),
-[`vsi_unlink()`](https://usdaforestservice.github.io/gdalraster/reference/vsi_unlink.md)
+[`vsi_copy_file()`](https://firelab.github.io/gdalraster/reference/vsi_copy_file.md),
+[`vsi_read_dir()`](https://firelab.github.io/gdalraster/reference/vsi_read_dir.md),
+[`vsi_stat()`](https://firelab.github.io/gdalraster/reference/vsi_stat.md),
+[`vsi_unlink()`](https://firelab.github.io/gdalraster/reference/vsi_unlink.md)
 
 ## Examples
 

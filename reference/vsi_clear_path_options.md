@@ -2,7 +2,7 @@
 
 `vsi_clear_path_options()` clears path specific options previously set
 with
-[`vsi_set_path_option()`](https://usdaforestservice.github.io/gdalraster/reference/vsi_set_path_option.md).
+[`vsi_set_path_option()`](https://firelab.github.io/gdalraster/reference/vsi_set_path_option.md).
 Wrapper for `VSIClearPathSpecificOptions()` in the GDAL Common
 Portability Library. Requires GDAL \>= 3.6.
 
@@ -30,4 +30,4 @@ No particular care is taken to remove options from RAM in a secure way.
 
 ## See also
 
-[`vsi_set_path_option()`](https://usdaforestservice.github.io/gdalraster/reference/vsi_set_path_option.md)
+[`vsi_set_path_option()`](https://firelab.github.io/gdalraster/reference/vsi_set_path_option.md)

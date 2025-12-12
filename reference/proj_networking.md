@@ -25,8 +25,8 @@ Reference System C API). Logical `NA` is returned if GDAL \< 3.4.
 
 ## See also
 
-[`proj_version()`](https://usdaforestservice.github.io/gdalraster/reference/proj_version.md),
-[`proj_search_paths()`](https://usdaforestservice.github.io/gdalraster/reference/proj_search_paths.md)
+[`proj_version()`](https://firelab.github.io/gdalraster/reference/proj_version.md),
+[`proj_search_paths()`](https://firelab.github.io/gdalraster/reference/proj_search_paths.md)
 
 [PROJ-data on GitHub](https://github.com/OSGeo/PROJ-data), [PROJ Content
 Delivery Network](https://cdn.proj.org/)

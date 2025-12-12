@@ -23,10 +23,10 @@ A list of length four containing:
 
 ## See also
 
-[`gdal_version()`](https://usdaforestservice.github.io/gdalraster/reference/gdal_version.md),
-[`geos_version()`](https://usdaforestservice.github.io/gdalraster/reference/geos_version.md),
-[`proj_search_paths()`](https://usdaforestservice.github.io/gdalraster/reference/proj_search_paths.md),
-[`proj_networking()`](https://usdaforestservice.github.io/gdalraster/reference/proj_networking.md)
+[`gdal_version()`](https://firelab.github.io/gdalraster/reference/gdal_version.md),
+[`geos_version()`](https://firelab.github.io/gdalraster/reference/geos_version.md),
+[`proj_search_paths()`](https://firelab.github.io/gdalraster/reference/proj_search_paths.md),
+[`proj_networking()`](https://firelab.github.io/gdalraster/reference/proj_networking.md)
 
 ## Examples
 

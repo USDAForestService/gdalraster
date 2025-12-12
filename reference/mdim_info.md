@@ -90,8 +90,8 @@ printed to the console unless `cout` is set to `FALSE`.
 
 ## See also
 
-[`mdim_as_classic()`](https://usdaforestservice.github.io/gdalraster/reference/mdim_as_classic.md),
-[`mdim_translate()`](https://usdaforestservice.github.io/gdalraster/reference/mdim_translate.md)
+[`mdim_as_classic()`](https://firelab.github.io/gdalraster/reference/mdim_as_classic.md),
+[`mdim_translate()`](https://firelab.github.io/gdalraster/reference/mdim_translate.md)
 
 ## Examples
 
