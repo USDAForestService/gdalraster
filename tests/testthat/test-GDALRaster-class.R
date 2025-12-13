@@ -151,6 +151,8 @@ test_that("get/set metadata works", {
                   nbands=1, dataType="Int32", return_obj = TRUE)
 
     srs <- ds$getProjection()
+    expect_equal(ds$getProjectionRef(), srs)
+    expect_equal(ds$getSpatialRef(), srs)
     ds2$setProjection(srs)
     gt <- ds$getGeoTransform()
     ds2$setGeoTransform(gt)

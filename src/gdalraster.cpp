@@ -551,6 +551,10 @@ std::string GDALRaster::getProjectionRef() const {
     }
 }
 
+std::string GDALRaster::getSpatialRef() const {
+    return getProjectionRef();
+}
+
 bool GDALRaster::setProjection(const std::string &projection) {
     checkAccess_(GA_Update);
 
@@ -2657,6 +2661,8 @@ RCPP_MODULE(mod_GDALRaster) {
         "Return the projection (equivalent to getProjectionRef)")
     .const_method("getProjectionRef", &GDALRaster::getProjectionRef,
         "Return the projection definition for this dataset")
+    .const_method("getSpatialRef", &GDALRaster::getSpatialRef,
+        "Return the spatial reference (equivalent to getProjectionRef)")
     .method("setProjection", &GDALRaster::setProjection,
         "Set the projection reference string for this dataset")
     .const_method("bbox", &GDALRaster::bbox,

@@ -74,6 +74,7 @@ class GDALRaster {
 
     std::string getProjection() const;
     std::string getProjectionRef() const;
+    std::string getSpatialRef() const;
     bool setProjection(const std::string &projection);
 
     Rcpp::NumericVector bbox() const;

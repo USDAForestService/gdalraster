@@ -82,6 +82,7 @@
 #'
 #' ds$getProjection()
 #' ds$getProjectionRef()
+#' ds$getSpatialRef()
 #' ds$setProjection(projection)
 #'
 #' ds$bbox()
@@ -316,6 +317,10 @@
 #' \code{projection} is a string in OGC WKT format.
 #' Returns logical \code{TRUE} on success or \code{FALSE} if the projection
 #' could not be set.
+#'
+#' \code{$getSpatialRef()}\cr
+#' Returns the coordinate reference system of the raster as an OGC WKT
+#' format string. Equivalent to \code{ds$getProjectionRef()}.
 #'
 #' \code{$bbox()}\cr
 #' Returns a numeric vector of length four containing the bounding box
