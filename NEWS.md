@@ -1,4 +1,10 @@
-# gdalraster 2.3.0.9007 (dev)
+# gdalraster 2.3.0.9100 (dev)
+
+* transfer repository to the `firelab` GitHub org, with new website URL <https://firelab.github.io/gdalraster/> (2025-12-12)
+
+* add `GDALRaster::getSpatialRef()` synonym (#845) (2025-12-12)
+
+* add checks for ctrl-c user interrupt in `buildRAT()` and `combine()` (#844) (2025-12-12)
 
 * `vsi_read_dir()`: fix slow string processing of the file list for return (#841, thanks to @mdsumner) (2025-12-06)
 
