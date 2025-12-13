@@ -121,6 +121,7 @@ override the default resampling to one of `BILINEAR`, `CUBIC`,
 
     ds$getProjection()
     ds$getProjectionRef()
+    ds$getSpatialRef()
     ds$setProjection(projection)
 
     ds$bbox()
@@ -357,6 +358,10 @@ is not available.
 Sets the projection reference for this dataset. `projection` is a string
 in OGC WKT format. Returns logical `TRUE` on success or `FALSE` if the
 projection could not be set.
+
+`$getSpatialRef()`  
+Returns the coordinate reference system of the raster as an OGC WKT
+format string. Equivalent to `ds$getProjectionRef()`.
 
 `$bbox()`  
 Returns a numeric vector of length four containing the bounding box
