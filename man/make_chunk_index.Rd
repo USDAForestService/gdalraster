@@ -83,5 +83,5 @@ Methods \code{make_chunk_index()}, \code{readChunk()} and
 \code{writeChunk()} in class \link{GDALRaster}.
 
 Usage example in the web article
-\href{https://usdaforestservice.github.io/gdalraster/articles/gdal-block-cache.html}{GDAL Block Cache}.
+\href{https://firelab.github.io/gdalraster/articles/gdal-block-cache.html}{GDAL Block Cache}.
 }

@@ -126,7 +126,7 @@ typeof(rowdata)
 head(rowdata)
 ```
 
-Writing data with `GDALRaster$write()` is similar to `$read()` with an additional argument specifying a vector of pixel data to write (arranged in left to right, top to bottom pixel order). The `xoff`, `yoff`, `xsize`, `ysize` arguments describe the window of raster data on disk to read (or write). It doesn't have to fall on tile boundaries, though access may be more efficient in some cases if it does. Note that GDAL uses memory caching algorithms during raster I/O to improve performance. The operation of the caching mechanism and  configuration of cache memory size might be considered when scaling I/O to large datasets (see [GDAL Block Cache](https://usdaforestservice.github.io/gdalraster/articles/gdal-block-cache.html)).
+Writing data with `GDALRaster$write()` is similar to `$read()` with an additional argument specifying a vector of pixel data to write (arranged in left to right, top to bottom pixel order). The `xoff`, `yoff`, `xsize`, `ysize` arguments describe the window of raster data on disk to read (or write). It doesn't have to fall on tile boundaries, though access may be more efficient in some cases if it does. Note that GDAL uses memory caching algorithms during raster I/O to improve performance. The operation of the caching mechanism and  configuration of cache memory size might be considered when scaling I/O to large datasets (see [GDAL Block Cache](https://firelab.github.io/gdalraster/articles/gdal-block-cache.html)).
 
 The values for `out_xsize` and `out_ysize` describe the size of the output buffer (an R vector of length `out_xsize * out_ysize` that data will be read into). When reading data at full resolution this would be the same as the window size (`xsize`, `ysize`). However, to load a reduced resolution overview, `out_xsize`, `out_ysize` could be set to smaller than the window on disk. The `$read()` method will perform automatic resampling as necessary if the specified output size (`out_xsize * out_ysize`) is different than the size of the region being read (`xsize * ysize`). In this case, overviews (a.k.a. "pyramids") will be utilized to do the I/O more efficiently if overviews are available at suitable resolution.
 
@@ -242,7 +242,7 @@ ds$close()
 
 * `rasterToVRT()` creates a virtual raster dataset (VRT) derived from a source raster with options for virtual subsetting, virtually resampling the source data at a different pixel resolution, or applying a virtual kernel filter.
 
-Wrapper functions for several GDAL utilities, including `translate()` and `warp()`, are also available. See the [package overview](https://usdaforestservice.github.io/gdalraster/reference/gdalraster-package.html) for a full summary of functionality provided by the GDAL API bindings.
+Wrapper functions for several GDAL utilities, including `translate()` and `warp()`, are also available. See the [package overview](https://firelab.github.io/gdalraster/reference/gdalraster-package.html) for a full summary of functionality provided by the GDAL API bindings.
 
 ## Data sources
 

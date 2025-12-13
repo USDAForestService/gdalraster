@@ -295,7 +295,7 @@ test_that("set ignored/selected fields works", {
     expect_true(length(lyr$getIgnoredFields()) > 1)
 
     # test fetch past end with ignored fields does not crash
-    # https://github.com/USDAForestService/gdalraster/issues/539
+    # https://github.com/firelab/gdalraster/issues/539
     lyr$returnGeomAs <- "WKB"
     lyr$setSelectedFields(c("incid_name", "ig_year", "OGR_GEOMETRY"))
     lyr$setAttributeFilter("ig_year >= 2018")

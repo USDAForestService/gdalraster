@@ -785,7 +785,7 @@ inspectDataset <- function(filename, ...) {
 #' \code{writeChunk()} in class [GDALRaster].
 #'
 #' Usage example in the web article
-#' [GDAL Block Cache](https://usdaforestservice.github.io/gdalraster/articles/gdal-block-cache.html).
+#' [GDAL Block Cache](https://firelab.github.io/gdalraster/articles/gdal-block-cache.html).
 #'
 #' @examples
 #' ## chunk as one block

@@ -443,7 +443,7 @@ Rcpp::NumericVector get_cache_max(std::string units = "MB") {
 //' of the available cache memory currently in use in the requested units.
 //'
 //' @seealso
-//' [GDAL Block Cache](https://usdaforestservice.github.io/gdalraster/articles/gdal-block-cache.html)
+//' [GDAL Block Cache](https://firelab.github.io/gdalraster/articles/gdal-block-cache.html)
 //'
 //' [get_cache_max()], [set_cache_max()]
 //'

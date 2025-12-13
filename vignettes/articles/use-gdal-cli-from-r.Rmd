@@ -26,7 +26,7 @@ The GDAL project states that the new CLI framework
 
 > "is provisionally provided as an alternative interface to GDAL and OGR command line utilities. The project reserves the right to modify, rename, reorganize, and change the behavior until it is officially frozen via PSC vote in a future major GDAL release. The utility needs time to mature, benefit from incremental feedback, and explore enhancements without carrying the burden of full backward compatibility. Your usage of it should have no expectation of compatibility until that time." (<https://gdal.org/en/latest/programs/#gdal-application>)
 
-The initial bindings in **gdalraster** 2.2.0 will evolve over future releases. *The bindings are considered experimental until the upstream API is declared stable*. Breaking changes in minor version releases are possible until then. Please use with those cautions in mind. Bug reports may be filed at: <https://github.com/USDAForestService/gdalraster/issues>.
+The initial bindings in **gdalraster** 2.2.0 will evolve over future releases. *The bindings are considered experimental until the upstream API is declared stable*. Breaking changes in minor version releases are possible until then. Please use with those cautions in mind. Bug reports may be filed at: <https://github.com/firelab/gdalraster/issues>.
 
 ## Command discovery and usage info
 
@@ -274,7 +274,7 @@ gdal_usage("raster convert")
 
 ## Running CLI algorithms
 
-A convenient way to access a CLI algorithm and run it is to use the `gdal_run()` function. This function accepts a command string, along with its argument values given in a character vector or named list. It attempts to parse the algorithm arguments and then run the algorithm on the given input data. The return value is an object of class [`GDALAlg`](https://usdaforestservice.github.io/gdalraster/reference/GDALAlg-class.html). If you do not need to access output value(s) of the algorithm, you can call `gdal_run()` without assigning its return value. More commonly, the return value is assigned to a variable so that algorithm output can be accessed via methods of the `GDALAlg` object.
+A convenient way to access a CLI algorithm and run it is to use the `gdal_run()` function. This function accepts a command string, along with its argument values given in a character vector or named list. It attempts to parse the algorithm arguments and then run the algorithm on the given input data. The return value is an object of class [`GDALAlg`](https://firelab.github.io/gdalraster/reference/GDALAlg-class.html). If you do not need to access output value(s) of the algorithm, you can call `gdal_run()` without assigning its return value. More commonly, the return value is assigned to a variable so that algorithm output can be accessed via methods of the `GDALAlg` object.
 
 ### Raster examples
 

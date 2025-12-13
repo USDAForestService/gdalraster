@@ -136,7 +136,7 @@
 #' *The bindings are considered experimental until the upstream API is declared
 #' stable*. Breaking changes in minor version releases are possible until then.
 #' Please use with those cautions in mind. Bug reports may be filed at:
-#' \url{https://github.com/USDAForestService/gdalraster/issues}.
+#' \url{https://github.com/firelab/gdalraster/issues}.
 #'
 #' @note
 #' Commands do not require the leading `"gdal"` root node. They may begin
@@ -176,7 +176,7 @@
 #' \url{https://gdal.org/en/stable/programs/index.html}
 #'
 #' Using `gdal` CLI algorithms from R\cr
-#' \url{https://usdaforestservice.github.io/gdalraster/articles/use-gdal-cli-from-r.html}
+#' \url{https://firelab.github.io/gdalraster/articles/use-gdal-cli-from-r.html}
 #'
 #' @examplesIf length(gdal_global_reg_names()) > 0
 #' ## top-level commands

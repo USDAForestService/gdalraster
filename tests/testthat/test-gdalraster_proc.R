@@ -62,7 +62,7 @@ test_that("calc writes correct results", {
     expect_equal(chk, 28017)
 
     # multiband output
-    # https://github.com/USDAForestService/gdalraster/issues/319
+    # https://github.com/firelab/gdalraster/issues/319
     expr <- "
 to_terrainrgb <- function(dtm) {
     startingvalue <- 10000
@@ -685,7 +685,7 @@ test_that("pixel_extract wrapper returns correct data", {
     skip_on_cran()
     skip_if(gdal_version_num() < gdal_compute_version(3, 6, 0))
 
-    f <- "/vsicurl/https://raw.githubusercontent.com/usdaforestservice/gdalraster/main/sample-data/lf_fbfm40_220_mt_hood_utm.tif"
+    f <- "/vsicurl/https://raw.githubusercontent.com/firelab/gdalraster/main/sample-data/lf_fbfm40_220_mt_hood_utm.tif"
     pts <- c(604450.6, 5023283,
              611437.6, 5021571,
              591824.6, 5030855,

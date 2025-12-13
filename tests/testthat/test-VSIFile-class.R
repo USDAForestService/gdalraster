@@ -36,7 +36,7 @@ test_that("VSIFile works", {
     # error on invalid options or GDAL < 3.3
     # invalid options do not seem to raise an error
     # url <- "/vsicurl/https://raw.githubusercontent.com/"
-    # url <- paste0(url, "usdaforestservice/gdalraster/main/sample-data/")
+    # url <- paste0(url, "firelab/gdalraster/main/sample-data/")
     # url <- paste0(url, "lf_elev_220_mt_hood_utm.tif")
     # expect_error(vf <- new(VSIFile, url, "r", "INAVLID_OPTION=YES"))
 
