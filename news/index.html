@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">gdalraster</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">2.3.0.9007</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">2.3.0.9100</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -53,8 +53,11 @@
     </div>
 
     <div class="section level2">
-<h2 class="pkg-version" data-toc-text="2.3.0.9007" id="gdalraster-2309007-dev">gdalraster 2.3.0.9007 (dev)<a class="anchor" aria-label="anchor" href="#gdalraster-2309007-dev"></a></h2>
-<ul><li><p><code><a href="../reference/vsi_read_dir.html">vsi_read_dir()</a></code>: fix slow string processing of the file list for return (<a href="https://github.com/firelab/gdalraster/issues/841" class="external-link">#841</a>, thanks to <a href="https://github.com/mdsumner" class="external-link">@mdsumner</a>) (2025-12-06)</p></li>
+<h2 class="pkg-version" data-toc-text="2.3.0.9100" id="gdalraster-2309100-dev">gdalraster 2.3.0.9100 (dev)<a class="anchor" aria-label="anchor" href="#gdalraster-2309100-dev"></a></h2>
+<ul><li><p>transfer repository to the <code>firelab</code> GitHub org, with new website URL <a href="https://firelab.github.io/gdalraster/" class="uri">https://firelab.github.io/gdalraster/</a> (2025-12-12)</p></li>
+<li><p>add <code>GDALRaster::getSpatialRef()</code> synonym (<a href="https://github.com/firelab/gdalraster/issues/845" class="external-link">#845</a>) (2025-12-12)</p></li>
+<li><p>add checks for ctrl-c user interrupt in <code><a href="../reference/buildRAT.html">buildRAT()</a></code> and <code><a href="../reference/combine.html">combine()</a></code> (<a href="https://github.com/firelab/gdalraster/issues/844" class="external-link">#844</a>) (2025-12-12)</p></li>
+<li><p><code><a href="../reference/vsi_read_dir.html">vsi_read_dir()</a></code>: fix slow string processing of the file list for return (<a href="https://github.com/firelab/gdalraster/issues/841" class="external-link">#841</a>, thanks to <a href="https://github.com/mdsumner" class="external-link">@mdsumner</a>) (2025-12-06)</p></li>
 <li><p>add <code><a href="../reference/srs_query.html">srs_epsg_treats_as_lat_long()</a></code> and <code><a href="../reference/srs_query.html">srs_epsg_treats_as_northing_easting()</a></code> (<a href="https://github.com/firelab/gdalraster/issues/839" class="external-link">#839</a>) (2025-12-03)</p></li>
 <li><p>add <code><a href="../reference/srs_query.html">srs_get_axes()</a></code>: return a list of the axis names and orientations for a spatial coordinate reference system (<a href="https://github.com/firelab/gdalraster/issues/837" class="external-link">#837</a>) (2025-12-02)</p></li>
 <li><p><code><a href="../reference/gdal_formats.html">gdal_formats()</a></code>: add Update (<code>u</code>) to <code>rw_flags</code> when GDAL &gt;= 3.11, and add several new columns to the output data frame containing various driver metadata (<a href="https://github.com/firelab/gdalraster/issues/833" class="external-link">#833</a>) (2025-11-29)</p></li>
