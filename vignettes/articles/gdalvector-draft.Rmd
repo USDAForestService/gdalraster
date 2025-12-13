@@ -9,13 +9,13 @@ knitr::opts_chunk$set(
 )
 ```
 
-**Note**: This document is now out of date and retained only as a record of the original proposed interface and initial development. Bindings to the GDAL Vector API were added in the **gdalraster** [2.0.0 release](https://github.com/USDAForestService/gdalraster/releases/tag/v.2.0.0). For current specifications, see the package vignette [Vector API Overview](https://usdaforestservice.github.io/gdalraster/articles/vector-api-overview.html) and the documentation for class [`GDALVector`](https://usdaforestservice.github.io/gdalraster/reference/GDALVector-class.html).
+**Note**: This document is now out of date and retained only as a record of the original proposed interface and initial development. Bindings to the GDAL Vector API were added in the **gdalraster** [2.0.0 release](https://github.com/firelab/gdalraster/releases/tag/v.2.0.0). For current specifications, see the package vignette [Vector API Overview](https://firelab.github.io/gdalraster/articles/vector-api-overview.html) and the documentation for class [`GDALVector`](https://firelab.github.io/gdalraster/reference/GDALVector-class.html).
 
 Chris Toney (chris.toney at usda.gov)
 
 Last modified: 2024-09-14
 
-Comment/discussion: <https://github.com/USDAForestService/gdalraster/issues/241>
+Comment/discussion: <https://github.com/firelab/gdalraster/issues/241>
 
 ## Summary
 
@@ -24,7 +24,7 @@ This document describes R bindings to the GDAL/OGR Vector API proposed for inclu
 A proposed interface is described in terms of the [GDAL Vector Data Model](https://gdal.org/en/stable/user/vector_data_model.html), along with a draft class definition for implementation via `RCPP_EXPOSED_CLASS`.
 
 An initial implemetation supporting read access has been merged into the **gdalraster** main branch (as of v. 1.11.1.9100, 2024-07-23), with online documentation available at:
-<https://usdaforestservice.github.io/gdalraster/reference/GDALVector-class.html>
+<https://firelab.github.io/gdalraster/reference/GDALVector-class.html>
 
 ## Description of the interface
 
@@ -35,7 +35,7 @@ Bindings will be implemented with **Rcpp** modules including `RCPP_EXPOSED_CLASS
 A GDAL Dataset for vector is a file or database containing one or more OGR layers. A vector dataset is represented in R as a data source name (DSN), a character string that may be a filename, database connection string, URL, virtual file, etc. Management of datasets and their vector schemas will be done with:
 
 * existing management functions in **gdalraster** that operate on vector datasets: `copyDatasetFiles()`, `deleteDataset()`, `renameDataset()` and `addFilesInZip()` (supports SOZip)
-* existing utility functions for managing vector data sources (as of **gdalraster** 1.11.0): [ogr_manage](https://usdaforestservice.github.io/gdalraster/reference/ogr_manage.html) and [ogr_define](https://usdaforestservice.github.io/gdalraster/reference/ogr_define.html)
+* existing utility functions for managing vector data sources (as of **gdalraster** 1.11.0): [ogr_manage](https://firelab.github.io/gdalraster/reference/ogr_manage.html) and [ogr_define](https://firelab.github.io/gdalraster/reference/ogr_define.html)
 * existing wrappers `ogr2ogr()` and `ogrinfo()` from the GDAL Utils API (as of **gdalraster** 1.10.0)
 * `ogr_execute_sql()`: execute an SQL statement against the data store to edit data (a SQL `SELECT` statement can be used in the constructor for class `GDALVector` described below, to open a layer of features)
 
@@ -102,11 +102,11 @@ Returning geometries is optional when retrieving features from a data store with
 
 The draft class definition below has been partially implemented in:
 
-<https://github.com/USDAForestService/gdalraster/blob/gdalvector/src/gdalvector.cpp>
+<https://github.com/firelab/gdalraster/blob/gdalvector/src/gdalvector.cpp>
 
 The header file can be referenced for the public class methods that have been implemented so far in the prototype (a subset of the draft class definition below):
 
-<https://github.com/USDAForestService/gdalraster/blob/gdalvector/src/gdalvector.h>
+<https://github.com/firelab/gdalraster/blob/gdalvector/src/gdalvector.h>
 
 ```cpp
 class GDALVector {
@@ -937,7 +937,7 @@ This is a working list of potential issues and design questions that need furthe
 * initial int64 support; now linking to **RcppInt64**, and importing **bit64**; `FID` and `OFTInteger64` fields are now returned in R as `integer64`; updated the examples (2024-04-06)
 * add `GDALVector::getFeature()`: fetch a feature from its FID (2024-04-06)
 * add a `GDALVector` class constructor with `spatial_filter` and SQL `dialect` arguments (2024-04-28)
-* [ogr_manage](https://usdaforestservice.github.io/gdalraster/reference/ogr_manage.html) and [ogr_define](https://usdaforestservice.github.io/gdalraster/reference/ogr_define.html) added in **gdalraster** dev; examples updated (2024-05-14)
+* [ogr_manage](https://firelab.github.io/gdalraster/reference/ogr_manage.html) and [ogr_define](https://firelab.github.io/gdalraster/reference/ogr_define.html) added in **gdalraster** dev; examples updated (2024-05-14)
 * update the draft class definition: Add read/write fields for per-object settings (`defaultGeomFldName`, `returnGeomAs` and `wkbByteOrder`). Rename method `getFeatureSet()` to `fetch()`, analog of `DBI::dbFetch()`, fetch the next n features from the layer and return them as a data frame. (2024-07-11)
 * update usage example for recent changes in gdalvector branch: `defaultGeomFldName`, `returnGeomAs = NONE|WKT|WKT_ISO|WKB|WKB_ISO`, `GDALVector::fetch()`, all OGR attribute field types now supported (2024-07-12)
 * add sub-headings under the heading "Description of the interface", and add specifications under "Feature retrieval" and "Geometry" (2024-07-13)
@@ -945,12 +945,12 @@ This is a working list of potential issues and design questions that need furthe
 * branch gdalvector was merged into main (2024-07-23)
 * added `ogr_proc()`, interface to GDAL OGR facilities for vector geoprocessing; updated "Example: layer geoprocessing" (2024-07-30)
 * removed `is_ignored` from feature class defintion, not needed for feature class / field creation (2024-09-11)
-* feature write methods were implemented in [#504](https://github.com/USDAForestService/gdalraster/pull/504): `$createFeature()`, `$setFeature()`, `$upsertFeature()`; documentation and examples in the (online reference)[https://usdaforestservice.github.io/gdalraster/reference/GDALVector-class.html] (2024-09-11)
+* feature write methods were implemented in [#504](https://github.com/firelab/gdalraster/pull/504): `$createFeature()`, `$setFeature()`, `$upsertFeature()`; documentation and examples in the (online reference)[https://firelab.github.io/gdalraster/reference/GDALVector-class.html] (2024-09-11)
 * updated the `GDALVector` class declaration in the draft document (2024-09-11)
 * remove the read-only field `GDALVector::featureTemplate` as not needed / not useful (2024-09-14)
 
 ## Contributors
 
-* [@goergen95](https://github.com/goergen95) ([#205](https://github.com/USDAForestService/gdalraster/issues/205))
+* [@goergen95](https://github.com/goergen95) ([#205](https://github.com/firelab/gdalraster/issues/205))
 * [@mdsumner](https://github.com/mdsumner)
 

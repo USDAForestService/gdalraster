@@ -2,14 +2,14 @@ test_that("ogr_reproject works", {
 
     # NOTE: temporarily disabling the Arrow code path in ogr2ogr and avoiding
     # the use of any virtual file systems while attempting to fix:
-    # https://github.com/USDAForestService/gdalraster/issues/769
+    # https://github.com/firelab/gdalraster/issues/769
 
     # BLAS/LAPACK are not involved in vector reprojection
     # cf. https://lists.osgeo.org/pipermail/gdal-dev/2025-August/060834.html
 
     # at time of writing, the CRAN check errors on systems with alternative
     # BLAS/LAPACK implementations cannot be reproduced
-    # cf. https://github.com/USDAForestService/gdalraster/issues/769#issuecomment-3192160052
+    # cf. https://github.com/firelab/gdalraster/issues/769#issuecomment-3192160052
 
     # the Arrow code path in gdal/apps/ogr2ogr_lib.cpp is implicated in the
     # error messages reported from the CRAN checks, so consider it as possibly

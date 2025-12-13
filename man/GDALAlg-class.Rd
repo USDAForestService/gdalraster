@@ -331,7 +331,7 @@ were added in \pkg{gdalraster} 2.2.0, and will evolve over future releases.
 \emph{The bindings are considered experimental until the upstream API is declared
 stable}. Breaking changes in minor version releases are possible until then.
 Please use with those cautions in mind. Bug reports may be filed at:
-\url{https://github.com/USDAForestService/gdalraster/issues}.
+\url{https://github.com/firelab/gdalraster/issues}.
 }
 
 \examples{
@@ -443,5 +443,5 @@ alg$release()
 \code{\link[=gdal_alg]{gdal_alg()}}, \code{\link[=gdal_commands]{gdal_commands()}}, \code{\link[=gdal_run]{gdal_run()}}, \code{\link[=gdal_usage]{gdal_usage()}}
 
 Using \code{gdal} CLI algorithms from R\cr
-\url{https://usdaforestservice.github.io/gdalraster/articles/use-gdal-cli-from-r.html}
+\url{https://firelab.github.io/gdalraster/articles/use-gdal-cli-from-r.html}
 }

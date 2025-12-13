@@ -45,9 +45,9 @@ Description: API bindings to the Geospatial Data Abstraction Library ('GDAL',
     I/O, or prefer a direct 'GDAL' API.
 License: MIT + file LICENSE
 Copyright: See file inst/COPYRIGHTS for details.
-URL: https://usdaforestservice.github.io/gdalraster/,
-    https://github.com/USDAForestService/gdalraster
-BugReports: https://github.com/USDAForestService/gdalraster/issues
+URL: https://firelab.github.io/gdalraster/,
+    https://github.com/firelab/gdalraster
+BugReports: https://github.com/firelab/gdalraster/issues
 Depends: R (>= 4.2.0)
 Imports:
     bit64,

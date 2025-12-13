@@ -4,5 +4,5 @@ bibentry(bibtype="Manual",
          year = "2025",
          organization = "USDA Forest Service, Rocky Mountain Research Station",
          address = "Missoula, MT, USA",
-         url = "https://usdaforestservice.github.io/gdalraster/")
+         url = "https://firelab.github.io/gdalraster/")
 

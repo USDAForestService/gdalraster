@@ -317,7 +317,7 @@ get_cache_max <- function(units = "MB") {
 #' of the available cache memory currently in use in the requested units.
 #'
 #' @seealso
-#' [GDAL Block Cache](https://usdaforestservice.github.io/gdalraster/articles/gdal-block-cache.html)
+#' [GDAL Block Cache](https://firelab.github.io/gdalraster/articles/gdal-block-cache.html)
 #'
 #' [get_cache_max()], [set_cache_max()]
 #'
@@ -1944,7 +1944,7 @@ vsi_read_dir <- function(path, max_files = 0L, recursive = FALSE, all_files = FA
 #' \dontrun{
 #' # sample-data is a directory in the git repository for gdalraster that is
 #' # not included in the R package:
-#' # https://github.com/USDAForestService/gdalraster/tree/main/sample-data
+#' # https://github.com/firelab/gdalraster/tree/main/sample-data
 #' # A copy of sample-data in an AWS S3 bucket, and a partial copy in an
 #' # Azure Blob container, were used to generate the example below.
 #'
@@ -2180,7 +2180,7 @@ vsi_unlink_batch <- function(filenames) {
 #' vsi_stat_size(fs_objects)
 #'
 #' # /vsicurl/ file system handler
-#' base_url <- "https://raw.githubusercontent.com/usdaforestservice/"
+#' base_url <- "https://raw.githubusercontent.com/firelab/"
 #' f <- "gdalraster/main/sample-data/landsat_c2ard_sr_mt_hood_jul2022_utm.tif"
 #' url_file <- paste0("/vsicurl/", base_url, f)
 #'

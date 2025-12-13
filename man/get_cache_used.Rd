@@ -24,7 +24,7 @@ value in MB by default.
 get_cache_used()
 }
 \seealso{
-\href{https://usdaforestservice.github.io/gdalraster/articles/gdal-block-cache.html}{GDAL Block Cache}
+\href{https://firelab.github.io/gdalraster/articles/gdal-block-cache.html}{GDAL Block Cache}
 
 \code{\link[=get_cache_max]{get_cache_max()}}, \code{\link[=set_cache_max]{set_cache_max()}}
 }
