@@ -1224,7 +1224,7 @@ ds_new$close()
 ## using a GDAL Virtual File System handler '/vsicurl/'
 ## see: https://gdal.org/en/stable/user/virtual_file_systems.html
 url <- "/vsicurl/https://raw.githubusercontent.com/"
-url <- paste0(url, "usdaforestservice/gdalraster/main/sample-data/")
+url <- paste0(url, "firelab/gdalraster/main/sample-data/")
 url <- paste0(url, "lf_elev_220_mt_hood_utm.tif")
 
 set_config_option("GDAL_HTTP_CONNECTTIMEOUT", "20")

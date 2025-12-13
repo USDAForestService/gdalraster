@@ -249,7 +249,7 @@ LANDFIRE EVT in the Raster Attribute Table QGIS Plugin
 ## See also
 
 - Documentation for
-  [`gdalraster::buildRAT()`](https://usdaforestservice.github.io/gdalraster/reference/buildRAT.html)
+  [`gdalraster::buildRAT()`](https://firelab.github.io/gdalraster/reference/buildRAT.html)
 
 - [GDALRasterAttributeTable Class
   Reference](https://gdal.org/en/stable/doxygen/classGDALRasterAttributeTable.html)

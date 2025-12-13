@@ -377,8 +377,7 @@ were added in gdalraster 2.2.0, and will evolve over future releases.
 *The bindings are considered experimental until the upstream API is
 declared stable*. Breaking changes in minor version releases are
 possible until then. Please use with those cautions in mind. Bug reports
-may be filed at:
-<https://github.com/USDAForestService/gdalraster/issues>.
+may be filed at: <https://github.com/firelab/gdalraster/issues>.
 
 ## See also
 
@@ -388,7 +387,7 @@ may be filed at:
 [`gdal_usage()`](https://firelab.github.io/gdalraster/reference/gdal_cli.md)
 
 Using `gdal` CLI algorithms from R  
-<https://usdaforestservice.github.io/gdalraster/articles/use-gdal-cli-from-r.html>
+<https://firelab.github.io/gdalraster/articles/use-gdal-cli-from-r.html>
 
 ## Examples
 

@@ -116,7 +116,7 @@ vsi_stat_size(fs_objects)
 #> [1] 4096  20043 -1   
 
 # /vsicurl/ file system handler
-base_url <- "https://raw.githubusercontent.com/usdaforestservice/"
+base_url <- "https://raw.githubusercontent.com/firelab/"
 f <- "gdalraster/main/sample-data/landsat_c2ard_sr_mt_hood_jul2022_utm.tif"
 url_file <- paste0("/vsicurl/", base_url, f)
 

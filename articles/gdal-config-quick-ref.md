@@ -79,7 +79,7 @@ will be in effect for the current session.
 [`gdalraster::set_cache_max()`](https://firelab.github.io/gdalraster/reference/set_cache_max.md)
 can be used to change the value programmatically during operation of the
 program. See also [GDAL Block
-Cache](https://usdaforestservice.github.io/gdalraster/articles/gdal-block-cache.html).
+Cache](https://firelab.github.io/gdalraster/articles/gdal-block-cache.html).
 
 ``` r
 # set to a specific size in MB

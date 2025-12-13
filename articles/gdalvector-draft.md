@@ -3,18 +3,17 @@
 **Note**: This document is now out of date and retained only as a record
 of the original proposed interface and initial development. Bindings to
 the GDAL Vector API were added in the **gdalraster** [2.0.0
-release](https://github.com/USDAForestService/gdalraster/releases/tag/v.2.0.0).
+release](https://github.com/firelab/gdalraster/releases/tag/v.2.0.0).
 For current specifications, see the package vignette [Vector API
-Overview](https://usdaforestservice.github.io/gdalraster/articles/vector-api-overview.html)
+Overview](https://firelab.github.io/gdalraster/articles/vector-api-overview.html)
 and the documentation for class
-[`GDALVector`](https://usdaforestservice.github.io/gdalraster/reference/GDALVector-class.html).
+[`GDALVector`](https://firelab.github.io/gdalraster/reference/GDALVector-class.html).
 
 Chris Toney (chris.toney at usda.gov)
 
 Last modified: 2024-09-14
 
-Comment/discussion:
-<https://github.com/USDAForestService/gdalraster/issues/241>
+Comment/discussion: <https://github.com/firelab/gdalraster/issues/241>
 
 ## Summary
 
@@ -40,7 +39,7 @@ with a draft class definition for implementation via
 An initial implemetation supporting read access has been merged into the
 **gdalraster** main branch (as of v. 1.11.1.9100, 2024-07-23), with
 online documentation available at:
-<https://usdaforestservice.github.io/gdalraster/reference/GDALVector-class.html>
+<https://firelab.github.io/gdalraster/reference/GDALVector-class.html>
 
 ## Description of the interface
 
@@ -66,9 +65,9 @@ schemas will be done with:
   (supports SOZip)
 - existing utility functions for managing vector data sources (as of
   **gdalraster** 1.11.0):
-  [ogr_manage](https://usdaforestservice.github.io/gdalraster/reference/ogr_manage.html)
+  [ogr_manage](https://firelab.github.io/gdalraster/reference/ogr_manage.html)
   and
-  [ogr_define](https://usdaforestservice.github.io/gdalraster/reference/ogr_define.html)
+  [ogr_define](https://firelab.github.io/gdalraster/reference/ogr_define.html)
 - existing wrappers
   [`ogr2ogr()`](https://firelab.github.io/gdalraster/reference/ogr2ogr.md)
   and
@@ -187,13 +186,13 @@ lifetime of the object.
 
 The draft class definition below has been partially implemented in:
 
-<https://github.com/USDAForestService/gdalraster/blob/gdalvector/src/gdalvector.cpp>
+<https://github.com/firelab/gdalraster/blob/gdalvector/src/gdalvector.cpp>
 
 The header file can be referenced for the public class methods that have
 been implemented so far in the prototype (a subset of the draft class
 definition below):
 
-<https://github.com/USDAForestService/gdalraster/blob/gdalvector/src/gdalvector.h>
+<https://github.com/firelab/gdalraster/blob/gdalvector/src/gdalvector.h>
 
 ``` cpp
 class GDALVector {
@@ -1059,9 +1058,9 @@ need further consideration, to be determined:
   (2024-04-06)
 - add a `GDALVector` class constructor with `spatial_filter` and SQL
   `dialect` arguments (2024-04-28)
-- [ogr_manage](https://usdaforestservice.github.io/gdalraster/reference/ogr_manage.html)
+- [ogr_manage](https://firelab.github.io/gdalraster/reference/ogr_manage.html)
   and
-  [ogr_define](https://usdaforestservice.github.io/gdalraster/reference/ogr_define.html)
+  [ogr_define](https://firelab.github.io/gdalraster/reference/ogr_define.html)
   added in **gdalraster** dev; examples updated (2024-05-14)
 - update the draft class definition: Add read/write fields for
   per-object settings (`defaultGeomFldName`, `returnGeomAs` and
@@ -1087,10 +1086,10 @@ need further consideration, to be determined:
 - removed `is_ignored` from feature class defintion, not needed for
   feature class / field creation (2024-09-11)
 - feature write methods were implemented in
-  [\#504](https://github.com/USDAForestService/gdalraster/pull/504):
+  [\#504](https://github.com/firelab/gdalraster/pull/504):
   `$createFeature()`, `$setFeature()`, `$upsertFeature()`; documentation
   and examples in the (online
-  reference)\[<https://usdaforestservice.github.io/gdalraster/reference/GDALVector-class.html>\]
+  reference)\[<https://firelab.github.io/gdalraster/reference/GDALVector-class.html>\]
   (2024-09-11)
 - updated the `GDALVector` class declaration in the draft document
   (2024-09-11)
@@ -1100,5 +1099,5 @@ need further consideration, to be determined:
 ## Contributors
 
 - [@goergen95](https://github.com/goergen95)
-  ([\#205](https://github.com/USDAForestService/gdalraster/issues/205))
+  ([\#205](https://github.com/firelab/gdalraster/issues/205))
 - [@mdsumner](https://github.com/mdsumner)

@@ -49,7 +49,7 @@ optional but may be preferred for readability."></head><body>
 <li class="nav-item"><a class="nav-link" href="../news/index.html">Changelog</a></li>
       </ul><ul class="navbar-nav"><li class="nav-item"><form class="form-inline" role="search">
  <input class="form-control" type="search" name="search-input" id="search-input" autocomplete="off" aria-label="Search site" placeholder="Search for" data-search-index="../search.json"></form></li>
-<li class="nav-item"><a class="external-link nav-link" href="https://github.com/USDAForestService/gdalraster/" aria-label="GitHub"><span class="fa fab fa-github fa-lg"></span></a></li>
+<li class="nav-item"><a class="external-link nav-link" href="https://github.com/firelab/gdalraster/" aria-label="GitHub"><span class="fa fab fa-github fa-lg"></span></a></li>
 <li class="nav-item dropdown">
   <button class="nav-link dropdown-toggle" type="button" id="dropdown-lightswitch" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true" aria-label="Light switch"><span class="fa fa-sun"></span></button>
   <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="dropdown-lightswitch"><li><button class="dropdown-item" data-bs-theme-value="light"><span class="fa fa-sun"></span> Light</button></li>
@@ -65,7 +65,7 @@ optional but may be preferred for readability."></head><body>
   <main id="main" class="col-md-9"><div class="page-header">
 
       <h1>Class encapsulating a raster dataset and associated band objects</h1>
-      <small class="dont-index">Source: <a href="https://github.com/USDAForestService/gdalraster/blob/main/R/gdalraster.R" class="external-link"><code>R/gdalraster.R</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/firelab/gdalraster/blob/main/R/gdalraster.R" class="external-link"><code>R/gdalraster.R</code></a></small>
       <div class="d-none name"><code>GDALRaster-class.Rd</code></div>
     </div>
 
@@ -1163,7 +1163,7 @@ The dataset can be re-opened on the existing <code>filename</code> with
 <span class="r-in"><span><span class="co">## using a GDAL Virtual File System handler '/vsicurl/'</span></span></span>
 <span class="r-in"><span><span class="co">## see: https://gdal.org/en/stable/user/virtual_file_systems.html</span></span></span>
 <span class="r-in"><span><span class="va">url</span> <span class="op">&lt;-</span> <span class="st">"/vsicurl/https://raw.githubusercontent.com/"</span></span></span>
-<span class="r-in"><span><span class="va">url</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span><span class="va">url</span>, <span class="st">"usdaforestservice/gdalraster/main/sample-data/"</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">url</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span><span class="va">url</span>, <span class="st">"firelab/gdalraster/main/sample-data/"</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">url</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span><span class="va">url</span>, <span class="st">"lf_elev_220_mt_hood_utm.tif"</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="fu"><a href="set_config_option.html">set_config_option</a></span><span class="op">(</span><span class="st">"GDAL_HTTP_CONNECTTIMEOUT"</span>, <span class="st">"20"</span><span class="op">)</span></span></span>

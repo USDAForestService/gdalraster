@@ -231,7 +231,7 @@ uses memory caching algorithms during raster I/O to improve performance.
 The operation of the caching mechanism and configuration of cache memory
 size might be considered when scaling I/O to large datasets (see [GDAL
 Block
-Cache](https://usdaforestservice.github.io/gdalraster/articles/gdal-block-cache.html)).
+Cache](https://firelab.github.io/gdalraster/articles/gdal-block-cache.html)).
 
 The values for `out_xsize` and `out_ysize` describe the size of the
 output buffer (an R vector of length `out_xsize * out_ysize` that data
@@ -469,7 +469,7 @@ Wrapper functions for several GDAL utilities, including
 [`translate()`](https://firelab.github.io/gdalraster/reference/translate.md)
 and [`warp()`](https://firelab.github.io/gdalraster/reference/warp.md),
 are also available. See the [package
-overview](https://usdaforestservice.github.io/gdalraster/reference/gdalraster-package.html)
+overview](https://firelab.github.io/gdalraster/reference/gdalraster-package.html)
 for a full summary of functionality provided by the GDAL API bindings.
 
 ## Data sources

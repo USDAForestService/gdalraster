@@ -40,8 +40,7 @@ The initial bindings in **gdalraster** 2.2.0 will evolve over future
 releases. *The bindings are considered experimental until the upstream
 API is declared stable*. Breaking changes in minor version releases are
 possible until then. Please use with those cautions in mind. Bug reports
-may be filed at:
-<https://github.com/USDAForestService/gdalraster/issues>.
+may be filed at: <https://github.com/firelab/gdalraster/issues>.
 
 ## Command discovery and usage info
 
@@ -305,7 +304,7 @@ function. This function accepts a command string, along with its
 argument values given in a character vector or named list. It attempts
 to parse the algorithm arguments and then run the algorithm on the given
 input data. The return value is an object of class
-[`GDALAlg`](https://usdaforestservice.github.io/gdalraster/reference/GDALAlg-class.html).
+[`GDALAlg`](https://firelab.github.io/gdalraster/reference/GDALAlg-class.html).
 If you do not need to access output value(s) of the algorithm, you can
 call
 [`gdal_run()`](https://firelab.github.io/gdalraster/reference/gdal_cli.md)

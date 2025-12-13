@@ -26,7 +26,7 @@ available cache memory currently in use in the requested units.
 ## See also
 
 [GDAL Block
-Cache](https://usdaforestservice.github.io/gdalraster/articles/gdal-block-cache.html)
+Cache](https://firelab.github.io/gdalraster/articles/gdal-block-cache.html)
 
 [`get_cache_max()`](https://firelab.github.io/gdalraster/reference/get_cache_max.md),
 [`set_cache_max()`](https://firelab.github.io/gdalraster/reference/set_cache_max.md)

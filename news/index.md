@@ -4,33 +4,33 @@
 
 - [`vsi_read_dir()`](https://firelab.github.io/gdalraster/reference/vsi_read_dir.md):
   fix slow string processing of the file list for return
-  ([\#841](https://github.com/USDAForestService/gdalraster/issues/841),
-  thanks to [@mdsumner](https://github.com/mdsumner)) (2025-12-06)
+  ([\#841](https://github.com/firelab/gdalraster/issues/841), thanks to
+  [@mdsumner](https://github.com/mdsumner)) (2025-12-06)
 
 - add
   [`srs_epsg_treats_as_lat_long()`](https://firelab.github.io/gdalraster/reference/srs_query.md)
   and
   [`srs_epsg_treats_as_northing_easting()`](https://firelab.github.io/gdalraster/reference/srs_query.md)
-  ([\#839](https://github.com/USDAForestService/gdalraster/issues/839))
+  ([\#839](https://github.com/firelab/gdalraster/issues/839))
   (2025-12-03)
 
 - add
   [`srs_get_axes()`](https://firelab.github.io/gdalraster/reference/srs_query.md):
   return a list of the axis names and orientations for a spatial
   coordinate reference system
-  ([\#837](https://github.com/USDAForestService/gdalraster/issues/837))
+  ([\#837](https://github.com/firelab/gdalraster/issues/837))
   (2025-12-02)
 
 - [`gdal_formats()`](https://firelab.github.io/gdalraster/reference/gdal_formats.md):
   add Update (`u`) to `rw_flags` when GDAL \>= 3.11, and add several new
   columns to the output data frame containing various driver metadata
-  ([\#833](https://github.com/USDAForestService/gdalraster/issues/833))
+  ([\#833](https://github.com/firelab/gdalraster/issues/833))
   (2025-11-29)
 
 - add
   [`srs_info_from_db()`](https://firelab.github.io/gdalraster/reference/srs_info_from_db.md):
   obtain information about coordinate reference systems in the PROJ DB
-  ([\#832](https://github.com/USDAForestService/gdalraster/issues/832))
+  ([\#832](https://github.com/firelab/gdalraster/issues/832))
   (2025-11-28)
 
 - add to the GDAL Spatial Reference System API bindings:
@@ -38,13 +38,13 @@
   [`srs_get_axes_count()`](https://firelab.github.io/gdalraster/reference/srs_query.md)
   and
   [`srs_get_celestial_body_name()`](https://firelab.github.io/gdalraster/reference/srs_query.md)
-  ([\#831](https://github.com/USDAForestService/gdalraster/issues/831))
+  ([\#831](https://github.com/firelab/gdalraster/issues/831))
   (2025-11-28)
 
 - [`plot_raster()`](https://firelab.github.io/gdalraster/reference/plot_raster.md):
   accept a color palette for the argument `col_map_fn`, to support an
   implied ramp function
-  ([\#830](https://github.com/USDAForestService/gdalraster/issues/830))
+  ([\#830](https://github.com/firelab/gdalraster/issues/830))
   (2025-11-20)
 
 ## gdalraster 2.3.0
@@ -62,17 +62,17 @@ CRAN release: 2025-11-19
 - [`gdal_usage()`](https://firelab.github.io/gdalraster/reference/gdal_cli.md):
   include the list of potential step algorithms for `"raster pipeline"`
   and `"vector pipeline"`
-  ([\#789](https://github.com/USDAForestService/gdalraster/issues/789))
+  ([\#789](https://github.com/firelab/gdalraster/issues/789))
 - [`gdal_run()`](https://firelab.github.io/gdalraster/reference/gdal_cli.md):
   add argument `setVectorArgsFromObject`
-  ([\#790](https://github.com/USDAForestService/gdalraster/issues/790))
+  ([\#790](https://github.com/firelab/gdalraster/issues/790))
 - add `GDALAlg::getExplicitlySetArgs()`: exposed class method to return
   a named list of arguments that have been set explicitly along with
   their values
-  ([\#807](https://github.com/USDAForestService/gdalraster/issues/807))
+  ([\#807](https://github.com/firelab/gdalraster/issues/807))
 - add `GDALAlg::setArg()`: exposed class method to set algorithm
   argument values individually by API
-  ([\#822](https://github.com/USDAForestService/gdalraster/issues/822))
+  ([\#822](https://github.com/firelab/gdalraster/issues/822))
 
 #### Raster
 
@@ -81,21 +81,21 @@ CRAN release: 2025-11-19
   `writeBlock()`,
   [`make_chunk_index()`](https://firelab.github.io/gdalraster/reference/make_chunk_index.md)
   and `readChunk()` / `writeChunk()`
-  ([\#819](https://github.com/USDAForestService/gdalraster/issues/819))
+  ([\#819](https://github.com/firelab/gdalraster/issues/819))
 - add
   [`make_chunk_index()`](https://firelab.github.io/gdalraster/reference/make_chunk_index.md)
   stand-alone function for use without a dataset object
 - add `GDALRaster::getMinMaxLocation()`: compute the min/max values for
   a raster band and their locations, using
   `GDALComputeRasterMinMaxLocation()` in GDAL \>= 3.11
-  ([\#820](https://github.com/USDAForestService/gdalraster/issues/820))
+  ([\#820](https://github.com/firelab/gdalraster/issues/820))
 - [`rasterToVRT()`](https://firelab.github.io/gdalraster/reference/rasterToVRT.md):
   add argument `krnl_fn` supporting a Function element in
   KernelFilteredSource with GDAL \>= 3.12, one of `"min"`, `"max"`,
   `"stddev"`, `"median"` or `"mode"`
-  ([\#821](https://github.com/USDAForestService/gdalraster/issues/821))
+  ([\#821](https://github.com/firelab/gdalraster/issues/821))
 - class `GDALRaster`: add a constructor with `allowed_drivers` argument
-  ([\#793](https://github.com/USDAForestService/gdalraster/issues/793))
+  ([\#793](https://github.com/firelab/gdalraster/issues/793))
 
 #### Multidimensional raster
 
@@ -105,7 +105,7 @@ CRAN release: 2025-11-19
   add column `multidim_raster` (`TRUE`\|`FALSE`) in the data frame
   output of
   [`gdal_formats()`](https://firelab.github.io/gdalraster/reference/gdal_formats.md)
-  ([\#799](https://github.com/USDAForestService/gdalraster/issues/799))
+  ([\#799](https://github.com/firelab/gdalraster/issues/799))
 - add
   [`mdim_info()`](https://firelab.github.io/gdalraster/reference/mdim_info.md):
   report structure and content of a multidimensional dataset, interface
@@ -114,7 +114,7 @@ CRAN release: 2025-11-19
   [`mdim_translate()`](https://firelab.github.io/gdalraster/reference/mdim_translate.md):
   convert multidimensional data between different formats, and subset,
   interface to `gdalmdimtranslate` utility
-  ([\#803](https://github.com/USDAForestService/gdalraster/issues/803))
+  ([\#803](https://github.com/firelab/gdalraster/issues/803))
 
 #### Geometry API
 
@@ -146,7 +146,7 @@ CRAN release: 2025-11-19
 - add
   [`gdal_get_driver_md()`](https://firelab.github.io/gdalraster/reference/gdal_get_driver_md.md):
   retrieve driver metadata
-  ([\#795](https://github.com/USDAForestService/gdalraster/issues/795))
+  ([\#795](https://github.com/firelab/gdalraster/issues/795))
 - add
   [`vsi_stat_exists()`](https://firelab.github.io/gdalraster/reference/vsi_stat.md),
   [`vsi_stat_type()`](https://firelab.github.io/gdalraster/reference/vsi_stat.md)
@@ -155,25 +155,25 @@ CRAN release: 2025-11-19
   specializations of
   [`vsi_stat()`](https://firelab.github.io/gdalraster/reference/vsi_stat.md)
   operating on a vector of potentially multiple file system object names
-  ([\#825](https://github.com/USDAForestService/gdalraster/issues/825))
+  ([\#825](https://github.com/firelab/gdalraster/issues/825))
 
 ### Bug fix
 
 - fixes for
   [`ogr_ds_delete_field_domain()`](https://firelab.github.io/gdalraster/reference/ogr_manage.md),
   and condition tests on GDAL 3.12
-  ([\#823](https://github.com/USDAForestService/gdalraster/issues/823))
+  ([\#823](https://github.com/firelab/gdalraster/issues/823))
 - ensure that the global error handler is restored when the input
   dataset cannot be opened in some OGR management functions
-  ([\#787](https://github.com/USDAForestService/gdalraster/issues/787))
+  ([\#787](https://github.com/firelab/gdalraster/issues/787))
 
 ### Internal
 
 - various C++ code linting, small refactorings and performance
   improvements
-  ([\#788](https://github.com/USDAForestService/gdalraster/issues/788),
-  [\#801](https://github.com/USDAForestService/gdalraster/issues/801),
-  [\#818](https://github.com/USDAForestService/gdalraster/issues/818))
+  ([\#788](https://github.com/firelab/gdalraster/issues/788),
+  [\#801](https://github.com/firelab/gdalraster/issues/801),
+  [\#818](https://github.com/firelab/gdalraster/issues/818))
 
 ## gdalraster 2.2.1
 
@@ -182,8 +182,7 @@ CRAN release: 2025-08-29
 ### Bug fix and maintenance release
 
 - updates in class `GDALAlg`, experimental bindings to the new GDAL CLI
-  API
-  ([\#782](https://github.com/USDAForestService/gdalraster/issues/782))
+  API ([\#782](https://github.com/firelab/gdalraster/issues/782))
   - improve input validation
   - ensure algorithm names originating in `Rcpp::CharacterVector` are
     always passed explicitly as `const char *` in C API calls
@@ -192,17 +191,17 @@ CRAN release: 2025-08-29
   [`gdal_global_reg_names()`](https://firelab.github.io/gdalraster/reference/gdal_cli.md):
   return a character vector containing the names of the algorithms in
   the GDAL global algorithm registry
-  ([\#782](https://github.com/USDAForestService/gdalraster/issues/782))
+  ([\#782](https://github.com/firelab/gdalraster/issues/782))
 - handle GDAL CPL error messages via **Rcpp**, and suppress driver
   warnings during package initialization
-  ([\#784](https://github.com/USDAForestService/gdalraster/issues/784))
+  ([\#784](https://github.com/firelab/gdalraster/issues/784))
 - [`plot_raster()`](https://firelab.github.io/gdalraster/reference/plot_raster.md):
   use [`on.exit()`](https://rdrr.io/r/base/on.exit.html) for
   [`par()`](https://rdrr.io/r/graphics/par.html) reset
-  ([\#780](https://github.com/USDAForestService/gdalraster/issues/780))
+  ([\#780](https://github.com/firelab/gdalraster/issues/780))
 - fixes in several unit tests, mainly fixing
   [`on.exit()`](https://rdrr.io/r/base/on.exit.html) cleanup code
-  ([\#783](https://github.com/USDAForestService/gdalraster/issues/783))
+  ([\#783](https://github.com/firelab/gdalraster/issues/783))
 - Documentation
   - update text in the “Development Status” section describing the
     experimental GDAL CLI bindings
@@ -220,14 +219,14 @@ CRAN release: 2025-08-22
 
 - initial bindings to the “gdal” command line interface (CLI) added in
   GDAL 3.11
-  - [functions](https://usdaforestservice.github.io/gdalraster/reference/gdal_cli.html)
+  - [functions](https://firelab.github.io/gdalraster/reference/gdal_cli.html)
     for using “gdal” CLI algorithms:
     [`gdal_commands()`](https://firelab.github.io/gdalraster/reference/gdal_cli.md),
     [`gdal_usage()`](https://firelab.github.io/gdalraster/reference/gdal_cli.md),
     [`gdal_run()`](https://firelab.github.io/gdalraster/reference/gdal_cli.md),
     [`gdal_alg()`](https://firelab.github.io/gdalraster/reference/gdal_cli.md)
   - bindings to the GDALAlgorithm API implemented in class
-    [`GDALAlg`](https://usdaforestservice.github.io/gdalraster/reference/GDALAlg-class.html)
+    [`GDALAlg`](https://firelab.github.io/gdalraster/reference/GDALAlg-class.html)
   - requires **gdalraster** built against GDAL \>= 3.11.3
 
 ### Other updates and fixes
@@ -237,8 +236,8 @@ CRAN release: 2025-08-22
   large number of points
 - allow reporting a raster driver name as empty string for a dataset
   that has no driver
-  ([\#761](https://github.com/USDAForestService/gdalraster/issues/761),
-  thanks to [@mdsumner](https://github.com/mdsumner))
+  ([\#761](https://github.com/firelab/gdalraster/issues/761), thanks to
+  [@mdsumner](https://github.com/mdsumner))
 - changes to address crash in
   [`ogr_reproject()`](https://firelab.github.io/gdalraster/reference/ogr_reproject.md)
   following GDAL `ERROR 1: Reprojection failed` on certain CRAN
@@ -252,19 +251,19 @@ CRAN release: 2025-08-22
     across all GDAL versions but skip more complex tests if GDAL \<
     3.11.3 (“stable” version as of July 2025)
   - move [*Vector API
-    Overview*](https://usdaforestservice.github.io/gdalraster/articles/vector-api-overview.html)
+    Overview*](https://firelab.github.io/gdalraster/articles/vector-api-overview.html)
     from vignette to a web article
 
 ### Documentation
 
 - add conda-forge installation instructions in the README and web docs
-  ([\#762](https://github.com/USDAForestService/gdalraster/issues/762),
-  thanks to [@matthewfeickert](https://github.com/matthewfeickert))
+  ([\#762](https://github.com/firelab/gdalraster/issues/762), thanks to
+  [@matthewfeickert](https://github.com/matthewfeickert))
 - update the sample data elevation raster (inst/extdata/storml_elev.tif)
   to avoid visual artifacts
-  ([\#768](https://github.com/USDAForestService/gdalraster/issues/768))
+  ([\#768](https://github.com/firelab/gdalraster/issues/768))
 - add web article [*Using “gdal” CLI algorithms from
-  R*](https://usdaforestservice.github.io/gdalraster/articles/use-gdal-cli-from-r.html)
+  R*](https://firelab.github.io/gdalraster/articles/use-gdal-cli-from-r.html)
 
 ### Internal
 
@@ -291,47 +290,46 @@ CRAN release: 2025-07-14
 - [`pixel_extract()`](https://firelab.github.io/gdalraster/reference/pixel_extract.md):
   support optional point IDs in the first column of an input data frame
   and add argument `as_data_frame`
-  ([\#751](https://github.com/USDAForestService/gdalraster/issues/751))
+  ([\#751](https://github.com/firelab/gdalraster/issues/751))
 - performance improvement for
   [`plot_raster()`](https://firelab.github.io/gdalraster/reference/plot_raster.md)
   via `col_tbl`
-  ([\#735](https://github.com/USDAForestService/gdalraster/issues/735)
-  thanks [@mdsumner](https://github.com/mdsumner))
+  ([\#735](https://github.com/firelab/gdalraster/issues/735) thanks
+  [@mdsumner](https://github.com/mdsumner))
 
 #### Vector
 
 - add write support for field domains
-  ([\#738](https://github.com/USDAForestService/gdalraster/issues/738),
-  [\#739](https://github.com/USDAForestService/gdalraster/issues/739))
+  ([\#738](https://github.com/firelab/gdalraster/issues/738),
+  [\#739](https://github.com/firelab/gdalraster/issues/739))
 - `GDALVector$getFieldDomain()`: a coded values domain is now returned
   as a two-column data frame of (codes, values) instead of character
   vector of `"CODE=VALUE"`, **a breaking change** but the return value
   was not previously documented. The returned field domain definition
   now aligns with the specification added under the `ogr_define` help
-  topic in
-  [\#738](https://github.com/USDAForestService/gdalraster/issues/738)
+  topic in [\#738](https://github.com/firelab/gdalraster/issues/738)
 
 #### Geometry API
 
 - add
   [`g_boundary()`](https://firelab.github.io/gdalraster/reference/g_unary_op.md):
   compute the boundary of input geometry, wrapper of `OGR_G_Boundary()`
-  ([\#727](https://github.com/USDAForestService/gdalraster/issues/727))
+  ([\#727](https://github.com/firelab/gdalraster/issues/727))
 - add
   [`g_convex_hull()`](https://firelab.github.io/gdalraster/reference/g_unary_op.md):
   compute convex hull for input geometries, wrapper of
   `OGR_G_ConvexHull()`
-  ([\#726](https://github.com/USDAForestService/gdalraster/issues/726))
+  ([\#726](https://github.com/firelab/gdalraster/issues/726))
 - add
   [`g_delaunay_triangulation()`](https://firelab.github.io/gdalraster/reference/g_unary_op.md):
   return a Delaunay triangulation of the vertices of the input geometry,
   wrapper of `OGR_G_DelaunayTriangulation()`
-  ([\#729](https://github.com/USDAForestService/gdalraster/issues/729))
+  ([\#729](https://github.com/firelab/gdalraster/issues/729))
 - add
   [`g_set_3D()`](https://firelab.github.io/gdalraster/reference/g_util.md)/[`g_set_measured()`](https://firelab.github.io/gdalraster/reference/g_util.md):
   add/remove the explicit Z/M coordinate dimension on the input
   geometries, wrappers of `OGR_G_Set3D()`/`OGR_G_SetMeasured()`
-  ([\#743](https://github.com/USDAForestService/gdalraster/issues/743))
+  ([\#743](https://github.com/firelab/gdalraster/issues/743))
 - add
   [`g_is_ring()`](https://firelab.github.io/gdalraster/reference/g_query.md):
   tests whether a geometry is a ring, `TRUE` if the coordinates of the
@@ -340,26 +338,25 @@ CRAN release: 2025-07-14
 - support one-to-many input (this-to-others) in binary predicate
   functions and in
   [`g_distance()`](https://firelab.github.io/gdalraster/reference/g_measures.md)
-  ([\#728](https://github.com/USDAForestService/gdalraster/issues/728))
+  ([\#728](https://github.com/firelab/gdalraster/issues/728))
 - [`g_transform()`](https://firelab.github.io/gdalraster/reference/g_transform.md):
   performance improvement when multiple input geometries
-  ([\#745](https://github.com/USDAForestService/gdalraster/issues/745))
+  ([\#745](https://github.com/firelab/gdalraster/issues/745))
 - [`g_envelope()`](https://firelab.github.io/gdalraster/reference/g_envelope.md):
   add argument `as_3d`, wrapper of `OGR_G_GetEnvelope3D()` in the GDAL
   Geometry API
-  ([\#724](https://github.com/USDAForestService/gdalraster/issues/724))
+  ([\#724](https://github.com/firelab/gdalraster/issues/724))
 - fixes and improvements in handling of NULL geometries
-  ([\#732](https://github.com/USDAForestService/gdalraster/issues/732))
+  ([\#732](https://github.com/firelab/gdalraster/issues/732))
 - minor fixes and improvements to input validation and error handling
-  ([\#737](https://github.com/USDAForestService/gdalraster/issues/737))
+  ([\#737](https://github.com/firelab/gdalraster/issues/737))
 
 #### Spatial Reference System API
 
 - add
   [`srs_to_projjson()`](https://firelab.github.io/gdalraster/reference/srs_convert.md),
   wrapper for `OSRExportToPROJJSON()` in the GDAL Spatial Reference
-  System API
-  ([\#721](https://github.com/USDAForestService/gdalraster/issues/721))
+  System API ([\#721](https://github.com/firelab/gdalraster/issues/721))
 - [`srs_to_wkt()`](https://firelab.github.io/gdalraster/reference/srs_convert.md):
   add argument `gcs_only`, wrapper for `OSRCloneGeogCS()` in the GDAL
   SRS API
@@ -368,40 +365,39 @@ CRAN release: 2025-07-14
 
 - [`transform_bounds()`](https://firelab.github.io/gdalraster/reference/transform_bounds.md):
   support multiple input bounding boxes given as rows of a matrix or
-  data frame
-  ([\#744](https://github.com/USDAForestService/gdalraster/issues/744))
+  data frame ([\#744](https://github.com/firelab/gdalraster/issues/744))
 
 ### Bug fixes
 
 - [`g_envelope()`](https://firelab.github.io/gdalraster/reference/g_envelope.md):
   fix the order of xy coordinates in the returned envelope(s), fixes
-  [\#725](https://github.com/USDAForestService/gdalraster/issues/725)
-  **a breaking change**
+  [\#725](https://github.com/firelab/gdalraster/issues/725) **a breaking
+  change**
 - [`pixel_extract()`](https://firelab.github.io/gdalraster/reference/pixel_extract.md):
   fix input validation for `xy_srs`
 
 ### Internal
 
 - improve input validation for the `ogr_manage` functions
-  ([\#749](https://github.com/USDAForestService/gdalraster/issues/749))
+  ([\#749](https://github.com/firelab/gdalraster/issues/749))
 - add tests in `tests/testthat/test-gdal_create.R` for the the
   [`create()`](https://firelab.github.io/gdalraster/reference/create.md)
   and
   [`createCopy()`](https://firelab.github.io/gdalraster/reference/createCopy.md)
   R public interfaces, and improve input validation
-  ([\#748](https://github.com/USDAForestService/gdalraster/issues/748))
+  ([\#748](https://github.com/firelab/gdalraster/issues/748))
 - additional tests for class `GDALVector` with a few minor code
   improvements
-  ([\#747](https://github.com/USDAForestService/gdalraster/issues/747))
+  ([\#747](https://github.com/firelab/gdalraster/issues/747))
 - class `GDALVector`: improve error handling in
   `setIgnoredFields()`/`setSelectedFields()` and add several new tests
-  ([\#731](https://github.com/USDAForestService/gdalraster/issues/731))
+  ([\#731](https://github.com/firelab/gdalraster/issues/731))
 - make variables `constexpr` or `const` in several places
 
 ### Documentation
 
 - add web article [Vector Read
-  Benchmarks](https://usdaforestservice.github.io/gdalraster/articles/vector-read-benchmarks.html)
+  Benchmarks](https://firelab.github.io/gdalraster/articles/vector-read-benchmarks.html)
 
 ## gdalraster 2.0.0
 
@@ -411,15 +407,15 @@ CRAN release: 2025-05-11
 
 - add bindings to the GDAL Vector API, implemented in the exposed C++
   class
-  [`GDALVector`](https://usdaforestservice.github.io/gdalraster/reference/GDALVector-class.html)
+  [`GDALVector`](https://firelab.github.io/gdalraster/reference/GDALVector-class.html)
   along with several additions and enhancements to [`ogr_*()`
   stand-alone
-  functions](https://usdaforestservice.github.io/gdalraster/reference/index.html#ogr-vector-utilities)
+  functions](https://firelab.github.io/gdalraster/reference/index.html#ogr-vector-utilities)
 - enhance and expand existing [bindings to the Geometry
-  API](https://usdaforestservice.github.io/gdalraster/reference/index.html#geometry),
+  API](https://firelab.github.io/gdalraster/reference/index.html#geometry),
   now operating on raw vectors of WKB or WKT strings
 - enhance and expand existing [bindings to the Spatial Reference Systems
-  API](https://usdaforestservice.github.io/gdalraster/reference/index.html#spatial-reference-systems)
+  API](https://firelab.github.io/gdalraster/reference/index.html#spatial-reference-systems)
 - add several new features and improvements to the Raster API, Virtual
   Systems Interface (VSI) API, and coordinate transformation functions
 - add helper functions for working with GDAL raster data types (see
@@ -441,14 +437,14 @@ CRAN release: 2025-05-11
 ### Vector API bindings
 
 - add class
-  [`GDALVector`](https://usdaforestservice.github.io/gdalraster/reference/GDALVector-class.html):
+  [`GDALVector`](https://firelab.github.io/gdalraster/reference/GDALVector-class.html):
   encapsulates an `OGRLayer` object and the `GDALDataset` that contains
   it, exposing 48 class methods for obtaining vector layer information,
   attribute and spatial filtering, and reading/writing feature data
 - wrap GDAL’s Arrow C Stream interface for reading vector data by
   exposing an ArrowArrayStream on a layer as a `nanoarrow_array_stream`
   object (GDAL \>= 3.6)
-  ([\#591](https://github.com/USDAForestService/gdalraster/issues/591))
+  ([\#591](https://github.com/firelab/gdalraster/issues/591))
 - add
   [`ogr_reproject()`](https://firelab.github.io/gdalraster/reference/ogr_reproject.md):
   reproject a vector layer (purpose-built wrapper of
@@ -473,8 +469,7 @@ CRAN release: 2025-05-11
 - remove element `$is_ignored` from the list object for a feature class
   definition (affects certain `ogr_define` and `ogr_manage` functions):
   potentially breaking change but assumed to be unused in layer / field
-  creation
-  ([\#513](https://github.com/USDAForestService/gdalraster/issues/513))
+  creation ([\#513](https://github.com/firelab/gdalraster/issues/513))
 
 ### Geometry API
 
@@ -486,7 +481,7 @@ CRAN release: 2025-05-11
   (create geometries from input points),
   [`g_add_geom()`](https://firelab.github.io/gdalraster/reference/g_factory.md)
   (build container geometry types from sub-geometries)
-  ([\#572](https://github.com/USDAForestService/gdalraster/issues/572))
+  ([\#572](https://github.com/firelab/gdalraster/issues/572))
 - the geometry wrapper functions now operate on input of either WKB raw
   vector, list of WKB, or character vector of WKT strings, with returned
   geometries as either WKB raw vector (or list of) or WKT character
@@ -518,12 +513,12 @@ CRAN release: 2025-05-11
   [`g_geodesic_area()`](https://firelab.github.io/gdalraster/reference/g_measures.md)
   and
   [`g_geodesic_length()`](https://firelab.github.io/gdalraster/reference/g_measures.md)
-  ([\#671](https://github.com/USDAForestService/gdalraster/issues/671))
+  ([\#671](https://github.com/firelab/gdalraster/issues/671))
 - add
   [`g_is_3D()`](https://firelab.github.io/gdalraster/reference/g_query.md)
   and
   [`g_is_measured()`](https://firelab.github.io/gdalraster/reference/g_query.md)
-  ([\#650](https://github.com/USDAForestService/gdalraster/issues/650))
+  ([\#650](https://github.com/firelab/gdalraster/issues/650))
 - add
   [`g_envelope()`](https://firelab.github.io/gdalraster/reference/g_envelope.md):
   computes and returns the bounding envelope(s) for input geometries
@@ -540,8 +535,7 @@ CRAN release: 2025-05-11
 ### Spatial Reference Systems API
 
 - improve and expand bindings to a subset of the GDAL Spatial Reference
-  System API
-  ([\#584](https://github.com/USDAForestService/gdalraster/issues/584))
+  System API ([\#584](https://github.com/firelab/gdalraster/issues/584))
 - **breaking change** in
   [`srs_is_same()`](https://firelab.github.io/gdalraster/reference/srs_query.md):
   argument `srs1` is renamed to `srs` and argument `srs2` to `srs_other`
@@ -579,7 +573,7 @@ CRAN release: 2025-05-11
 
 - add method `$get_block_indexing()`: helper to get indexing values for
   the block layout of a raster band
-  ([\#667](https://github.com/USDAForestService/gdalraster/issues/667))
+  ([\#667](https://github.com/firelab/gdalraster/issues/667))
 - add method `$addBand()`: add a band to a dataset if the underlying
   format supports this action, e.g., `MEM` and `VRT`
 - add method `$clearColorTable()`: clear the color table associated with
@@ -598,7 +592,7 @@ CRAN release: 2025-05-11
   [`read_ds()`](https://firelab.github.io/gdalraster/reference/read_ds.md)
   and
   [`plot_raster()`](https://firelab.github.io/gdalraster/reference/plot_raster.md))
-  ([\#569](https://github.com/USDAForestService/gdalraster/issues/569))
+  ([\#569](https://github.com/firelab/gdalraster/issues/569))
 
 ### GDAL VSI for operations on virtual file systems
 
@@ -641,7 +635,7 @@ CRAN release: 2025-05-11
   extract pixel values at geospatial point locations, with options for
   multiple interpolation methods and returning the individual pixel
   values from a N x N kernel
-  ([\#570](https://github.com/USDAForestService/gdalraster/issues/570))
+  ([\#570](https://github.com/firelab/gdalraster/issues/570))
 - add
   [`transform_bounds()`](https://firelab.github.io/gdalraster/reference/transform_bounds.md):
   transform a bounding box, densifying the edges to account for
@@ -656,11 +650,11 @@ CRAN release: 2025-05-11
 - add
   [`validateCreationOptions()`](https://firelab.github.io/gdalraster/reference/validateCreationOptions.md):
   validate the list of creation options that are handled by a driver
-  ([\#663](https://github.com/USDAForestService/gdalraster/issues/663))
+  ([\#663](https://github.com/firelab/gdalraster/issues/663))
 - [`getCreationOptions()`](https://firelab.github.io/gdalraster/reference/getCreationOptions.md):
   change the return value to a named list of options with their
   information
-  ([\#662](https://github.com/USDAForestService/gdalraster/issues/662))
+  ([\#662](https://github.com/firelab/gdalraster/issues/662))
 - [`getCreationOptions()`](https://firelab.github.io/gdalraster/reference/getCreationOptions.md):
   include `$min` and `$max` attributes in the returned list if GDAL \>=
   3.11
@@ -681,10 +675,10 @@ CRAN release: 2025-05-11
 - [`inspectDataset()`](https://firelab.github.io/gdalraster/reference/inspectDataset.md):
   handle the case if separate raster and vector drivers are identified
   but a specific flag for the dataset type was not given
-  ([\#693](https://github.com/USDAForestService/gdalraster/issues/693))
+  ([\#693](https://github.com/firelab/gdalraster/issues/693))
 - [`rasterize()`](https://firelab.github.io/gdalraster/reference/rasterize.md):
   support passing a `GDALRaster` object for in-place updating
-  ([\#660](https://github.com/USDAForestService/gdalraster/issues/660))
+  ([\#660](https://github.com/firelab/gdalraster/issues/660))
 - accept one (x, y) as a vector in functions that expect matrix or data
   frame input
   ([`transform_xy()`](https://firelab.github.io/gdalraster/reference/transform_xy.md),
@@ -703,19 +697,18 @@ CRAN release: 2025-05-11
   [`inv_project()`](https://firelab.github.io/gdalraster/reference/inv_project.md):
   account for behavior change in the GDAL `Transform()` methods of
   `OGRCoordinateTransformation` at GDAL 3.11
-  ([\#631](https://github.com/USDAForestService/gdalraster/issues/631))
+  ([\#631](https://github.com/firelab/gdalraster/issues/631))
 - [`plot_raster()`](https://firelab.github.io/gdalraster/reference/plot_raster.md):
   add argument `pixel_fn` to specify a function that will be applied to
   the input data for plotting, and handle input raster with complex data
-  type
-  ([\#582](https://github.com/USDAForestService/gdalraster/issues/582))
+  type ([\#582](https://github.com/firelab/gdalraster/issues/582))
 - [`inspectDataset()`](https://firelab.github.io/gdalraster/reference/inspectDataset.md)
   and
   [`warp()`](https://firelab.github.io/gdalraster/reference/warp.md):
   set a quiet error handler around code checks that are based on a
   [`try()`](https://rdrr.io/r/base/try.html) statement that attempts to
   open a raster dataset
-  ([\#709](https://github.com/USDAForestService/gdalraster/issues/709))
+  ([\#709](https://github.com/firelab/gdalraster/issues/709))
 
 ### Bug fixes
 
@@ -726,45 +719,45 @@ CRAN release: 2025-05-11
   [`apply_geotransform()`](https://firelab.github.io/gdalraster/reference/apply_geotransform.md)
   and
   [`get_pixel_line()`](https://firelab.github.io/gdalraster/reference/get_pixel_line.md)
-  ([\#592](https://github.com/USDAForestService/gdalraster/issues/592))
+  ([\#592](https://github.com/firelab/gdalraster/issues/592))
 - fix
   [`plot_raster()`](https://firelab.github.io/gdalraster/reference/plot_raster.md)
   to avoid integer overflow
-  ([\#613](https://github.com/USDAForestService/gdalraster/issues/613)
-  thanks to [@mdsumner](https://github.com/mdsumner))
+  ([\#613](https://github.com/firelab/gdalraster/issues/613) thanks to
+  [@mdsumner](https://github.com/mdsumner))
 - fix potential integer overflow when multiplying raster dimensions in R
   without explicit [`as.numeric()`](https://rdrr.io/r/base/numeric.html)
-  ([\#620](https://github.com/USDAForestService/gdalraster/issues/620)
-  thanks to [@mdsumner](https://github.com/mdsumner))
+  ([\#620](https://github.com/firelab/gdalraster/issues/620) thanks to
+  [@mdsumner](https://github.com/mdsumner))
 - configure.ac: fix test for GDAL \>= 3.1.0
 - fix class method `VSIFile$read()`: the `nbytes` argument should accept
   values carrying the `integer64` class attribute (fixes
-  [\#677](https://github.com/USDAForestService/gdalraster/issues/677)
-  thanks to [@mdsumner](https://github.com/mdsumner))
+  [\#677](https://github.com/firelab/gdalraster/issues/677) thanks to
+  [@mdsumner](https://github.com/mdsumner))
 
 ### Internal
 
 - configure.ac: remove configuration of PROJ include directory and libs
   as no longer needed
-  ([\#702](https://github.com/USDAForestService/gdalraster/issues/702))
+  ([\#702](https://github.com/firelab/gdalraster/issues/702))
 - implement
   [`create()`](https://firelab.github.io/gdalraster/reference/create.md),
   [`createCopy()`](https://firelab.github.io/gdalraster/reference/createCopy.md)
   and
   [`autoCreateWarpedVRT()`](https://firelab.github.io/gdalraster/reference/autoCreateWarpedVRT.md)
   as `GDALRaster` object factories
-  ([\#606](https://github.com/USDAForestService/gdalraster/issues/606))
+  ([\#606](https://github.com/firelab/gdalraster/issues/606))
 - implement
   [`ogr_ds_create()`](https://firelab.github.io/gdalraster/reference/ogr_manage.md)
   and
   [`ogr_layer_create()`](https://firelab.github.io/gdalraster/reference/ogr_manage.md)
   as `GDALVector` object factories
-  ([\#609](https://github.com/USDAForestService/gdalraster/issues/609))
+  ([\#609](https://github.com/firelab/gdalraster/issues/609))
 - code linting for `cppcheck` style in `src/geom_api.cpp` and
   `src/srs_api.cpp`
-  ([\#658](https://github.com/USDAForestService/gdalraster/issues/658))
+  ([\#658](https://github.com/firelab/gdalraster/issues/658))
 - various C++ code linting throughout
-  ([\#624](https://github.com/USDAForestService/gdalraster/issues/624))
+  ([\#624](https://github.com/firelab/gdalraster/issues/624))
 - add header `src/gdal_vsi.h`, and minor code cleanups in
   `src/gdal_vsi.cpp`
 - rename files: `src/wkt_conv.cpp` -\> `src/srs_api.cpp`,
@@ -773,9 +766,9 @@ CRAN release: 2025-05-11
 - use consistent naming convention for C++ class member variables
 - pass arguments by `const` reference in some srs and geom functions
 - use try/catch if potentially large allocation of `std::vector`
-  ([\#485](https://github.com/USDAForestService/gdalraster/issues/485))
+  ([\#485](https://github.com/firelab/gdalraster/issues/485))
 - replace `CPLIsNan()` with `std::isnan()`
-  ([\#485](https://github.com/USDAForestService/gdalraster/issues/485))
+  ([\#485](https://github.com/firelab/gdalraster/issues/485))
 - [`read_ds()`](https://firelab.github.io/gdalraster/reference/read_ds.md):
   pre-allocate the output vector based on the bit size of the unioned
   data type across all bands
@@ -786,18 +779,18 @@ CRAN release: 2025-05-11
 
 - update the package Description
 - add package vignette [Vector API
-  Overview](https://usdaforestservice.github.io/gdalraster/articles/vector-api-overview.html)
+  Overview](https://firelab.github.io/gdalraster/articles/vector-api-overview.html)
 - update descriptions of the C++ exposed classes and emphasize lack of
   named argument support in those cases (i.e., argument order matters,
   mainly of concern with class constructors)
 - update [Raster API
-  Tutorial](https://usdaforestservice.github.io/gdalraster/articles/raster-api-tutorial.html)
+  Tutorial](https://firelab.github.io/gdalraster/articles/raster-api-tutorial.html)
   to use the argument `return_obj` with
   [`create()`](https://firelab.github.io/gdalraster/reference/create.md)
   and
   [`createCopy()`](https://firelab.github.io/gdalraster/reference/createCopy.md)
 - additions to the section on Azure (/vsiaz/) in [GDAL Config Quick
-  Reference](https://usdaforestservice.github.io/gdalraster/articles/gdal-config-quick-ref.html)
+  Reference](https://firelab.github.io/gdalraster/articles/gdal-config-quick-ref.html)
 - add the `-srcband` and `-dstband` command-line options in the
   documentation for
   [`warp()`](https://firelab.github.io/gdalraster/reference/warp.md)
@@ -813,19 +806,19 @@ CRAN release: 2025-05-11
   and
   [`vsi_get_file_metadata()`](https://firelab.github.io/gdalraster/reference/vsi_get_file_metadata.md)
   to use the new sample data file `inst/extdata/ynp_features.zip`
-  ([\#691](https://github.com/USDAForestService/gdalraster/issues/691))
+  ([\#691](https://github.com/firelab/gdalraster/issues/691))
 - add alt text to images in the package vignettes and other web-only
   articles
 - code that cleans up temp files in the examples is now wrapped in
   `\dontshow{}`
 - add [Development
-  practices](https://usdaforestservice.github.io/gdalraster/CONTRIBUTING.html#development-practices)
+  practices](https://firelab.github.io/gdalraster/CONTRIBUTING.html#development-practices)
   in CONTRIBUTING.md
 - add the [OpenSSF best
   practices](https://www.bestpractices.dev/projects/9382) badge in
   README.md
 - add the [OpenSSF
-  Scorecard](https://scorecard.dev/viewer/?uri=github.com/USDAForestService/gdalraster)
+  Scorecard](https://scorecard.dev/viewer/?uri=github.com/firelab/gdalraster)
   badge in README.md
 
 ## gdalraster 1.12.0
@@ -837,12 +830,11 @@ CRAN release: 2025-01-19
 - add
   [`inspectDataset()`](https://firelab.github.io/gdalraster/reference/inspectDataset.md):
   obtain information about a GDAL raster or vector dataset
-  ([\#552](https://github.com/USDAForestService/gdalraster/issues/552))
+  ([\#552](https://github.com/firelab/gdalraster/issues/552))
 - add
   [`identifyDriver()`](https://firelab.github.io/gdalraster/reference/identifyDriver.md):
   identify the driver that can open a given filename, connection string,
-  etc.
-  ([\#553](https://github.com/USDAForestService/gdalraster/issues/553))
+  etc. ([\#553](https://github.com/firelab/gdalraster/issues/553))
 - [`transform_xy()`](https://firelab.github.io/gdalraster/reference/transform_xy.md)
   and
   [`inv_project()`](https://firelab.github.io/gdalraster/reference/inv_project.md):
@@ -850,28 +842,27 @@ CRAN release: 2025-01-19
   [`srs_to_wkt()`](https://firelab.github.io/gdalraster/reference/srs_convert.md)
 - [`vsi_read_dir()`](https://firelab.github.io/gdalraster/reference/vsi_read_dir.md):
   add the `recursive` argument
-  ([\#426](https://github.com/USDAForestService/gdalraster/issues/426));
-  omit “.” and “..” from the output directory listing; add the
-  `all_files` argument, `TRUE` to include hidden files; sort the
-  directory listing alphabetically
+  ([\#426](https://github.com/firelab/gdalraster/issues/426)); omit “.”
+  and “..” from the output directory listing; add the `all_files`
+  argument, `TRUE` to include hidden files; sort the directory listing
+  alphabetically
 
 ### Bug fixes
 
 - fix the mode name for `"color-relief"` in `DEFAULT_DEM_PROC`
-  ([\#430](https://github.com/USDAForestService/gdalraster/issues/430))
+  ([\#430](https://github.com/firelab/gdalraster/issues/430))
 - fix a unit test for class `VSIFile`: create file with “w+” access for
-  read/write
-  ([\#546](https://github.com/USDAForestService/gdalraster/issues/546))
+  read/write ([\#546](https://github.com/firelab/gdalraster/issues/546))
 - [`ogr_def_geom_field()`](https://firelab.github.io/gdalraster/reference/ogr_define.md):
   fix input validation for the `srs` argument
-  ([\#507](https://github.com/USDAForestService/gdalraster/issues/507))
+  ([\#507](https://github.com/firelab/gdalraster/issues/507))
 - [`createCopy()`](https://firelab.github.io/gdalraster/reference/createCopy.md):
   check the driver for GDAL_DCAP_CREATE capability as well as
   GDAL_DCAP_CREATECOPY
-  ([\#479](https://github.com/USDAForestService/gdalraster/issues/479))
+  ([\#479](https://github.com/firelab/gdalraster/issues/479))
 - [`plot_raster()`](https://firelab.github.io/gdalraster/reference/plot_raster.md):
   default to no stretch when the input is an RGB Byte raster
-  ([\#435](https://github.com/USDAForestService/gdalraster/issues/435))
+  ([\#435](https://github.com/firelab/gdalraster/issues/435))
 
 ### Documentation
 
@@ -888,7 +879,7 @@ CRAN release: 2024-06-13
 
 - fix test in test-ogr_manage.R: the test for GeoJSON layer did not need
   to check existence using `with_update = TRUE` on a file in extdata
-  ([\#410](https://github.com/USDAForestService/gdalraster/issues/410))
+  ([\#410](https://github.com/firelab/gdalraster/issues/410))
 
 - add
   [`apply_geotransform()`](https://firelab.github.io/gdalraster/reference/apply_geotransform.md):
@@ -909,7 +900,7 @@ CRAN release: 2024-06-13
 - Documentation: document the `w+` access flag for class `VSIFile`; add
   `CPL_VSIL_USE_TEMP_FILE_FOR_RANDOM_WRITE` configuration option in
   vignette [GDAL Config Quick
-  Reference](https://usdaforestservice.github.io/gdalraster/articles/gdal-config-quick-ref.html);
+  Reference](https://firelab.github.io/gdalraster/articles/gdal-config-quick-ref.html);
   replace [`paste0()`](https://rdrr.io/r/base/paste.html) with
   [`file.path()`](https://rdrr.io/r/base/file.path.html) in the examples
   throughout
@@ -1004,8 +995,8 @@ CRAN release: 2024-06-03
   (`character(0)`).
 - add support for I/O of Byte raster as R `raw` type, and add the
   setting `$readByteAsRaw` as a class field
-  ([\#314](https://github.com/USDAForestService/gdalraster/issues/314),
-  thanks to [@mdsumner](https://github.com/mdsumner))
+  ([\#314](https://github.com/firelab/gdalraster/issues/314), thanks to
+  [@mdsumner](https://github.com/mdsumner))
 - add read/write fields `$infoOptions` and `$quiet` for applying
   per-object settings
 - add an optional constructor to allow specifying whether the dataset is
@@ -1016,7 +1007,7 @@ CRAN release: 2024-06-03
   the stand-alone function
   [`get_pixel_line()`](https://firelab.github.io/gdalraster/reference/get_pixel_line.md)
   on an object of class
-  `GDALRaster`([\#339](https://github.com/USDAForestService/gdalraster/issues/339))
+  `GDALRaster`([\#339](https://github.com/firelab/gdalraster/issues/339))
 - add method `$getProjection()`: equivalent to `$getProjectionRef()`
   (consistent with `osgeo.gdal.Dataset.getProjection()` /
   `osgeo.gdal.Dataset.getProjectionRef()` in the GDAL Python API)
@@ -1027,7 +1018,7 @@ CRAN release: 2024-06-03
 
 - [`calc()`](https://firelab.github.io/gdalraster/reference/calc.md):
   add support for multiband output
-  ([\#319](https://github.com/USDAForestService/gdalraster/issues/319))
+  ([\#319](https://github.com/firelab/gdalraster/issues/319))
 - [`calc()`](https://firelab.github.io/gdalraster/reference/calc.md):
   add input validation for `var.names`, must be in `expr`
 - [`get_pixel_line()`](https://firelab.github.io/gdalraster/reference/get_pixel_line.md):
@@ -1035,13 +1026,13 @@ CRAN release: 2024-06-03
   parameter, in which case the geotransform will be obtained from the
   object and bounds checking on the raster extent will be done (original
   behavior for `gt` as numeric vector is unchanged)
-  ([\#339](https://github.com/USDAForestService/gdalraster/issues/339))
+  ([\#339](https://github.com/firelab/gdalraster/issues/339))
 - [`ogr2ogr()`](https://firelab.github.io/gdalraster/reference/ogr2ogr.md):
   add parameter `open_options` to support options on the source dataset
 - [`read_ds()`](https://firelab.github.io/gdalraster/reference/read_ds.md):
   add parameter `as_raw` to read a Byte raster as R `raw` type
-  ([\#314](https://github.com/USDAForestService/gdalraster/issues/314),
-  thanks to [@mdsumner](https://github.com/mdsumner))
+  ([\#314](https://github.com/firelab/gdalraster/issues/314), thanks to
+  [@mdsumner](https://github.com/mdsumner))
 
 ### GDAL configuration
 
@@ -1096,12 +1087,11 @@ CRAN release: 2024-06-03
 
 ### Documentation
 
-- add
-  [Discussions](https://github.com/USDAForestService/gdalraster/discussions)
+- add [Discussions](https://github.com/firelab/gdalraster/discussions)
   on the GitHub repository
 - add a section for HTTP/HTTPS (/vsicurl/) in the vignette [GDAL Config
   Quick
-  Reference](https://usdaforestservice.github.io/gdalraster/articles/gdal-config-quick-ref.html)
+  Reference](https://firelab.github.io/gdalraster/articles/gdal-config-quick-ref.html)
 - DESCRIPTION file: add Michael D. Sumner in `Authors@R`
 
 ### Other internal changes and fixes
@@ -1160,7 +1150,7 @@ CRAN release: 2024-03-26
   [`vsi_copy_file()`](https://firelab.github.io/gdalraster/reference/vsi_copy_file.md)
   and
   [`vsi_sync()`](https://firelab.github.io/gdalraster/reference/vsi_sync.md)
-  ([\#233](https://github.com/USDAForestService/gdalraster/issues/233))
+  ([\#233](https://github.com/firelab/gdalraster/issues/233))
 
 ### Other stand-alone functions
 
@@ -1194,9 +1184,9 @@ CRAN release: 2024-03-26
   when needed
 - add optional argument `quiet` in several functions to configure
   progress reporting
-  ([\#237](https://github.com/USDAForestService/gdalraster/issues/237))
+  ([\#237](https://github.com/firelab/gdalraster/issues/237))
 - make the dataset management functions quieter
-  ([\#282](https://github.com/USDAForestService/gdalraster/issues/282))
+  ([\#282](https://github.com/firelab/gdalraster/issues/282))
 - [`gdal_formats()`](https://firelab.github.io/gdalraster/reference/gdal_formats.md)
   now returns a data frame with the supported raster and vector formats,
   and information about the capabilities of each format driver
@@ -1239,10 +1229,10 @@ CRAN release: 2024-02-25
 
 - remove `OSR_DEFAULT_AXIS_MAPPING_STRATEGY=TRADITIONAL_GIS_ORDER` from
   `_gdal_init()`
-  ([\#209](https://github.com/USDAForestService/gdalraster/issues/209)),
-  since this could give a different SRS comparison result depending on
-  GDAL version in cases where axis mapping matters and the default
-  options in `OSRIsSameEx()` are used
+  ([\#209](https://github.com/firelab/gdalraster/issues/209)), since
+  this could give a different SRS comparison result depending on GDAL
+  version in cases where axis mapping matters and the default options in
+  `OSRIsSameEx()` are used
 
 ### GDAL VSI for operations on virtual file systems
 
@@ -1292,12 +1282,12 @@ CRAN release: 2024-02-25
   form; attach attribute `gis` to the output, a list containing bbox,
   dimension and spatial reference (thanks to input from
   [@mdsumner](https://github.com/mdsumner)
-  [\#185](https://github.com/USDAForestService/gdalraster/issues/185))
+  [\#185](https://github.com/firelab/gdalraster/issues/185))
 - [`plot_raster()`](https://firelab.github.io/gdalraster/reference/plot_raster.md):
   accept pixel data in list form (band vectors as list elements), and
   make use of `gis` attribute if present (thanks to input from
   [@mdsumner](https://github.com/mdsumner)
-  [\#185](https://github.com/USDAForestService/gdalraster/issues/185))
+  [\#185](https://github.com/firelab/gdalraster/issues/185))
 - [`srs_is_same()`](https://firelab.github.io/gdalraster/reference/srs_query.md):
   add arguments for `criterion`, `ignore_axis_mapping` and
   `ignore_coord_epoch`
@@ -1305,9 +1295,9 @@ CRAN release: 2024-02-25
 ### Documentation
 
 - organize the website [reference
-  index](https://usdaforestservice.github.io/gdalraster/reference/index.html)
+  index](https://firelab.github.io/gdalraster/reference/index.html)
 - add Microsoft Azure information in [GDAL Config Quick
-  Reference](https://usdaforestservice.github.io/gdalraster/articles/gdal-config-quick-ref.html)
+  Reference](https://firelab.github.io/gdalraster/articles/gdal-config-quick-ref.html)
 - update DESCRIPTION
 
 ### Internal
@@ -1340,8 +1330,8 @@ CRAN release: 2024-01-27
   create/append to Seek-Optimized ZIP files (GDAL \>= 3.7)
 - [`plot_raster()`](https://firelab.github.io/gdalraster/reference/plot_raster.md):
   now uses georeferenced coordinates by default instead of pixel/line
-  ([\#184](https://github.com/USDAForestService/gdalraster/issues/184)
-  thanks to [@mdsumner](https://github.com/mdsumner))
+  ([\#184](https://github.com/firelab/gdalraster/issues/184) thanks to
+  [@mdsumner](https://github.com/mdsumner))
 
 ### Documentation
 
@@ -1350,14 +1340,14 @@ CRAN release: 2024-01-27
   using Landsat bands should have applied scale/offset as given in the
   .json metadata - this has been corrected
 - add `AWS_REGION`, and a section for SOZip to [GDAL Config Quick
-  Ref](https://usdaforestservice.github.io/gdalraster/articles/gdal-config-quick-ref.html)
+  Ref](https://firelab.github.io/gdalraster/articles/gdal-config-quick-ref.html)
 - update documentation and examples throughout for default
   `read_only=TRUE` in the constructor for `GDALRaster`
 - add
   [`translate()`](https://firelab.github.io/gdalraster/reference/translate.md)
   and [`warp()`](https://firelab.github.io/gdalraster/reference/warp.md)
   in [Raster API
-  Tutorial](https://usdaforestservice.github.io/gdalraster/articles/raster-api-tutorial.html#see-also)
+  Tutorial](https://firelab.github.io/gdalraster/articles/raster-api-tutorial.html#see-also)
 
 ### Internal
 
@@ -1365,14 +1355,13 @@ CRAN release: 2024-01-27
   **gdalraster** only uses PROJ via GDAL headers; use `autoconf` macros
   for compiler invocations; get the PROJ data directory from
   `pkg-config` if possible; add `action-if-cross-compiling` argument
-  ([\#190](https://github.com/USDAForestService/gdalraster/issues/190)
-  and
-  [\#197](https://github.com/USDAForestService/gdalraster/issues/197);
-  thanks to Simon Urbanek for debugging an initial issue and providing
-  helpful feedback)
+  ([\#190](https://github.com/firelab/gdalraster/issues/190) and
+  [\#197](https://github.com/firelab/gdalraster/issues/197); thanks to
+  Simon Urbanek for debugging an initial issue and providing helpful
+  feedback)
 - get GDAL libs from `pkg-config` on Windows when possible
-  ([\#125](https://github.com/USDAForestService/gdalraster/issues/125)
-  thanks to [@kalibera](https://github.com/kalibera))
+  ([\#125](https://github.com/firelab/gdalraster/issues/125) thanks to
+  [@kalibera](https://github.com/kalibera))
 - [`translate()`](https://firelab.github.io/gdalraster/reference/translate.md)
   and
   [`warp()`](https://firelab.github.io/gdalraster/reference/warp.md):
@@ -1411,7 +1400,7 @@ CRAN release: 2023-11-29
 ### Documentation
 
 - add [GDAL Config Quick
-  Reference](https://usdaforestservice.github.io/gdalraster/articles/gdal-config-quick-ref.html)
+  Reference](https://firelab.github.io/gdalraster/articles/gdal-config-quick-ref.html)
   to vignettes
 - [`warp()`](https://firelab.github.io/gdalraster/reference/warp.md) has
   additional documentation covering several processing options
@@ -1419,10 +1408,10 @@ CRAN release: 2023-11-29
   for `GDALRaster::buildOverviews()`
 - add [`str()`](https://rdrr.io/r/utils/str.html) of the `GDALRaster`
   object in the [Raster API
-  Tutorial](https://usdaforestservice.github.io/gdalraster/articles/raster-api-tutorial.html)
+  Tutorial](https://firelab.github.io/gdalraster/articles/raster-api-tutorial.html)
 - add display of the EVT raster itself along with its attribute table in
   [Raster Attribute
-  Tables](https://usdaforestservice.github.io/gdalraster/articles/raster-attribute-tables.html)
+  Tables](https://firelab.github.io/gdalraster/articles/raster-attribute-tables.html)
 
 ### Internal
 
@@ -1454,7 +1443,7 @@ CRAN release: 2023-10-27
 - add `getMetadataDomainList()`: get a list of metadata domains for a
   dataset or raster band
 - fix `getMetadataItem()` for a specific domain at dataset level
-  ([\#109](https://github.com/USDAForestService/gdalraster/issues/109))
+  ([\#109](https://github.com/firelab/gdalraster/issues/109))
 
 ### GDAL API stand-alone functions
 
@@ -1482,7 +1471,7 @@ CRAN release: 2023-10-27
   [`renameDataset()`](https://firelab.github.io/gdalraster/reference/renameDataset.md):
   rename a dataset in a format-specific way
 - add some missing error checks in src/gdal_exp.cpp
-  ([\#104](https://github.com/USDAForestService/gdalraster/issues/104))
+  ([\#104](https://github.com/firelab/gdalraster/issues/104))
 
 ### CmbTable-class
 
@@ -1500,23 +1489,23 @@ CRAN release: 2023-10-27
 
 - [`plot_raster()`](https://firelab.github.io/gdalraster/reference/plot_raster.md):
   normalize legend correctly for `minmax_def` and `minmax_pct_cut`
-  ([\#131](https://github.com/USDAForestService/gdalraster/issues/131))
+  ([\#131](https://github.com/firelab/gdalraster/issues/131))
 
 ### Documentation
 
 - add vignette [Raster Attribute
-  Tables](https://usdaforestservice.github.io/gdalraster/articles/raster-attribute-tables.html)
+  Tables](https://firelab.github.io/gdalraster/articles/raster-attribute-tables.html)
 - add
-  [notes](https://usdaforestservice.github.io/gdalraster/reference/RunningStats-class.html#note)
+  [notes](https://firelab.github.io/gdalraster/reference/RunningStats-class.html#note)
   for `RunningStats-class`
 - update vignette [Raster API
-  Tutorial](https://usdaforestservice.github.io/gdalraster/articles/raster-api-tutorial.html)
+  Tutorial](https://firelab.github.io/gdalraster/articles/raster-api-tutorial.html)
   with
   [`gdal_formats()`](https://firelab.github.io/gdalraster/reference/gdal_formats.md)
   and
   [`getCreationOptions()`](https://firelab.github.io/gdalraster/reference/getCreationOptions.md)
 - update installation instructions in
-  [README](https://github.com/USDAForestService/gdalraster/blob/main/README.md)
+  [README](https://github.com/firelab/gdalraster/blob/main/README.md)
 
 ## gdalraster 1.5.0
 
@@ -1572,7 +1561,7 @@ CRAN release: 2023-09-25
 
 - [`warp()`](https://firelab.github.io/gdalraster/reference/warp.md)
   caused segfault if proj.db could not be found
-  ([\#96](https://github.com/USDAForestService/gdalraster/issues/96))
+  ([\#96](https://github.com/firelab/gdalraster/issues/96))
 
 ### Other miscellaneous
 
@@ -1625,7 +1614,7 @@ CRAN release: 2023-06-29
 
 - `GDALRaster::read()`: data are now read as R `integer` type when
   possible for the raster data type
-  ([\#23](https://github.com/USDAForestService/gdalraster/issues/23))
+  ([\#23](https://github.com/firelab/gdalraster/issues/23))
 
 - add
   [`fillNodata()`](https://firelab.github.io/gdalraster/reference/fillNodata.md):
@@ -1650,20 +1639,20 @@ CRAN release: 2023-06-29
 
 - [`bbox_from_wkt()`](https://firelab.github.io/gdalraster/reference/bbox_from_wkt.md):
   return `NA` if creation of the geometry object fails
-  ([\#27](https://github.com/USDAForestService/gdalraster/issues/27))
+  ([\#27](https://github.com/firelab/gdalraster/issues/27))
 
 - fix `GDALRaster$getMetadata()`: requesting band-level metadata for a
   domain other than the default metadata domain was returning
   dataset-level metadata instead
 
 - add vignette containing an [R port of the GDAL Raster API
-  tutorial](https://usdaforestservice.github.io/gdalraster/articles/raster-api-tutorial.html)
+  tutorial](https://firelab.github.io/gdalraster/articles/raster-api-tutorial.html)
 
 - add description of the `GDAL_RASTERIO_RESAMPLING` configuration option
   in the documentation for `GDALRaster$read()`
 
 - add web article on the [GDAL block
-  cache](https://usdaforestservice.github.io/gdalraster/articles/gdal-block-cache.html)
+  cache](https://firelab.github.io/gdalraster/articles/gdal-block-cache.html)
   and configuration of `GDAL_CACHEMAX`
 
 ## gdalraster 1.2.0
@@ -1671,16 +1660,16 @@ CRAN release: 2023-06-29
 CRAN release: 2023-05-28
 
 - starting at v. 1.2.0,
-  [gdalraster](https://usdaforestservice.github.io/gdalraster/) will
-  require R \>= 4.2.0
+  [gdalraster](https://firelab.github.io/gdalraster/) will require R \>=
+  4.2.0
 
 - fix: check for GEOS availability in bbox geometry functions
 
 - fix: wrong array dimensions in `read()`
-  ([\#5](https://github.com/USDAForestService/gdalraster/issues/5)).
-  Starting at v. 1.2.0, `read()` will return vector instead of matrix
-  which better matches the concept of a native GDAL-like interface
-  (thanks to Michael Sumner).
+  ([\#5](https://github.com/firelab/gdalraster/issues/5)). Starting
+  at v. 1.2.0, `read()` will return vector instead of matrix which
+  better matches the concept of a native GDAL-like interface (thanks to
+  Michael Sumner).
 
 - add:
   [`has_geos()`](https://firelab.github.io/gdalraster/reference/has_geos.md)

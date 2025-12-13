@@ -43,7 +43,7 @@ GDAL API."></head><body>
 <li class="nav-item"><a class="nav-link" href="../news/index.html">Changelog</a></li>
       </ul><ul class="navbar-nav"><li class="nav-item"><form class="form-inline" role="search">
  <input class="form-control" type="search" name="search-input" id="search-input" autocomplete="off" aria-label="Search site" placeholder="Search for" data-search-index="../search.json"></form></li>
-<li class="nav-item"><a class="external-link nav-link" href="https://github.com/USDAForestService/gdalraster/" aria-label="GitHub"><span class="fa fab fa-github fa-lg"></span></a></li>
+<li class="nav-item"><a class="external-link nav-link" href="https://github.com/firelab/gdalraster/" aria-label="GitHub"><span class="fa fab fa-github fa-lg"></span></a></li>
 <li class="nav-item dropdown">
   <button class="nav-link dropdown-toggle" type="button" id="dropdown-lightswitch" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true" aria-label="Light switch"><span class="fa fa-sun"></span></button>
   <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="dropdown-lightswitch"><li><button class="dropdown-item" data-bs-theme-value="light"><span class="fa fa-sun"></span> Light</button></li>
@@ -59,7 +59,7 @@ GDAL API."></head><body>
   <main id="main" class="col-md-9"><div class="page-header">
 
       <h1>Rename a dataset</h1>
-      <small class="dont-index">Source: <a href="https://github.com/USDAForestService/gdalraster/blob/main/R/RcppExports.R" class="external-link"><code>R/RcppExports.R</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/firelab/gdalraster/blob/main/R/RcppExports.R" class="external-link"><code>R/RcppExports.R</code></a></small>
       <div class="d-none name"><code>renameDataset.Rd</code></div>
     </div>
 
@@ -126,15 +126,15 @@ from the passed file name.</p>
 <span class="r-in"><span><span class="va">ds</span><span class="op">$</span><span class="fu">buildOverviews</span><span class="op">(</span><span class="st">"BILINEAR"</span>, levels <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">2</span>, <span class="fl">4</span>, <span class="fl">8</span><span class="op">)</span>, bands <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 0...10...20...30...40...50...60...70...80...90...100 - done.</span>
 <span class="r-in"><span><span class="va">ds</span><span class="op">$</span><span class="fu">getFileList</span><span class="op">(</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "/tmp/RtmpXLQW3L/b5_tmp.tif"     "/tmp/RtmpXLQW3L/b5_tmp.tif.ovr"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "/tmp/Rtmp1hKRBr/b5_tmp.tif"     "/tmp/Rtmp1hKRBr/b5_tmp.tif.ovr"</span>
 <span class="r-in"><span><span class="va">ds</span><span class="op">$</span><span class="fu">close</span><span class="op">(</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">b5_tmp2</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/file.path.html" class="external-link">file.path</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/tempfile.html" class="external-link">tempdir</a></span><span class="op">(</span><span class="op">)</span>, <span class="st">"b5_tmp_renamed.tif"</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="fu">renameDataset</span><span class="op">(</span><span class="va">b5_tmp2</span>, <span class="va">b5_tmp</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] TRUE</span>
 <span class="r-in"><span><span class="va">ds</span> <span class="op">&lt;-</span> <span class="fu">new</span><span class="op">(</span><span class="va">GDALRaster</span>, <span class="va">b5_tmp2</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">ds</span><span class="op">$</span><span class="fu">getFileList</span><span class="op">(</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "/tmp/RtmpXLQW3L/b5_tmp_renamed.tif"    </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [2] "/tmp/RtmpXLQW3L/b5_tmp_renamed.tif.ovr"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "/tmp/Rtmp1hKRBr/b5_tmp_renamed.tif"    </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [2] "/tmp/Rtmp1hKRBr/b5_tmp_renamed.tif.ovr"</span>
 <span class="r-in"><span><span class="va">ds</span><span class="op">$</span><span class="fu">close</span><span class="op">(</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="fu"><a href="deleteDataset.html">deleteDataset</a></span><span class="op">(</span><span class="va">b5_tmp2</span><span class="op">)</span></span></span>

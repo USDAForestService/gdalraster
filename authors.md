@@ -33,12 +33,12 @@ for details.
 ## Citation
 
 Source:
-[`inst/CITATION`](https://github.com/USDAForestService/gdalraster/blob/main/inst/CITATION)
+[`inst/CITATION`](https://github.com/firelab/gdalraster/blob/main/inst/CITATION)
 
 Toney C (2025). *gdalraster: R Bindings to the 'Geospatial Data
 Abstraction Library' Raster API*. USDA Forest Service, Rocky Mountain
 Research Station, Missoula, MT, USA.
-<https://usdaforestservice.github.io/gdalraster/>.
+<https://firelab.github.io/gdalraster/>.
 
     @Manual{,
       title = {gdalraster: R Bindings to the 'Geospatial Data Abstraction Library' Raster API},
@@ -46,5 +46,5 @@ Research Station, Missoula, MT, USA.
       year = {2025},
       organization = {USDA Forest Service, Rocky Mountain Research Station},
       address = {Missoula, MT, USA},
-      url = {https://usdaforestservice.github.io/gdalraster/},
+      url = {https://firelab.github.io/gdalraster/},
     }

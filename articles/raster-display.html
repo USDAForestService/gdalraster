@@ -52,7 +52,7 @@
 <li class="nav-item"><form class="form-inline" role="search">
  <input class="form-control" type="search" name="search-input" id="search-input" autocomplete="off" aria-label="Search site" placeholder="Search for" data-search-index="../search.json">
 </form></li>
-<li class="nav-item"><a class="external-link nav-link" href="https://github.com/USDAForestService/gdalraster/" aria-label="GitHub"><span class="fa fab fa-github fa-lg"></span></a></li>
+<li class="nav-item"><a class="external-link nav-link" href="https://github.com/firelab/gdalraster/" aria-label="GitHub"><span class="fa fab fa-github fa-lg"></span></a></li>
 <li class="nav-item dropdown">
   <button class="nav-link dropdown-toggle" type="button" id="dropdown-lightswitch" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true" aria-label="Light switch"><span class="fa fa-sun"></span></button>
   <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="dropdown-lightswitch">
@@ -77,7 +77,7 @@
       <h1>Raster Display</h1>
             
       
-      <small class="dont-index">Source: <a href="https://github.com/USDAForestService/gdalraster/blob/main/vignettes/articles/raster-display.Rmd" class="external-link"><code>vignettes/articles/raster-display.Rmd</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/firelab/gdalraster/blob/main/vignettes/articles/raster-display.Rmd" class="external-link"><code>vignettes/articles/raster-display.Rmd</code></a></small>
       <div class="d-none name"><code>raster-display.Rmd</code></div>
     </div>
 
@@ -87,10 +87,10 @@
 <code>graphics</code>. The function will read from an open dataset, or
 use pixel values that have already been read into a vector.</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://usdaforestservice.github.io/gdalraster/" class="external-link">gdalraster</a></span><span class="op">)</span></span>
+<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://firelab.github.io/gdalraster/">gdalraster</a></span><span class="op">)</span></span>
 <span><span class="co">#&gt; GDAL 3.8.4 (released 2024-02-08), GEOS 3.12.1, PROJ 9.4.0</span></span>
 <span></span>
-<span><span class="va">base_url</span> <span class="op">&lt;-</span> <span class="st">"/vsicurl/https://raw.githubusercontent.com/usdaforestservice/gdalraster/main/sample-data/"</span></span></code></pre></div>
+<span><span class="va">base_url</span> <span class="op">&lt;-</span> <span class="st">"/vsicurl/https://raw.githubusercontent.com/firelab/gdalraster/main/sample-data/"</span></span></code></pre></div>
 <div class="section level2">
 <h2 id="single-band-grayscale-or-color-ramp">Single-band grayscale or color ramp<a class="anchor" aria-label="anchor" href="#single-band-grayscale-or-color-ramp"></a>
 </h2>

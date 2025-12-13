@@ -9,7 +9,7 @@ vector.
 library(gdalraster)
 #> GDAL 3.8.4 (released 2024-02-08), GEOS 3.12.1, PROJ 9.4.0
 
-base_url <- "/vsicurl/https://raw.githubusercontent.com/usdaforestservice/gdalraster/main/sample-data/"
+base_url <- "/vsicurl/https://raw.githubusercontent.com/firelab/gdalraster/main/sample-data/"
 ```
 
 ## Single-band grayscale or color ramp
